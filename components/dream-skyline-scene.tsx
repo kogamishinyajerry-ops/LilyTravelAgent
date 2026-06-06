@@ -6,9 +6,11 @@ import {
   BoxGeometry,
   BufferGeometry,
   CanvasTexture,
+  CircleGeometry,
   CatmullRomCurve3,
   Color,
   ConeGeometry,
+  CylinderGeometry,
   DirectionalLight,
   DoubleSide,
   Float32BufferAttribute,
@@ -26,6 +28,7 @@ import {
   PlaneGeometry,
   SRGBColorSpace,
   Scene,
+  SphereGeometry,
   TextureLoader,
   Vector3,
   WebGLRenderer,
@@ -226,7 +229,15 @@ export function DreamSkylineScene({
   }, [activeDay, assetSource, design.routeStops.length, mood, palette, profile, template]);
 
   return (
-    <div ref={wrapRef} className={`dream-skyline-scene dream-skyline-${template}${template === "neon-city" ? " dream-skyline-neon" : ""}`}>
+    <div ref={wrapRef} className={`dream-skyline-scene dream-skyline-${template}${
+      template === "neon-city" ? " dream-skyline-neon" : ""
+    }${
+      template === "island" ? " dream-skyline-island" : ""
+    }${
+      template === "shrine" ? " dream-skyline-shrine" : ""
+    }${
+      template === "desert" ? " dream-skyline-desert" : ""
+    }`}>
       {assetSource ? (
         <div className="dream-skyline-asset-backdrop" style={{ backgroundImage: `url(${assetSource})` }} />
       ) : null}
@@ -480,6 +491,108 @@ function createSkyline(
 
   }
 
+  if (template === "desert") {
+    return createDesertSkyline(group, palette, disposables);
+  }
+
+  if (template === "island") {
+    const islandCount = 8 + Math.round(profile.density * 6);
+    const islandEarth = new MeshStandardMaterial({
+      color: new Color(palette.mountain),
+      roughness: 0.94,
+      metalness: 0.02,
+    });
+    const islandGrass = new MeshStandardMaterial({
+      color: new Color(palette.ground),
+      roughness: 0.82,
+      metalness: 0.02,
+    });
+    const islandWire = new LineBasicMaterial({
+      color: new Color(palette.light),
+      transparent: true,
+      opacity: 0.55,
+    });
+    disposables.push(islandEarth, islandGrass, islandWire);
+
+    for (let i = 0; i < islandCount; i += 1) {
+      const x = -8.2 + ((i * 1.97) % 16.4) + Math.sin(i * 1.31) * 0.6;
+      const z = -1.6 + ((i * 1.13) % 5.4) - 0.4;
+      const y = 1 + ((i * 17) % 30) / 10; // 1-4m above ground
+      const w = 0.8 + ((i * 13) % 7) * 0.1;
+      const h = 0.3 + ((i * 7) % 3) * 0.1;
+      const d = 0.8 + ((i * 19) % 7) * 0.1;
+
+      const earthGeom = new BoxGeometry(w, h, d);
+      const earthMesh = new Mesh(earthGeom, islandEarth);
+      earthMesh.position.set(x, y, z);
+      group.add(earthMesh);
+      disposables.push(earthGeom);
+
+      const grassGeom = new BoxGeometry(w * 0.92, 0.05, d * 0.92);
+      const grassMesh = new Mesh(grassGeom, islandGrass);
+      grassMesh.position.set(x, y + h / 2 + 0.025, z);
+      group.add(grassMesh);
+      disposables.push(grassGeom);
+
+      const edgesGeom = new EdgesGeometry(earthGeom);
+      const edges = new LineSegments(edgesGeom, islandWire);
+      edges.position.copy(earthMesh.position);
+      group.add(edges);
+      disposables.push(edgesGeom);
+    }
+  }
+
+  if (template === "shrine") {
+    const stoneMat = new MeshStandardMaterial({
+      color: new Color(palette.stone),
+      roughness: 0.88,
+      metalness: 0.02,
+    });
+    const lanternGlassMat = new MeshStandardMaterial({
+      color: new Color(palette.light),
+      emissive: new Color(palette.light),
+      emissiveIntensity: 1.4,
+      roughness: 0.32,
+      metalness: 0.05,
+    });
+    disposables.push(stoneMat, lanternGlassMat);
+
+    const lanternCount = 6 + Math.round((Math.sin(profile.density * 7.3) + 1) * 2); // 6-10
+    for (let i = 0; i < lanternCount; i += 1) {
+      const t = lanternCount === 1 ? 0.5 : i / (lanternCount - 1);
+      // S-curve path along x
+      const x = -6.6 + t * 13.2;
+      const sCurve = Math.sin(t * Math.PI * 1.6) * 0.85;
+      const z = 0.6 + sCurve + (i % 2 === 0 ? -0.1 : 0.15);
+      const lantern = new Group();
+      lantern.position.set(x, 0, z);
+
+      // Stone base
+      addBox(lantern, [0, 0.06, 0], [0.16, 0.12, 0.16], stoneMat, disposables);
+      // Vertical post
+      const postGeom = new CylinderGeometry(0.045, 0.055, 0.34, 8);
+      const postMesh = new Mesh(postGeom, stoneMat);
+      postMesh.position.set(0, 0.29, 0);
+      lantern.add(postMesh);
+      disposables.push(postGeom);
+      // Small roof cap
+      const capGeom = new ConeGeometry(0.12, 0.08, 4);
+      const capMesh = new Mesh(capGeom, stoneMat);
+      capMesh.position.set(0, 0.5, 0);
+      capMesh.rotation.y = Math.PI / 4;
+      lantern.add(capMesh);
+      disposables.push(capGeom);
+      // Tiny emissive light on top
+      const flameGeom = new SphereGeometry(0.045, 10, 8);
+      const flameMesh = new Mesh(flameGeom, lanternGlassMat);
+      flameMesh.position.set(0, 0.58, 0);
+      lantern.add(flameMesh);
+      disposables.push(flameGeom);
+
+      group.add(lantern);
+    }
+  }
+
   if (template === "neon-city") {
     const neonGlass = new MeshStandardMaterial({
       color: new Color(palette.glass),
@@ -553,6 +666,18 @@ function createLandmark(
   template: DreamTemplate,
   disposables: Array<{ dispose: () => void }>,
 ) {
+  if (template === "desert") {
+    return createDesertLandmark(palette, disposables);
+  }
+
+  if (template === "shrine") {
+    return createShrineLandmark(palette, disposables);
+  }
+
+  if (template === "island") {
+    return createIslandLandmark(palette, disposables);
+  }
+
   if (template === "neon-city") {
     return createNeonTower(palette, disposables);
   }
@@ -731,6 +856,156 @@ function createObservationDeck(palette: SkylinePalette, disposables: Array<{ dis
   return group;
 }
 
+function createIslandLandmark(
+  palette: SkylinePalette,
+  disposables: Array<{ dispose: () => void }>,
+) {
+  const group = new Group();
+  group.position.set(0, 0, 1.4);
+
+  const earth = new MeshStandardMaterial({
+    color: new Color(palette.mountain),
+    roughness: 0.94,
+    metalness: 0.02,
+  });
+  const grass = new MeshStandardMaterial({
+    color: new Color(palette.ground),
+    roughness: 0.82,
+    metalness: 0.02,
+  });
+  const trunk = new MeshStandardMaterial({
+    color: new Color("#3d2a1a"),
+    roughness: 0.9,
+    metalness: 0.02,
+  });
+  const foliage = new MeshStandardMaterial({
+    color: new Color("#4faa55"),
+    roughness: 0.78,
+    metalness: 0.02,
+  });
+  disposables.push(earth, grass, trunk, foliage);
+
+  // Tapered earth block: wider at top, narrower at bottom (slight inverted frustum look)
+  const earthTopGeom = new BoxGeometry(1.4, 0.32, 1.4);
+  const earthTopMesh = new Mesh(earthTopGeom, earth);
+  earthTopMesh.position.set(0, 0.45, 0);
+  group.add(earthTopMesh);
+  disposables.push(earthTopGeom);
+
+  const earthBottomGeom = new BoxGeometry(1.18, 0.24, 1.18);
+  const earthBottomMesh = new Mesh(earthBottomGeom, earth);
+  earthBottomMesh.position.set(0, 0.16, 0);
+  group.add(earthBottomMesh);
+  disposables.push(earthBottomGeom);
+
+  // Flat grass plane on top
+  const grassGeom = new BoxGeometry(1.32, 0.06, 1.32);
+  const grassMesh = new Mesh(grassGeom, grass);
+  grassMesh.position.set(0, 0.6, 0);
+  group.add(grassMesh);
+  disposables.push(grassGeom);
+
+  // Tree trunk
+  const trunkGeom = new CylinderGeometry(0.045, 0.06, 0.36, 8);
+  const trunkMesh = new Mesh(trunkGeom, trunk);
+  trunkMesh.position.set(0.18, 0.78, -0.1);
+  group.add(trunkMesh);
+  disposables.push(trunkGeom);
+
+  // Foliage sphere
+  const foliageGeom = new SphereGeometry(0.2, 12, 10);
+  const foliageMesh = new Mesh(foliageGeom, foliage);
+  foliageMesh.position.set(0.18, 1.06, -0.1);
+  group.add(foliageMesh);
+  disposables.push(foliageGeom);
+
+  return group;
+}
+
+function createShrineLandmark(
+  palette: SkylinePalette,
+  disposables: Array<{ dispose: () => void }>,
+) {
+  const group = new Group();
+  group.position.set(0, 0, 1.4);
+
+  // Deep red lacquered wood for torii
+  const shrineRed = new MeshStandardMaterial({
+    color: new Color("#b8332a"),
+    roughness: 0.55,
+    metalness: 0.08,
+  });
+  // Slightly darker trim for the lower beam
+  const shrineRedDeep = new MeshStandardMaterial({
+    color: new Color("#8a2018"),
+    roughness: 0.6,
+    metalness: 0.08,
+  });
+  // Grey stone for lantern bodies
+  const stoneMat = new MeshStandardMaterial({
+    color: new Color(palette.stone),
+    roughness: 0.88,
+    metalness: 0.02,
+  });
+  // Warm yellow glowing lantern light
+  const lanternGlow = new MeshStandardMaterial({
+    color: new Color(palette.light),
+    emissive: new Color(palette.light),
+    emissiveIntensity: 1.8,
+    roughness: 0.32,
+    metalness: 0.05,
+  });
+  disposables.push(shrineRed, shrineRedDeep, stoneMat, lanternGlow);
+
+  // --- Torii gate ---
+  // Two vertical pillars
+  addBox(group, [-0.62, 0.55, 0], [0.16, 1.1, 0.16], shrineRed, disposables);
+  addBox(group, [0.62, 0.55, 0], [0.16, 1.1, 0.16], shrineRed, disposables);
+
+  // Lower horizontal beam (nuki) with slight overhang
+  addBox(group, [0, 0.92, 0], [1.7, 0.12, 0.18], shrineRed, disposables);
+
+  // Top horizontal beam (kasagi) with a bit more overhang
+  addBox(group, [0, 1.16, 0], [1.9, 0.1, 0.2], shrineRedDeep, disposables);
+  // Top crown ridge (shimaki) — thin slice on top for the iconic torii silhouette
+  addBox(group, [0, 1.24, 0], [1.95, 0.04, 0.22], shrineRedDeep, disposables);
+
+  // Vertical strut connecting the two beams (gakuzuka)
+  addBox(group, [0, 1.04, 0], [0.08, 0.18, 0.08], shrineRed, disposables);
+
+  // --- Stone lanterns (mysterious) on either side ---
+  const buildStoneLantern = (x: number) => {
+    // Stone base
+    addBox(group, [x, 0.08, 0.1], [0.18, 0.16, 0.18], stoneMat, disposables);
+    // Post
+    const postGeom = new CylinderGeometry(0.05, 0.06, 0.36, 8);
+    const postMesh = new Mesh(postGeom, stoneMat);
+    postMesh.position.set(x, 0.34, 0.1);
+    group.add(postMesh);
+    disposables.push(postGeom);
+    // Lantern housing
+    addBox(group, [x, 0.6, 0.1], [0.16, 0.16, 0.16], stoneMat, disposables);
+    // Roof cap
+    const capGeom = new ConeGeometry(0.14, 0.1, 4);
+    const capMesh = new Mesh(capGeom, stoneMat);
+    capMesh.position.set(x, 0.73, 0.1);
+    capMesh.rotation.y = Math.PI / 4;
+    group.add(capMesh);
+    disposables.push(capGeom);
+    // Tiny warm glow on top
+    const flameGeom = new SphereGeometry(0.05, 10, 8);
+    const flameMesh = new Mesh(flameGeom, lanternGlow);
+    flameMesh.position.set(x, 0.82, 0.1);
+    group.add(flameMesh);
+    disposables.push(flameGeom);
+  };
+
+  buildStoneLantern(-1.1);
+  buildStoneLantern(1.1);
+
+  return group;
+}
+
 function createNeonTower(
   palette: SkylinePalette,
   disposables: Array<{ dispose: () => void }>,
@@ -770,6 +1045,210 @@ function createNeonTower(
   ring.rotation.y = Math.PI / 8;
   group.add(ring);
   disposables.push(ringGeom);
+
+  return group;
+}
+
+function createDesertLandmark(
+  palette: SkylinePalette,
+  disposables: Array<{ dispose: () => void }>,
+) {
+  const group = new Group();
+  group.position.set(0, 0, 1.4);
+
+  // Warm sand tone
+  const sand = new MeshStandardMaterial({
+    color: new Color("#e8c98a"),
+    roughness: 0.96,
+    metalness: 0.02,
+  });
+  // Slightly darker dune base for layered look
+  const sandShadow = new MeshStandardMaterial({
+    color: new Color("#c8a86a"),
+    roughness: 0.95,
+    metalness: 0.02,
+  });
+  // Dark brown palm trunks
+  const palmTrunk = new MeshStandardMaterial({
+    color: new Color("#4a2e1a"),
+    roughness: 0.92,
+    metalness: 0.02,
+  });
+  // Green palm fronds
+  const palmFrond = new MeshStandardMaterial({
+    color: new Color("#3f8a3a"),
+    roughness: 0.7,
+    metalness: 0.02,
+    side: DoubleSide,
+  });
+  // Light blue water
+  const oasisWater = new MeshStandardMaterial({
+    color: new Color("#6cb8d6"),
+    roughness: 0.18,
+    metalness: 0.18,
+    transparent: true,
+    opacity: 0.85,
+  });
+  disposables.push(sand, sandShadow, palmTrunk, palmFrond, oasisWater);
+
+  // Sand dune: low wide sphere, half-submerged
+  const duneGeom = new SphereGeometry(1.2, 24, 16);
+  const dune = new Mesh(duneGeom, sand);
+  dune.position.set(0, -0.15, 0);
+  dune.scale.set(1.4, 0.5, 1.1);
+  group.add(dune);
+  disposables.push(duneGeom);
+
+  // Smaller secondary dune behind for depth
+  const duneBackGeom = new SphereGeometry(0.7, 18, 12);
+  const duneBack = new Mesh(duneBackGeom, sandShadow);
+  duneBack.position.set(0.5, -0.1, -0.6);
+  duneBack.scale.set(1.1, 0.4, 0.9);
+  group.add(duneBack);
+  disposables.push(duneBackGeom);
+
+  // Water patch: flat circle in front of dune
+  const waterGeom = new CircleGeometry(0.55, 28);
+  const water = new Mesh(waterGeom, oasisWater);
+  water.rotation.x = -Math.PI / 2;
+  water.position.set(0.1, 0.02, 0.7);
+  group.add(water);
+  disposables.push(waterGeom);
+
+  // Helper to build a palm tree
+  const buildPalm = (x: number, z: number, scale: number) => {
+    const palm = new Group();
+    palm.position.set(x, 0, z);
+    palm.scale.setScalar(scale);
+
+    // Trunk: tall thin cylinder
+    const trunkHeight = 1.3;
+    const trunkGeom = new CylinderGeometry(0.045, 0.06, trunkHeight, 8);
+    const trunkMesh = new Mesh(trunkGeom, palmTrunk);
+    trunkMesh.position.set(0, trunkHeight / 2, 0);
+    palm.add(trunkMesh);
+    disposables.push(trunkGeom);
+
+    // Fronds: cluster of elongated cones at top
+    const frondCount = 5;
+    for (let i = 0; i < frondCount; i += 1) {
+      const angle = (i / frondCount) * Math.PI * 2;
+      const frondGeom = new ConeGeometry(0.05, 0.55, 6);
+      const frondMesh = new Mesh(frondGeom, palmFrond);
+      frondMesh.position.set(
+        Math.cos(angle) * 0.18,
+        trunkHeight + 0.12,
+        Math.sin(angle) * 0.18,
+      );
+      // Tilt frond outward
+      frondMesh.rotation.z = -Math.cos(angle) * 0.7;
+      frondMesh.rotation.x = Math.sin(angle) * 0.7;
+      palm.add(frondMesh);
+      disposables.push(frondGeom);
+    }
+
+    // Central crown sphere
+    const crownGeom = new SphereGeometry(0.08, 8, 6);
+    const crownMesh = new Mesh(crownGeom, palmFrond);
+    crownMesh.position.set(0, trunkHeight + 0.08, 0);
+    palm.add(crownMesh);
+    disposables.push(crownGeom);
+
+    group.add(palm);
+  };
+
+  // 3 palm trees around the oasis
+  buildPalm(-0.85, 0.25, 0.95);
+  buildPalm(0.7, 0.45, 1.05);
+  buildPalm(0.15, 1.0, 0.85);
+
+  return group;
+}
+
+function createDesertSkyline(
+  group: Group,
+  palette: SkylinePalette,
+  disposables: Array<{ dispose: () => void }>,
+) {
+  // Warm sand-colored ground tone (slightly different from default ground)
+  const desertGround = new MeshStandardMaterial({
+    color: new Color("#d4b070"),
+    roughness: 0.95,
+    metalness: 0.02,
+  });
+  disposables.push(desertGround);
+
+  // Subtle distant dune ribbon to anchor the horizon
+  const ribbonGeom = new PlaneGeometry(28, 1.2);
+  const ribbon = new Mesh(ribbonGeom, desertGround);
+  ribbon.rotation.x = -Math.PI / 2;
+  ribbon.position.set(0, -0.18, -3.5);
+  group.add(ribbon);
+  disposables.push(ribbonGeom);
+
+  // Palm tree materials (tall thin trunks, green fronds)
+  const palmTrunk = new MeshStandardMaterial({
+    color: new Color("#4a2e1a"),
+    roughness: 0.92,
+    metalness: 0.02,
+  });
+  const palmFrond = new MeshStandardMaterial({
+    color: new Color("#3f8a3a"),
+    roughness: 0.7,
+    metalness: 0.02,
+    side: DoubleSide,
+  });
+  disposables.push(palmTrunk, palmFrond);
+
+  // Generate 10-18 distant palm trees scattered along the route
+  const palmCount = 12 + Math.round((Math.sin(palette.sky.length * 7.3) + 1) * 3); // 12-18
+  for (let i = 0; i < palmCount; i += 1) {
+    // Distribute along the route (x spans ~-8 to +8, z varies)
+    const x = -8.2 + ((i * 1.97) % 16.4) + Math.sin(i * 1.31) * 0.6;
+    const z = -2.4 + ((i * 1.13) % 5.2) - 0.3;
+    const scale = 0.65 + ((i * 7) % 5) * 0.08; // 0.65-1.0
+    const yOffset = 0; // sit on ground
+
+    const palm = new Group();
+    palm.position.set(x, yOffset, z);
+    palm.scale.setScalar(scale);
+
+    // Trunk: tall thin cylinder
+    const trunkHeight = 1.5 + ((i * 3) % 4) * 0.12;
+    const trunkGeom = new CylinderGeometry(0.04, 0.055, trunkHeight, 7);
+    const trunkMesh = new Mesh(trunkGeom, palmTrunk);
+    trunkMesh.position.set(0, trunkHeight / 2, 0);
+    palm.add(trunkMesh);
+    disposables.push(trunkGeom);
+
+    // Cluster of 4-6 elongated cone/plane fronds at the top
+    const frondCount = 4 + (i % 3); // 4-6
+    for (let f = 0; f < frondCount; f += 1) {
+      const angle = (f / frondCount) * Math.PI * 2 + i * 0.4;
+      const frondLen = 0.5 + ((f * 5 + i) % 4) * 0.06;
+      const frondGeom = new ConeGeometry(0.045, frondLen, 5);
+      const frondMesh = new Mesh(frondGeom, palmFrond);
+      frondMesh.position.set(
+        Math.cos(angle) * 0.16,
+        trunkHeight + 0.08,
+        Math.sin(angle) * 0.16,
+      );
+      // Tilt frond outward and slightly down
+      frondMesh.rotation.z = -Math.cos(angle) * 0.85;
+      frondMesh.rotation.x = Math.sin(angle) * 0.85;
+      palm.add(frondMesh);
+      disposables.push(frondGeom);
+    }
+
+    // Central crown
+    const crownGeom = new SphereGeometry(0.07, 7, 5);
+    const crownMesh = new Mesh(crownGeom, palmFrond);
+    crownMesh.position.set(0, trunkHeight + 0.05, 0);
+    palm.add(crownMesh);
+    disposables.push(crownGeom);
+
+    group.add(palm);
+  }
 
   return group;
 }

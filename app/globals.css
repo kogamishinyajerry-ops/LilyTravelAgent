@@ -1861,6 +1861,27 @@ textarea {
     radial-gradient(ellipse at 50% 72%, transparent 34%, rgba(255, 255, 255, 0.22) 78%);
 }
 
+.dream-skyline-island {
+  border: 1px solid rgba(91, 127, 163, 0.32);
+  background:
+    radial-gradient(ellipse at 50% 14%, rgba(167, 211, 220, 0.32), transparent 56%),
+    linear-gradient(180deg, rgba(91, 127, 163, 0.12), rgba(201, 213, 200, 0.1) 62%, rgba(248, 247, 242, 0.06));
+}
+
+.dream-skyline-shrine {
+  border: 1px solid rgba(214, 107, 61, 0.32);
+  background:
+    radial-gradient(ellipse at 50% 78%, rgba(201, 149, 61, 0.16), transparent 52%),
+    linear-gradient(180deg, rgba(214, 107, 61, 0.08), rgba(248, 247, 242, 0.04) 58%, rgba(201, 149, 61, 0.08));
+}
+
+.dream-skyline-desert {
+  border: 1px solid rgba(201, 149, 61, 0.4);
+  background:
+    radial-gradient(ellipse at 50% 80%, rgba(201, 149, 61, 0.22), transparent 58%),
+    linear-gradient(180deg, rgba(201, 149, 61, 0.12), rgba(248, 247, 242, 0.05) 52%, rgba(214, 107, 61, 0.1));
+}
+
 .dream-skyline-caption {
   position: absolute;
   top: 22px;
