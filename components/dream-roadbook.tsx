@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, Compass, Eye, Layers3, Loader2, MapPinned, Moon, PlayCircle, RotateCcw, Sparkles, Trash2 } from "lucide-react";
+import { ArrowLeft, Compass, Eye, Layers3, Loader2, MapPinned, Moon, Pause, PlayCircle, RotateCcw, Sparkles, Trash2 } from "lucide-react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { type ChangeEvent, type FormEvent, useEffect, useMemo, useRef, useState } from "react";
@@ -12,6 +12,13 @@ import {
   type DreamTemplate,
 } from "@/lib/dream-design-skill";
 import { defaultBrief } from "@/lib/default-brief";
+import {
+  createRecordingController,
+  getTotalCombinations,
+  type RecordingConfig,
+  type RecordingController,
+  type RecordingMode,
+} from "@/lib/recording-helper";
 import { scenicSamplePhotos, type ScenicSamplePhoto } from "@/lib/scenic-sample-photos";
 import type {
   DeletePreviewAssetCacheResponse,
@@ -67,6 +74,22 @@ const generationModes: Array<{ id: GenerationMode; label: string; note: string }
 const demoTrackNotes = ["需求进入 Agent", "先出可展示预览", "AI 图做远景贴片", "后台补吃住行", "地图点位点亮"] as const;
 const scenicUploadMaxBytes = 6 * 1024 * 1024;
 
+const recordingModes: Array<{ id: RecordingMode; label: string; note: string }> = [
+  { id: "cycle-both", label: "模板+气质", note: "录屏遍历" },
+  { id: "cycle-templates", label: "只换模板", note: "气质不变" },
+  { id: "cycle-moods", label: "只换气质", note: "模板不变" },
+  { id: "manual", label: "手动", note: "用按钮走" },
+];
+
+const allTemplateIds = dreamTemplates.map((item) => item.id);
+const allMoodIds = dreamMoods.map((item) => item.id);
+const defaultRecordingConfig: RecordingConfig = {
+  mode: "cycle-both",
+  stepIntervalMs: 4000,
+  templates: allTemplateIds,
+  moods: allMoodIds,
+};
+
 async function fetchPreviewAssetHistory(cacheKey: string) {
   const response = await fetch(`/api/generate-preview-asset?cacheKey=${encodeURIComponent(cacheKey)}`);
   const result = (await response.json()) as PreviewAssetHistoryResponse;
@@ -80,6 +103,13 @@ async function fetchPreviewAssetHistory(cacheKey: string) {
 
 export function DreamRoadbook() {
   const runIdRef = useRef(0);
+  const recordingControllerRef = useRef<RecordingController | null>(null);
+  const recordingConfigRef = useRef<RecordingConfig>(defaultRecordingConfig);
+  const manualTemplateIndexRef = useRef(0);
+  const manualMoodIndexRef = useRef(0);
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordingConfig, setRecordingConfig] = useState<RecordingConfig>(defaultRecordingConfig);
+  const [recordingProgress, setRecordingProgress] = useState({ step: 0, total: getTotalCombinations(defaultRecordingConfig) });
   const [roadbook, setRoadbook] = useState<Roadbook>(sampleRoadbook);
   const [brief, setBrief] = useState<TravelBrief>(dreamBriefDefaults);
   const [interestsInput, setInterestsInput] = useState(dreamBriefDefaults.interests.join("、"));
@@ -201,6 +231,142 @@ export function DreamRoadbook() {
 
     return () => window.clearTimeout(timer);
   }, [isBusy, trackDemoStep]);
+
+  // Keep the ref synced so the setInterval closure always reads the latest config.
+  useEffect(() => {
+    recordingConfigRef.current = recordingConfig;
+  }, [recordingConfig]);
+
+  // Recording loop: when isRecording is on, poll the controller on a fixed
+  // interval. In manual mode we only mount the controller for API symmetry
+  // but it never auto-advances; the user drives prev/next via buttons.
+  useEffect(() => {
+    if (!isRecording) {
+      return;
+    }
+
+    if (!recordingControllerRef.current) {
+      const controller = createRecordingController(recordingConfigRef.current);
+      controller.state.currentStepStartMs = performance.now();
+      recordingControllerRef.current = controller;
+      const initialTemplate = allTemplateIds[0];
+      const initialMood = allMoodIds[0];
+      // Defer the initial state sync to the next tick so we are not
+      // calling setState synchronously inside the effect body.
+      const initialProgress = { step: 0, total: getTotalCombinations(recordingConfigRef.current) };
+      window.setTimeout(() => {
+        if (initialTemplate) {
+          setTemplate(initialTemplate);
+        }
+        if (initialMood) {
+          setMood(initialMood);
+        }
+        setRecordingProgress(initialProgress);
+      }, 0);
+    }
+
+    const handle = window.setInterval(() => {
+      const controller = recordingControllerRef.current;
+      if (!controller) {
+        return;
+      }
+
+      const result = controller.tick(performance.now());
+
+      if (result.templateChanged) {
+        const nextTemplate = allTemplateIds[controller.state.currentTemplateIndex];
+        if (nextTemplate) {
+          setTemplate(nextTemplate);
+        }
+      }
+
+      if (result.moodChanged) {
+        const nextMood = allMoodIds[controller.state.currentMoodIndex];
+        if (nextMood) {
+          setMood(nextMood);
+        }
+      }
+
+      if (result.finished) {
+        setRecordingProgress({ step: controller.state.totalSteps, total: controller.state.totalSteps });
+        setIsRecording(false);
+        return;
+      }
+
+      setRecordingProgress({
+        step: controller.state.totalSteps,
+        total: getTotalCombinations(recordingConfigRef.current),
+      });
+    }, 500);
+
+    return () => {
+      window.clearInterval(handle);
+    };
+  }, [isRecording]);
+
+  // Drop the controller whenever recording stops so the next run starts fresh.
+  useEffect(() => {
+    if (!isRecording) {
+      recordingControllerRef.current = null;
+    }
+  }, [isRecording]);
+
+  function startRecording() {
+    if (isRecording) {
+      return;
+    }
+    manualTemplateIndexRef.current = allTemplateIds.indexOf(template);
+    manualMoodIndexRef.current = allMoodIds.indexOf(mood);
+    if (manualTemplateIndexRef.current < 0) {
+      manualTemplateIndexRef.current = 0;
+    }
+    if (manualMoodIndexRef.current < 0) {
+      manualMoodIndexRef.current = 0;
+    }
+    setRecordingProgress({ step: 0, total: getTotalCombinations(recordingConfig) });
+    setIsRecording(true);
+  }
+
+  function stopRecording() {
+    if (!isRecording) {
+      return;
+    }
+    setIsRecording(false);
+  }
+
+  function stepManualTemplate(direction: 1 | -1) {
+    if (recordingConfig.mode !== "manual" || isRecording) {
+      return;
+    }
+    const templates = recordingConfig.templates && recordingConfig.templates.length > 0 ? recordingConfig.templates : allTemplateIds;
+    if (templates.length === 0) {
+      return;
+    }
+    const currentIndex = templates.indexOf(template);
+    const baseIndex = currentIndex >= 0 ? currentIndex : 0;
+    const nextIndex = (baseIndex + direction + templates.length) % templates.length;
+    const nextTemplate = templates[nextIndex];
+    if (nextTemplate) {
+      setTemplate(nextTemplate);
+    }
+  }
+
+  function stepManualMood(direction: 1 | -1) {
+    if (recordingConfig.mode !== "manual" || isRecording) {
+      return;
+    }
+    const moods = recordingConfig.moods && recordingConfig.moods.length > 0 ? recordingConfig.moods : allMoodIds;
+    if (moods.length === 0) {
+      return;
+    }
+    const currentIndex = moods.indexOf(mood);
+    const baseIndex = currentIndex >= 0 ? currentIndex : 0;
+    const nextIndex = (baseIndex + direction + moods.length) % moods.length;
+    const nextMood = moods[nextIndex];
+    if (nextMood) {
+      setMood(nextMood);
+    }
+  }
 
   const baseTrackSteps = [
     {
@@ -1021,6 +1187,66 @@ export function DreamRoadbook() {
         </aside>
 
         <section className="dream-world dream-world-skyline" aria-label={`${roadbook.destination} 3D 目的地预览`}>
+          <div className="dream-recording-panel" aria-label="录屏控制器">
+            <div className="dream-recording-head">
+              <span>录屏控制器</span>
+              <strong>Recording: D{recordingProgress.step}/{recordingProgress.total}</strong>
+            </div>
+            <div className="dream-recording-modes" aria-label="录屏模式">
+              {recordingModes.map((item) => (
+                <button
+                  key={item.id}
+                  type="button"
+                  className={recordingConfig.mode === item.id ? "active" : ""}
+                  onClick={() => {
+                    if (isRecording) {
+                      return;
+                    }
+                    setRecordingConfig((current) => ({ ...current, mode: item.id }));
+                  }}
+                  disabled={isRecording}
+                  aria-pressed={recordingConfig.mode === item.id}
+                >
+                  <strong>{item.label}</strong>
+                  <small>{item.note}</small>
+                </button>
+              ))}
+            </div>
+            <div className="dream-recording-actions">
+              {isRecording ? (
+                <button type="button" className="dream-recording-stop" onClick={stopRecording}>
+                  <Pause size={14} />
+                  Stop
+                </button>
+              ) : (
+                <button type="button" className="dream-recording-start" onClick={startRecording}>
+                  <PlayCircle size={14} />
+                  录制
+                </button>
+              )}
+              {recordingConfig.mode === "manual" && !isRecording ? (
+                <>
+                  <button type="button" onClick={() => stepManualTemplate(-1)}>
+                    模板 ◀
+                  </button>
+                  <button type="button" onClick={() => stepManualTemplate(1)}>
+                    模板 ▶
+                  </button>
+                  <button type="button" onClick={() => stepManualMood(-1)}>
+                    气质 ◀
+                  </button>
+                  <button type="button" onClick={() => stepManualMood(1)}>
+                    气质 ▶
+                  </button>
+                </>
+              ) : null}
+            </div>
+            <p className="dream-recording-hint">
+              {recordingConfig.mode === "manual"
+                ? "手动模式：使用 ◀ ▶ 按钮逐个切换模板和气质。"
+                : `自动模式：每 ${recordingConfig.stepIntervalMs ?? 4000}ms 切换一次。`}
+            </p>
+          </div>
           <div className="dream-terrain-toggle" aria-label="真实地形管线开关">
             <label>
               <input
