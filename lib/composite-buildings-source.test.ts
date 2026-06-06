@@ -5,9 +5,13 @@ import {
   COMPOSITE_NAME_PREFIX,
   isDuplicate,
   haversineMeters,
+  dedupeByCentroidAndPreferHeight,
+  pickMoreConfidentHeight,
+  HEIGHT_SOURCE_CONFIDENCE,
 } from "./composite-buildings-source";
 import type { BBox } from "./tile-coords";
 import type { Building, BuildingsSource, FetchBuildingsOptions } from "./buildings-source";
+import type { HeightSource } from "./building-height-estimator";
 
 // ---------------------------------------------------------------------------
 // Helper: minimal mock source
@@ -229,5 +233,240 @@ describe("haversineMeters", () => {
     const d = haversineMeters(a, b);
     expect(d).toBeGreaterThan(100_000);
     expect(d).toBeLessThan(130_000);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// heightSource confidence ranking
+// ---------------------------------------------------------------------------
+
+describe("HEIGHT_SOURCE_CONFIDENCE", () => {
+  it("ranks osm above gaode-extensions above heuristic above default", () => {
+    const order: HeightSource[] = [
+      "osm",
+      "gaode-extensions",
+      "heuristic",
+      "default",
+    ];
+    for (let i = 0; i < order.length - 1; i++) {
+      const higher = order[i]!;
+      const lower = order[i + 1]!;
+      expect(HEIGHT_SOURCE_CONFIDENCE[higher]).toBeGreaterThan(
+        HEIGHT_SOURCE_CONFIDENCE[lower],
+      );
+    }
+  });
+});
+
+describe("pickMoreConfidentHeight", () => {
+  it("returns b when b has higher confidence", () => {
+    const a: Building = { ...BLDG_A, heightSource: "default" };
+    const b: Building = { ...BLDG_B, heightSource: "osm" };
+    expect(pickMoreConfidentHeight(a, b)).toBe(b);
+  });
+
+  it("returns a when a has higher confidence", () => {
+    const a: Building = { ...BLDG_A, heightSource: "osm" };
+    const b: Building = { ...BLDG_B, heightSource: "heuristic" };
+    expect(pickMoreConfidentHeight(a, b)).toBe(a);
+  });
+
+  it("returns a on a tie (preserves child order)", () => {
+    const a: Building = { ...BLDG_A, heightSource: "osm" };
+    const b: Building = { ...BLDG_B, heightSource: "osm" };
+    expect(pickMoreConfidentHeight(a, b)).toBe(a);
+  });
+
+  it("treats missing heightSource as default", () => {
+    const untagged: Building = { ...BLDG_A };
+    const tagged: Building = { ...BLDG_B, heightSource: "heuristic" };
+    expect(pickMoreConfidentHeight(untagged, tagged)).toBe(tagged);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// dedupeByCentroidAndPreferHeight
+// ---------------------------------------------------------------------------
+
+describe("dedupeByCentroidAndPreferHeight", () => {
+  it("returns [] for an empty list", () => {
+    expect(dedupeByCentroidAndPreferHeight([])).toEqual([]);
+  });
+
+  it("keeps a single building unchanged", () => {
+    expect(dedupeByCentroidAndPreferHeight([BLDG_A])).toEqual([BLDG_A]);
+  });
+
+  it("keeps two far-apart buildings", () => {
+    const result = dedupeByCentroidAndPreferHeight([BLDG_A, BLDG_B]);
+    expect(result).toHaveLength(2);
+    expect(result.map((b) => b.id)).toEqual(["a", "b"]);
+  });
+
+  it("preserves the earlier building when confidences tie", () => {
+    // BLDG_A2 is within DEDUPE_CENTROID_METERS of BLDG_A. Both have
+    // `osm` heightSource, so child order wins and the first building
+    // (BLDG_A) is kept.
+    const result = dedupeByCentroidAndPreferHeight(
+      [
+        { ...BLDG_A, heightSource: "osm" },
+        { ...BLDG_A2, heightSource: "osm" },
+      ],
+      DEDUPE_CENTROID_METERS,
+    );
+    expect(result).toHaveLength(1);
+    expect(result[0]!.id).toBe("a");
+  });
+
+  it("prefers the higher-confidence heightSource on a duplicate", () => {
+    // First candidate is `heuristic` (lower confidence), the duplicate
+    // is `osm` (higher). The OSM record should win, even though the
+    // OSM one is *later* in the list.
+    const result = dedupeByCentroidAndPreferHeight(
+      [
+        { ...BLDG_A, heightSource: "heuristic" },
+        { ...BLDG_A2, heightSource: "osm" },
+      ],
+      DEDUPE_CENTROID_METERS,
+    );
+    expect(result).toHaveLength(1);
+    expect(result[0]!.id).toBe("a2");
+    expect(result[0]!.heightSource).toBe("osm");
+  });
+
+  it("replaces an `osm` record with a `gaode-extensions` one only when osm is missing", () => {
+    // First candidate has NO heightSource (treats as `default`).
+    // Second candidate has `gaode-extensions` and is within the
+    // dedupe radius. The higher-confidence one should win.
+    const result = dedupeByCentroidAndPreferHeight(
+      [
+        { ...BLDG_A },
+        { ...BLDG_A2, heightSource: "gaode-extensions" },
+      ],
+      DEDUPE_CENTROID_METERS,
+    );
+    expect(result).toHaveLength(1);
+    expect(result[0]!.id).toBe("a2");
+    expect(result[0]!.heightSource).toBe("gaode-extensions");
+  });
+
+  it("does not replace an `osm` record with a `gaode-extensions` duplicate", () => {
+    // The first record has the highest-confidence `osm` source.
+    // The second record (within the dedupe radius) has lower
+    // confidence. The first record must win.
+    const result = dedupeByCentroidAndPreferHeight(
+      [
+        { ...BLDG_A, heightSource: "osm" },
+        { ...BLDG_A2, heightSource: "gaode-extensions" },
+      ],
+      DEDUPE_CENTROID_METERS,
+    );
+    expect(result).toHaveLength(1);
+    expect(result[0]!.id).toBe("a");
+    expect(result[0]!.heightSource).toBe("osm");
+  });
+
+  it("preserves `heightSource` on buildings that are not duplicates", () => {
+    const result = dedupeByCentroidAndPreferHeight([
+      { ...BLDG_A, heightSource: "osm" },
+      { ...BLDG_B, heightSource: "gaode-extensions" },
+    ]);
+    expect(result).toHaveLength(2);
+    const a = result.find((b) => b.id === "a")!;
+    const b = result.find((x) => x.id === "b")!;
+    expect(a.heightSource).toBe("osm");
+    expect(b.heightSource).toBe("gaode-extensions");
+  });
+
+  it("preserves `heightSource` on the surviving duplicate", () => {
+    // The higher-confidence duplicate wins and its `heightSource` is
+    // surfaced verbatim on the result.
+    const result = dedupeByCentroidAndPreferHeight(
+      [
+        { ...BLDG_A, heightSource: "default" },
+        { ...BLDG_A2, heightSource: "osm" },
+      ],
+      DEDUPE_CENTROID_METERS,
+    );
+    expect(result).toHaveLength(1);
+    expect(result[0]!.heightSource).toBe("osm");
+    expect(result[0]!.heightMeters).toBe(BLDG_A2.heightMeters);
+  });
+
+  it("respects a custom threshold", () => {
+    // With a tight threshold (1 m) BLDG_A and BLDG_A2 are not
+    // considered duplicates anymore.
+    const result = dedupeByCentroidAndPreferHeight(
+      [
+        { ...BLDG_A, heightSource: "osm" },
+        { ...BLDG_A2, heightSource: "gaode-extensions" },
+      ],
+      1,
+    );
+    expect(result).toHaveLength(2);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// CompositeBuildingsSource — heightSource end-to-end
+// ---------------------------------------------------------------------------
+
+describe("CompositeBuildingsSource heightSource handling", () => {
+  it("passes through heightSource from the child source", async () => {
+    const osm = makeMockSource("osm", [{ ...BLDG_A, heightSource: "osm" }]);
+    const source = createCompositeBuildingsSource([osm]);
+    const result = await source.fetchBuildings(BBOX, OPTS);
+    expect(result).toHaveLength(1);
+    expect(result[0]!.heightSource).toBe("osm");
+  });
+
+  it("prefers osm over gaode-extensions when both sources return the same building", async () => {
+    // OSM comes second, 高德 comes first. The OSM record is the same
+    // building as the 高德 record (within dedupe radius) and has a
+    // higher-confidence `heightSource`, so OSM should win.
+    const gaode = makeMockSource("gaode", [
+      { ...BLDG_A, heightSource: "gaode-extensions" },
+    ]);
+    const osm = makeMockSource("osm", [
+      { ...BLDG_A2, heightSource: "osm" },
+    ]);
+    const source = createCompositeBuildingsSource([gaode, osm]);
+    const result = await source.fetchBuildings(BBOX, OPTS);
+    expect(result).toHaveLength(1);
+    expect(result[0]!.id).toBe("a2");
+    expect(result[0]!.heightSource).toBe("osm");
+  });
+
+  it("prefers higher-confidence heuristic over default when first source had default", async () => {
+    const first = makeMockSource("first", [{ ...BLDG_A, heightSource: "default" }]);
+    const second = makeMockSource("second", [
+      { ...BLDG_A2, heightSource: "heuristic" },
+    ]);
+    const source = createCompositeBuildingsSource([first, second]);
+    const result = await source.fetchBuildings(BBOX, OPTS);
+    expect(result).toHaveLength(1);
+    expect(result[0]!.heightSource).toBe("heuristic");
+  });
+
+  it("preserves child order when heights are tied", async () => {
+    const first = makeMockSource("first", [{ ...BLDG_A, heightSource: "osm" }]);
+    const second = makeMockSource("second", [
+      { ...BLDG_A2, heightSource: "osm" },
+    ]);
+    const source = createCompositeBuildingsSource([first, second]);
+    const result = await source.fetchBuildings(BBOX, OPTS);
+    expect(result).toHaveLength(1);
+    expect(result[0]!.id).toBe("a");
+  });
+
+  it("preserves the original centroid-dedupe behaviour when no heightSource is set on either duplicate", async () => {
+    // Neither candidate has a `heightSource`, so they both rank as
+    // `default` and child order wins (the first one).
+    const first = makeMockSource("first", [BLDG_A]);
+    const second = makeMockSource("second", [BLDG_A2]);
+    const source = createCompositeBuildingsSource([first, second]);
+    const result = await source.fetchBuildings(BBOX, OPTS);
+    expect(result).toHaveLength(1);
+    expect(result[0]!.id).toBe("a");
   });
 });
