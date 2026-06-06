@@ -21,6 +21,8 @@ import {
   type DreamMood,
   type DreamTemplate,
 } from "./dream-design-skill";
+import type { Building } from "./buildings-source";
+import type { HeightSource } from "./building-height-estimator";
 
 export type RecordingMode =
   | "cycle-templates"
@@ -200,4 +202,82 @@ export function getTotalCombinations(
       ? config.moods
       : (dreamMoods.map((m) => m.id) as DreamMood[]);
   return templates.length * moods.length;
+}
+
+// ---------------------------------------------------------------------------
+// Building height-source statistics (used by the recording / dev overlay)
+// ---------------------------------------------------------------------------
+
+/** Fixed set of height-source buckets the overlay tracks. */
+export const HEIGHT_SOURCE_BUCKETS: readonly HeightSource[] = [
+  "osm",
+  "gaode-extensions",
+  "heuristic",
+  "default",
+] as const;
+
+/** Per-bucket count plus the total number of buildings seen. */
+export type HeightSourceStats = {
+  osm: number;
+  "gaode-extensions": number;
+  heuristic: number;
+  default: number;
+  total: number;
+};
+
+/** Empty stats: useful for initial render before data arrives. */
+export const EMPTY_HEIGHT_SOURCE_STATS: HeightSourceStats = {
+  osm: 0,
+  "gaode-extensions": 0,
+  heuristic: 0,
+  default: 0,
+  total: 0,
+};
+
+/**
+ * Count buildings by their `heightSource` field. Buildings without a
+ * `heightSource` (legacy data paths) are bucketed as `default`.
+ *
+ * The result always includes every bucket from
+ * `HEIGHT_SOURCE_BUCKETS` so the UI can render a fixed template
+ * without worrying about missing keys.
+ */
+export function summarizeBuildingHeightSources(
+  buildings: readonly Building[] | null | undefined,
+): HeightSourceStats {
+  const stats: HeightSourceStats = { ...EMPTY_HEIGHT_SOURCE_STATS };
+  if (!buildings || buildings.length === 0) {
+    return stats;
+  }
+  for (const building of buildings) {
+    const source: HeightSource = building?.heightSource ?? "default";
+    // Unknown future sources fall back to the `default` bucket.
+    if (source in stats) {
+      stats[source] += 1;
+    } else {
+      stats.default += 1;
+    }
+    stats.total += 1;
+  }
+  return stats;
+}
+
+/**
+ * Format `HeightSourceStats` into the compact, copy-pasteable string
+ * used by the recording / dev overlay:
+ *
+ *   "Buildings: 1247 (osm: 891, gaode-extensions: 234, heuristic: 122, default: 0)"
+ *
+ * The bucket order is fixed (`osm`, `gaode-extensions`, `heuristic`,
+ * `default`) so two recordings using the same data produce identical
+ * text — useful for diffing.
+ */
+export function formatHeightSourceStats(stats: HeightSourceStats): string {
+  return (
+    `Buildings: ${stats.total} ` +
+    `(osm: ${stats.osm}, ` +
+    `gaode: ${stats["gaode-extensions"]}, ` +
+    `heuristic: ${stats.heuristic}, ` +
+    `default: ${stats.default})`
+  );
 }

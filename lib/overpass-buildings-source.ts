@@ -208,6 +208,12 @@ export function elementToBuilding(
     heightMeters: resolveHeightMeters(tags),
     footprint,
     tags,
+    // OSM `height` / `building:levels` tags are explicit values
+    // declared by the mapper, so the resulting height is always
+    // tagged with the highest-confidence `heightSource: 'osm'`. This
+    // lets the composite source prefer OSM heights over heuristic
+    // estimates when the same building shows up in two providers.
+    heightSource: "osm",
   };
 }
 

@@ -2,6 +2,10 @@ import { describe, it, expect } from "vitest";
 import {
   createRecordingController,
   getTotalCombinations,
+  summarizeBuildingHeightSources,
+  formatHeightSourceStats,
+  EMPTY_HEIGHT_SOURCE_STATS,
+  HEIGHT_SOURCE_BUCKETS,
   type RecordingConfig,
   type RecordingController,
 } from "./recording-helper";
@@ -11,6 +15,7 @@ import {
   type DreamMood,
   type DreamTemplate,
 } from "./dream-design-skill";
+import type { Building } from "./buildings-source";
 
 const ALL_TEMPLATES: DreamTemplate[] = dreamTemplates.map((t) => t.id);
 const ALL_MOODS: DreamMood[] = dreamMoods.map((m) => m.id);
@@ -183,5 +188,98 @@ describe("createRecordingController", () => {
     expect(
       getTotalCombinations({ moods: ["cloud", "geometry", "dusk"] }),
     ).toBe(ALL_TEMPLATES.length * 3);
+  });
+});
+
+describe("summarizeBuildingHeightSources", () => {
+  function makeBuilding(
+    id: string,
+    heightSource: Building["heightSource"],
+  ): Building {
+    return {
+      id,
+      lng: 100.1,
+      lat: 25.5,
+      heightMeters: 12,
+      footprint: [],
+      tags: {},
+      heightSource,
+    };
+  }
+
+  it("returns all-zero stats for an empty / nullish input", () => {
+    expect(summarizeBuildingHeightSources(undefined)).toEqual(
+      EMPTY_HEIGHT_SOURCE_STATS,
+    );
+    expect(summarizeBuildingHeightSources(null)).toEqual(
+      EMPTY_HEIGHT_SOURCE_STATS,
+    );
+    expect(summarizeBuildingHeightSources([])).toEqual(EMPTY_HEIGHT_SOURCE_STATS);
+  });
+
+  it("counts buildings per height source bucket", () => {
+    const buildings: Building[] = [
+      makeBuilding("a", "osm"),
+      makeBuilding("b", "osm"),
+      makeBuilding("c", "gaode-extensions"),
+      makeBuilding("d", "heuristic"),
+      makeBuilding("e", "default"),
+    ];
+    expect(summarizeBuildingHeightSources(buildings)).toEqual({
+      osm: 2,
+      "gaode-extensions": 1,
+      heuristic: 1,
+      default: 1,
+      total: 5,
+    });
+  });
+
+  it("treats buildings without a heightSource as default", () => {
+    const legacy: Building = {
+      id: "legacy",
+      lng: 0,
+      lat: 0,
+      heightMeters: 8,
+      footprint: [],
+      tags: {},
+    };
+    const stats = summarizeBuildingHeightSources([legacy]);
+    expect(stats).toEqual({
+      osm: 0,
+      "gaode-extensions": 0,
+      heuristic: 0,
+      default: 1,
+      total: 1,
+    });
+  });
+
+  it("always returns every HEIGHT_SOURCE_BUCKETS key", () => {
+    const stats = summarizeBuildingHeightSources([]);
+    for (const key of HEIGHT_SOURCE_BUCKETS) {
+      expect(typeof stats[key]).toBe("number");
+    }
+    expect(typeof stats.total).toBe("number");
+  });
+});
+
+describe("formatHeightSourceStats", () => {
+  it("renders zero stats in the expected compact format", () => {
+    expect(formatHeightSourceStats(EMPTY_HEIGHT_SOURCE_STATS)).toBe(
+      "Buildings: 0 (osm: 0, gaode: 0, heuristic: 0, default: 0)",
+    );
+  });
+
+  it("renders a non-empty distribution in a stable order", () => {
+    expect(
+      formatHeightSourceStats({
+        osm: 891,
+        "gaode-extensions": 234,
+        heuristic: 122,
+        default: 0,
+        total: 1247,
+      }),
+    ).toBe(
+      "Buildings: 1247 (osm: 891, gaode: 234, heuristic: 122, default: 0)",
+    );
   });
 });

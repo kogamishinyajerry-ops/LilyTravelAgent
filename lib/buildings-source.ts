@@ -16,6 +16,7 @@
 // provider answered.
 
 import type { BBox } from "./tile-coords";
+import type { HeightSource } from "./building-height-estimator";
 
 /** Re-exported so building consumers don't need to import tile-coords. */
 export type { BBox, TileCoord } from "./tile-coords";
@@ -35,6 +36,16 @@ export type FootprintVertex = {
  * the same coordinate space as `lng`/`lat` (WGS84). `tags` carries
  * through upstream metadata (OSM tags, 高德 type codes, etc.) for
  * downstream consumers that care about land use, height, or names.
+ * `metadata` is a free-form bag for provider-specific provenance
+ * hints (e.g. the 高德 `extensions=all` data channel) that don't
+ * belong in the OSM-style `tags` map.
+ *
+ * `heightSource` records the provenance of `heightMeters` so a
+ * composite source can prefer higher-confidence measurements when
+ * merging duplicates. The ranking is:
+ *   `osm` > `gaode-extensions` > `heuristic` > `default`
+ * Sources that do not yet stamp a `heightSource` (e.g. legacy code
+ * paths) are treated as `default` for ranking purposes.
  */
 export type Building = {
   id: string;
@@ -43,6 +54,8 @@ export type Building = {
   heightMeters: number;
   footprint: FootprintVertex[];
   tags: Record<string, string>;
+  metadata?: Record<string, string>;
+  heightSource?: HeightSource;
 };
 
 /** Options accepted by a `BuildingsSource.fetchBuildings` call. */

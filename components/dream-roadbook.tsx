@@ -1282,6 +1282,7 @@ export function DreamRoadbook() {
               onSelectDay={setActiveDay}
               terrainSource={realTerrainSources.terrainSource}
               buildingsSource={realTerrainSources.buildingsSource}
+              isRecording={isRecording}
             />
           ) : (
             <DreamSkylineScene
