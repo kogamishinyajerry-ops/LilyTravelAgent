@@ -70,6 +70,8 @@ After a cover is locked, the share-preview card presents the final cover, roadbo
 
 To enable real terrain in /dream: set MAPBOX_TOKEN in .env.local. The "真实地形管线" toggle in the /dream right panel will then fetch Mapbox terrain-rgb + OSM Overpass buildings. Without a token, the toggle falls back to the procedural Three.js scene.
 
+v0.5.0 adds full 高德 3D building pipeline: extensions=all, multi-type-code queries, heuristic height estimation. Set `AMAP_KEY` in `.env.local`. The pipeline runs alongside the Mapbox/Overpass sources; missing tokens gracefully fall back to procedural buildings.
+
 ## Verification
 
 ```bash

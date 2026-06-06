@@ -56,6 +56,25 @@ Three pillars land together for v0.4.0:
 
 All three pillars are isolated behind the existing interfaces, so the Phase C / D contracts stay intact and the procedural fallback still works for anyone without tokens.
 
+## Phase F Scaffolding (v0.5.0) — 高德 3D 建筑全量
+
+### What was added
+
+- `lib/building-height-estimator.ts`: heuristics + tag parsing — estimates building heights from footprint area, level counts parsed from OSM/高德 tags (`building:levels`, `height`, `building:height`), and tag-class heuristics (e.g. residential vs industrial vs commercial). Returns a height value usable for 3D extrusion.
+- `lib/gaode-buildings-source.ts`: upgraded to `extensions=all` — the 高德 (Amap) buildings query now asks the API to return the full extension field set so downstream code can read `height`, `name`, `type`, and other attributes needed for richer 3D meshes.
+- `lib/gaode-3d-buildings-source.ts`: new multi-strategy source — `Gaode3DBuildingsSource` is a strategy aggregator that tries (a) 高德 extensions=all, (b) per-type-code queries (residential / commercial / public / landmark), and (c) the estimator fallback. Picks the first strategy that yields usable building data for the requested bbox.
+- `lib/composite-buildings-source.ts`: height-aware dedupe — `CompositeBuildingsSource` now dedupes not only by id but also by footprint overlap with a height tie-breaker, so the same building supplied by two upstream sources keeps the richer height value.
+
+### What was NOT added (out of scope)
+
+- Real 高德 3D vector tiles — requires an enterprise AMAP service contract; the public Web Service API does not expose raw 3D tile endpoints.
+- Client-side 高德 3D building extrusion — the renderer still uses the existing footprint+height extrusion pipeline; we are not switching to a 高德-native 3D engine.
+- Building interior data — floor plans, room layouts, and POI internals are out of scope; we only need footprints, height, type, and name for the 3D scene.
+
+### How to plug in real heights
+
+If 高德 later exposes an enterprise height API (raw 3D tile service, mesh endpoint, or a `height` field in a paid tier), add a new strategy in `Gaode3DBuildingsSource` that calls it and returns buildings with real heights tagged `source=gaode-height-api`. The composite source will pick that strategy's height over the estimator's via the new height-aware dedupe. Until that API is available, the estimator in `lib/building-height-estimator.ts` is the best available height source — it is the default strategy in the chain.
+
 ## Phase C Scaffolding (2026-06-06)
 
 ### What was added
