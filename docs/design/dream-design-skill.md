@@ -29,6 +29,14 @@ The AI writes the trip. The design skill decides what to show, what to hide, and
 - `starlake`: floating lake / glowing route
 - `lantern`: warm evening / city walk
 - `snowfield`: quiet whitespace / cold shrine
+- `neon-city`: cyberpunk neon city / holographic ads / rainy night reflections
+
+### Neon City
+
+- **Visual signature**: 赛博朋克霓虹都市 / 全息广告 / 雨夜倒影
+- **Mood pairing**: `neon` + `neon-city` is the canonical pairing
+- **When to use**: city destinations with night photography or futuristic feel
+- **Implementation notes**: emissive glass, deep blue-violet sky, line-based building outlines, hot pink light accent
 
 ## Current Implementation
 
