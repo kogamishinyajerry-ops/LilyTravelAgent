@@ -66,6 +66,10 @@ The `/dream` right-side asset panel shows the current cache key, cache time, sou
 
 After a cover is locked, the share-preview card presents the final cover, roadbook title, four-day route, cache key, and asset status as a clean recording-ready handoff view.
 
+## Real Terrain Pipeline (Optional)
+
+To enable real terrain in /dream: set MAPBOX_TOKEN in .env.local. The "真实地形管线" toggle in the /dream right panel will then fetch Mapbox terrain-rgb + OSM Overpass buildings. Without a token, the toggle falls back to the procedural Three.js scene.
+
 ## Verification
 
 ```bash
