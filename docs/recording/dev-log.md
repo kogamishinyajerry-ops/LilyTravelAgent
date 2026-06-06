@@ -113,3 +113,14 @@ Files shown: lib/dream-design-skill.ts, lib/preview-asset.ts, components/dream-s
 Command/result: npm run lint && npm run test:run && npm run build
 Voiceover note: "Phase B 是在原有梦境地图上再加一格：霓虹都市，赛博朋克味。Phase C 是把'真地形'这件事拆成可替换的积木：坐标换算、地形源、建筑源、组件兜底。下次录屏就可以拿真大理来跑这条管线了。"
 Usable for: visual variety demo, Vibe Coding refactor clip, "growing a project in parallel tracks" mid-section, real terrain pipeline preview
+
+## Phase D: real data sources + dream-roadbook wiring
+
+Date: 2026-06-07
+Clip title: Phase D: swap the stubs for real Mapbox + Overpass clients
+What changed: Replaced the Phase C procedural terrain and buildings stubs with real implementations: lib/mapbox-terrain-source.ts fetches Mapbox terrain-rgb tiles and decodes the packed elevation encoding, lib/overpass-buildings-source.ts queries the OpenStreetMap Overpass API for building footprints in a center+radius bbox, both behind the same source interfaces introduced in Phase C. /dream gets a new "真实地形管线" opt-in toggle in the right-side panel that mounts RealSkylineScene with these real sources; without MAPBOX_TOKEN or with the toggle off, the existing procedural DreamSkylineScene continues to render unchanged. New Vitest suites cover the real sources with mocked fetch, and the README documents the env vars and the fallback behavior.
+Why this matters: Phase D is the moment the abstract Phase C scaffolding becomes a real product path. The /dream toggle lets a recording show real Dali terrain in one click without breaking the procedural fallback for viewers who never set a Mapbox token. Swapping the sources was a one-interface-change job, which is the design payoff of having isolated tile math and source abstractions in Phase C.
+Files shown: lib/mapbox-terrain-source.ts, lib/mapbox-terrain-source.test.ts, lib/overpass-buildings-source.ts, lib/overpass-buildings-source.test.ts, components/dream-roadbook.tsx, .env.local.example, README.md, docs/recording/dev-log.md
+Command/result: npm run lint && npm run test:run && npm run build
+Voiceover note: "Phase D 把 Phase C 留的接口填上真数据：Mapbox 的 terrain-rgb、Overpass 的建筑轮廓。/dream 多了一个开关，开了就是真大理，关了还是原来的梦境地图。这条切换路径现在完全靠测试和接口保证，录屏时再也不用担心换数据会把流程跑崩。"
+Usable for: real-scenic preview demo, "how to grow a visual product in isolated layers" mid-section, Vibe Coding refactor payoff clip, Phase D release-notes clip
