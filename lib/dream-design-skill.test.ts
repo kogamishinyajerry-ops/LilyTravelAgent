@@ -260,24 +260,56 @@ describe("dream-design-skill", () => {
     });
 
     describe("derivePoeticLine logic", () => {
-      // NOTE: derivePoeticLine always appends "风里" to sources array,
-      // so scenicKeywords.find() always matches "风里" first due to search order.
-      // This makes direct scenic keyword testing impossible without code changes.
-
-      it("should return a string starting with 走进", () => {
+      it("should use scenic keyword from subtitle", () => {
         const roadbook = createMinimalRoadbook({
-          subtitle: "探索古城",
-          concept: "体验",
+          subtitle: "星湖之旅",
+          concept: "",
           highlights: ["其他"],
         });
 
         const result = buildDreamRoadbookDesign(roadbook);
 
-        expect(result.titleLines[1]).toMatch(/^走进/);
+        expect(result.titleLines[1]).toBe("走进星湖");
       });
 
-      it("should use token extraction for subtitle tokens", () => {
-        // Test that subtitle contributes to token extraction
+      it("should use scenic keyword from concept", () => {
+        const roadbook = createMinimalRoadbook({
+          subtitle: "",
+          concept: "星湖",
+          highlights: ["其他"],
+        });
+
+        const result = buildDreamRoadbookDesign(roadbook);
+
+        expect(result.titleLines[1]).toBe("走进星湖");
+      });
+
+      it("should use scenic keyword from highlights", () => {
+        const roadbook = createMinimalRoadbook({
+          subtitle: "",
+          concept: "",
+          highlights: ["星湖", "其他", "测试"],
+        });
+
+        const result = buildDreamRoadbookDesign(roadbook);
+
+        expect(result.titleLines[1]).toBe("走进星湖");
+      });
+
+      it("should prefer specific scenic keyword over generic token", () => {
+        const roadbook = createMinimalRoadbook({
+          subtitle: "洱海晨雾",
+          concept: "",
+          highlights: ["其他"],
+        });
+
+        const result = buildDreamRoadbookDesign(roadbook);
+
+        // "洱海" comes before "晨雾" in scenicKeywords; both are in subtitle
+        expect(result.titleLines[1]).toBe("走进洱海");
+      });
+
+      it("should fall back to token extraction when no scenic keyword matches", () => {
         const roadbook = createMinimalRoadbook({
           subtitle: "彩云之南",
           concept: "",
@@ -287,7 +319,6 @@ describe("dream-design-skill", () => {
 
         const result = buildDreamRoadbookDesign(roadbook);
 
-        // Should contain 走进 (from either scenic keyword or token extraction)
         expect(result.titleLines[1]).toContain("走进");
       });
 

@@ -165,10 +165,9 @@ function shortenDestination(destination: string) {
 }
 
 function derivePoeticLine(roadbook: Roadbook) {
-  const sources = [roadbook.subtitle, roadbook.concept, roadbook.highlights[0], roadbook.summary.routeTheme, "风里"];
+  const sources = [roadbook.subtitle, roadbook.concept, roadbook.highlights[0], roadbook.summary.routeTheme];
   const sourceText = sources.join(" ");
   const scenicKeywords = [
-    "风里",
     "洱海",
     "日落",
     "云海",
@@ -219,7 +218,10 @@ function deriveDayKeywords(day: DayPlan) {
   return unique(keywords).slice(0, 3).length > 0 ? unique(keywords).slice(0, 3) : ["慢游", "取景", "留白"];
 }
 
-function splitTokens(value: string) {
+function splitTokens(value: string | undefined | null) {
+  if (typeof value !== "string" || value.length === 0) {
+    return [];
+  }
   return value
     .split(/[、，,。.+＋/／｜|\s]+/)
     .map((item) => item.trim())
