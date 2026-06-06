@@ -30,6 +30,9 @@ The AI writes the trip. The design skill decides what to show, what to hide, and
 - `lantern`: warm evening / city walk
 - `snowfield`: quiet whitespace / cold shrine
 - `neon-city`: cyberpunk neon city / holographic ads / rainy night reflections
+- `island`: tropical island / floating terrain / misty sea
+- `shrine`: torii gate / stone lanterns / quiet forest
+- `desert`: sand dunes / palm trees / golden dusk
 
 ### Neon City
 
@@ -37,6 +40,27 @@ The AI writes the trip. The design skill decides what to show, what to hide, and
 - **Mood pairing**: `neon` + `neon-city` is the canonical pairing
 - **When to use**: city destinations with night photography or futuristic feel
 - **Implementation notes**: emissive glass, deep blue-violet sky, line-based building outlines, hot pink light accent
+
+### Island
+
+- **Visual signature**: 热带海岛 / 漂浮地形 / 雾色海面
+- **Mood pairing**: `cloud` for soft, misty tropical atmosphere
+- **When to use**: coastal, tropical, or island destinations where the sea is the main character
+- **Implementation notes**: uses floating mesh + misty material
+
+### Shrine
+
+- **Visual signature**: 鸟居 / 石灯笼 / 静谧森林
+- **Mood pairing**: `geometry` for clean, ceremonial composition
+- **When to use**: cultural, spiritual, or heritage destinations with a quiet, contemplative tone
+- **Implementation notes**: stone lanterns + torii gate
+
+### Desert
+
+- **Visual signature**: 沙丘 / 棕榈树 / 金色黄昏
+- **Mood pairing**: `dusk` for warm, golden hour atmosphere
+- **When to use**: arid, desert, or oasis destinations where the horizon and warm light dominate
+- **Implementation notes**: sand dunes + palm trees
 
 ## Current Implementation
 
