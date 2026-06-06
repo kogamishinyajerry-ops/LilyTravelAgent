@@ -91,3 +91,14 @@ Files shown: components/dream-roadbook.tsx, docs/design/scenic-render-skill.md
 Command/result: npm run lint && npm run build
 Voiceover note: "为了让录屏更顺，我把示例图做成一键触发：点照片，Agent 自动读图并生成建模蓝图。"
 Usable for: visual pipeline demo, product polish clip
+
+## Phase A: Quality Gate
+
+Date: 2026-06-06
+Clip title: Phase A: Quality Gate
+What changed: Added a Vitest unit-test pass over the deterministic lib helpers (dream-design-skill, geo, json-extract, MiniMax config, roadbook normalize and roadbook validation), a Playwright e2e harness with smoke specs for /, /studio and /dream, a GitHub Actions CI workflow plus Dependabot, Next.js error.tsx files for the root, /dream and /studio segments paired with a class-based components/error-boundary.tsx, and Zod field-level error reporting on the three roadbook API routes.
+Why this matters: This is the foundation that makes every later Vibe Coding change safe. The next batch of work (Phase B neon-city template, Phase C real terrain pipeline) will lean on this CI to catch regressions, on the error boundaries to keep the recording recoverable, and on the Zod field errors to make product issues debuggable from the browser console.
+Files shown: vitest.config.ts, playwright.config.ts, .github/workflows/ci.yml, .github/dependabot.yml, app/error.tsx, app/dream/error.tsx, app/studio/error.tsx, components/error-boundary.tsx, lib/roadbook-validation.ts, lib/roadbook-types.ts, app/api/generate-roadbook/route.ts, app/api/generate-dream-preview/route.ts, app/api/generate-scenic-render-design/route.ts, lib/*.test.ts, e2e/*.spec.ts
+Command/result: npm run lint && npm run test:run && npm run build && npm run e2e
+Voiceover note: "Phase A 不是给用户看的新功能，是给后面所有功能兜底的质量门：测试、CI、错误边界、Zod 字段错误。跑通这一关，后面写 /dream 新模板才敢放手改。"
+Usable for: Vibe Coding process clip, AI engineering workflow clip, long-video mid-section showing "how I set up the guardrails before feature work"
