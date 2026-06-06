@@ -13,10 +13,21 @@
 // distinct neighbouring buildings in dense urban tiles apart, while
 // still absorbing the same-building-with-slightly-different-vertex-
 // order artefacts you get from OSM and 高德 tracing the same outline
-// independently. When two records collide, the first one wins and
-// later duplicates are dropped — ordering is stable because each child
-// source is required to return a sorted list (see BuildingsSource docs)
-// and we iterate children in constructor order.
+// independently.
+//
+// When two records collide we pick the one with the higher-confidence
+// `heightSource`. The ranking is
+//   `osm` > `gaode-extensions` > `heuristic` > `default`
+// so a building traced by both Overpass (explicit `height` tag) and
+// 高德 (heuristic estimate) keeps the OSM measurement, not the guess.
+// Ties preserve child order — the first source's record wins, matching
+// the original contract documented below.
+//
+// Original (pre-confidence) behaviour, kept verbatim for context:
+// "When two records collide, the first one wins and later duplicates
+// are dropped — ordering is stable because each child source is
+// required to return a sorted list (see BuildingsSource docs) and we
+// iterate children in constructor order."
 //
 // Failure handling: any source that throws or rejects is caught and
 // logged via `console.warn`. The composite still resolves to the
@@ -24,6 +35,7 @@
 // region that 高德 already covered cleanly.
 
 import type { BBox } from "./tile-coords";
+import type { HeightSource } from "./building-height-estimator";
 import type {
   Building,
   BuildingsSource,
@@ -39,6 +51,39 @@ export const COMPOSITE_NAME_PREFIX = "composite:";
 export type CompositeBuildingsSourceOptions = {
   sources: BuildingsSource[];
 };
+
+/**
+ * Numeric confidence ranking for each `heightSource`. Higher numbers
+ * win during dedupe. The order is:
+ *   `osm` > `gaode-extensions` > `heuristic` > `default`
+ *
+ * Exported so tests can assert on the exact ranking without re-stating
+ * the order. Unknown / missing `heightSource` values fall back to
+ * `default` (lowest confidence) so legacy buildings that pre-date the
+ * typed field still lose out to a properly-tagged duplicate.
+ */
+export const HEIGHT_SOURCE_CONFIDENCE: Readonly<Record<HeightSource, number>> = {
+  osm: 4,
+  "gaode-extensions": 3,
+  heuristic: 2,
+  default: 1,
+};
+
+/**
+ * Compare two `Building`s and return the one with the more confident
+ * `heightSource`. Ties (equal confidence, including both being
+ * `undefined` / `default`) return `a` so child-order is preserved.
+ * Exposed for tests; production code uses the inlined fast-path
+ * inside `dedupeByCentroidAndPreferHeight`.
+ */
+export function pickMoreConfidentHeight(
+  a: Building,
+  b: Building,
+): Building {
+  const confA = HEIGHT_SOURCE_CONFIDENCE[a.heightSource ?? "default"];
+  const confB = HEIGHT_SOURCE_CONFIDENCE[b.heightSource ?? "default"];
+  return confB > confA ? b : a;
+}
 
 /**
  * Earth radius in metres used by the haversine formula. Matches the
@@ -83,8 +128,71 @@ export function isDuplicate(
 }
 
 /**
+ * Find the index of the first building in `accepted` that is within
+ * `thresholdMeters` of `candidate`, or `-1` when no such building
+ * exists. Returned as an index (not a boolean) so the caller can
+ * replace the matching record with a higher-confidence variant.
+ */
+function findDuplicateIndex(
+  candidate: Building,
+  accepted: Building[],
+  thresholdMeters: number,
+): number {
+  for (let i = 0; i < accepted.length; i++) {
+    const existing = accepted[i]!;
+    if (haversineMeters(candidate, existing) <= thresholdMeters) {
+      return i;
+    }
+  }
+  return -1;
+}
+
+/**
+ * Dedupe a list of buildings by centroid proximity, preferring the
+ * building with the higher-confidence `heightSource` when two
+ * records collide.
+ *
+ * Behaviour:
+ *   - Two buildings are "the same" when their haversine centroid
+ *     distance is at or below `thresholdMeters`.
+ *   - When a duplicate is found, the new candidate replaces the
+ *     existing record only if its `heightSource` confidence is
+ *     strictly greater (so the first-seen record still wins ties —
+ *     this is what preserves the original "child order wins"
+ *     contract documented in the file header).
+ *   - `heightSource` metadata on the resulting buildings is the
+ *     candidate's own field (callers that need a default for
+ *     un-tagged buildings can stamp it before calling).
+ *
+ * Exposed as a pure function so callers (e.g. a renderer that
+ * already has a list of buildings from several sources and wants to
+ * dedupe them in a single pass) can reuse the same logic without
+ * instantiating a `CompositeBuildingsSource`.
+ */
+export function dedupeByCentroidAndPreferHeight(
+  buildings: Building[],
+  thresholdMeters: number = DEDUPE_CENTROID_METERS,
+): Building[] {
+  const accepted: Building[] = [];
+  for (const candidate of buildings) {
+    const idx = findDuplicateIndex(candidate, accepted, thresholdMeters);
+    if (idx === -1) {
+      accepted.push(candidate);
+      continue;
+    }
+    const existing = accepted[idx]!;
+    const better = pickMoreConfidentHeight(existing, candidate);
+    if (better !== existing) {
+      accepted[idx] = candidate;
+    }
+  }
+  return accepted;
+}
+
+/**
  * Composite `BuildingsSource` that merges multiple child sources in
- * parallel and deduplicates the union by centroid proximity.
+ * parallel and deduplicates the union by centroid proximity, preferring
+ * the higher-confidence `heightSource` when records collide.
  *
  * `name` is the join of all child names under the `composite:` prefix
  * so logs and telemetry can tell which sources actually contributed.
@@ -125,14 +233,14 @@ export class CompositeBuildingsSource implements BuildingsSource {
 
     // Children are already sorted by id (see BuildingsSource contract),
     // so iterating in constructor order and dedup'ing as we go yields a
-    // stable, predictable output for caching layers.
-    const accepted: Building[] = [];
+    // stable, predictable output for caching layers. The dedupe now
+    // prefers higher-confidence `heightSource` per
+    // `dedupeByCentroidAndPreferHeight` below.
+    const combined: Building[] = [];
     for (const { buildings } of settled) {
-      for (const building of buildings) {
-        if (!isDuplicate(building, accepted)) accepted.push(building);
-      }
+      for (const building of buildings) combined.push(building);
     }
-    return accepted;
+    return dedupeByCentroidAndPreferHeight(combined, DEDUPE_CENTROID_METERS);
   }
 }
 
