@@ -1,7 +1,7 @@
 import type { DayPlan, Roadbook } from "@/lib/roadbook-types";
 
 export type DreamMood = "cloud" | "geometry" | "dusk" | "neon";
-export type DreamTemplate = "monument" | "starlake" | "lantern" | "snowfield" | "neon-city";
+export type DreamTemplate = "monument" | "starlake" | "lantern" | "snowfield" | "neon-city" | "island" | "shrine" | "desert";
 
 export const dreamMoods: Array<{ id: DreamMood; label: string }> = [
   { id: "cloud", label: "云海" },
@@ -45,6 +45,24 @@ export const dreamTemplates: Array<{
     label: "霓虹都市",
     note: "夜晚都市 / 全息广告 / 赛博朋克",
     generationHint: "像赛博朋克霓虹都市夜晚旅行地图，每一天要有发光招牌、湿漉漉的街面、悬浮交通工具和蓝紫主调。",
+  },
+  {
+    id: "island",
+    label: "漂浮岛屿",
+    note: "天空浮岛 / 轻雾 / 孤独",
+    generationHint: "像天空中的漂浮岛屿地图，每一天是一块独立的浮岛，岛与岛之间有薄雾、绳桥或飞行器连接。",
+  },
+  {
+    id: "shrine",
+    label: "清冷神殿",
+    note: "鸟居 / 石灯 / 神道",
+    generationHint: "像清冷神殿里的神道旅行地图，每一天要有石灯笼、苔藓石阶、鸟居或风铃，节奏要慢。",
+  },
+  {
+    id: "desert",
+    label: "大漠孤烟",
+    note: "沙丘 / 绿洲 / 远山",
+    generationHint: "像大漠孤烟的旅行地图，每一天要有沙丘纹理、远方驼影、绿洲椰枣和长长的影子。",
   },
 ];
 
