@@ -91,21 +91,25 @@ describe("createRecordingController", () => {
     expect(c.state.currentTemplateIndex).toBe(1);
     expect(c.state.currentMoodIndex).toBe(0);
 
-    // Advance until we wrap templates back to 0 (4 more steps for 5 templates).
-    c.tick(2000); // template 2
-    c.tick(3000); // template 3
-    c.tick(4000); // template 4
-    r = c.tick(5000); // template wraps to 0, mood should now advance to 1
+    // Advance the inner template loop until it wraps back to 0, at
+    // which point the outer (mood) loop should advance. We use
+    // ALL_TEMPLATES.length so the test stays correct as the template
+    // catalog grows.
+    for (let i = 2; i < ALL_TEMPLATES.length; i += 1) {
+      c.tick(i * 1000);
+    }
+    r = c.tick(ALL_TEMPLATES.length * 1000);
     expect(r.templateChanged).toBe(true);
     expect(r.moodChanged).toBe(true);
     expect(c.state.currentTemplateIndex).toBe(0);
     expect(c.state.currentMoodIndex).toBe(1);
   });
 
-  it("finished becomes true after all combinations in cycle-both (default 5x4 = 20)", () => {
+  it("finished becomes true after all combinations in cycle-both", () => {
     const c = makeController({ mode: "cycle-both" });
     const total = ALL_TEMPLATES.length * ALL_MOODS.length;
-    expect(total).toBe(20);
+    // Sanity: every (template, mood) pair must be visited exactly once.
+    expect(total).toBeGreaterThan(0);
 
     let lastResult;
     for (let i = 1; i <= total; i += 1) {

@@ -38,8 +38,8 @@ describe("dream-design-skill", () => {
   });
 
   describe("dreamTemplates", () => {
-    it("should export 5 template options", () => {
-      expect(dreamTemplates).toHaveLength(5);
+    it("should export 8 template options", () => {
+      expect(dreamTemplates).toHaveLength(8);
     });
 
     it("should have valid template ids", () => {
@@ -49,6 +49,9 @@ describe("dream-design-skill", () => {
       expect(templateIds).toContain("lantern");
       expect(templateIds).toContain("snowfield");
       expect(templateIds).toContain("neon-city");
+      expect(templateIds).toContain("island");
+      expect(templateIds).toContain("shrine");
+      expect(templateIds).toContain("desert");
     });
 
     describe("neon-city template", () => {
@@ -68,6 +71,66 @@ describe("dream-design-skill", () => {
         expect(neonCity).toBeDefined();
         expect(typeof neonCity!.generationHint).toBe("string");
         expect(neonCity!.generationHint.length).toBeGreaterThan(0);
+      });
+    });
+
+    describe("island template", () => {
+      it("includes island in dreamTemplates", () => {
+        const templateIds = dreamTemplates.map((t) => t.id);
+        expect(templateIds).toContain("island");
+      });
+
+      it("island has a Chinese label (漂浮岛屿)", () => {
+        const island = dreamTemplates.find((t) => t.id === "island");
+        expect(island).toBeDefined();
+        expect(island!.label).toBe("漂浮岛屿");
+      });
+
+      it("island has a generationHint", () => {
+        const island = dreamTemplates.find((t) => t.id === "island");
+        expect(island).toBeDefined();
+        expect(typeof island!.generationHint).toBe("string");
+        expect(island!.generationHint.length).toBeGreaterThan(0);
+      });
+    });
+
+    describe("shrine template", () => {
+      it("includes shrine in dreamTemplates", () => {
+        const templateIds = dreamTemplates.map((t) => t.id);
+        expect(templateIds).toContain("shrine");
+      });
+
+      it("shrine has a Chinese label (清冷神殿)", () => {
+        const shrine = dreamTemplates.find((t) => t.id === "shrine");
+        expect(shrine).toBeDefined();
+        expect(shrine!.label).toBe("清冷神殿");
+      });
+
+      it("shrine has a generationHint", () => {
+        const shrine = dreamTemplates.find((t) => t.id === "shrine");
+        expect(shrine).toBeDefined();
+        expect(typeof shrine!.generationHint).toBe("string");
+        expect(shrine!.generationHint.length).toBeGreaterThan(0);
+      });
+    });
+
+    describe("desert template", () => {
+      it("includes desert in dreamTemplates", () => {
+        const templateIds = dreamTemplates.map((t) => t.id);
+        expect(templateIds).toContain("desert");
+      });
+
+      it("desert has a Chinese label (大漠孤烟)", () => {
+        const desert = dreamTemplates.find((t) => t.id === "desert");
+        expect(desert).toBeDefined();
+        expect(desert!.label).toBe("大漠孤烟");
+      });
+
+      it("desert has a generationHint", () => {
+        const desert = dreamTemplates.find((t) => t.id === "desert");
+        expect(desert).toBeDefined();
+        expect(typeof desert!.generationHint).toBe("string");
+        expect(desert!.generationHint.length).toBeGreaterThan(0);
       });
     });
 
