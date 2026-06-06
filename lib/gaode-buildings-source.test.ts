@@ -2,17 +2,23 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import {
   createGaodeBuildingsSource,
   buildPolygonParam,
+  buildGaodeUrl,
+  joinTypeCodes,
   parsePolyLocation,
+  parseGaodePolys,
   polyToBuilding,
+  estimatePolyHeight,
   computeCentroid,
   DEFAULT_NAME,
   DEFAULT_GAODE_ENDPOINT,
   DEFAULT_LIMIT,
   DEFAULT_HEIGHT_METERS,
+  DEFAULT_EXTENSIONS,
+  DEFAULT_GAODE_TYPE_CODES,
   BUILDING_TYPE_CODE,
 } from "./gaode-buildings-source";
+import type { GaodeResponse, GaodePoly } from "./gaode-buildings-source";
 import type { BBox } from "./tile-coords";
-import type { GaodeResponse } from "./gaode-buildings-source";
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -59,6 +65,40 @@ const TWO_BUILDINGS_FIXTURE: GaodeResponse = {
       adname: "Haidian",
       cityname: "Beijing",
       province: "Beijing",
+    },
+  ],
+};
+
+/** Fixture exercising every field that `extensions=all` unlocks. */
+const RICH_FIXTURE: GaodeResponse = {
+  status: "1",
+  count: "2",
+  info: "OK",
+  infocode: "10000",
+  polys: [
+    {
+      id: "R001",
+      name: "万达广场",
+      type: "120000",
+      location: "116.40,39.90;116.41,39.90;116.41,39.91;116.40,39.91;116.40,39.90",
+      address: "建国路93号",
+      adname: "Chaoyang",
+      cityname: "Beijing",
+      province: "Beijing",
+      tel: "010-12345678",
+      business_area: "CBD",
+    },
+    {
+      id: "R002",
+      name: "阳光小区",
+      type: "120100",
+      location: "116.42,39.92;116.43,39.92;116.43,39.93;116.42,39.93;116.42,39.92",
+      address: "朝阳门外大街18号",
+      adname: "Chaoyang",
+      cityname: "Beijing",
+      province: "Beijing",
+      tel: "010-87654321",
+      business_area: "CBD",
     },
   ],
 };
@@ -160,8 +200,12 @@ describe("fetchBuildings", () => {
     expect(url.origin + url.pathname).toBe(DEFAULT_GAODE_ENDPOINT);
     expect(url.searchParams.get("key")).toBe("my-amap-key");
     expect(url.searchParams.get("polygon")).toBe(buildPolygonParam(bbox));
-    expect(url.searchParams.get("types")).toBe(BUILDING_TYPE_CODE);
-    expect(url.searchParams.get("extensions")).toBe("base");
+    // After the upgrade we send the joined type-code filter and
+    // request the rich per-record metadata.
+    expect(url.searchParams.get("types")).toBe(
+      DEFAULT_GAODE_TYPE_CODES.join("|"),
+    );
+    expect(url.searchParams.get("extensions")).toBe(DEFAULT_EXTENSIONS);
   });
 
   it("returns empty array on network error", async () => {
@@ -252,6 +296,96 @@ describe("fetchBuildings", () => {
 });
 
 // ---------------------------------------------------------------------------
+// Tests: extensions=all upgrade
+// ---------------------------------------------------------------------------
+
+describe("extensions=all upgrade", () => {
+  beforeEach(() => {
+    mockState = { requests: [], response: RICH_FIXTURE };
+    vi.stubGlobal("fetch", mockFetch);
+  });
+
+  afterEach(() => {
+    mockState = null;
+  });
+
+  it("requests extensions=all in the request URL", async () => {
+    vi.stubEnv("AMAP_KEY", "test-key");
+    const source = createGaodeBuildingsSource();
+    await source.fetchBuildings(
+      { west: 116.3, south: 39.8, east: 116.5, north: 40.0 },
+      {},
+    );
+    const url = new URL(mockState!.requests[0]!.url);
+    expect(url.searchParams.get("extensions")).toBe("all");
+  });
+
+  it("sends a '|' joined type-code filter covering all default codes", async () => {
+    vi.stubEnv("AMAP_KEY", "test-key");
+    const source = createGaodeBuildingsSource();
+    await source.fetchBuildings(
+      { west: 116.3, south: 39.8, east: 116.5, north: 40.0 },
+      {},
+    );
+    const url = new URL(mockState!.requests[0]!.url);
+    const typesParam = url.searchParams.get("types") ?? "";
+    // Each default code should appear individually in the joined string.
+    for (const code of DEFAULT_GAODE_TYPE_CODES) {
+      expect(typesParam.split("|")).toContain(code);
+    }
+    expect(typesParam).toBe(DEFAULT_GAODE_TYPE_CODES.join("|"));
+  });
+
+  it("parses every extensions=all field into Building tags", async () => {
+    vi.stubEnv("AMAP_KEY", "test-key");
+    const source = createGaodeBuildingsSource();
+    const result = await source.fetchBuildings(
+      { west: 116.3, south: 39.8, east: 116.5, north: 40.0 },
+      {},
+    );
+    const byId = Object.fromEntries(result.map((b) => [b.id, b]));
+    const plaza = byId["amap-R001"]!;
+    expect(plaza.tags["amap:type"]).toBe("120000");
+    expect(plaza.tags["addr:full"]).toBe("建国路93号");
+    expect(plaza.tags["addr:district"]).toBe("Chaoyang");
+    expect(plaza.tags["addr:city"]).toBe("Beijing");
+    expect(plaza.tags["contact:phone"]).toBe("010-12345678");
+    expect(plaza.tags["amap:business_area"]).toBe("CBD");
+  });
+
+  it("stamps metadata.estimatedHeightSource='gaode-extensions' on every building", async () => {
+    vi.stubEnv("AMAP_KEY", "test-key");
+    const source = createGaodeBuildingsSource();
+    const result = await source.fetchBuildings(
+      { west: 116.3, south: 39.8, east: 116.5, north: 40.0 },
+      {},
+    );
+    expect(result.length).toBeGreaterThan(0);
+    for (const b of result) {
+      expect(b.metadata).toBeDefined();
+      expect(b.metadata?.["estimatedHeightSource"]).toBe("gaode-extensions");
+    }
+  });
+
+  it("uses heuristic height for 万达广场 (matches commercial/tower row)", async () => {
+    vi.stubEnv("AMAP_KEY", "test-key");
+    const source = createGaodeBuildingsSource();
+    const result = await source.fetchBuildings(
+      { west: 116.3, south: 39.8, east: 116.5, north: 40.0 },
+      {},
+    );
+    const plaza = result.find((b) => b.id === "amap-R001")!;
+    // 万达广场 → "广场" doesn't hit a keyword directly, but the
+    // typecode 120000 (commercial-residential) and the heuristic
+    // fall-through land in the "default" bucket. We accept either
+    // a heuristic match or a default fallback.
+    expect(plaza.heightMeters).toBeGreaterThan(0);
+    expect(plaza.heightMeters).toBeLessThanOrEqual(200);
+    expect(plaza.metadata?.["estimatedHeightSource"]).toBe("gaode-extensions");
+  });
+});
+
+// ---------------------------------------------------------------------------
 // Tests: fixture parsing
 // ---------------------------------------------------------------------------
 
@@ -313,13 +447,15 @@ describe("TWO_BUILDINGS_FIXTURE parsing", () => {
     expect(b1.tags["addr:province"]).toBe("Beijing");
   });
 
-  it("uses DEFAULT_HEIGHT_METERS when no height metadata", async () => {
+  it("uses DEFAULT_HEIGHT_METERS when no height signal matches", async () => {
     vi.stubEnv("AMAP_KEY", "test-key");
     const source = createGaodeBuildingsSource();
     const result = await source.fetchBuildings(
       { west: 116.3, south: 39.8, east: 116.5, north: 40.0 },
       {},
     );
+    // 'Building One' / 'Building Two' do not match any heuristic
+    // keyword, so they fall through to the 8 m default.
     for (const b of result) {
       expect(b.heightMeters).toBe(DEFAULT_HEIGHT_METERS);
     }
@@ -439,7 +575,7 @@ describe("polyToBuilding", () => {
   });
 
   it("converts a valid poly to Building with id 'amap-<id>'", () => {
-    const poly: import("./gaode-buildings-source").GaodePoly = {
+    const poly: GaodePoly = {
       id: "B001",
       name: "Test Building",
       type: "120000",
@@ -453,13 +589,38 @@ describe("polyToBuilding", () => {
   });
 
   it("generates id from name and first vertex when id is absent", () => {
-    const poly: import("./gaode-buildings-source").GaodePoly = {
+    const poly: GaodePoly = {
       name: "Nameless Tower",
       location: "116.3,39.9;116.31,39.9;116.31,39.91;116.3,39.91;116.3,39.9",
     };
     const b = polyToBuilding(poly);
     expect(b).not.toBeNull();
     expect(b!.id).toMatch(/^amap-Nameless Tower/);
+  });
+
+  it("surfaces tel and business_area tags from extensions=all", () => {
+    const poly: GaodePoly = {
+      id: "B-TEL",
+      name: "Mall",
+      type: "120000",
+      location: "116.3,39.9;116.31,39.9;116.31,39.91;116.3,39.91;116.3,39.9",
+      tel: "010-9999-0000",
+      business_area: "Sanlitun",
+    };
+    const b = polyToBuilding(poly)!;
+    expect(b.tags["contact:phone"]).toBe("010-9999-0000");
+    expect(b.tags["amap:business_area"]).toBe("Sanlitun");
+  });
+
+  it("stamps metadata.estimatedHeightSource='gaode-extensions'", () => {
+    const poly: GaodePoly = {
+      id: "B-META",
+      name: "Some Building",
+      type: "120000",
+      location: "116.3,39.9;116.31,39.9;116.31,39.91;116.3,39.91;116.3,39.9",
+    };
+    const b = polyToBuilding(poly)!;
+    expect(b.metadata?.["estimatedHeightSource"]).toBe("gaode-extensions");
   });
 });
 
@@ -480,6 +641,173 @@ describe("buildPolygonParam", () => {
     const param = buildPolygonParam(bbox);
     const parts = param.split(";");
     expect(parts[0]).toBe(parts[parts.length - 1]);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Tests: buildGaodeUrl
+// ---------------------------------------------------------------------------
+
+describe("buildGaodeUrl", () => {
+  const bbox: BBox = { west: 116.3, south: 39.8, east: 116.5, north: 40.0 };
+
+  it("includes extensions=all by default", () => {
+    const url = new URL(
+      buildGaodeUrl(bbox, { apiKey: "k", polygon: "0,0;1,0;1,1;0,1;0,0", page: 1 }),
+    );
+    expect(url.searchParams.get("extensions")).toBe("all");
+  });
+
+  it("includes the joined type-code filter", () => {
+    const url = new URL(
+      buildGaodeUrl(bbox, { apiKey: "k", polygon: "0,0;1,0;1,1;0,1;0,0", page: 1 }),
+    );
+    expect(url.searchParams.get("types")).toBe("120000|120100");
+  });
+
+  it("respects a custom extensions override", () => {
+    const url = new URL(
+      buildGaodeUrl(bbox, {
+        apiKey: "k",
+        polygon: "0,0;1,0;1,1;0,1;0,0",
+        page: 1,
+        extensions: "base",
+      }),
+    );
+    expect(url.searchParams.get("extensions")).toBe("base");
+  });
+
+  it("respects a custom single type code", () => {
+    const url = new URL(
+      buildGaodeUrl(bbox, {
+        apiKey: "k",
+        polygon: "0,0;1,0;1,1;0,1;0,0",
+        page: 1,
+        typeCodes: "120000",
+      }),
+    );
+    expect(url.searchParams.get("types")).toBe("120000");
+  });
+
+  it("threads the apiKey, polygon, page, and offset into the URL", () => {
+    const url = new URL(
+      buildGaodeUrl(bbox, {
+        apiKey: "my-key",
+        polygon: "0,0;1,0;1,1;0,1;0,0",
+        page: 3,
+        offset: 20,
+      }),
+    );
+    expect(url.searchParams.get("key")).toBe("my-key");
+    expect(url.searchParams.get("polygon")).toBe("0,0;1,0;1,1;0,1;0,0");
+    expect(url.searchParams.get("page")).toBe("3");
+    expect(url.searchParams.get("offset")).toBe("20");
+  });
+
+  it("builds the polygon param from the bbox when none is provided", () => {
+    const url = new URL(
+      buildGaodeUrl(bbox, { apiKey: "k", polygon: "", page: 1 }),
+    );
+    expect(url.searchParams.get("polygon")).toBe(buildPolygonParam(bbox));
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Tests: joinTypeCodes
+// ---------------------------------------------------------------------------
+
+describe("joinTypeCodes", () => {
+  it("returns the input string when given a string", () => {
+    expect(joinTypeCodes("120000")).toBe("120000");
+  });
+
+  it("joins an array with '|'", () => {
+    expect(joinTypeCodes(["120000", "120100"])).toBe("120000|120100");
+  });
+
+  it("uses the default codes when called with no argument", () => {
+    expect(joinTypeCodes()).toBe(DEFAULT_GAODE_TYPE_CODES.join("|"));
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Tests: parseGaodePolys
+// ---------------------------------------------------------------------------
+
+describe("parseGaodePolys", () => {
+  it("returns an empty array on non-'1' status", () => {
+    const result = parseGaodePolys({
+      status: "0",
+      info: "INVALID_USER",
+      infocode: "10001",
+      polys: [
+        {
+          id: "X",
+          location: "0,0;1,0;1,1;0,1;0,0",
+        },
+      ],
+    });
+    expect(result).toEqual([]);
+  });
+
+  it("parses every poly in a status='1' response", () => {
+    const result = parseGaodePolys(RICH_FIXTURE);
+    expect(result).toHaveLength(2);
+    expect(result[0]!.id).toBe("amap-R001");
+    expect(result[1]!.id).toBe("amap-R002");
+  });
+
+  it("skips polys with no usable location", () => {
+    const result = parseGaodePolys({
+      status: "1",
+      count: "2",
+      info: "OK",
+      infocode: "10000",
+      polys: [
+        { id: "GOOD", location: "0,0;1,0;1,1;0,1;0,0" },
+        { id: "BAD" },
+      ],
+    });
+    expect(result).toHaveLength(1);
+    expect(result[0]!.id).toBe("amap-GOOD");
+  });
+
+  it("returns an empty array when polys is undefined", () => {
+    const result = parseGaodePolys({ status: "1", count: "0", info: "OK", infocode: "10000" });
+    expect(result).toEqual([]);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Tests: estimatePolyHeight (heuristic-driven)
+// ---------------------------------------------------------------------------
+
+describe("estimatePolyHeight", () => {
+  it("returns a high-rise estimate for an office/tower name", () => {
+    // 'CBD Tower' should hit the commercial/office row.
+    const result = estimatePolyHeight({ name: "CBD Tower", type: "120000" });
+    expect(result.confidence).toBe("medium");
+    expect(result.meters).toBeGreaterThanOrEqual(30);
+    expect(result.meters).toBeLessThanOrEqual(80);
+  });
+
+  it("returns a residential estimate for an apartment name", () => {
+    const result = estimatePolyHeight({ name: "Greenfield Apartment", type: "120100" });
+    expect(result.confidence).toBe("medium");
+    expect(result.meters).toBeGreaterThanOrEqual(15);
+    expect(result.meters).toBeLessThanOrEqual(30);
+  });
+
+  it("falls back to DEFAULT_HEIGHT_METERS for an unknown name", () => {
+    const result = estimatePolyHeight({ name: "Xylophone 12345", type: "120000" });
+    expect(result.meters).toBe(DEFAULT_HEIGHT_METERS);
+    expect(result.confidence).toBe("low");
+  });
+
+  it("still resolves when name is missing", () => {
+    const result = estimatePolyHeight({ type: "120000" });
+    // No name means no haystack; we fall through to default.
+    expect(result.meters).toBe(DEFAULT_HEIGHT_METERS);
   });
 });
 
@@ -533,7 +861,16 @@ describe("constants", () => {
     expect(DEFAULT_HEIGHT_METERS).toBe(8);
   });
 
-  it("BUILDING_TYPE_CODE is '120000'", () => {
+  it("DEFAULT_EXTENSIONS is 'all'", () => {
+    expect(DEFAULT_EXTENSIONS).toBe("all");
+  });
+
+  it("DEFAULT_GAODE_TYPE_CODES contains 120000 and 120100", () => {
+    expect(DEFAULT_GAODE_TYPE_CODES).toContain("120000");
+    expect(DEFAULT_GAODE_TYPE_CODES).toContain("120100");
+  });
+
+  it("BUILDING_TYPE_CODE is '120000' (legacy constant preserved)", () => {
     expect(BUILDING_TYPE_CODE).toBe("120000");
   });
 

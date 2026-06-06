@@ -9,14 +9,22 @@
 //   GET https://restapi.amap.com/v3/place/polygon
 //     ?polygon=bbox   (lng,lat;lng,lat;lng,lat;lng,lat — closed ring)
 //     &key=AMAP_KEY
-//     &types=120000   (商务住宅+商业楼宇 — buildings-of-interest)
-//     &extensions=base
+//     &types=120000|120100   (商务住宅, 住宅小区 — buildings-of-interest)
+//     &extensions=all        (richer per-record metadata: tel, business_area, type, etc.)
 //     &offset=20&page=1
 //
 // The response carries a `polys` array of objects whose `location`
 // field is a single string: "lng,lat;lng,lat;...". The ring is
 // implicitly closed by 高德 (first vertex === last vertex) but we
 // defensively re-close it for consistency with the Overpass source.
+//
+// We use `extensions=all` because the endpoint only returns a thin
+// record set otherwise (just id, name, location, address) — `all`
+// unlocks `tel`, `business_area`, `type` (POI typecode), and other
+// metadata we can use to estimate building height when no explicit
+// `height` is available. Height resolution still flows through
+// `estimateHeightByHeuristic` from the building-height-estimator so
+// the heuristic table is the single source of truth.
 
 import type { BBox } from "./tile-coords";
 import type {
@@ -25,6 +33,10 @@ import type {
   FetchBuildingsOptions,
   FootprintVertex,
 } from "./buildings-source";
+import {
+  estimateHeightByHeuristic,
+  type HeightEstimate,
+} from "./building-height-estimator";
 
 /** Public 高德 endpoint, exposed as a constant for tests / overrides. */
 export const DEFAULT_GAODE_ENDPOINT =
@@ -33,7 +45,30 @@ export const DEFAULT_GAODE_ENDPOINT =
 /** Default `name` reported via `BuildingsSource.name`. */
 export const DEFAULT_NAME = "gaode-amap";
 
-/** 高德 type code that matches the building category we care about. */
+/**
+ * 高德 POI type codes that match the building categories we care
+ * about. `120000` covers 商务住宅 / commercial-residential, `120100`
+ * covers 住宅小区 / residential compounds. Multiple codes are joined
+ * with `|` per 高德's "or" semantics so a single request can return
+ * buildings from both categories.
+ */
+export const DEFAULT_GAODE_TYPE_CODES: ReadonlyArray<string> = [
+  "120000",
+  "120100",
+];
+
+/**
+ * Default `extensions` value. `all` requests the rich per-record
+ * metadata (tel, business_area, type, etc.) so we have enough
+ * signal to estimate building heights heuristically.
+ */
+export const DEFAULT_EXTENSIONS = "all";
+
+/**
+ * Legacy single-code export, kept for backwards compatibility with
+ * callers that pass a string type code. New code should use
+ * `DEFAULT_GAODE_TYPE_CODES` (the array) instead.
+ */
 export const BUILDING_TYPE_CODE = "120000";
 
 /** Hard cap when the caller does not pass `opts.limit`. */
@@ -46,11 +81,13 @@ export const DEFAULT_HEIGHT_METERS = 8;
 const PAGE_SIZE = 20;
 
 /**
- * Shape of a single `polys[i]` record from the 高德 response. We only
- * type the fields we read; 高德 returns more in `extensions=all` mode
- * (which we don't request).
+ * Shape of a single `polys[i]` record from the 高德 response. We
+ * type the fields we read. With `extensions=all` 高德 also returns
+ * `tel`, `business_area`, `type` (a POI typecode like "120000"),
+ * `adname`, `cityname`, and `province` — all of which we surface as
+ * tags so downstream consumers can still recover them.
  */
-type GaodePoly = {
+export type GaodePoly = {
   id?: string;
   name?: string;
   type?: string;
@@ -59,9 +96,11 @@ type GaodePoly = {
   adname?: string;
   cityname?: string;
   province?: string;
+  tel?: string;
+  business_area?: string;
 };
 
-type GaodeResponse = {
+export type GaodeResponse = {
   status?: string;
   count?: string;
   info?: string;
@@ -79,6 +118,36 @@ export type GaodeBuildingsSourceOptions = {
   fetchImpl?: typeof fetch;
   /** Override the human-readable name. */
   name?: string;
+  /**
+   * Override the POI type codes passed via the `types` parameter.
+   * Defaults to `DEFAULT_GAODE_TYPE_CODES`. Pass a single code or an
+   * array of codes; the function will join them with `|` per 高德
+   * semantics.
+   */
+  typeCodes?: string | ReadonlyArray<string>;
+  /**
+   * Override the `extensions` value. Defaults to `all` (see
+   * `DEFAULT_EXTENSIONS`).
+   */
+  extensions?: string;
+};
+
+/** Options for `buildGaodeUrl` — kept narrow so tests can target it. */
+export type BuildGaodeUrlOpts = {
+  /** 高德 Web Service API key. */
+  apiKey: string;
+  /** Override the endpoint. Defaults to `DEFAULT_GAODE_ENDPOINT`. */
+  endpoint?: string;
+  /** Closed-ring polygon string (output of `buildPolygonParam`). */
+  polygon: string;
+  /** Page number (1-indexed). */
+  page: number;
+  /** Page size; 高德 caps at 20 for the polygon endpoint. */
+  offset?: number;
+  /** POI type codes (single code, or array joined with `|`). */
+  typeCodes?: string | ReadonlyArray<string>;
+  /** `extensions` value — defaults to `DEFAULT_EXTENSIONS` ("all"). */
+  extensions?: string;
 };
 
 /**
@@ -95,6 +164,42 @@ export function buildPolygonParam(bbox: BBox): string {
   const se = `${bbox.east},${bbox.south}`;
   // Close the ring so the bbox is unambiguous on the server side.
   return `${sw};${nw};${ne};${se};${sw}`;
+}
+
+/**
+ * Join a `string | string[]` type-code argument with `|` per 高德
+ * "or" semantics. Exposed for testability and so callers can pass
+ * either shape.
+ */
+export function joinTypeCodes(
+  typeCodes: string | ReadonlyArray<string> = DEFAULT_GAODE_TYPE_CODES,
+): string {
+  if (typeof typeCodes === "string") return typeCodes;
+  return typeCodes.join("|");
+}
+
+/**
+ * Build the 高德 `place/polygon` request URL for a single page.
+ * Kept in its own function so tests can assert on the exact query
+ * string (extensions, types, polygon, etc.) without standing up the
+ * full paginating source.
+ */
+export function buildGaodeUrl(bbox: BBox, opts: BuildGaodeUrlOpts): string {
+  const endpoint = opts.endpoint ?? DEFAULT_GAODE_ENDPOINT;
+  const offset = opts.offset ?? PAGE_SIZE;
+  const extensions = opts.extensions ?? DEFAULT_EXTENSIONS;
+  // Fall back to the bbox-derived polygon when the caller passes an
+  // empty string or undefined (a frequent pattern in tests). Using
+  // `||` (not `??`) so an empty string also triggers the fallback.
+  const polygon = opts.polygon || buildPolygonParam(bbox);
+  const url = new URL(endpoint);
+  url.searchParams.set("key", opts.apiKey);
+  url.searchParams.set("polygon", polygon);
+  url.searchParams.set("types", joinTypeCodes(opts.typeCodes));
+  url.searchParams.set("extensions", extensions);
+  url.searchParams.set("offset", String(offset));
+  url.searchParams.set("page", String(opts.page));
+  return url.toString();
 }
 
 /**
@@ -153,7 +258,23 @@ export function computeCentroid(footprint: FootprintVertex[]): {
   return { lng: sumLng / count, lat: sumLat / count };
 }
 
-/** Convert a `polys[i]` record into a `Building`, or `null` if unusable. */
+/**
+ * Resolve a height estimate for a 高德 poly. We always run the
+ * POI name + typecode through `estimateHeightByHeuristic` so the
+ * heuristic table is the single source of truth across providers;
+ * `extensions=all` only buys us richer inputs.
+ */
+export function estimatePolyHeight(poly: GaodePoly): HeightEstimate {
+  return estimateHeightByHeuristic(poly.name ?? "", poly.type);
+}
+
+/**
+ * Convert a `polys[i]` record into a `Building`, or `null` if unusable.
+ * The returned building carries `tags["estimatedHeightSource"]` so
+ * downstream consumers can tell whether the height came from the
+ * heuristic table or fell back to the default. We also surface
+ * `tags["estimatedHeightConfidence"]` for UI hints.
+ */
 export function polyToBuilding(poly: GaodePoly): Building | null {
   const footprint = parsePolyLocation(poly.location);
   if (!footprint || footprint.length < 4) return null;
@@ -165,20 +286,52 @@ export function polyToBuilding(poly: GaodePoly): Building | null {
   if (poly.adname) tags["addr:district"] = poly.adname;
   if (poly.cityname) tags["addr:city"] = poly.cityname;
   if (poly.province) tags["addr:province"] = poly.province;
+  if (poly.tel) tags["contact:phone"] = poly.tel;
+  if (poly.business_area) tags["amap:business_area"] = poly.business_area;
 
   const id = poly.id
     ? `amap-${poly.id}`
     : `amap-${tags.name ?? "anon"}-${footprint[0].lng},${footprint[0].lat}`;
 
   const { lng, lat } = computeCentroid(footprint);
+  const heightEstimate = estimatePolyHeight(poly);
   return {
     id,
     lng,
     lat,
-    heightMeters: DEFAULT_HEIGHT_METERS,
+    heightMeters: heightEstimate.meters,
     footprint,
     tags,
+    // The 高德 `extensions=all` data channel exposes the inputs the
+    // heuristic table needs, so we tag the resulting height as
+    // `gaode-extensions` (mid-tier confidence: more reliable than a
+    // bare heuristic guess, but still an estimate rather than an
+    // explicit measurement like an OSM `height` tag would be).
+    heightSource: "gaode-extensions",
+    metadata: {
+      // Marker that says "this record came from the 高德
+      // `extensions=all` data channel" — independent of the
+      // heuristic table that resolved the height.
+      estimatedHeightSource: "gaode-extensions",
+      estimatedHeightConfidence: heightEstimate.confidence,
+    },
   };
+}
+
+/**
+ * Parse a raw 高德 response into an array of `Building` records.
+ * Filters out unusable polys (no / malformed `location`) and drops
+ * everything when `status !== "1"`. Kept pure for testability.
+ */
+export function parseGaodePolys(response: GaodeResponse): Building[] {
+  if (response.status !== "1") return [];
+  const polys = response.polys ?? [];
+  const buildings: Building[] = [];
+  for (const poly of polys) {
+    const building = polyToBuilding(poly);
+    if (building) buildings.push(building);
+  }
+  return buildings;
 }
 
 /**
@@ -195,6 +348,8 @@ export class GaodeBuildingsSource implements BuildingsSource {
   private readonly apiKey: string;
   private readonly endpoint: string;
   private readonly fetchImpl: typeof fetch;
+  private readonly typeCodes: string | ReadonlyArray<string>;
+  private readonly extensions: string;
 
   constructor(opts: GaodeBuildingsSourceOptions = {}) {
     this.apiKey = opts.apiKey ?? process.env.AMAP_KEY ?? "";
@@ -206,6 +361,8 @@ export class GaodeBuildingsSource implements BuildingsSource {
     this.endpoint = opts.endpoint ?? DEFAULT_GAODE_ENDPOINT;
     this.fetchImpl = opts.fetchImpl ?? globalThis.fetch.bind(globalThis);
     this.name = opts.name ?? DEFAULT_NAME;
+    this.typeCodes = opts.typeCodes ?? DEFAULT_GAODE_TYPE_CODES;
+    this.extensions = opts.extensions ?? DEFAULT_EXTENSIONS;
   }
 
   async fetchBuildings(
@@ -218,17 +375,18 @@ export class GaodeBuildingsSource implements BuildingsSource {
     const buildings: Building[] = [];
     for (let page = 1; ; page++) {
       if (buildings.length >= limit) break;
-      const url = new URL(this.endpoint);
-      url.searchParams.set("key", this.apiKey);
-      url.searchParams.set("polygon", polygon);
-      url.searchParams.set("types", BUILDING_TYPE_CODE);
-      url.searchParams.set("extensions", "base");
-      url.searchParams.set("offset", String(PAGE_SIZE));
-      url.searchParams.set("page", String(page));
+      const url = buildGaodeUrl(bbox, {
+        apiKey: this.apiKey,
+        endpoint: this.endpoint,
+        polygon,
+        page,
+        typeCodes: this.typeCodes,
+        extensions: this.extensions,
+      });
 
       let response: Response;
       try {
-        response = await this.fetchImpl(url.toString(), { method: "GET" });
+        response = await this.fetchImpl(url, { method: "GET" });
       } catch (err) {
         console.warn(
           "GaodeBuildingsSource: network request failed:",
