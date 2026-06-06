@@ -1,6 +1,7 @@
 "use client";
 
-import { ArrowLeft, Compass, Eye, Layers3, Loader2, Moon, PlayCircle, RotateCcw, Sparkles, Trash2 } from "lucide-react";
+import { ArrowLeft, Compass, Eye, Layers3, Loader2, MapPinned, Moon, PlayCircle, RotateCcw, Sparkles, Trash2 } from "lucide-react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { type ChangeEvent, type FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -34,6 +35,11 @@ import type {
 import { sampleRoadbook } from "@/lib/sample-roadbook";
 import { DreamMiniMap } from "@/components/dream-mini-map";
 import { DreamSkylineScene } from "@/components/dream-skyline-scene";
+
+const RealSkylineScene = dynamic(
+  () => import("@/components/real-skyline-scene").then((mod) => mod.default),
+  { ssr: false },
+);
 
 type DreamStage = "demo" | "generating" | "refining" | "preview" | "ready" | "error";
 type TrackStepStatus = "idle" | "active" | "done" | "error";
@@ -104,10 +110,70 @@ export function DreamRoadbook() {
   const [scenicDesign, setScenicDesign] = useState<ScenicRenderDesign | null>(null);
   const [scenicStage, setScenicStage] = useState<ScenicSkillStage>("idle");
   const [scenicMessage, setScenicMessage] = useState("");
+  const [useRealTerrain, setUseRealTerrain] = useState(false);
+  const [realTerrainTokenMissing, setRealTerrainTokenMissing] = useState(false);
   const design = useMemo(() => buildDreamRoadbookDesign(roadbook), [roadbook]);
   const activePlan = roadbook.days.find((day) => day.day === activeDay) || roadbook.days[0];
   const activeStop = design.routeStops.find((stop) => stop.day === activePlan?.day) || design.routeStops[0];
   const activeTemplate = dreamTemplates.find((item) => item.id === template) || dreamTemplates[0];
+  // Lazily build the real terrain/buildings sources only when the toggle is on,
+  // so MAPBOX_TOKEN env lookups don't run at module-load time.
+  const [realTerrainSources, setRealTerrainSources] = useState<
+    | { terrainSource: import("@/lib/terrain-source").TerrainSource; buildingsSource: import("@/lib/buildings-source").BuildingsSource }
+    | null
+  >(null);
+
+  useEffect(() => {
+    if (!useRealTerrain) {
+      return;
+    }
+
+    let cancelled = false;
+
+    async function loadSources() {
+      try {
+        const [terrainModule, buildingsModule] = await Promise.all([
+          import("@/lib/mapbox-terrain-source"),
+          import("@/lib/overpass-buildings-source"),
+        ]);
+
+        if (cancelled) {
+          return;
+        }
+
+        try {
+          const terrainSource = terrainModule.createMapboxTerrainSource();
+          const buildingsSource = buildingsModule.createOverpassBuildingsSource();
+          if (cancelled) {
+            return;
+          }
+          setRealTerrainSources({ terrainSource, buildingsSource });
+          setRealTerrainTokenMissing(false);
+        } catch (constructionError) {
+          // Most common cause: MAPBOX_TOKEN env var is not configured.
+          console.warn("Real terrain pipeline unavailable, falling back:", constructionError);
+          if (!cancelled) {
+            setRealTerrainSources(null);
+            setRealTerrainTokenMissing(true);
+          }
+        }
+      } catch (loadError) {
+        console.error("Real terrain module load failed:", loadError);
+        if (!cancelled) {
+          setRealTerrainSources(null);
+          setRealTerrainTokenMissing(true);
+        }
+      }
+    }
+
+    void loadSources();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [useRealTerrain]);
+  // Derived: when toggle is off, the pipeline is inactive regardless of cached sources.
+  const realTerrainActive = useRealTerrain && realTerrainSources !== null && !realTerrainTokenMissing;
   const isBusy = stage === "generating" || stage === "refining";
   const isTrackDemo = trackDemoStep !== null;
   const trackBadge = isTrackDemo ? "explain" : stage === "ready" ? "completed" : isBusy ? "running" : "local";
@@ -755,6 +821,9 @@ export function DreamRoadbook() {
     setPoints([]);
     setMapConfigured(null);
     setMapLoading(false);
+    setUseRealTerrain(false);
+    setRealTerrainTokenMissing(false);
+    setRealTerrainSources(null);
     setStage("demo");
     setError("");
   }
@@ -952,17 +1021,55 @@ export function DreamRoadbook() {
         </aside>
 
         <section className="dream-world dream-world-skyline" aria-label={`${roadbook.destination} 3D 目的地预览`}>
-          <DreamSkylineScene
-            roadbook={roadbook}
-            design={design}
-            activeDay={activeDay}
-            mood={mood}
-            template={template}
-            previewAsset={previewAsset}
-            assetStage={assetStage}
-            assetMessage={assetMessage}
-            onSelectDay={setActiveDay}
-          />
+          <div className="dream-terrain-toggle" aria-label="真实地形管线开关">
+            <label>
+              <input
+                type="checkbox"
+                checked={useRealTerrain}
+                onChange={(event) => setUseRealTerrain(event.target.checked)}
+                disabled={isBusy}
+              />
+              <MapPinned size={14} />
+              <span>真实地形管线</span>
+              <small>Real Terrain: {realTerrainActive ? "on" : "off"}</small>
+            </label>
+            {useRealTerrain ? (
+              realTerrainTokenMissing ? (
+                <p className="dream-terrain-toggle-hint warn">
+                  未配置 MAPBOX_TOKEN，使用回退
+                </p>
+              ) : (
+                <p className="dream-terrain-toggle-hint">需要配置 MAPBOX_TOKEN</p>
+              )
+            ) : null}
+          </div>
+          {realTerrainActive && realTerrainSources ? (
+            <RealSkylineScene
+              roadbook={roadbook}
+              design={design}
+              activeDay={activeDay}
+              mood={mood}
+              template={template}
+              previewAsset={previewAsset}
+              assetStage={assetStage}
+              assetMessage={assetMessage}
+              onSelectDay={setActiveDay}
+              terrainSource={realTerrainSources.terrainSource}
+              buildingsSource={realTerrainSources.buildingsSource}
+            />
+          ) : (
+            <DreamSkylineScene
+              roadbook={roadbook}
+              design={design}
+              activeDay={activeDay}
+              mood={mood}
+              template={template}
+              previewAsset={previewAsset}
+              assetStage={assetStage}
+              assetMessage={assetMessage}
+              onSelectDay={setActiveDay}
+            />
+          )}
           <div className="dream-title-block">
             <p className="dream-eyebrow">AI Custom Atlas</p>
             <h2>
