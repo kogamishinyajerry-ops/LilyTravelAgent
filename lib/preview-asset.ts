@@ -73,7 +73,13 @@ function buildVisualStyle(mood?: string, template?: string) {
           ? "minimal snowy negative space and crisp air"
           : template === "neon-city"
             ? "towering cyberpunk megacity with holographic billboards, neon signs, and rain-slick streets"
-            : "monumental scenic composition with layered terrain";
+            : template === "island"
+              ? "floating sky islands with misty green-blue atmosphere, ethereal weightless composition"
+              : template === "shrine"
+                ? "serene Japanese shrine path with stone lanterns, vermilion torii, morning fog"
+                : template === "desert"
+                  ? "vast sand dunes with distant caravan, oasis palm trees, golden hour haze"
+                  : "monumental scenic composition with layered terrain";
 
   return `${moodText}, ${templateText}, photorealistic cinematic render, high detail, elegant color grading`;
 }
