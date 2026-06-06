@@ -17,6 +17,8 @@ import {
   HemisphereLight,
   Line,
   LineBasicMaterial,
+  LineSegments,
+  EdgesGeometry,
   Mesh,
   MeshBasicMaterial,
   MeshStandardMaterial,
@@ -101,6 +103,17 @@ const palettes: Record<DreamMood, SkylinePalette> = {
     stone: "#e2c6a8",
     roof: "#7f5a52",
     light: "#ffd08a",
+  },
+  neon: {
+    sky: "#0a0e2e",
+    fog: "#1a1a3a",
+    mountain: "#1f2547",
+    ground: "#0d1024",
+    water: "#1a4d6b",
+    glass: "#3a7eff",
+    stone: "#2a2a4a",
+    roof: "#1a1a2e",
+    light: "#ff2db5",
   },
 };
 
@@ -213,7 +226,7 @@ export function DreamSkylineScene({
   }, [activeDay, assetSource, design.routeStops.length, mood, palette, profile, template]);
 
   return (
-    <div ref={wrapRef} className={`dream-skyline-scene dream-skyline-${template}`}>
+    <div ref={wrapRef} className={`dream-skyline-scene dream-skyline-${template}${template === "neon-city" ? " dream-skyline-neon" : ""}`}>
       {assetSource ? (
         <div className="dream-skyline-asset-backdrop" style={{ backgroundImage: `url(${assetSource})` }} />
       ) : null}
@@ -467,6 +480,70 @@ function createSkyline(
 
   }
 
+  if (template === "neon-city") {
+    const neonGlass = new MeshStandardMaterial({
+      color: new Color(palette.glass),
+      roughness: 0.18,
+      metalness: 0.45,
+      transparent: true,
+      opacity: 0.42,
+      emissive: new Color(palette.glass),
+      emissiveIntensity: 0.55,
+    });
+    disposables.push(neonGlass);
+
+    const neonLineMat = new LineBasicMaterial({
+      color: new Color(palette.light),
+      transparent: true,
+      opacity: 0.78,
+    });
+    disposables.push(neonLineMat);
+
+    const neonLightMat = new MeshBasicMaterial({
+      color: new Color(palette.light),
+      transparent: true,
+      opacity: 0.92,
+    });
+    disposables.push(neonLightMat);
+
+    const neonCount = Math.round(18 + profile.density * 24);
+    for (let index = 0; index < neonCount; index += 1) {
+      const lane = index % 5;
+      const x = -7.6 + ((index * 2.91) % 15.2);
+      const z = -0.28 + lane * 0.48 + Math.sin(index * 1.17) * 0.1;
+      const width = 0.22 + ((index * 13) % 9) * 0.032;
+      const depth = 0.28 + ((index * 17) % 7) * 0.038;
+      const height = 0.9 + ((index * 23) % 15) * 0.13;
+      const geometry = new BoxGeometry(width, height, depth);
+      const mesh = new Mesh(geometry, neonGlass);
+      mesh.position.set(x, height / 2 - 0.04, z);
+      group.add(mesh);
+      disposables.push(geometry);
+
+      const edgesGeom = new EdgesGeometry(geometry);
+      const edges = new LineSegments(edgesGeom, neonLineMat);
+      edges.position.copy(mesh.position);
+      group.add(edges);
+      disposables.push(edgesGeom);
+
+      const winW = 0.022;
+      const winH = 0.028;
+      const winGeom = new BoxGeometry(winW, winH, 0.008);
+      for (let row = 0; row < 3; row += 1) {
+        for (let col = 0; col < 4; col += 1) {
+          const winMesh = new Mesh(winGeom, neonLightMat);
+          winMesh.position.set(
+            x - width / 2 + 0.06 + col * (width * 0.22),
+            0.12 + row * (height * 0.28),
+            z + depth / 2 + 0.005,
+          );
+          group.add(winMesh);
+        }
+      }
+      disposables.push(winGeom);
+    }
+  }
+
   return group;
 }
 
@@ -476,6 +553,10 @@ function createLandmark(
   template: DreamTemplate,
   disposables: Array<{ dispose: () => void }>,
 ) {
+  if (template === "neon-city") {
+    return createNeonTower(palette, disposables);
+  }
+
   if (profile.landmark === "pagoda") {
     return createPagoda(palette, disposables);
   }
@@ -647,6 +728,49 @@ function createObservationDeck(palette: SkylinePalette, disposables: Array<{ dis
   addBox(group, [0, 0.12, 0], [2.4, 0.16, 0.7], deck, disposables);
   addBox(group, [0, 0.44, 0], [1.15, 0.5, 0.45], glass, disposables);
   addBox(group, [0, 0.08, 1.1], [0.34, 0.1, 1.8], deck, disposables);
+  return group;
+}
+
+function createNeonTower(
+  palette: SkylinePalette,
+  disposables: Array<{ dispose: () => void }>,
+) {
+  const group = new Group();
+  group.position.set(0, 0, 1.4);
+
+  const towerMat = new MeshStandardMaterial({
+    color: new Color(palette.stone),
+    roughness: 0.45,
+    metalness: 0.3,
+  });
+  disposables.push(towerMat);
+
+  const glowMat = new MeshStandardMaterial({
+    color: new Color(palette.light),
+    emissive: new Color(palette.light),
+    emissiveIntensity: 2.2,
+    roughness: 0.1,
+    metalness: 0.1,
+  });
+  disposables.push(glowMat);
+
+  addBox(group, [0, 0.4, 0], [0.55, 0.8, 0.55], towerMat, disposables);
+  addBox(group, [0, 1.0, 0], [0.38, 0.6, 0.38], towerMat, disposables);
+  addBox(group, [0, 1.48, 0], [0.24, 0.36, 0.24], towerMat, disposables);
+
+  const coneGeom = new ConeGeometry(0.18, 0.45, 8);
+  const cone = new Mesh(coneGeom, glowMat);
+  cone.position.set(0, 1.89, 0);
+  group.add(cone);
+  disposables.push(coneGeom);
+
+  const ringGeom = new ConeGeometry(0.28, 0.08, 8);
+  const ring = new Mesh(ringGeom, glowMat);
+  ring.position.set(0, 1.65, 0);
+  ring.rotation.y = Math.PI / 8;
+  group.add(ring);
+  disposables.push(ringGeom);
+
   return group;
 }
 
