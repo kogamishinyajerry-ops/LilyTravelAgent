@@ -1,12 +1,13 @@
 import type { DayPlan, Roadbook } from "@/lib/roadbook-types";
 
-export type DreamMood = "cloud" | "geometry" | "dusk";
-export type DreamTemplate = "monument" | "starlake" | "lantern" | "snowfield";
+export type DreamMood = "cloud" | "geometry" | "dusk" | "neon";
+export type DreamTemplate = "monument" | "starlake" | "lantern" | "snowfield" | "neon-city";
 
 export const dreamMoods: Array<{ id: DreamMood; label: string }> = [
   { id: "cloud", label: "云海" },
   { id: "geometry", label: "几何" },
   { id: "dusk", label: "暮色" },
+  { id: "neon", label: "霓虹" },
 ];
 
 export const dreamTemplates: Array<{
@@ -38,6 +39,12 @@ export const dreamTemplates: Array<{
     label: "雪原",
     note: "留白 / 清冷神殿",
     generationHint: "像清冷雪原里的极简旅行地图，每一天要有留白、远景和安静的仪式感。",
+  },
+  {
+    id: "neon-city",
+    label: "霓虹都市",
+    note: "夜晚都市 / 全息广告 / 赛博朋克",
+    generationHint: "像赛博朋克霓虹都市夜晚旅行地图，每一天要有发光招牌、湿漉漉的街面、悬浮交通工具和蓝紫主调。",
   },
 ];
 

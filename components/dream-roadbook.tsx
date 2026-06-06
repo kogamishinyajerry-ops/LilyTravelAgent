@@ -45,6 +45,7 @@ const dreamMoodNotes: Record<DreamMood, string> = {
   cloud: "柔光 / 轻盈 / 风",
   geometry: "等距 / 错视 / 秩序",
   dusk: "日落 / 低饱和 / 安静",
+  neon: "霓虹 / 蓝紫 / 雨夜",
 };
 
 const dreamBriefDefaults: TravelBrief = {

@@ -61,7 +61,9 @@ function buildVisualStyle(mood?: string, template?: string) {
       ? "warm dusk light, soft amber reflections"
       : mood === "geometry"
         ? "precise architectural composition, clean cinematic geometry"
-        : "soft morning light, airy clouds, calm premium palette";
+        : mood === "neon"
+          ? "electric neon glow, deep blue-violet sky, wet asphalt reflections"
+          : "soft morning light, airy clouds, calm premium palette";
   const templateText =
     template === "starlake"
       ? "lake reflections and luminous horizon"
@@ -69,7 +71,9 @@ function buildVisualStyle(mood?: string, template?: string) {
         ? "lantern-like warm city glow and evening atmosphere"
         : template === "snowfield"
           ? "minimal snowy negative space and crisp air"
-          : "monumental scenic composition with layered terrain";
+          : template === "neon-city"
+            ? "towering cyberpunk megacity with holographic billboards, neon signs, and rain-slick streets"
+            : "monumental scenic composition with layered terrain";
 
   return `${moodText}, ${templateText}, photorealistic cinematic render, high detail, elegant color grading`;
 }
