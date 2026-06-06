@@ -1,0 +1,14 @@
+.DS_Store
+.env*
+!.env.local.example
+.next/
+.lily-cache/
+node_modules/
+recordings/
+out/
+dist/
+coverage/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
