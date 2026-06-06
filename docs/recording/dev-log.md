@@ -124,3 +124,14 @@ Files shown: lib/mapbox-terrain-source.ts, lib/mapbox-terrain-source.test.ts, li
 Command/result: npm run lint && npm run test:run && npm run build
 Voiceover note: "Phase D 把 Phase C 留的接口填上真数据：Mapbox 的 terrain-rgb、Overpass 的建筑轮廓。/dream 多了一个开关，开了就是真大理，关了还是原来的梦境地图。这条切换路径现在完全靠测试和接口保证，录屏时再也不用担心换数据会把流程跑崩。"
 Usable for: real-scenic preview demo, "how to grow a visual product in isolated layers" mid-section, Vibe Coding refactor payoff clip, Phase D release-notes clip
+
+## Phase E: v0.4.0 — Real Render + Data Source Expansion + Recording
+
+Date: 2026-06-07
+Clip title: Phase E: v0.4.0 — Real Render + Data Source Expansion + Recording
+What changed: Rewrote components/real-skyline-scene.tsx to project real terrain-rgb heightmaps onto a PlaneGeometry and extrude real building footprints into meshes (the Phase C/D placeholder geometry is gone). Added three new sources that sit behind the same Phase C interfaces: lib/maptiler-terrain-source.ts (MapTiler terrain-rgb, reusing the decodeTerrainRgb helper), lib/gaode-buildings-source.ts (高德 3D, picking AMAP_KEY or GAODE_KEY), and lib/composite-buildings-source.ts (fan-out merger that dedupes by id and swallows per-source errors). Added lib/recording-helper.ts as a small state machine that auto-cycles the five /dream templates on a fixed interval, wired it into components/dream-roadbook.tsx as a '开始录制' toggle in the right-side panel, and added e2e/recording.spec.ts to drive it from Playwright. Unit tests for the new sources use mocked fetch / decoder; the manual / tokenless fallback path is preserved.
+Why this matters: v0.4.0 is the first LilyTravelAgent release that does not have to choose between 'real geography' and 'recording ready'. The three pillars (real render, more sources, recording) all sit behind interfaces that the existing renderer and tests already trust, so the procedural fallback still works for anyone without tokens. The recording toggle is the camera-ready demo surface for this release, and the e2e spec locks it down so future refactors cannot silently break the auto-cycle.
+Files shown: components/real-skyline-scene.tsx, lib/maptiler-terrain-source.ts, lib/maptiler-terrain-source.test.ts, lib/gaode-buildings-source.ts, lib/gaode-buildings-source.test.ts, lib/composite-buildings-source.ts, lib/composite-buildings-source.test.ts, lib/recording-helper.ts, lib/recording-helper.test.ts, components/dream-roadbook.tsx, e2e/recording.spec.ts, docs/design/real-scenic-preview-roadmap.md, docs/recording/dev-log.md
+Command/result: npm run lint && npm run test:run && npm run build && npm run e2e
+Voiceover note: 'v0.4.0 我把三件事一起做：把之前占位的 real-skyline-scene 换成真地形+真建筑，又加了 MapTiler / 高德 / 复合源三条新数据线，最后还接了录制模式——/dream 现在能一键自动巡演五个模板，录屏时点一下录制徽章就行。整条链路还是走 Phase C/D 那套接口，没设 token 的用户依然能看程序化回退。'
+Usable for: v0.4.0 release clip, 'three pillars in one release' highlight, real-render demo, auto-cycle recording demo, Vibe Coding 'interface-first growth' follow-up clip
