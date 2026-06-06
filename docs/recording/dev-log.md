@@ -102,3 +102,14 @@ Files shown: vitest.config.ts, playwright.config.ts, .github/workflows/ci.yml, .
 Command/result: npm run lint && npm run test:run && npm run build && npm run e2e
 Voiceover note: "Phase A 不是给用户看的新功能，是给后面所有功能兜底的质量门：测试、CI、错误边界、Zod 字段错误。跑通这一关，后面写 /dream 新模板才敢放手改。"
 Usable for: Vibe Coding process clip, AI engineering workflow clip, long-video mid-section showing "how I set up the guardrails before feature work"
+
+## Phase B + C: neon-city template and real terrain scaffolding
+
+Date: 2026-06-06
+Clip title: Phase B + C: neon-city template and real terrain scaffolding
+What changed: Added a fourth dream mood ("neon") and a fifth template ("neon-city") wired through dream-design-skill, buildVisualStyle, and the three.js DreamSkylineScene renderer, plus the Phase C real terrain scaffolding: tile-coords math, terrain and buildings Source interfaces with procedural/stub implementations, a RealSkylineScene component that degrades to a placeholder when no real data is available, and updated docs for both efforts.
+Why this matters: The neon-city template gives /dream a fifth visually distinct preset (cyberpunk megacity, holographic billboards, rain-slick streets) that reuses the same data pipeline, while the Phase C scaffolding isolates tile math and source data behind small interfaces so the next iteration can swap in real terrain/buildings without touching the renderer. Together they show how to grow a visual product in two parallel tracks — more templates in the existing branch, and a credible path to real geography in a new one.
+Files shown: lib/dream-design-skill.ts, lib/preview-asset.ts, components/dream-skyline-scene.tsx, components/dream-roadbook.tsx, lib/dream-design-skill.test.ts, docs/design/dream-design-skill.md, docs/design/scenic-render-skill.md, lib/tile-coords.ts, lib/tile-coords.test.ts, lib/terrain-source.ts, lib/terrain-source.test.ts, lib/buildings-source.ts, lib/buildings-source.test.ts, components/real-skyline-scene.tsx, docs/design/real-scenic-preview-roadmap.md
+Command/result: npm run lint && npm run test:run && npm run build
+Voiceover note: "Phase B 是在原有梦境地图上再加一格：霓虹都市，赛博朋克味。Phase C 是把'真地形'这件事拆成可替换的积木：坐标换算、地形源、建筑源、组件兜底。下次录屏就可以拿真大理来跑这条管线了。"
+Usable for: visual variety demo, Vibe Coding refactor clip, "growing a project in parallel tracks" mid-section, real terrain pipeline preview
