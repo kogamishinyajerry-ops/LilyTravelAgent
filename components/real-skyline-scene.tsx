@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   AmbientLight,
   BoxGeometry,
@@ -26,6 +26,10 @@ import type { BuildingsSource } from "@/lib/buildings-source";
 import type { TerrainSource } from "@/lib/terrain-source";
 import type { DreamMood, DreamRoadbookDesign, DreamTemplate } from "@/lib/dream-design-skill";
 import type { PreviewAsset, Roadbook } from "@/lib/roadbook-types";
+import {
+  formatHeightSourceStats,
+  summarizeBuildingHeightSources,
+} from "@/lib/recording-helper";
 
 type RealSkylineSceneProps = {
   roadbook: Roadbook;
@@ -39,6 +43,8 @@ type RealSkylineSceneProps = {
   onSelectDay: (day: number) => void;
   terrainSource?: TerrainSource;
   buildingsSource?: BuildingsSource;
+  /** When true, the height-source stats overlay is shown (used during recording). */
+  isRecording?: boolean;
 };
 
 /** Dali default bbox [west, south, east, north] used when roadbook has no coordinate metadata. */
@@ -277,6 +283,7 @@ export default function RealSkylineScene({
   onSelectDay,
   terrainSource,
   buildingsSource,
+  isRecording = false,
 }: RealSkylineSceneProps) {
   const terrain = terrainSource ?? createDefaultTerrainSource();
   const buildings = buildingsSource ?? createDefaultBuildingsSource();
@@ -290,6 +297,21 @@ export default function RealSkylineScene({
   const wrapRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [fps, setFps] = useState(0);
+
+  // Recompute the height-source stats whenever the building list
+  // changes. Cheap O(n) walk over a few thousand entries.
+  const heightSourceStats = useMemo(
+    () => summarizeBuildingHeightSources(buildingsData),
+    [buildingsData],
+  );
+  const heightSourceLabel = useMemo(
+    () => formatHeightSourceStats(heightSourceStats),
+    [heightSourceStats],
+  );
+
+  // Show the overlay during recording, plus in dev mode for easy
+  // inspection while developing / debugging the real-scene pipeline.
+  const showHeightSourceOverlay = isRecording || SHOW_FPS_OVERLAY;
 
   useEffect(() => {
     let cancelled = false;
@@ -456,6 +478,16 @@ export default function RealSkylineScene({
           <div className="real-skyline-fps" aria-hidden="true">
             <span>fps</span>
             <strong>{fps}</strong>
+          </div>
+        )}
+        {showHeightSourceOverlay && (
+          <div
+            className="real-skyline-height-overlay"
+            data-testid="real-skyline-height-overlay"
+            aria-label="building height source stats"
+          >
+            <span>heights</span>
+            <strong>{heightSourceLabel}</strong>
           </div>
         )}
       </div>
