@@ -13,6 +13,7 @@ import {
   normalizeScenicRenderDesign,
   type ScenicRenderSkillInput,
 } from "@/lib/scenic-render-skill";
+import { formatZodIssues } from "@/lib/roadbook-validation";
 import type { GenerateScenicRenderDesignResponse } from "@/lib/roadbook-types";
 
 export const runtime = "nodejs";
@@ -63,11 +64,14 @@ export async function POST(request: Request) {
 
   try {
     payload = scenicRenderRequestSchema.parse(await request.json());
-  } catch {
+  } catch (error) {
+    const fieldIssues =
+      error instanceof z.ZodError ? formatZodIssues(error) : undefined;
     const response: GenerateScenicRenderDesignResponse = {
       ok: false,
       code: "invalid_request",
       message: "Scenic Render Skill 请求格式不完整。",
+      ...(fieldIssues ? { fieldIssues } : {}),
     };
     return NextResponse.json(response, { status: 400 });
   }
@@ -196,6 +200,8 @@ export async function POST(request: Request) {
     };
     return NextResponse.json(result);
   } catch (error) {
+    const fieldIssues =
+      error instanceof z.ZodError ? formatZodIssues(error) : undefined;
     const result: GenerateScenicRenderDesignResponse = {
       ok: false,
       code: error instanceof SyntaxError ? "parse_error" : "minimax_error",
@@ -204,6 +210,7 @@ export async function POST(request: Request) {
           ? "MiniMax-M3 返回内容不是可解析 JSON，已使用本地建模蓝图兜底。"
           : "生成建模蓝图时出现网络或服务错误，已使用本地建模蓝图兜底。",
       details: error instanceof Error ? error.message : undefined,
+      ...(fieldIssues ? { fieldIssues } : {}),
       design: buildFallbackScenicRenderDesign(input, "M3 读图设计失败，当前使用本地建模蓝图兜底。", model),
     };
     return NextResponse.json(result, { status: 502 });

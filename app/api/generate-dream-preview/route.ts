@@ -4,7 +4,7 @@ import { extractJsonObject } from "@/lib/json-extract";
 import { applyMiniMaxThinking, buildMiniMaxChatEndpoint, readPositiveIntegerEnv, resolveMiniMaxModel } from "@/lib/minimax-config";
 import { normalizeRoadbook } from "@/lib/roadbook-normalize";
 import type { DayPlan, GenerateRoadbookResponse, ItineraryStop, Roadbook } from "@/lib/roadbook-types";
-import { roadbookSchema, travelBriefSchema } from "@/lib/roadbook-validation";
+import { formatZodIssues, roadbookSchema, travelBriefSchema } from "@/lib/roadbook-validation";
 
 export const runtime = "nodejs";
 
@@ -192,11 +192,14 @@ export async function POST(request: Request) {
 
   try {
     brief = travelBriefSchema.parse(await request.json());
-  } catch {
+  } catch (error) {
+    const fieldIssues =
+      error instanceof z.ZodError ? formatZodIssues(error) : undefined;
     const payload: GenerateRoadbookResponse = {
       ok: false,
       code: "invalid_request",
       message: "旅行需求格式不完整，请检查输入项。",
+      ...(fieldIssues ? { fieldIssues } : {}),
     };
     return NextResponse.json(payload, { status: 400 });
   }
@@ -274,6 +277,8 @@ export async function POST(request: Request) {
     };
     return NextResponse.json(payload);
   } catch (error) {
+    const fieldIssues =
+      error instanceof z.ZodError ? formatZodIssues(error) : undefined;
     const payload: GenerateRoadbookResponse = {
       ok: false,
       code: error instanceof SyntaxError ? "parse_error" : "minimax_error",
@@ -282,6 +287,7 @@ export async function POST(request: Request) {
           ? "MiniMax 预览返回内容不是可解析 JSON。请重试。"
           : "生成梦境预览时出现网络或服务错误。",
       details: error instanceof Error ? error.message : undefined,
+      ...(fieldIssues ? { fieldIssues } : {}),
     };
     return NextResponse.json(payload, { status: 502 });
   }

@@ -139,6 +139,12 @@ export type PreviewAssetHistoryItem = {
   isCover?: boolean;
 };
 
+export type ZodFieldIssue = {
+  path: string;
+  message: string;
+  code: string;
+};
+
 export type GenerateRoadbookResponse =
   | {
       ok: true;
@@ -152,6 +158,7 @@ export type GenerateRoadbookResponse =
       code: "missing_minimax_key" | "minimax_error" | "parse_error" | "invalid_request";
       message: string;
       details?: string;
+      fieldIssues?: ZodFieldIssue[];
     };
 
 export type GeocodePlacesResponse = {
@@ -183,6 +190,7 @@ export type GenerateScenicRenderDesignResponse =
       code: "missing_minimax_key" | "minimax_error" | "parse_error" | "invalid_request";
       message: string;
       details?: string;
+      fieldIssues?: ZodFieldIssue[];
       design?: ScenicRenderDesign;
     };
 

@@ -1,5 +1,26 @@
 import { z } from "zod";
 
+export type FormattedZodIssue = {
+  path: string;
+  message: string;
+  code: string;
+};
+
+/**
+ * Convert a ZodError into a stable, JSON-friendly array of field issues.
+ *
+ * The path is rendered as a dotted string (e.g. "days.0.stops.2.name") so the
+ * frontend can show field-level errors and tests can assert on the shape
+ * without dealing with Zod's `PropertyPath` array type.
+ */
+export function formatZodIssues(error: z.ZodError): FormattedZodIssue[] {
+  return error.issues.map((issue) => ({
+    path: issue.path.map((segment) => String(segment)).join("."),
+    message: issue.message,
+    code: issue.code,
+  }));
+}
+
 export const travelBriefSchema = z.object({
   destination: z.string().min(1).max(80),
   city: z.string().min(1).max(40),
