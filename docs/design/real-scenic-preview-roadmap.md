@@ -33,13 +33,37 @@
 4. 同步生成一张 AI cinematic preview 图，作为远景贴片。
 5. 后续再把程序化占位替换成真实地形和真实资产。
 
+## Phase C Scaffolding (2026-06-06)
+
+### What was added
+
+- `lib/terrain-source.ts`: interface + `NoopTerrainSource` + `createDefaultTerrainSource`
+- `lib/buildings-source.ts`: interface + `NoopBuildingsSource` + `createDefaultBuildingsSource`
+- `lib/tile-coords.ts`: WGS84 → slippy map tile math
+- `components/real-skyline-scene.tsx`: hybrid wrapper with fallback to `dream-skyline-scene`
+
+### What was NOT added (deferred to next phase)
+
+- Real Mapbox/MapTiler/terrain-rgb integration
+- Real OSM Overpass / 高德 3D integration
+- Actual 3D rendering of real buildings (currently just a placeholder)
+- Wiring into the dream-roadbook page (still uses dream-skyline-scene)
+
+### Why scaffold-first
+
+Lets the UI/API contract stabilize before investing in real data. Recording can demo the scaffolding now and plug in real data later without changing the wrapper.
+
+### How to plug in real data
+
+Replace `createDefaultTerrainSource` / `createDefaultBuildingsSource` with concrete implementations; pass them as props to `<RealSkylineScene>`.
+
 ## Next Realism Layers
 
-1. **真实地形**
-   - 接 DEM/terrain tiles。
-   - 按目的地经纬度裁切山体、水面、海岸线。
+1. **Real terrain** — see `lib/terrain-source.ts` for the interface. Implement a `MapboxTerrainSource` / `MapTilerTerrainSource` and pass it as the `terrainSource` prop.
 
-2. **真实建筑轮廓**
+2. **Real building footprints** — see `lib/buildings-source.ts` for the interface. Implement an `OSMBuildingsSource` / `GaodeBuildingsSource` and pass it as the `buildingsSource` prop.
+
+3. **真实建筑轮廓**
    - 城市路线接 OSM/地图建筑体块。
    - 中国目的地优先评估高德/国内地图 3D 能力。
 
