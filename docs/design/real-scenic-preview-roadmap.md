@@ -33,6 +33,29 @@
 4. 同步生成一张 AI cinematic preview 图，作为远景贴片。
 5. 后续再把程序化占位替换成真实地形和真实资产。
 
+## Phase D: real data sources (2026-06-07)
+
+Replaced the Phase C procedural stubs with real implementations:
+
+- `lib/mapbox-terrain-source.ts` — `MapboxTerrainSource` fetching Mapbox terrain-rgb tiles, with a small dependency-free PNG decoder and a tokenless fallback.
+- `lib/overpass-buildings-source.ts` — `OverpassBuildingsSource` querying the OpenStreetMap Overpass API for building footprints in a center+radius bbox.
+- Both sit behind the same `TerrainSource` / `BuildingsSource` interfaces introduced in Phase C; no renderer changes were needed.
+
+`/dream` gets a new "真实地形管线" opt-in toggle in the right-side panel. When the toggle is on and `MAPBOX_TOKEN` is set, `<RealSkylineScene>` mounts with the real sources; otherwise the existing procedural `DreamSkylineScene` continues to render unchanged.
+
+## Phase E: real render + new sources + recording (v0.4.0, 2026-06-07)
+
+Three pillars land together for v0.4.0:
+
+1. **Real rendering** — `components/real-skyline-scene.tsx` was rewritten to project real terrain-rgb heightmaps onto a `PlaneGeometry` and extrude real building footprints into meshes. The earlier placeholder geometry is gone.
+2. **Data source expansion** — three new sources join the Phase C/D set:
+   - `lib/maptiler-terrain-source.ts` — `MapTilerTerrainSource`, an alternative to Mapbox that reuses the same `decodeTerrainRgb` helper.
+   - `lib/gaode-buildings-source.ts` — `GaodeBuildingsSource`, the 高德 (Amap) 3D counterpart to Overpass, picking the env var from `AMAP_KEY` (and `GAODE_KEY` for back-compat).
+   - `lib/composite-buildings-source.ts` — `CompositeBuildingsSource`, a fan-out merger that dedupes by id and swallows per-source errors so one upstream failure does not blank the whole scene.
+3. **Recording** — `lib/recording-helper.ts` is a small state machine that auto-cycles the `/dream` templates on a fixed interval. `components/dream-roadbook.tsx` mounts it as a "开始录制" toggle in the right-side panel, and `e2e/recording.spec.ts` drives it from Playwright. The toggle is the camera-ready demo surface for this release.
+
+All three pillars are isolated behind the existing interfaces, so the Phase C / D contracts stay intact and the procedural fallback still works for anyone without tokens.
+
 ## Phase C Scaffolding (2026-06-06)
 
 ### What was added
