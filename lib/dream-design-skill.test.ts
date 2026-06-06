@@ -4,8 +4,8 @@ import type { Roadbook, DayPlan } from "./roadbook-types";
 
 describe("dream-design-skill", () => {
   describe("dreamMoods", () => {
-    it("should export 3 mood options", () => {
-      expect(dreamMoods).toHaveLength(3);
+    it("should export 4 mood options", () => {
+      expect(dreamMoods).toHaveLength(4);
     });
 
     it("should have valid mood ids", () => {
@@ -13,6 +13,7 @@ describe("dream-design-skill", () => {
       expect(moodIds).toContain("cloud");
       expect(moodIds).toContain("geometry");
       expect(moodIds).toContain("dusk");
+      expect(moodIds).toContain("neon");
     });
 
     it("should have Chinese labels", () => {
@@ -21,11 +22,24 @@ describe("dream-design-skill", () => {
         expect(mood.label.length).toBeGreaterThan(0);
       });
     });
+
+    describe("neon mood", () => {
+      it("includes neon in dreamMoods", () => {
+        const moodIds = dreamMoods.map((m) => m.id);
+        expect(moodIds).toContain("neon");
+      });
+
+      it("neon mood has a Chinese label (霓虹)", () => {
+        const neonMood = dreamMoods.find((m) => m.id === "neon");
+        expect(neonMood).toBeDefined();
+        expect(neonMood!.label).toBe("霓虹");
+      });
+    });
   });
 
   describe("dreamTemplates", () => {
-    it("should export 4 template options", () => {
-      expect(dreamTemplates).toHaveLength(4);
+    it("should export 5 template options", () => {
+      expect(dreamTemplates).toHaveLength(5);
     });
 
     it("should have valid template ids", () => {
@@ -34,6 +48,27 @@ describe("dream-design-skill", () => {
       expect(templateIds).toContain("starlake");
       expect(templateIds).toContain("lantern");
       expect(templateIds).toContain("snowfield");
+      expect(templateIds).toContain("neon-city");
+    });
+
+    describe("neon-city template", () => {
+      it("includes neon-city in dreamTemplates", () => {
+        const templateIds = dreamTemplates.map((t) => t.id);
+        expect(templateIds).toContain("neon-city");
+      });
+
+      it("neon-city has a Chinese label (霓虹都市)", () => {
+        const neonCity = dreamTemplates.find((t) => t.id === "neon-city");
+        expect(neonCity).toBeDefined();
+        expect(neonCity!.label).toBe("霓虹都市");
+      });
+
+      it("neon-city has a generationHint", () => {
+        const neonCity = dreamTemplates.find((t) => t.id === "neon-city");
+        expect(neonCity).toBeDefined();
+        expect(typeof neonCity!.generationHint).toBe("string");
+        expect(neonCity!.generationHint.length).toBeGreaterThan(0);
+      });
     });
 
     it("should have all required fields", () => {
