@@ -44,6 +44,9 @@ import { sampleRoadbook } from "@/lib/sample-roadbook";
 import { DreamMiniMap } from "@/components/dream-mini-map";
 import { DreamSkylineScene } from "@/components/dream-skyline-scene";
 import { ErrorStateBanner } from "@/components/error-ux";
+import { LandmarkBlueprintCard } from "@/components/landmark-blueprint-card";
+import { TemplateCardGrid } from "@/components/template-card-grid";
+import { showError, showInfo, showSuccess, showWarning } from "@/lib/toast";
 import type { M3Error, M3ErrorCategory } from "@/lib/m3-error-classifier";
 
 const RealSkylineScene = dynamic(
@@ -63,6 +66,13 @@ const dreamMoodNotes: Record<DreamMood, string> = {
   geometry: "等距 / 错视 / 秩序",
   dusk: "日落 / 低饱和 / 安静",
   neon: "霓虹 / 蓝紫 / 雨夜",
+};
+
+const dreamMoodSwatchColors: Record<DreamMood, { core: string; ring: string; soft: string }> = {
+  cloud: { core: "#7cb6e0", ring: "#a8d3ee", soft: "rgba(124, 182, 224, 0.32)" },
+  geometry: { core: "#9a6cd6", ring: "#c6a3ec", soft: "rgba(154, 108, 214, 0.32)" },
+  dusk: { core: "#e8894a", ring: "#f4b285", soft: "rgba(232, 137, 74, 0.32)" },
+  neon: { core: "#e6478c", ring: "#f48ab8", soft: "rgba(230, 71, 140, 0.32)" },
 };
 
 const dreamBriefDefaults: TravelBrief = {
@@ -114,6 +124,9 @@ export function DreamRoadbook() {
   const [isRecording, setIsRecording] = useState(false);
   const [recordingConfig, setRecordingConfig] = useState<RecordingConfig>(defaultRecordingConfig);
   const [recordingProgress, setRecordingProgress] = useState({ step: 0, total: getTotalCombinations(defaultRecordingConfig) });
+  type RecordingStatus = "idle" | "recording" | "stopped" | "finished";
+  const [recordingStatus, setRecordingStatus] = useState<RecordingStatus>("idle");
+  const [countdownMs, setCountdownMs] = useState(recordingConfig.stepIntervalMs ?? 4000);
   const [roadbook, setRoadbook] = useState<Roadbook>(sampleRoadbook);
   const [brief, setBrief] = useState<TravelBrief>(dreamBriefDefaults);
   const [interestsInput, setInterestsInput] = useState(dreamBriefDefaults.interests.join("、"));
@@ -248,6 +261,21 @@ export function DreamRoadbook() {
     recordingConfigRef.current = recordingConfig;
   }, [recordingConfig]);
 
+  // Track the last template/mood to trigger the brief transition flash.
+  const lastFlashTemplateRef = useRef<DreamTemplate>(template);
+  const lastFlashMoodRef = useRef<DreamMood>(mood);
+  const [transitionFlash, setTransitionFlash] = useState(0);
+
+  // Trigger a brief flash when the active template or mood changes.
+  useEffect(() => {
+    if (template === lastFlashTemplateRef.current && mood === lastFlashMoodRef.current) {
+      return;
+    }
+    lastFlashTemplateRef.current = template;
+    lastFlashMoodRef.current = mood;
+    setTransitionFlash((value) => value + 1);
+  }, [mood, template]);
+
   // Recording loop: when isRecording is on, poll the controller on a fixed
   // interval. In manual mode we only mount the controller for API symmetry
   // but it never auto-advances; the user drives prev/next via buttons.
@@ -273,6 +301,7 @@ export function DreamRoadbook() {
           setMood(initialMood);
         }
         setRecordingProgress(initialProgress);
+        setCountdownMs(recordingConfigRef.current.stepIntervalMs ?? 4000);
       }, 0);
     }
 
@@ -301,6 +330,8 @@ export function DreamRoadbook() {
       if (result.finished) {
         setRecordingProgress({ step: controller.state.totalSteps, total: controller.state.totalSteps });
         setIsRecording(false);
+        setRecordingStatus("finished");
+        showSuccess("录制完成", `共 ${controller.state.totalSteps} 组组合已巡演。`);
         return;
       }
 
@@ -308,10 +339,24 @@ export function DreamRoadbook() {
         step: controller.state.totalSteps,
         total: getTotalCombinations(recordingConfigRef.current),
       });
+      setCountdownMs(recordingConfigRef.current.stepIntervalMs ?? 4000);
     }, 500);
+
+    // Smooth countdown: 60Hz tick that decrements the visible timer.
+    let lastTickMs = performance.now();
+    const countdownHandle = window.setInterval(() => {
+      const now = performance.now();
+      const delta = now - lastTickMs;
+      lastTickMs = now;
+      setCountdownMs((current) => {
+        const next = current - delta;
+        return next < 0 ? 0 : next;
+      });
+    }, 100);
 
     return () => {
       window.clearInterval(handle);
+      window.clearInterval(countdownHandle);
     };
   }, [isRecording]);
 
@@ -335,7 +380,10 @@ export function DreamRoadbook() {
       manualMoodIndexRef.current = 0;
     }
     setRecordingProgress({ step: 0, total: getTotalCombinations(recordingConfig) });
+    setCountdownMs(recordingConfig.stepIntervalMs ?? 4000);
+    setRecordingStatus("recording");
     setIsRecording(true);
+    showInfo("录制开始", `将按 ${getTotalCombinations(recordingConfig)} 组组合自动巡演。`);
   }
 
   function stopRecording() {
@@ -343,6 +391,21 @@ export function DreamRoadbook() {
       return;
     }
     setIsRecording(false);
+    // Only show "已停止" if we actually had progress; otherwise the user
+    // toggled the button without a run in flight.
+    if (recordingProgress.step > 0) {
+      setRecordingStatus("stopped");
+    } else {
+      setRecordingStatus("idle");
+    }
+  }
+
+  function reRecord() {
+    // Reset everything for a fresh run.
+    setRecordingStatus("idle");
+    setRecordingProgress({ step: 0, total: getTotalCombinations(recordingConfig) });
+    setCountdownMs(recordingConfig.stepIntervalMs ?? 4000);
+    startRecording();
   }
 
   function stepManualTemplate(direction: 1 | -1) {
@@ -671,6 +734,7 @@ export function DreamRoadbook() {
         setLandmarkStage(result.preset.source === "m3-generated" ? "ready" : "fallback");
         setLandmarkError("");
         setLandmarkErrorInfo(null);
+        showSuccess("地标已生成", result.preset.name);
         return;
       }
 
@@ -679,6 +743,7 @@ export function DreamRoadbook() {
       setLandmarkStage("error");
       setLandmarkError(result.message || "AI 地标预设生成失败。");
       setLandmarkErrorInfo(buildLandmarkM3Error(result.code, response.status, result.message || "AI 地标预设生成失败。"));
+      showError("地标生成失败", result.message || "AI 地标预设生成失败。");
     } catch (caught) {
       setLandmarkPreset(null);
       setLandmarkModel("");
@@ -686,6 +751,7 @@ export function DreamRoadbook() {
       const message = caught instanceof Error ? caught.message : "AI 地标预设生成失败。";
       setLandmarkError(message);
       setLandmarkErrorInfo(buildLandmarkM3Error(undefined, 0, message));
+      showError("地标生成失败", message);
     } finally {
       setLandmarkLoading(false);
     }
@@ -786,14 +852,17 @@ export function DreamRoadbook() {
       setLastModel(fullResult.model);
       setError("");
       setStage("ready");
+      showSuccess("路书已生成", `${fullResult.roadbook.title} · ${fullResult.roadbook.durationLabel}`);
       void geocodeRoadbook(fullResult.roadbook, runId);
     } catch (caught) {
       if (runId !== runIdRef.current) {
         return;
       }
 
-      setError(caught instanceof Error ? caught.message : "完整细节补充失败，当前保留预览版。");
+      const message = caught instanceof Error ? caught.message : "完整细节补充失败，当前保留预览版。";
+      setError(message);
       setStage("preview");
+      showWarning("路书细节未补齐", message);
     }
   }
 
@@ -1031,12 +1100,15 @@ export function DreamRoadbook() {
       setActiveDay(previewResult.roadbook.days[0]?.day || 1);
       setLastModel(previewResult.model);
       setStage("refining");
+      showInfo("梦境路书预览已出", `${previewResult.roadbook.title} · 后台补完整细节中`);
       void generatePreviewAsset(previewResult.roadbook, runId);
       void geocodeRoadbook(previewResult.roadbook, runId);
       void completeRoadbook(requestBrief, runId);
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : "生成服务暂时不可用，请先检查 MiniMax Key 或网络。");
+      const message = caught instanceof Error ? caught.message : "生成服务暂时不可用，请先检查 MiniMax Key 或网络。";
+      setError(message);
       setStage("error");
+      showError("梦境路书生成失败", message);
     }
   }
 
@@ -1242,32 +1314,42 @@ export function DreamRoadbook() {
           </div>
 
           <div className="dream-template-switcher" aria-label="梦境模板">
-            {dreamTemplates.map((item) => (
-              <button
-                key={item.id}
-                type="button"
-                className={template === item.id ? "active" : ""}
-                onClick={() => setTemplate(item.id)}
-                aria-pressed={template === item.id}
-              >
-                <strong>{item.label}</strong>
-                <small>{item.note}</small>
-              </button>
-            ))}
+            <TemplateCardGrid
+              templates={dreamTemplates}
+              activeId={template}
+              onSelect={setTemplate}
+            />
           </div>
 
           <div className="dream-mood-switcher" aria-label="视觉气质">
-            {dreamMoods.map((item) => (
-              <button
-                key={item.id}
-                type="button"
-                className={mood === item.id ? "active" : ""}
-                onClick={() => setMood(item.id)}
-              >
-                <span>{item.label}</span>
-                <small>{dreamMoodNotes[item.id]}</small>
-              </button>
-            ))}
+            <div className="dream-mood-swatch-row" role="radiogroup" aria-label="视觉气质">
+              {dreamMoods.map((item) => {
+                const isActive = mood === item.id;
+                const swatch = dreamMoodSwatchColors[item.id];
+                return (
+                  <button
+                    key={item.id}
+                    type="button"
+                    role="radio"
+                    aria-checked={isActive}
+                    className={`dream-mood-swatch ${isActive ? "active" : ""}`}
+                    data-mood={item.id}
+                    onClick={() => setMood(item.id)}
+                    style={{
+                      // CSS custom properties consumed by .dream-mood-swatch styles
+                      // so the same component renders a different palette per mood.
+                      ["--mood-core" as string]: swatch.core,
+                      ["--mood-ring" as string]: swatch.ring,
+                      ["--mood-soft" as string]: swatch.soft,
+                    }}
+                    title={dreamMoodNotes[item.id]}
+                  >
+                    <span className="dream-mood-swatch-chip" aria-hidden="true" />
+                    <strong className="dream-mood-swatch-label">{item.label}</strong>
+                  </button>
+                );
+              })}
+            </div>
           </div>
           <div className="dream-rule">
             <Moon size={17} />
@@ -1279,8 +1361,80 @@ export function DreamRoadbook() {
           <div className="dream-recording-panel" aria-label="录屏控制器">
             <div className="dream-recording-head">
               <span>录屏控制器</span>
-              <strong>Recording: D{recordingProgress.step}/{recordingProgress.total}</strong>
+              {recordingStatus === "recording" ? (
+                <strong className="dream-recording-head-live">
+                  <Loader2 size={12} className="dream-spin" />
+                  正在录制 · {Math.ceil(countdownMs / 1000)}s
+                </strong>
+              ) : recordingStatus === "finished" ? (
+                <strong className="dream-recording-head-finished">录制完成</strong>
+              ) : recordingStatus === "stopped" ? (
+                <strong className="dream-recording-head-stopped">已停止</strong>
+              ) : (
+                <strong>待开始</strong>
+              )}
             </div>
+
+            <div
+              className={`dream-recording-progress ${recordingStatus === "recording" ? "live" : ""} ${transitionFlash > 0 ? "flash" : ""}`}
+              data-flash={transitionFlash}
+              aria-label="录屏进度"
+            >
+              <div className="dream-recording-progress-head">
+                <strong className="dream-recording-step-number">
+                  <em>D{recordingProgress.step}</em>
+                  <span>/{recordingProgress.total}</span>
+                </strong>
+                <div className="dream-recording-current-pair">
+                  <span className="dream-recording-template-chip" data-template={template}>
+                    {activeTemplate?.label || template}
+                  </span>
+                  <span className="dream-recording-pair-sep" aria-hidden="true">
+                    ·
+                  </span>
+                  <span className="dream-recording-mood-chip" data-mood={mood}>
+                    {dreamMoods.find((item) => item.id === mood)?.label || mood}
+                  </span>
+                </div>
+              </div>
+
+              <div className="dream-recording-dot-bar" role="progressbar" aria-valuemin={0} aria-valuemax={recordingProgress.total} aria-valuenow={recordingProgress.step}>
+                {Array.from({ length: recordingProgress.total }).map((_, index) => {
+                  const isFilled = index < recordingProgress.step;
+                  const isCurrent = index === recordingProgress.step && recordingStatus === "recording";
+                  return (
+                    <span
+                      key={index}
+                      className={`dream-recording-dot ${isFilled ? "filled" : ""} ${isCurrent ? "current" : ""}`}
+                      aria-hidden="true"
+                    />
+                  );
+                })}
+              </div>
+            </div>
+
+            {recordingStatus === "finished" ? (
+              <div className="dream-recording-toast finished" role="status" aria-live="polite">
+                <Sparkles size={14} />
+                <span>录制完成 · 共 {recordingProgress.total} 组模板 × 气质组合已全部过一遍。</span>
+                <button type="button" onClick={reRecord}>
+                  <RotateCcw size={12} />
+                  重新录制
+                </button>
+              </div>
+            ) : null}
+
+            {recordingStatus === "stopped" ? (
+              <div className="dream-recording-toast stopped" role="status" aria-live="polite">
+                <Pause size={14} />
+                <span>已停止 · 进度停留在 D{recordingProgress.step}/{recordingProgress.total}。</span>
+                <button type="button" onClick={reRecord}>
+                  <RotateCcw size={12} />
+                  重新录制
+                </button>
+              </div>
+            ) : null}
+
             <div className="dream-recording-modes" aria-label="录屏模式">
               {recordingModes.map((item) => (
                 <button
@@ -1560,21 +1714,14 @@ export function DreamRoadbook() {
               </p>
             )}
             {landmarkPreset ? (
-              <div className="dream-landmark-blueprint">
-                <strong>{landmarkPreset.name}</strong>
-                <small>
-                  来源 {formatLandmarkSource(landmarkPreset.source)}
-                  {landmarkModel ? ` · ${landmarkModel}` : ""}
-                </small>
-                {landmarkPreset.notes ? <p>{landmarkPreset.notes}</p> : null}
-                <div>
-                  <span>{landmarkPreset.primitives.length} 几何体</span>
-                  {landmarkPreset.lights && landmarkPreset.lights.length ? (
-                    <span>{landmarkPreset.lights.length} 灯光</span>
-                  ) : null}
-                  <span>模板 {landmarkPreset.template}</span>
-                </div>
-              </div>
+              <LandmarkBlueprintCard
+                preset={landmarkPreset}
+                currentSceneDay={activeDay}
+                model={landmarkModel || undefined}
+                onActivateScene={(day) => {
+                  setActiveDay(day);
+                }}
+              />
             ) : null}
           </div>
 
@@ -1966,3 +2113,5 @@ function buildLandmarkM3Error(
     ...(status > 0 ? { statusCode: status, httpStatus: status } : {}),
   };
 }
+
+// TemplateCardGrid moved to its own file: components/template-card-grid.tsx

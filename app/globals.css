@@ -1149,6 +1149,15 @@ textarea {
   --dream-accent-2: #6f7eac;
 }
 
+.dream-page.dream-mood-neon {
+  --dream-bg-a: #2b1f47;
+  --dream-bg-b: #4a3a78;
+  --dream-bg-c: #1d2a3a;
+  --dream-accent: #e6478c;
+  --dream-accent-2: #5b7fa3;
+  --dream-glow: rgba(230, 71, 140, 0.78);
+}
+
 .dream-page.dream-template-starlake {
   --dream-bg-a: #98d6d0;
   --dream-bg-b: #9db7df;
@@ -1560,39 +1569,108 @@ textarea {
 }
 
 .dream-template-switcher {
+  display: block;
+}
+
+.dream-template-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 8px;
 }
 
-.dream-template-switcher button {
+@media (max-width: 720px) {
+  .dream-template-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@keyframes dreamTemplateCardEnter {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.dream-template-card {
   display: grid;
+  grid-template-rows: auto auto auto;
+  align-content: start;
   gap: 4px;
-  min-height: 58px;
+  min-height: 96px;
   border: 1px solid rgba(255, 255, 255, 0.5);
-  border-radius: 8px;
-  padding: 9px;
+  border-radius: 10px;
+  padding: 10px 9px;
   color: var(--dream-ink);
   text-align: left;
   background: rgba(255, 255, 255, 0.28);
+  cursor: pointer;
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    background 0.18s ease,
+    border-color 0.18s ease;
+  animation: dreamTemplateCardEnter 0.36s ease both;
+  opacity: 0;
 }
 
-.dream-template-switcher button.active {
+.dream-template-card:hover,
+.dream-template-card:focus-visible {
+  transform: scale(1.03);
+  border-color: rgba(255, 255, 255, 0.78);
+  background: rgba(255, 255, 255, 0.46);
+  box-shadow: 0 12px 28px rgba(65, 75, 91, 0.16);
+  outline: none;
+}
+
+.dream-template-card:focus-visible {
+  box-shadow:
+    0 0 0 3px rgba(234, 167, 117, 0.45),
+    0 12px 28px rgba(65, 75, 91, 0.16);
+}
+
+.dream-template-card.active {
+  border-color: rgba(234, 167, 117, 0.85);
   color: #fff;
   background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.16), transparent),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.18), transparent),
     linear-gradient(135deg, var(--dream-accent), var(--dream-accent-2));
-  box-shadow: 0 14px 30px rgba(65, 75, 91, 0.16);
+  box-shadow:
+    inset 0 0 0 2px rgba(255, 255, 255, 0.55),
+    0 16px 32px rgba(65, 75, 91, 0.18);
 }
 
-.dream-template-switcher strong {
-  font-size: 0.9rem;
+.dream-template-card-symbol {
+  display: inline-grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  font-size: 1.18rem;
+  line-height: 1;
+  background: rgba(255, 255, 255, 0.42);
 }
 
-.dream-template-switcher small {
-  font-size: 0.72rem;
-  line-height: 1.25;
-  opacity: 0.8;
+.dream-template-card.active .dream-template-card-symbol {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.dream-template-card-label {
+  font-size: 0.92rem;
+  font-weight: 800;
+}
+
+.dream-template-card-hint {
+  font-size: 0.7rem;
+  line-height: 1.2;
+  opacity: 0.78;
+}
+
+.dream-template-card.active .dream-template-card-hint {
+  opacity: 0.92;
 }
 
 .dream-mood-switcher {
@@ -1600,32 +1678,94 @@ textarea {
   gap: 8px;
 }
 
-.dream-mood-switcher button,
-.dream-mini-route button {
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  border-radius: 8px;
-  color: var(--dream-ink);
-  background: rgba(255, 255, 255, 0.28);
-}
-
-.dream-mood-switcher button {
+.dream-mood-swatch-row {
   display: grid;
-  gap: 3px;
-  padding: 10px;
-  text-align: left;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
 }
 
-.dream-mood-switcher button.active {
+.dream-mood-swatch {
+  --mood-core: #7cb6e0;
+  --mood-ring: #a8d3ee;
+  --mood-soft: rgba(124, 182, 224, 0.32);
+  display: grid;
+  justify-items: center;
+  align-content: start;
+  gap: 6px;
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 10px 6px 9px;
+  color: var(--ink);
+  background: var(--paper);
+  cursor: pointer;
+  transition:
+    transform 0.18s ease,
+    border-color 0.18s ease,
+    background 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.dream-mood-swatch:hover,
+.dream-mood-swatch:focus-visible {
+  transform: translateY(-1px);
+  border-color: var(--mood-core);
+  background: #fff;
+  box-shadow: 0 0 0 3px var(--mood-soft);
+  outline: none;
+}
+
+.dream-mood-swatch:focus-visible {
+  box-shadow:
+    0 0 0 3px var(--mood-soft),
+    0 0 0 1px var(--mood-core);
+}
+
+.dream-mood-swatch.active {
+  border-color: var(--mood-core);
   color: #fff;
-  background: linear-gradient(135deg, var(--dream-accent), var(--dream-accent-2));
+  background: linear-gradient(135deg, var(--mood-core), var(--mood-ring));
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.4),
+    0 8px 18px var(--mood-soft);
 }
 
-.dream-mood-switcher span {
-  font-weight: 900;
+.dream-mood-swatch-chip {
+  display: block;
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  background: radial-gradient(circle at 32% 30%, var(--mood-ring), var(--mood-core) 64%);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.55),
+    0 0 0 3px var(--mood-soft);
+  transition: box-shadow 0.18s ease, transform 0.18s ease;
 }
 
-.dream-mood-switcher small {
-  opacity: 0.78;
+.dream-mood-swatch:hover .dream-mood-swatch-chip,
+.dream-mood-swatch:focus-visible .dream-mood-swatch-chip {
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.65),
+    0 0 0 5px var(--mood-soft),
+    0 0 14px var(--mood-soft);
+  transform: scale(1.04);
+}
+
+.dream-mood-swatch.active .dream-mood-swatch-chip {
+  background: radial-gradient(circle at 32% 30%, #fff, var(--mood-core) 60%);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.7),
+    0 0 0 4px rgba(255, 255, 255, 0.32);
+}
+
+.dream-mood-swatch-label {
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.dream-mood-swatch.active .dream-mood-swatch-label {
+  color: #fff;
 }
 
 .dream-rule,
@@ -2863,52 +3003,189 @@ textarea {
 
 .dream-landmark-blueprint {
   display: grid;
-  gap: 5px;
-  border-radius: 8px;
-  padding: 8px;
+  grid-template-columns: auto 1fr auto;
+  align-items: start;
+  gap: 10px;
+  border-radius: 10px;
+  padding: 10px;
   background: rgba(255, 255, 255, 0.32);
+  transition: background 160ms ease, transform 160ms ease;
 }
 
-.dream-landmark-blueprint strong {
+.dream-landmark-blueprint:hover {
+  background: rgba(255, 255, 255, 0.42);
+}
+
+.dream-landmark-blueprint[data-source-tone="m3"] {
+  background:
+    linear-gradient(135deg, rgba(124, 200, 168, 0.18), rgba(255, 255, 255, 0.32)),
+    rgba(255, 255, 255, 0.32);
+  border-left: 3px solid rgba(74, 158, 122, 0.85);
+}
+
+.dream-landmark-blueprint[data-source-tone="fallback"] {
+  background:
+    linear-gradient(135deg, rgba(234, 167, 117, 0.18), rgba(255, 255, 255, 0.32)),
+    rgba(255, 255, 255, 0.32);
+  border-left: 3px solid rgba(196, 122, 64, 0.78);
+}
+
+.dream-landmark-blueprint-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.65), rgba(255, 255, 255, 0.28));
+  box-shadow: inset 0 0 0 1px rgba(15, 24, 22, 0.06);
+  font-size: 1.18rem;
+  line-height: 1;
+}
+
+.dream-landmark-blueprint-symbol {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(0 1px 1px rgba(15, 24, 22, 0.15));
+}
+
+.dream-landmark-blueprint-body {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.dream-landmark-blueprint-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  max-width: 100%;
   overflow: hidden;
-  font-size: 0.82rem;
+  border: 0;
+  border-radius: 6px;
+  padding: 2px 6px;
+  margin: 0 0 0 -6px;
+  background: transparent;
+  color: rgba(39, 49, 59, 0.92);
+  font-size: 0.84rem;
+  font-weight: 900;
   text-overflow: ellipsis;
   white-space: nowrap;
+  cursor: pointer;
+  transition: background 140ms ease, color 140ms ease;
 }
 
-.dream-landmark-blueprint small {
+.dream-landmark-blueprint-name:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.55);
+  color: rgba(15, 24, 22, 0.96);
+}
+
+.dream-landmark-blueprint-name:disabled {
+  cursor: default;
+}
+
+.dream-landmark-blueprint-name strong {
   overflow: hidden;
-  color: var(--dream-soft);
-  font-size: 0.7rem;
-  font-weight: 850;
   text-overflow: ellipsis;
   white-space: nowrap;
+  font-size: 0.84rem;
 }
 
-.dream-landmark-blueprint p {
-  margin: 0;
-  color: rgba(39, 49, 59, 0.7);
-  font-size: 0.72rem;
-  line-height: 1.42;
-}
-
-.dream-landmark-blueprint div {
+.dream-landmark-blueprint-meta {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  align-items: center;
+  gap: 5px;
 }
 
-.dream-landmark-blueprint span {
+.dream-landmark-blueprint-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  border-radius: 999px;
+  padding: 2px 7px;
+  color: #fff;
+  font-size: 0.66rem;
+  font-weight: 900;
+  letter-spacing: 0.01em;
+  background: linear-gradient(135deg, #6b7a8a, #3a4a5a);
+}
+
+.dream-landmark-blueprint-badge-m3 {
+  background: linear-gradient(135deg, #4a9e7a, #2f7a5c);
+  box-shadow: 0 0 0 1px rgba(74, 158, 122, 0.18);
+}
+
+.dream-landmark-blueprint-badge-fallback {
+  background: linear-gradient(135deg, #c47a40, #a45a28);
+  box-shadow: 0 0 0 1px rgba(196, 122, 64, 0.18);
+}
+
+.dream-landmark-blueprint-badge-neutral {
+  background: linear-gradient(135deg, #6b7a8a, #3a4a5a);
+}
+
+.dream-landmark-blueprint-model,
+.dream-landmark-blueprint-scene {
+  color: var(--dream-soft);
+  font-size: 0.66rem;
+  font-weight: 850;
+  letter-spacing: 0.01em;
+}
+
+.dream-landmark-blueprint-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.dream-landmark-blueprint-chips span {
   max-width: 100%;
   overflow: hidden;
   border-radius: 999px;
-  padding: 4px 7px;
+  padding: 3px 7px;
   color: rgba(39, 49, 59, 0.72);
-  font-size: 0.68rem;
+  font-size: 0.66rem;
   font-weight: 900;
   text-overflow: ellipsis;
   white-space: nowrap;
   background: rgba(255, 255, 255, 0.52);
+}
+
+.dream-landmark-blueprint-notes {
+  margin: 0;
+  color: rgba(39, 49, 59, 0.7);
+  font-size: 0.72rem;
+  line-height: 1.42;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.dream-landmark-blueprint-thumb {
+  display: block;
+  width: 56px;
+  height: 56px;
+  border-radius: 8px;
+  background-size: cover;
+  background-position: center;
+  background-color: rgba(15, 24, 22, 0.08);
+  box-shadow: inset 0 0 0 1px rgba(15, 24, 22, 0.08);
+}
+
+@media (max-width: 480px) {
+  .dream-landmark-blueprint {
+    grid-template-columns: auto 1fr;
+  }
+
+  .dream-landmark-blueprint-thumb {
+    grid-column: 1 / -1;
+    width: 100%;
+    height: 96px;
+    margin-top: 4px;
+  }
 }
 
 .dream-asset-panel {
@@ -3753,6 +4030,392 @@ textarea {
   }
 }
 
+/* ---------- Recording panel (v0.x) ---------- */
+
+.dream-recording-panel {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  gap: 12px;
+  margin: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.46);
+  border-radius: 12px;
+  padding: 12px 14px;
+  color: var(--dream-ink);
+  background:
+    linear-gradient(160deg, rgba(255, 255, 255, 0.46), rgba(255, 255, 255, 0.16)),
+    rgba(255, 255, 255, 0.22);
+  box-shadow: 0 14px 40px rgba(63, 73, 95, 0.12);
+  backdrop-filter: blur(8px);
+  z-index: 5;
+}
+
+.dream-recording-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  color: var(--dream-soft);
+  font-size: 0.7rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.dream-recording-head strong {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--dream-ink);
+  font-size: 0.74rem;
+  letter-spacing: 0.04em;
+  text-transform: none;
+}
+
+.dream-recording-head-live {
+  color: var(--dream-accent) !important;
+  animation: dreamRecordingLivePulse 1.2s ease-in-out infinite;
+}
+
+.dream-recording-head-live .dream-spin {
+  color: var(--dream-accent);
+}
+
+.dream-recording-head-finished {
+  color: #2f7a5b !important;
+}
+
+.dream-recording-head-stopped {
+  color: #8f344d !important;
+}
+
+@keyframes dreamRecordingLivePulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.58;
+  }
+}
+
+.dream-recording-progress {
+  display: grid;
+  gap: 9px;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 10px;
+  padding: 10px 12px 12px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.2)),
+    rgba(255, 255, 255, 0.18);
+  transition:
+    box-shadow 0.36s ease,
+    transform 0.36s ease;
+}
+
+.dream-recording-progress.live {
+  border-color: rgba(234, 167, 117, 0.62);
+  box-shadow: 0 12px 30px rgba(234, 167, 117, 0.18);
+}
+
+.dream-recording-progress.flash {
+  animation: dreamRecordingFlash 0.55s ease-out;
+}
+
+@keyframes dreamRecordingFlash {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(234, 167, 117, 0.5);
+  }
+  35% {
+    transform: scale(1.012);
+    box-shadow: 0 0 0 8px rgba(234, 167, 117, 0.16);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(234, 167, 117, 0);
+  }
+}
+
+.dream-recording-progress-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.dream-recording-step-number {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 2px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  color: var(--dream-ink);
+}
+
+.dream-recording-step-number em {
+  font-style: normal;
+  font-size: 1.6rem;
+  color: var(--dream-ink);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.dream-recording-step-number span {
+  font-size: 0.92rem;
+  color: var(--dream-soft);
+}
+
+.dream-recording-current-pair {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  font-size: 0.84rem;
+  font-weight: 800;
+  color: var(--dream-ink);
+}
+
+.dream-recording-template-chip,
+.dream-recording-mood-chip {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 999px;
+  padding: 3px 9px;
+  background: rgba(255, 255, 255, 0.62);
+  color: var(--dream-ink);
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  transition:
+    transform 0.36s ease,
+    background 0.36s ease,
+    box-shadow 0.36s ease;
+}
+
+.dream-recording-mood-chip {
+  color: #fff;
+  border-color: transparent;
+  background: var(--mood-core, #5b7fa3);
+  box-shadow: 0 4px 12px rgba(91, 127, 163, 0.32);
+}
+
+.dream-recording-pair-sep {
+  color: var(--dream-soft);
+  font-size: 0.86rem;
+  font-weight: 900;
+}
+
+.dream-recording-progress.flash .dream-recording-template-chip,
+.dream-recording-progress.flash .dream-recording-mood-chip {
+  transform: scale(1.04);
+  background: rgba(255, 255, 255, 0.86);
+}
+
+.dream-recording-progress.flash .dream-recording-mood-chip {
+  background: var(--mood-core, #5b7fa3);
+}
+
+.dream-recording-dot-bar {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  flex-wrap: nowrap;
+  width: 100%;
+  padding-top: 2px;
+}
+
+.dream-recording-dot {
+  flex: 1 1 0;
+  min-width: 2px;
+  height: 8px;
+  border-radius: 2px;
+  background: rgba(108, 122, 143, 0.22);
+  transition: background 0.32s ease, transform 0.32s ease;
+}
+
+.dream-recording-dot.filled {
+  background: var(--dream-accent-2, #8bb7bd);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.42) inset;
+}
+
+.dream-recording-dot.current {
+  background: var(--dream-accent, #eaa775);
+  animation: dreamRecordingDotBlink 0.8s ease-in-out infinite;
+  transform: scaleY(1.4);
+}
+
+@keyframes dreamRecordingDotBlink {
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.dream-recording-toast {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 9px;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 10px;
+  padding: 9px 11px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  background: rgba(255, 255, 255, 0.6);
+  color: var(--dream-ink);
+  box-shadow: 0 10px 24px rgba(63, 73, 95, 0.1);
+  animation: dreamRecordingToastIn 0.32s ease-out;
+}
+
+@keyframes dreamRecordingToastIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dream-recording-toast.finished {
+  border-color: rgba(91, 154, 121, 0.6);
+  color: #2f7a5b;
+  background: rgba(228, 246, 238, 0.72);
+}
+
+.dream-recording-toast.stopped {
+  border-color: rgba(143, 52, 77, 0.4);
+  color: #8f344d;
+  background: rgba(255, 231, 235, 0.6);
+}
+
+.dream-recording-toast button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  padding: 4px 9px;
+  color: inherit;
+  font-size: 0.72rem;
+  font-weight: 900;
+  background: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  transition: background 0.18s ease, transform 0.18s ease;
+}
+
+.dream-recording-toast button:hover {
+  background: rgba(255, 255, 255, 0.92);
+  transform: translateY(-1px);
+}
+
+.dream-recording-modes {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.dream-recording-modes button {
+  display: grid;
+  gap: 2px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 8px;
+  padding: 6px 8px;
+  color: var(--dream-ink);
+  text-align: left;
+  font-size: 0.78rem;
+  background: rgba(255, 255, 255, 0.32);
+  cursor: pointer;
+  transition: background 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+}
+
+.dream-recording-modes button:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.5);
+  transform: translateY(-1px);
+}
+
+.dream-recording-modes button.active {
+  border-color: rgba(234, 167, 117, 0.62);
+  background: rgba(255, 255, 255, 0.6);
+  box-shadow: 0 6px 16px rgba(234, 167, 117, 0.18);
+}
+
+.dream-recording-modes button strong {
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.dream-recording-modes button small {
+  color: var(--dream-soft);
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+
+.dream-recording-modes button:disabled {
+  cursor: not-allowed;
+  opacity: 0.54;
+}
+
+.dream-recording-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.dream-recording-actions button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 8px;
+  padding: 5px 9px;
+  color: var(--dream-ink);
+  font-size: 0.78rem;
+  font-weight: 800;
+  background: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  transition: background 0.18s ease, transform 0.18s ease;
+}
+
+.dream-recording-actions button:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.78);
+  transform: translateY(-1px);
+}
+
+.dream-recording-actions button:disabled {
+  cursor: not-allowed;
+  opacity: 0.54;
+}
+
+.dream-recording-start {
+  color: #2f7a5b !important;
+  border-color: rgba(91, 154, 121, 0.4) !important;
+  background: rgba(228, 246, 238, 0.6) !important;
+}
+
+.dream-recording-stop {
+  color: #8f344d !important;
+  border-color: rgba(143, 52, 77, 0.4) !important;
+  background: rgba(255, 231, 235, 0.62) !important;
+}
+
+.dream-recording-hint {
+  margin: 0;
+  color: var(--dream-soft);
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
 /* ---------- Error UX (v0.8.0) ---------- */
 
 .error-state-banner {
@@ -3891,4 +4554,149 @@ textarea {
   font-size: 0.82rem;
   line-height: 1.5;
   color: var(--muted);
+}
+
+/* Global toast notification system. Stacked bottom-right, slide in from
+   the right edge. Variants share the same shell but change the accent color
+   to match the severity of the message. */
+.toast-container {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: min(360px, calc(100vw - 32px));
+  pointer-events: none;
+}
+
+.toast {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: flex-start;
+  gap: 10px;
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-left-width: 4px;
+  border-radius: 10px;
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 18px 38px rgba(29, 38, 34, 0.18);
+  pointer-events: auto;
+  animation: toastSlideIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
+  backdrop-filter: blur(8px);
+}
+
+.toast--success {
+  border-color: rgba(79, 143, 122, 0.5);
+  border-left-color: var(--sage);
+  color: #1f5b43;
+}
+
+.toast--error {
+  border-color: rgba(214, 107, 61, 0.5);
+  border-left-color: var(--rust);
+  color: #7a2f1f;
+  background: rgba(255, 247, 244, 0.96);
+}
+
+.toast--info {
+  border-color: rgba(91, 127, 163, 0.5);
+  border-left-color: var(--blue);
+  color: #2c4a6b;
+  background: rgba(247, 250, 253, 0.96);
+}
+
+.toast--warning {
+  border-color: rgba(201, 149, 61, 0.55);
+  border-left-color: var(--gold);
+  color: #7a4f1a;
+  background: rgba(255, 250, 240, 0.96);
+}
+
+.toast-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.65);
+  color: inherit;
+}
+
+.toast--success .toast-icon {
+  color: var(--sage);
+}
+
+.toast--error .toast-icon {
+  color: var(--rust);
+}
+
+.toast--info .toast-icon {
+  color: var(--blue);
+}
+
+.toast--warning .toast-icon {
+  color: var(--gold);
+}
+
+.toast-body {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.toast-title {
+  font-size: 0.92rem;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  color: inherit;
+}
+
+.toast-description {
+  margin: 0;
+  color: inherit;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  opacity: 0.85;
+  word-break: break-word;
+}
+
+.toast-dismiss {
+  display: inline-grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border: 0;
+  border-radius: 999px;
+  color: inherit;
+  background: transparent;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.15s ease, background 0.15s ease;
+}
+
+.toast-dismiss:hover,
+.toast-dismiss:focus-visible {
+  opacity: 1;
+  background: rgba(0, 0, 0, 0.06);
+  outline: none;
+}
+
+@keyframes toastSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toast {
+    animation: none;
+  }
 }
