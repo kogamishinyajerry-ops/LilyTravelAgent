@@ -2738,6 +2738,132 @@ textarea {
   background: rgba(255, 255, 255, 0.52);
 }
 
+.dream-landmark-skill {
+  display: grid;
+  gap: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 8px;
+  padding: 10px;
+  color: rgba(39, 49, 59, 0.82);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.46), rgba(255, 255, 255, 0.16)),
+    rgba(255, 255, 255, 0.22);
+}
+
+.dream-landmark-skill.ready {
+  border-color: rgba(120, 174, 185, 0.7);
+}
+
+.dream-landmark-skill.generating {
+  border-color: rgba(234, 167, 117, 0.74);
+}
+
+.dream-landmark-skill.error,
+.dream-landmark-skill.fallback {
+  border-color: rgba(139, 99, 88, 0.34);
+}
+
+.dream-landmark-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.dream-landmark-head span {
+  color: var(--dream-soft);
+  font-size: 0.74rem;
+  font-weight: 900;
+}
+
+.dream-landmark-head-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.dream-landmark-head strong,
+.dream-landmark-head button {
+  border-radius: 8px;
+  padding: 5px 8px;
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, #4f6062, var(--dream-accent));
+}
+
+.dream-landmark-head button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border: 0;
+  min-height: 25px;
+  background: linear-gradient(135deg, var(--dream-accent), var(--dream-accent-2));
+}
+
+.dream-landmark-head button:disabled {
+  cursor: not-allowed;
+  opacity: 0.48;
+}
+
+.dream-landmark-skill > p {
+  margin: 0;
+  color: rgba(39, 49, 59, 0.7);
+  font-size: 0.74rem;
+  line-height: 1.42;
+}
+
+.dream-landmark-blueprint {
+  display: grid;
+  gap: 5px;
+  border-radius: 8px;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.32);
+}
+
+.dream-landmark-blueprint strong {
+  overflow: hidden;
+  font-size: 0.82rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dream-landmark-blueprint small {
+  overflow: hidden;
+  color: var(--dream-soft);
+  font-size: 0.7rem;
+  font-weight: 850;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dream-landmark-blueprint p {
+  margin: 0;
+  color: rgba(39, 49, 59, 0.7);
+  font-size: 0.72rem;
+  line-height: 1.42;
+}
+
+.dream-landmark-blueprint div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.dream-landmark-blueprint span {
+  max-width: 100%;
+  overflow: hidden;
+  border-radius: 999px;
+  padding: 4px 7px;
+  color: rgba(39, 49, 59, 0.72);
+  font-size: 0.68rem;
+  font-weight: 900;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  background: rgba(255, 255, 255, 0.52);
+}
+
 .dream-asset-panel {
   display: grid;
   gap: 10px;
