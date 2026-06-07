@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { extractJsonObject } from "@/lib/json-extract";
-import { applyMiniMaxThinking, buildMiniMaxChatEndpoint, readPositiveIntegerEnv, resolveMiniMaxModel } from "@/lib/minimax-config";
+import { readPositiveIntegerEnv, resolveMiniMaxModel } from "@/lib/minimax-config";
+import { callM3Chat, type M3ChatRequest } from "@/lib/m3-client";
+import { classifyM3Error, getM3ErrorMessage } from "@/lib/m3-error-classifier";
 import { normalizeRoadbook } from "@/lib/roadbook-normalize";
 import type { DayPlan, GenerateRoadbookResponse, ItineraryStop, Roadbook } from "@/lib/roadbook-types";
 import { formatZodIssues, roadbookSchema, travelBriefSchema } from "@/lib/roadbook-validation";
@@ -187,6 +189,18 @@ function expandPreviewToRoadbook(
   return normalizeRoadbook(roadbookSchema.parse(roadbook));
 }
 
+/**
+ * Map an M3 error category onto the response `code` field expected by
+ * existing clients. Falls back to `minimax_error` for unrecognised
+ * categories.
+ */
+function codeFromM3Category(
+  category: ReturnType<typeof classifyM3Error>["category"],
+): "minimax_error" | "parse_error" {
+  if (category === "parse" || category === "schema") return "parse_error";
+  return "minimax_error";
+}
+
 export async function POST(request: Request) {
   let brief: ReturnType<typeof travelBriefSchema.parse>;
 
@@ -218,50 +232,51 @@ export async function POST(request: Request) {
     return NextResponse.json(payload, { status: 503 });
   }
 
-  try {
-    const requestBody = applyMiniMaxThinking({
-      model,
-      messages: [
-        {
-          role: "system" as const,
-          content: "你只返回可解析 JSON。不要输出 Markdown，不要输出额外解释。",
-        },
-        {
-          role: "user" as const,
-          content: buildPreviewPrompt(brief),
-        },
-      ],
-      temperature: 0.55,
-      top_p: 0.85,
-      max_completion_tokens: maxCompletionTokens,
-    });
-
-    const response = await fetch(buildMiniMaxChatEndpoint(), {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
+  const m3Request: M3ChatRequest = {
+    model,
+    messages: [
+      {
+        role: "system",
+        content: "你只返回可解析 JSON。不要输出 Markdown，不要输出额外解释。",
       },
-      body: JSON.stringify(requestBody),
-      signal: AbortSignal.timeout(timeoutMs),
+      {
+        role: "user",
+        content: buildPreviewPrompt(brief),
+      },
+    ],
+    temperature: 0.55,
+    top_p: 0.85,
+    max_completion_tokens: maxCompletionTokens,
+  };
+
+  try {
+    const result = await callM3Chat(m3Request, {
+      apiKey,
+      timeoutMs,
     });
 
-    const data = await response.json();
-    if (!response.ok) {
+    if (!result.ok) {
+      const classified = result.error;
+      const message = getM3ErrorMessage(classified);
       const payload: GenerateRoadbookResponse = {
         ok: false,
-        code: "minimax_error",
-        message: "MiniMax 预览生成失败，请检查密钥、模型名或账户额度。",
-        details: typeof data?.base_resp?.status_msg === "string" ? data.base_resp.status_msg : undefined,
+        code: codeFromM3Category(classified.category),
+        category: classified.category,
+        message,
+        ...(classified.details ? { details: classified.details } : {}),
       };
-      return NextResponse.json(payload, { status: response.status });
+      return NextResponse.json(payload, {
+        status: classified.statusCode ?? 502,
+      });
     }
 
-    const content = data?.choices?.[0]?.message?.content;
-    if (typeof content !== "string" || !content.trim()) {
+    const content = result.data.content;
+    if (!content) {
+      const classified = classifyM3Error(new Error("empty content from M3"));
       const payload: GenerateRoadbookResponse = {
         ok: false,
         code: "parse_error",
+        category: classified.category,
         message: "MiniMax 预览返回内容为空，无法生成路书。",
       };
       return NextResponse.json(payload, { status: 502 });
@@ -279,16 +294,23 @@ export async function POST(request: Request) {
   } catch (error) {
     const fieldIssues =
       error instanceof z.ZodError ? formatZodIssues(error) : undefined;
+    const classified = classifyM3Error(error);
+    const code: "parse_error" | "minimax_error" =
+      classified.category === "parse" || classified.category === "schema"
+        ? "parse_error"
+        : "minimax_error";
+    const message =
+      classified.category === "parse" || classified.category === "schema"
+        ? "MiniMax 预览返回内容不是可解析 JSON。请重试。"
+        : getM3ErrorMessage(classified);
     const payload: GenerateRoadbookResponse = {
       ok: false,
-      code: error instanceof SyntaxError ? "parse_error" : "minimax_error",
-      message:
-        error instanceof SyntaxError
-          ? "MiniMax 预览返回内容不是可解析 JSON。请重试。"
-          : "生成梦境预览时出现网络或服务错误。",
+      code,
+      category: classified.category,
+      message,
       details: error instanceof Error ? error.message : undefined,
       ...(fieldIssues ? { fieldIssues } : {}),
     };
-    return NextResponse.json(payload, { status: 502 });
+    return NextResponse.json(payload, { status: classified.statusCode ?? 502 });
   }
 }

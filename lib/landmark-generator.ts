@@ -9,16 +9,17 @@
 //   - `buildLandmarkPrompt(opts)`   — pure, returns the user message body
 //   - `generateLandmarkPreset(opts)` — calls MiniMax-M3, validates, returns
 //
-// The whole network path is funneled through an injected `fetch` so unit
-// tests can hand in a stubbed responder (`vi.stubGlobal('fetch', ...)`).
-// `globalThis.fetch` is the sensible production default for Node 18+ and
-// the browser.
+// The network path is delegated to the central M3 client
+// (`lib/m3-client.ts: callM3Chat`) so retries, timeouts, and error
+// classification stay in one place. The generator still owns prompt
+// construction, response validation, and stamping the preset with
+// `source: 'm3-generated'`. Tests pass an injected `fetchImpl` to
+// `callM3Chat`; `globalThis.fetch` is the sensible production default for
+// Node 18+ and the browser.
 
 import { extractJsonObject } from "./json-extract";
-import {
-  applyMiniMaxThinking,
-  buildMiniMaxChatEndpoint,
-} from "./minimax-config";
+import { callM3Chat, type M3ChatRequest } from "./m3-client";
+import { getM3ErrorMessage } from "./m3-error-classifier";
 import type { DayPlan, Roadbook, ScenicRenderDesign } from "./roadbook-types";
 import {
   landmarkPresetSchema,
@@ -38,6 +39,14 @@ export type GenerateLandmarkOptions = {
   apiKey?: string;
   /** Inject a `fetch` implementation (used by tests). */
   fetchImpl?: typeof fetch;
+  /** Per-attempt timeout in milliseconds (forwarded to the M3 client). */
+  timeoutMs?: number;
+  /** Total attempts (1 initial + retries). Forwarded to the M3 client. */
+  maxAttempts?: number;
+  /** Base backoff delay in milliseconds. Forwarded to the M3 client. */
+  baseDelayMs?: number;
+  /** Maximum backoff delay in milliseconds. Forwarded to the M3 client. */
+  maxDelayMs?: number;
 };
 
 /** Result of a successful `generateLandmarkPreset` call. */
@@ -164,58 +173,42 @@ export function buildLandmarkPrompt(opts: GenerateLandmarkOptions): string {
   ].join("\n");
 }
 
-/** Shape we expect from a MiniMax chat completion response. */
-type MiniMaxChatChoice = {
-  message?: {
-    content?: unknown;
-    reasoning_content?: string;
+/**
+ * Build the `M3ChatRequest` that `callM3Chat` will dispatch. Kept as a
+ * pure helper so tests can assert on the wire shape without standing up
+ * a fetch mock.
+ */
+function buildLandmarkRequest(opts: GenerateLandmarkOptions): M3ChatRequest {
+  const model = "MiniMax-M3";
+  return {
+    model,
+    messages: [
+      {
+        role: "system",
+        content:
+          "你只返回可解析 JSON。不要输出 Markdown 代码块，不要输出额外解释。",
+      },
+      {
+        role: "user",
+        content: buildLandmarkPrompt(opts),
+      },
+    ],
+    temperature: 0.4,
+    top_p: 0.9,
+    response_format: { type: "json_object" },
   };
-};
-
-type MiniMaxChatResponse = {
-  choices?: MiniMaxChatChoice[];
-  base_resp?: {
-    status_code?: number;
-    status_msg?: string;
-  };
-};
-
-/** Extract a string content field from a chat completion response. */
-function extractContent(data: MiniMaxChatResponse | null | undefined): string {
-  const content = data?.choices?.[0]?.message?.content;
-
-  if (typeof content === "string") {
-    return content.trim();
-  }
-
-  if (Array.isArray(content)) {
-    return content
-      .map((item) => {
-        if (typeof item === "string") return item;
-        if (item && typeof item === "object" && "text" in item && typeof item.text === "string") {
-          return item.text;
-        }
-        return "";
-      })
-      .join("\n")
-      .trim();
-  }
-
-  return "";
 }
-
-/** Default fetch implementation for production use. */
-const defaultFetch: typeof fetch = (...args) => globalThis.fetch(...args);
 
 /**
  * Call MiniMax-M3 with the landmark prompt and return a validated preset.
  *
  * Throws on:
  *   - missing API key (no `MINIMAX_API_KEY` env, no `apiKey` option)
- *   - non-2xx / non-zero `base_resp.status_code` from MiniMax
+ *   - any classified M3 failure surfaced as `ok: false` (network /
+ *     timeout / 4xx / 5xx / parse / schema) — the message is the
+ *     user-friendly Chinese string from `getM3ErrorMessage`
  *   - empty / non-JSON content from the model
  *   - JSON that does not validate against `landmarkPresetSchema`
- *   - any other network / runtime error
  */
 export async function generateLandmarkPreset(
   opts: GenerateLandmarkOptions,
@@ -227,86 +220,27 @@ export async function generateLandmarkPreset(
     );
   }
 
-  const fetchImpl: typeof fetch = opts.fetchImpl ?? defaultFetch;
   const model = "MiniMax-M3";
-  const prompt = buildLandmarkPrompt(opts);
+  const request = buildLandmarkRequest(opts);
 
-  const requestBody = applyMiniMaxThinking<{
-    model: string;
-    messages: Array<{ role: "system" | "user"; content: string }>;
-    temperature: number;
-    top_p: number;
-    response_format?: { type: string };
-    thinking?: { type: string };
-  }>({
-    model,
-    messages: [
-      {
-        role: "system",
-        content:
-          "你只返回可解析 JSON。不要输出 Markdown 代码块，不要输出额外解释。",
-      },
-      {
-        role: "user",
-        content: prompt,
-      },
-    ],
-    temperature: 0.4,
-    top_p: 0.9,
-    response_format: { type: "json_object" },
+  const result = await callM3Chat(request, {
+    apiKey,
+    // Tests inject fetchImpl through callM3Chat's options; default uses
+    // globalThis.fetch inside the client.
+    ...(opts.fetchImpl ? { fetchImpl: opts.fetchImpl } : {}),
+    ...(opts.timeoutMs !== undefined ? { timeoutMs: opts.timeoutMs } : {}),
+    ...(opts.maxAttempts !== undefined ? { maxAttempts: opts.maxAttempts } : {}),
+    ...(opts.baseDelayMs !== undefined ? { baseDelayMs: opts.baseDelayMs } : {}),
+    ...(opts.maxDelayMs !== undefined ? { maxDelayMs: opts.maxDelayMs } : {}),
   });
 
-  const endpoint = buildMiniMaxChatEndpoint();
-  const startedAt = Date.now();
-
-  let response: Response;
-  try {
-    response = await fetchImpl(endpoint, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(requestBody),
-    });
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
+  if (!result.ok) {
     throw new Error(
-      `generateLandmarkPreset: network request to MiniMax failed: ${message}`,
+      `generateLandmarkPreset: ${getM3ErrorMessage(result.error)}`,
     );
   }
 
-  let rawText: string;
-  try {
-    rawText = await response.text();
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    throw new Error(
-      `generateLandmarkPreset: failed to read MiniMax response body: ${message}`,
-    );
-  }
-
-  let data: MiniMaxChatResponse | null = null;
-  if (rawText) {
-    try {
-      data = JSON.parse(rawText) as MiniMaxChatResponse;
-    } catch {
-      // Some gateways return non-JSON on transient errors; keep going so we
-      // can still surface a useful message from `response.status`.
-      data = null;
-    }
-  }
-
-  const baseStatus = data?.base_resp?.status_code;
-  if (!response.ok || (typeof baseStatus === "number" && baseStatus !== 0)) {
-    const reason =
-      data?.base_resp?.status_msg || `HTTP ${response.status} ${response.statusText}`;
-    throw new Error(
-      `generateLandmarkPreset: MiniMax returned an error (${reason}).`,
-    );
-  }
-
-  const content = extractContent(data);
+  const content = result.data.content;
   if (!content) {
     throw new Error(
       "generateLandmarkPreset: MiniMax response did not include any content.",
@@ -343,8 +277,8 @@ export async function generateLandmarkPreset(
 
   return {
     preset: stamped,
-    model,
+    model: result.data.model || model,
     cached: false,
-    durationMs: Date.now() - startedAt,
+    durationMs: result.totalDurationMs,
   };
 }

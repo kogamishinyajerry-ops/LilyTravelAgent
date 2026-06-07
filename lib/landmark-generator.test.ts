@@ -34,6 +34,11 @@ function makeOptions(overrides: Partial<GenerateLandmarkOptions> = {}): Generate
     template: "lantern",
     mood: "dusk",
     apiKey: "test-key",
+    // Pin retry/backoff to one attempt with no delay so failure-path tests
+    // surface the underlying M3 error without waiting on the retry loop.
+    maxAttempts: 1,
+    baseDelayMs: 1,
+    maxDelayMs: 1,
     ...overrides,
   };
 }
@@ -56,6 +61,9 @@ let mockState: MockFetchState | null = null;
 function mockFetch(url: string, init: RequestInit = {}): Promise<Response> {
   if (!mockState) throw new Error("mockState not set");
   if (mockState.throwOnFetch) {
+    if (mockState.throwOnFetch === "typeerror") {
+      return Promise.reject(new TypeError("Failed to fetch"));
+    }
     return Promise.reject(new Error("network boom"));
   }
 
@@ -256,7 +264,7 @@ describe("generateLandmarkPreset", () => {
     };
 
     await expect(generateLandmarkPreset(makeOptions())).rejects.toThrow(
-      /MiniMax returned an error/,
+      /请求频率过高/,
     );
   });
 
@@ -272,19 +280,21 @@ describe("generateLandmarkPreset", () => {
     };
 
     await expect(generateLandmarkPreset(makeOptions())).rejects.toThrow(
-      /auth failed/,
+      /服务暂时不可用/,
     );
   });
 
-  it("throws on a network failure with the underlying error message", async () => {
+  it("throws on a network failure with the user-friendly message", async () => {
+    // Use a TypeError to trigger the network-error classification in
+    // classifyM3Error (the same shape as the built-in fetch failure).
     mockState = {
       requests: [],
       responseBody: {},
-      throwOnFetch: true,
+      throwOnFetch: "typeerror",
     };
 
     await expect(generateLandmarkPreset(makeOptions())).rejects.toThrow(
-      /network request to MiniMax failed/,
+      /网络连接失败/,
     );
   });
 
@@ -359,13 +369,21 @@ describe("generateLandmarkPreset", () => {
       },
     };
 
+    // The central M3 client surfaces the missing-content error through the
+    // generic classification path; the generator wraps it with its own
+    // "did not include any content" message after a successful call. With
+    // a null content the call fails inside the client, so we expect the
+    // unknown-error fallback message instead.
     await expect(generateLandmarkPreset(makeOptions())).rejects.toThrow(
-      /did not include any content/,
+      /未知错误/,
     );
   });
 
   it("throws when the response body cannot be read as text", async () => {
-    // Override the mock fetch to return a Response that throws on text()
+    // Override the mock fetch to return a Response that throws on text().
+    // The central M3 client catches that failure and surfaces it as a
+    // classified "unknown" error; the generator re-throws the user-friendly
+    // message.
     vi.stubGlobal("fetch", (() =>
       Promise.resolve({
         ok: true,
@@ -376,7 +394,7 @@ describe("generateLandmarkPreset", () => {
       } as Response)) as unknown as typeof fetch);
 
     await expect(generateLandmarkPreset(makeOptions())).rejects.toThrow(
-      /failed to read MiniMax response body/,
+      /未知错误/,
     );
   });
 
@@ -391,7 +409,7 @@ describe("generateLandmarkPreset", () => {
       } as Response)) as unknown as typeof fetch);
 
     await expect(generateLandmarkPreset(makeOptions())).rejects.toThrow(
-      /did not include any content/,
+      /未知错误/,
     );
   });
 
