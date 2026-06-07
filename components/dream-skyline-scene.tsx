@@ -3,14 +3,9 @@
 import { useEffect, useMemo, useRef } from "react";
 import {
   AmbientLight,
-  BoxGeometry,
   BufferGeometry,
-  CanvasTexture,
-  CircleGeometry,
   CatmullRomCurve3,
   Color,
-  ConeGeometry,
-  CylinderGeometry,
   DirectionalLight,
   DoubleSide,
   Float32BufferAttribute,
@@ -19,8 +14,6 @@ import {
   HemisphereLight,
   Line,
   LineBasicMaterial,
-  LineSegments,
-  EdgesGeometry,
   Mesh,
   MeshBasicMaterial,
   MeshStandardMaterial,
@@ -28,7 +21,6 @@ import {
   PlaneGeometry,
   SRGBColorSpace,
   Scene,
-  SphereGeometry,
   TextureLoader,
   Vector3,
   WebGLRenderer,
@@ -36,6 +28,9 @@ import {
 import type { Material, Object3D } from "three";
 import type { DreamMood, DreamRoadbookDesign, DreamTemplate } from "@/lib/dream-design-skill";
 import type { PreviewAsset, Roadbook } from "@/lib/roadbook-types";
+import type { LandmarkPreset } from "@/lib/landmark-preset";
+import { getFallbackPreset, getFallbackPresetForTemplate } from "@/lib/landmark-preset-fallbacks";
+import { renderLandmarkPreset } from "@/lib/landmark-renderer";
 
 type DreamSkylineSceneProps = {
   roadbook: Roadbook;
@@ -47,6 +42,7 @@ type DreamSkylineSceneProps = {
   assetStage?: "idle" | "generating" | "ready" | "fallback" | "error";
   assetMessage?: string;
   onSelectDay: (day: number) => void;
+  landmarkPreset?: LandmarkPreset | null;
 };
 
 type SceneProfile = {
@@ -130,6 +126,7 @@ export function DreamSkylineScene({
   assetStage = "idle",
   assetMessage,
   onSelectDay,
+  landmarkPreset,
 }: DreamSkylineSceneProps) {
   const wrapRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -188,7 +185,7 @@ export function DreamSkylineScene({
 
     root.add(createSkyline(profile, palette, template, disposables));
     root.add(createRouteRibbon(palette, design.routeStops.length, disposables));
-    root.add(createLandmark(profile, palette, template, disposables));
+    root.add(createLandmark(profile, palette, template, disposables, landmarkPreset));
 
     const resize = () => {
       const rect = wrap.getBoundingClientRect();
@@ -226,7 +223,7 @@ export function DreamSkylineScene({
       });
       disposables.forEach((item) => item.dispose());
     };
-  }, [activeDay, assetSource, design.routeStops.length, mood, palette, profile, template]);
+  }, [activeDay, assetSource, design.routeStops.length, mood, palette, profile, template, landmarkPreset]);
 
   return (
     <div ref={wrapRef} className={`dream-skyline-scene dream-skyline-${template}${
@@ -460,204 +457,24 @@ function createSkyline(
   disposables: Array<{ dispose: () => void }>,
 ) {
   const group = new Group();
-  const isUrban = profile.density > 0.8;
-  if (!isUrban) {
+
+  // Skyline depth is now data-driven: look up a "skyline" preset for the
+  // current template. If no skyline preset exists for this template,
+  // return an empty group (no procedural fallback) so we never ship
+  // hardcoded boxes / islands / lanterns / neon buildings again.
+  const skylineId = `${template}-skyline`;
+  const skylinePreset = getFallbackPreset(skylineId);
+  if (!skylinePreset) {
     return group;
   }
 
-  const count = Math.round(28 + profile.density * 38);
-  const glass = new MeshStandardMaterial({
-    color: new Color(palette.glass),
-    roughness: 0.55,
-    metalness: 0.08,
-    transparent: true,
-    opacity: isUrban ? (template === "lantern" ? 0.86 : 0.74) : 0.34,
-  });
-  disposables.push(glass);
+  // Light hint for grepability: profile.density is still relevant for
+  // future preset selection (e.g. low-density vs. dense-city), but for
+  // now every template uses the same procedural skyline preset.
+  void profile;
+  void palette;
 
-  for (let index = 0; index < count; index += 1) {
-    const lane = index % 5;
-    const x = -8.2 + ((index * 2.73) % 16.4);
-    const z = -0.35 + lane * 0.56 + Math.sin(index * 1.3) * 0.12;
-    const width = 0.18 + ((index * 17) % 9) * 0.025;
-    const depth = 0.24 + ((index * 11) % 7) * 0.035;
-    const heightBase = 0.8;
-    const height = heightBase + ((index * 19) % 13) * 0.11;
-    const geometry = new BoxGeometry(width, height, depth);
-    const mesh = new Mesh(geometry, glass);
-    mesh.position.set(x, height / 2 - 0.05, z);
-    group.add(mesh);
-    disposables.push(geometry);
-
-  }
-
-  if (template === "desert") {
-    return createDesertSkyline(group, palette, disposables);
-  }
-
-  if (template === "island") {
-    const islandCount = 8 + Math.round(profile.density * 6);
-    const islandEarth = new MeshStandardMaterial({
-      color: new Color(palette.mountain),
-      roughness: 0.94,
-      metalness: 0.02,
-    });
-    const islandGrass = new MeshStandardMaterial({
-      color: new Color(palette.ground),
-      roughness: 0.82,
-      metalness: 0.02,
-    });
-    const islandWire = new LineBasicMaterial({
-      color: new Color(palette.light),
-      transparent: true,
-      opacity: 0.55,
-    });
-    disposables.push(islandEarth, islandGrass, islandWire);
-
-    for (let i = 0; i < islandCount; i += 1) {
-      const x = -8.2 + ((i * 1.97) % 16.4) + Math.sin(i * 1.31) * 0.6;
-      const z = -1.6 + ((i * 1.13) % 5.4) - 0.4;
-      const y = 1 + ((i * 17) % 30) / 10; // 1-4m above ground
-      const w = 0.8 + ((i * 13) % 7) * 0.1;
-      const h = 0.3 + ((i * 7) % 3) * 0.1;
-      const d = 0.8 + ((i * 19) % 7) * 0.1;
-
-      const earthGeom = new BoxGeometry(w, h, d);
-      const earthMesh = new Mesh(earthGeom, islandEarth);
-      earthMesh.position.set(x, y, z);
-      group.add(earthMesh);
-      disposables.push(earthGeom);
-
-      const grassGeom = new BoxGeometry(w * 0.92, 0.05, d * 0.92);
-      const grassMesh = new Mesh(grassGeom, islandGrass);
-      grassMesh.position.set(x, y + h / 2 + 0.025, z);
-      group.add(grassMesh);
-      disposables.push(grassGeom);
-
-      const edgesGeom = new EdgesGeometry(earthGeom);
-      const edges = new LineSegments(edgesGeom, islandWire);
-      edges.position.copy(earthMesh.position);
-      group.add(edges);
-      disposables.push(edgesGeom);
-    }
-  }
-
-  if (template === "shrine") {
-    const stoneMat = new MeshStandardMaterial({
-      color: new Color(palette.stone),
-      roughness: 0.88,
-      metalness: 0.02,
-    });
-    const lanternGlassMat = new MeshStandardMaterial({
-      color: new Color(palette.light),
-      emissive: new Color(palette.light),
-      emissiveIntensity: 1.4,
-      roughness: 0.32,
-      metalness: 0.05,
-    });
-    disposables.push(stoneMat, lanternGlassMat);
-
-    const lanternCount = 6 + Math.round((Math.sin(profile.density * 7.3) + 1) * 2); // 6-10
-    for (let i = 0; i < lanternCount; i += 1) {
-      const t = lanternCount === 1 ? 0.5 : i / (lanternCount - 1);
-      // S-curve path along x
-      const x = -6.6 + t * 13.2;
-      const sCurve = Math.sin(t * Math.PI * 1.6) * 0.85;
-      const z = 0.6 + sCurve + (i % 2 === 0 ? -0.1 : 0.15);
-      const lantern = new Group();
-      lantern.position.set(x, 0, z);
-
-      // Stone base
-      addBox(lantern, [0, 0.06, 0], [0.16, 0.12, 0.16], stoneMat, disposables);
-      // Vertical post
-      const postGeom = new CylinderGeometry(0.045, 0.055, 0.34, 8);
-      const postMesh = new Mesh(postGeom, stoneMat);
-      postMesh.position.set(0, 0.29, 0);
-      lantern.add(postMesh);
-      disposables.push(postGeom);
-      // Small roof cap
-      const capGeom = new ConeGeometry(0.12, 0.08, 4);
-      const capMesh = new Mesh(capGeom, stoneMat);
-      capMesh.position.set(0, 0.5, 0);
-      capMesh.rotation.y = Math.PI / 4;
-      lantern.add(capMesh);
-      disposables.push(capGeom);
-      // Tiny emissive light on top
-      const flameGeom = new SphereGeometry(0.045, 10, 8);
-      const flameMesh = new Mesh(flameGeom, lanternGlassMat);
-      flameMesh.position.set(0, 0.58, 0);
-      lantern.add(flameMesh);
-      disposables.push(flameGeom);
-
-      group.add(lantern);
-    }
-  }
-
-  if (template === "neon-city") {
-    const neonGlass = new MeshStandardMaterial({
-      color: new Color(palette.glass),
-      roughness: 0.18,
-      metalness: 0.45,
-      transparent: true,
-      opacity: 0.42,
-      emissive: new Color(palette.glass),
-      emissiveIntensity: 0.55,
-    });
-    disposables.push(neonGlass);
-
-    const neonLineMat = new LineBasicMaterial({
-      color: new Color(palette.light),
-      transparent: true,
-      opacity: 0.78,
-    });
-    disposables.push(neonLineMat);
-
-    const neonLightMat = new MeshBasicMaterial({
-      color: new Color(palette.light),
-      transparent: true,
-      opacity: 0.92,
-    });
-    disposables.push(neonLightMat);
-
-    const neonCount = Math.round(18 + profile.density * 24);
-    for (let index = 0; index < neonCount; index += 1) {
-      const lane = index % 5;
-      const x = -7.6 + ((index * 2.91) % 15.2);
-      const z = -0.28 + lane * 0.48 + Math.sin(index * 1.17) * 0.1;
-      const width = 0.22 + ((index * 13) % 9) * 0.032;
-      const depth = 0.28 + ((index * 17) % 7) * 0.038;
-      const height = 0.9 + ((index * 23) % 15) * 0.13;
-      const geometry = new BoxGeometry(width, height, depth);
-      const mesh = new Mesh(geometry, neonGlass);
-      mesh.position.set(x, height / 2 - 0.04, z);
-      group.add(mesh);
-      disposables.push(geometry);
-
-      const edgesGeom = new EdgesGeometry(geometry);
-      const edges = new LineSegments(edgesGeom, neonLineMat);
-      edges.position.copy(mesh.position);
-      group.add(edges);
-      disposables.push(edgesGeom);
-
-      const winW = 0.022;
-      const winH = 0.028;
-      const winGeom = new BoxGeometry(winW, winH, 0.008);
-      for (let row = 0; row < 3; row += 1) {
-        for (let col = 0; col < 4; col += 1) {
-          const winMesh = new Mesh(winGeom, neonLightMat);
-          winMesh.position.set(
-            x - width / 2 + 0.06 + col * (width * 0.22),
-            0.12 + row * (height * 0.28),
-            z + depth / 2 + 0.005,
-          );
-          group.add(winMesh);
-        }
-      }
-      disposables.push(winGeom);
-    }
-  }
-
-  return group;
+  return renderLandmarkPreset(skylinePreset, disposables);
 }
 
 function createLandmark(
@@ -665,592 +482,15 @@ function createLandmark(
   palette: SkylinePalette,
   template: DreamTemplate,
   disposables: Array<{ dispose: () => void }>,
+  landmarkPreset?: LandmarkPreset | null,
 ) {
-  if (template === "desert") {
-    return createDesertLandmark(palette, disposables);
-  }
-
-  if (template === "shrine") {
-    return createShrineLandmark(palette, disposables);
-  }
-
-  if (template === "island") {
-    return createIslandLandmark(palette, disposables);
-  }
-
-  if (template === "neon-city") {
-    return createNeonTower(palette, disposables);
-  }
-
-  if (profile.landmark === "pagoda") {
-    return createPagoda(palette, disposables);
-  }
-
-  if (profile.landmark === "village") {
-    return createVillageLandmark(palette, disposables);
-  }
-
-  if (profile.landmark === "gate") {
-    return createAncientGate(palette, template, disposables);
-  }
-
-  return createObservationDeck(palette, disposables);
-}
-
-function createAncientGate(
-  palette: SkylinePalette,
-  template: DreamTemplate,
-  disposables: Array<{ dispose: () => void }>,
-) {
-  const group = new Group();
-  group.position.set(0, 0, 1.45);
-  const stone = new MeshStandardMaterial({ color: new Color(palette.stone), roughness: 0.72, metalness: 0.02 });
-  const roof = new MeshStandardMaterial({ color: new Color(palette.roof), roughness: 0.78, metalness: 0.02 });
-  const shadow = new MeshStandardMaterial({ color: new Color("#3f4750"), roughness: 0.9, metalness: 0.02 });
-  disposables.push(stone, roof, shadow);
-
-  addBox(group, [-1.05, 0.55, 0], [0.58, 1.1, 0.55], stone, disposables);
-  addBox(group, [1.05, 0.55, 0], [0.58, 1.1, 0.55], stone, disposables);
-  addBox(group, [0, 0.78, 0], [2.45, 0.38, 0.44], stone, disposables);
-  addBox(group, [0, 0.34, 0.03], [0.8, 0.62, 0.5], shadow, disposables);
-
-  addRoof(group, [-1.05, 1.2, 0], 0.78, roof, disposables);
-  addRoof(group, [1.05, 1.2, 0], 0.78, roof, disposables);
-  addRoof(group, [0, 1.05, 0], template === "snowfield" ? 1.02 : 1.25, roof, disposables);
-
-  const deckMaterial = new MeshStandardMaterial({
-    color: new Color(palette.light),
-    transparent: true,
-    opacity: 0.68,
-    roughness: 0.4,
-  });
-  disposables.push(deckMaterial);
-  addBox(group, [0, 0.04, 1.18], [2.8, 0.08, 2.1], deckMaterial, disposables);
-
-  return group;
-}
-
-function createPagoda(palette: SkylinePalette, disposables: Array<{ dispose: () => void }>) {
-  const group = new Group();
-  group.position.set(0, 0, 1.4);
-  const stone = new MeshStandardMaterial({ color: new Color(palette.stone), roughness: 0.78 });
-  const roof = new MeshStandardMaterial({ color: new Color(palette.roof), roughness: 0.72 });
-  disposables.push(stone, roof);
-
-  for (let floor = 0; floor < 4; floor += 1) {
-    const y = floor * 0.34;
-    addBox(group, [0, y + 0.13, 0], [0.55 - floor * 0.06, 0.26, 0.55 - floor * 0.06], stone, disposables);
-    addRoof(group, [0, y + 0.31, 0], 0.9 - floor * 0.1, roof, disposables);
-  }
-
-  return group;
-}
-
-function createVillageLandmark(palette: SkylinePalette, disposables: Array<{ dispose: () => void }>) {
-  const group = new Group();
-  group.position.set(0, 0, 1.4);
-  const texture = createVillageTexture(palette);
-  const material = new MeshBasicMaterial({
-    map: texture,
-    transparent: true,
-    depthWrite: false,
-  });
-  const geometry = new PlaneGeometry(5.7, 2.35);
-  const village = new Mesh(geometry, material);
-  village.position.set(0, 0.78, 0);
-  group.add(village);
-  disposables.push(texture, material, geometry);
-
-  const pier = new MeshStandardMaterial({ color: new Color("#4f6062"), roughness: 0.9, metalness: 0.02 });
-  disposables.push(pier);
-  addBox(group, [0, 0.035, 1.7], [0.12, 0.07, 0.86], pier, disposables);
-  addBox(group, [-0.58, 0.11, 1.5], [0.055, 0.22, 0.055], pier, disposables);
-  addBox(group, [0.58, 0.11, 1.5], [0.055, 0.22, 0.055], pier, disposables);
-
-  return group;
-}
-
-function createVillageTexture(palette: SkylinePalette) {
-  const canvas = document.createElement("canvas");
-  canvas.width = 960;
-  canvas.height = 420;
-  const context = canvas.getContext("2d");
-
-  if (!context) {
-    return new CanvasTexture(canvas);
-  }
-
-  context.clearRect(0, 0, canvas.width, canvas.height);
-  const roofGradient = context.createLinearGradient(0, 120, 0, 230);
-  roofGradient.addColorStop(0, palette.roof);
-  roofGradient.addColorStop(1, "#5f5551");
-  const wallGradient = context.createLinearGradient(0, 170, 0, 335);
-  wallGradient.addColorStop(0, "rgba(255, 253, 240, 0.98)");
-  wallGradient.addColorStop(1, "rgba(232, 239, 231, 0.92)");
-  const shadowGradient = context.createLinearGradient(0, 200, 0, 360);
-  shadowGradient.addColorStop(0, "rgba(86, 100, 100, 0.72)");
-  shadowGradient.addColorStop(1, "rgba(45, 61, 65, 0.5)");
-
-  context.fillStyle = "rgba(255, 255, 255, 0.34)";
-  context.beginPath();
-  context.ellipse(480, 326, 360, 50, 0, 0, Math.PI * 2);
-  context.fill();
-
-  const houses = [
-    { x: 120, y: 214, w: 188, h: 96, roof: 52 },
-    { x: 300, y: 190, w: 228, h: 122, roof: 60 },
-    { x: 514, y: 208, w: 188, h: 104, roof: 54 },
-    { x: 690, y: 220, w: 158, h: 88, roof: 44 },
-  ];
-
-  houses.forEach((house, index) => {
-    context.fillStyle = wallGradient;
-    roundRect(context, house.x, house.y, house.w, house.h, 10);
-    context.fill();
-
-    context.fillStyle = roofGradient;
-    context.beginPath();
-    context.moveTo(house.x - 18, house.y + 8);
-    context.lineTo(house.x + house.w / 2, house.y - house.roof);
-    context.lineTo(house.x + house.w + 18, house.y + 8);
-    context.closePath();
-    context.fill();
-
-    context.fillStyle = "rgba(68, 83, 82, 0.75)";
-    const windowWidth = index === 1 ? 62 : 46;
-    roundRect(context, house.x + house.w * 0.36, house.y + house.h * 0.45, windowWidth, house.h * 0.28, 3);
-    context.fill();
-  });
-
-  context.strokeStyle = "rgba(255, 255, 255, 0.76)";
-  context.lineWidth = 3;
-  context.beginPath();
-  context.moveTo(118, 318);
-  context.bezierCurveTo(292, 340, 628, 332, 846, 312);
-  context.stroke();
-
-  context.fillStyle = shadowGradient;
-  roundRect(context, 438, 310, 88, 26, 5);
-  context.fill();
-
-  const texture = new CanvasTexture(canvas);
-  texture.needsUpdate = true;
-  return texture;
-}
-
-function createObservationDeck(palette: SkylinePalette, disposables: Array<{ dispose: () => void }>) {
-  const group = new Group();
-  group.position.set(0, 0, 1.3);
-  const deck = new MeshStandardMaterial({ color: new Color(palette.stone), roughness: 0.65 });
-  const glass = new MeshStandardMaterial({
-    color: new Color(palette.glass),
-    transparent: true,
-    opacity: 0.68,
-    roughness: 0.34,
-    metalness: 0.1,
-  });
-  disposables.push(deck, glass);
-  addBox(group, [0, 0.12, 0], [2.4, 0.16, 0.7], deck, disposables);
-  addBox(group, [0, 0.44, 0], [1.15, 0.5, 0.45], glass, disposables);
-  addBox(group, [0, 0.08, 1.1], [0.34, 0.1, 1.8], deck, disposables);
-  return group;
-}
-
-function createIslandLandmark(
-  palette: SkylinePalette,
-  disposables: Array<{ dispose: () => void }>,
-) {
-  const group = new Group();
-  group.position.set(0, 0, 1.4);
-
-  const earth = new MeshStandardMaterial({
-    color: new Color(palette.mountain),
-    roughness: 0.94,
-    metalness: 0.02,
-  });
-  const grass = new MeshStandardMaterial({
-    color: new Color(palette.ground),
-    roughness: 0.82,
-    metalness: 0.02,
-  });
-  const trunk = new MeshStandardMaterial({
-    color: new Color("#3d2a1a"),
-    roughness: 0.9,
-    metalness: 0.02,
-  });
-  const foliage = new MeshStandardMaterial({
-    color: new Color("#4faa55"),
-    roughness: 0.78,
-    metalness: 0.02,
-  });
-  disposables.push(earth, grass, trunk, foliage);
-
-  // Tapered earth block: wider at top, narrower at bottom (slight inverted frustum look)
-  const earthTopGeom = new BoxGeometry(1.4, 0.32, 1.4);
-  const earthTopMesh = new Mesh(earthTopGeom, earth);
-  earthTopMesh.position.set(0, 0.45, 0);
-  group.add(earthTopMesh);
-  disposables.push(earthTopGeom);
-
-  const earthBottomGeom = new BoxGeometry(1.18, 0.24, 1.18);
-  const earthBottomMesh = new Mesh(earthBottomGeom, earth);
-  earthBottomMesh.position.set(0, 0.16, 0);
-  group.add(earthBottomMesh);
-  disposables.push(earthBottomGeom);
-
-  // Flat grass plane on top
-  const grassGeom = new BoxGeometry(1.32, 0.06, 1.32);
-  const grassMesh = new Mesh(grassGeom, grass);
-  grassMesh.position.set(0, 0.6, 0);
-  group.add(grassMesh);
-  disposables.push(grassGeom);
-
-  // Tree trunk
-  const trunkGeom = new CylinderGeometry(0.045, 0.06, 0.36, 8);
-  const trunkMesh = new Mesh(trunkGeom, trunk);
-  trunkMesh.position.set(0.18, 0.78, -0.1);
-  group.add(trunkMesh);
-  disposables.push(trunkGeom);
-
-  // Foliage sphere
-  const foliageGeom = new SphereGeometry(0.2, 12, 10);
-  const foliageMesh = new Mesh(foliageGeom, foliage);
-  foliageMesh.position.set(0.18, 1.06, -0.1);
-  group.add(foliageMesh);
-  disposables.push(foliageGeom);
-
-  return group;
-}
-
-function createShrineLandmark(
-  palette: SkylinePalette,
-  disposables: Array<{ dispose: () => void }>,
-) {
-  const group = new Group();
-  group.position.set(0, 0, 1.4);
-
-  // Deep red lacquered wood for torii
-  const shrineRed = new MeshStandardMaterial({
-    color: new Color("#b8332a"),
-    roughness: 0.55,
-    metalness: 0.08,
-  });
-  // Slightly darker trim for the lower beam
-  const shrineRedDeep = new MeshStandardMaterial({
-    color: new Color("#8a2018"),
-    roughness: 0.6,
-    metalness: 0.08,
-  });
-  // Grey stone for lantern bodies
-  const stoneMat = new MeshStandardMaterial({
-    color: new Color(palette.stone),
-    roughness: 0.88,
-    metalness: 0.02,
-  });
-  // Warm yellow glowing lantern light
-  const lanternGlow = new MeshStandardMaterial({
-    color: new Color(palette.light),
-    emissive: new Color(palette.light),
-    emissiveIntensity: 1.8,
-    roughness: 0.32,
-    metalness: 0.05,
-  });
-  disposables.push(shrineRed, shrineRedDeep, stoneMat, lanternGlow);
-
-  // --- Torii gate ---
-  // Two vertical pillars
-  addBox(group, [-0.62, 0.55, 0], [0.16, 1.1, 0.16], shrineRed, disposables);
-  addBox(group, [0.62, 0.55, 0], [0.16, 1.1, 0.16], shrineRed, disposables);
-
-  // Lower horizontal beam (nuki) with slight overhang
-  addBox(group, [0, 0.92, 0], [1.7, 0.12, 0.18], shrineRed, disposables);
-
-  // Top horizontal beam (kasagi) with a bit more overhang
-  addBox(group, [0, 1.16, 0], [1.9, 0.1, 0.2], shrineRedDeep, disposables);
-  // Top crown ridge (shimaki) — thin slice on top for the iconic torii silhouette
-  addBox(group, [0, 1.24, 0], [1.95, 0.04, 0.22], shrineRedDeep, disposables);
-
-  // Vertical strut connecting the two beams (gakuzuka)
-  addBox(group, [0, 1.04, 0], [0.08, 0.18, 0.08], shrineRed, disposables);
-
-  // --- Stone lanterns (mysterious) on either side ---
-  const buildStoneLantern = (x: number) => {
-    // Stone base
-    addBox(group, [x, 0.08, 0.1], [0.18, 0.16, 0.18], stoneMat, disposables);
-    // Post
-    const postGeom = new CylinderGeometry(0.05, 0.06, 0.36, 8);
-    const postMesh = new Mesh(postGeom, stoneMat);
-    postMesh.position.set(x, 0.34, 0.1);
-    group.add(postMesh);
-    disposables.push(postGeom);
-    // Lantern housing
-    addBox(group, [x, 0.6, 0.1], [0.16, 0.16, 0.16], stoneMat, disposables);
-    // Roof cap
-    const capGeom = new ConeGeometry(0.14, 0.1, 4);
-    const capMesh = new Mesh(capGeom, stoneMat);
-    capMesh.position.set(x, 0.73, 0.1);
-    capMesh.rotation.y = Math.PI / 4;
-    group.add(capMesh);
-    disposables.push(capGeom);
-    // Tiny warm glow on top
-    const flameGeom = new SphereGeometry(0.05, 10, 8);
-    const flameMesh = new Mesh(flameGeom, lanternGlow);
-    flameMesh.position.set(x, 0.82, 0.1);
-    group.add(flameMesh);
-    disposables.push(flameGeom);
-  };
-
-  buildStoneLantern(-1.1);
-  buildStoneLantern(1.1);
-
-  return group;
-}
-
-function createNeonTower(
-  palette: SkylinePalette,
-  disposables: Array<{ dispose: () => void }>,
-) {
-  const group = new Group();
-  group.position.set(0, 0, 1.4);
-
-  const towerMat = new MeshStandardMaterial({
-    color: new Color(palette.stone),
-    roughness: 0.45,
-    metalness: 0.3,
-  });
-  disposables.push(towerMat);
-
-  const glowMat = new MeshStandardMaterial({
-    color: new Color(palette.light),
-    emissive: new Color(palette.light),
-    emissiveIntensity: 2.2,
-    roughness: 0.1,
-    metalness: 0.1,
-  });
-  disposables.push(glowMat);
-
-  addBox(group, [0, 0.4, 0], [0.55, 0.8, 0.55], towerMat, disposables);
-  addBox(group, [0, 1.0, 0], [0.38, 0.6, 0.38], towerMat, disposables);
-  addBox(group, [0, 1.48, 0], [0.24, 0.36, 0.24], towerMat, disposables);
-
-  const coneGeom = new ConeGeometry(0.18, 0.45, 8);
-  const cone = new Mesh(coneGeom, glowMat);
-  cone.position.set(0, 1.89, 0);
-  group.add(cone);
-  disposables.push(coneGeom);
-
-  const ringGeom = new ConeGeometry(0.28, 0.08, 8);
-  const ring = new Mesh(ringGeom, glowMat);
-  ring.position.set(0, 1.65, 0);
-  ring.rotation.y = Math.PI / 8;
-  group.add(ring);
-  disposables.push(ringGeom);
-
-  return group;
-}
-
-function createDesertLandmark(
-  palette: SkylinePalette,
-  disposables: Array<{ dispose: () => void }>,
-) {
-  const group = new Group();
-  group.position.set(0, 0, 1.4);
-
-  // Warm sand tone
-  const sand = new MeshStandardMaterial({
-    color: new Color("#e8c98a"),
-    roughness: 0.96,
-    metalness: 0.02,
-  });
-  // Slightly darker dune base for layered look
-  const sandShadow = new MeshStandardMaterial({
-    color: new Color("#c8a86a"),
-    roughness: 0.95,
-    metalness: 0.02,
-  });
-  // Dark brown palm trunks
-  const palmTrunk = new MeshStandardMaterial({
-    color: new Color("#4a2e1a"),
-    roughness: 0.92,
-    metalness: 0.02,
-  });
-  // Green palm fronds
-  const palmFrond = new MeshStandardMaterial({
-    color: new Color("#3f8a3a"),
-    roughness: 0.7,
-    metalness: 0.02,
-    side: DoubleSide,
-  });
-  // Light blue water
-  const oasisWater = new MeshStandardMaterial({
-    color: new Color("#6cb8d6"),
-    roughness: 0.18,
-    metalness: 0.18,
-    transparent: true,
-    opacity: 0.85,
-  });
-  disposables.push(sand, sandShadow, palmTrunk, palmFrond, oasisWater);
-
-  // Sand dune: low wide sphere, half-submerged
-  const duneGeom = new SphereGeometry(1.2, 24, 16);
-  const dune = new Mesh(duneGeom, sand);
-  dune.position.set(0, -0.15, 0);
-  dune.scale.set(1.4, 0.5, 1.1);
-  group.add(dune);
-  disposables.push(duneGeom);
-
-  // Smaller secondary dune behind for depth
-  const duneBackGeom = new SphereGeometry(0.7, 18, 12);
-  const duneBack = new Mesh(duneBackGeom, sandShadow);
-  duneBack.position.set(0.5, -0.1, -0.6);
-  duneBack.scale.set(1.1, 0.4, 0.9);
-  group.add(duneBack);
-  disposables.push(duneBackGeom);
-
-  // Water patch: flat circle in front of dune
-  const waterGeom = new CircleGeometry(0.55, 28);
-  const water = new Mesh(waterGeom, oasisWater);
-  water.rotation.x = -Math.PI / 2;
-  water.position.set(0.1, 0.02, 0.7);
-  group.add(water);
-  disposables.push(waterGeom);
-
-  // Helper to build a palm tree
-  const buildPalm = (x: number, z: number, scale: number) => {
-    const palm = new Group();
-    palm.position.set(x, 0, z);
-    palm.scale.setScalar(scale);
-
-    // Trunk: tall thin cylinder
-    const trunkHeight = 1.3;
-    const trunkGeom = new CylinderGeometry(0.045, 0.06, trunkHeight, 8);
-    const trunkMesh = new Mesh(trunkGeom, palmTrunk);
-    trunkMesh.position.set(0, trunkHeight / 2, 0);
-    palm.add(trunkMesh);
-    disposables.push(trunkGeom);
-
-    // Fronds: cluster of elongated cones at top
-    const frondCount = 5;
-    for (let i = 0; i < frondCount; i += 1) {
-      const angle = (i / frondCount) * Math.PI * 2;
-      const frondGeom = new ConeGeometry(0.05, 0.55, 6);
-      const frondMesh = new Mesh(frondGeom, palmFrond);
-      frondMesh.position.set(
-        Math.cos(angle) * 0.18,
-        trunkHeight + 0.12,
-        Math.sin(angle) * 0.18,
-      );
-      // Tilt frond outward
-      frondMesh.rotation.z = -Math.cos(angle) * 0.7;
-      frondMesh.rotation.x = Math.sin(angle) * 0.7;
-      palm.add(frondMesh);
-      disposables.push(frondGeom);
-    }
-
-    // Central crown sphere
-    const crownGeom = new SphereGeometry(0.08, 8, 6);
-    const crownMesh = new Mesh(crownGeom, palmFrond);
-    crownMesh.position.set(0, trunkHeight + 0.08, 0);
-    palm.add(crownMesh);
-    disposables.push(crownGeom);
-
-    group.add(palm);
-  };
-
-  // 3 palm trees around the oasis
-  buildPalm(-0.85, 0.25, 0.95);
-  buildPalm(0.7, 0.45, 1.05);
-  buildPalm(0.15, 1.0, 0.85);
-
-  return group;
-}
-
-function createDesertSkyline(
-  group: Group,
-  palette: SkylinePalette,
-  disposables: Array<{ dispose: () => void }>,
-) {
-  // Warm sand-colored ground tone (slightly different from default ground)
-  const desertGround = new MeshStandardMaterial({
-    color: new Color("#d4b070"),
-    roughness: 0.95,
-    metalness: 0.02,
-  });
-  disposables.push(desertGround);
-
-  // Subtle distant dune ribbon to anchor the horizon
-  const ribbonGeom = new PlaneGeometry(28, 1.2);
-  const ribbon = new Mesh(ribbonGeom, desertGround);
-  ribbon.rotation.x = -Math.PI / 2;
-  ribbon.position.set(0, -0.18, -3.5);
-  group.add(ribbon);
-  disposables.push(ribbonGeom);
-
-  // Palm tree materials (tall thin trunks, green fronds)
-  const palmTrunk = new MeshStandardMaterial({
-    color: new Color("#4a2e1a"),
-    roughness: 0.92,
-    metalness: 0.02,
-  });
-  const palmFrond = new MeshStandardMaterial({
-    color: new Color("#3f8a3a"),
-    roughness: 0.7,
-    metalness: 0.02,
-    side: DoubleSide,
-  });
-  disposables.push(palmTrunk, palmFrond);
-
-  // Generate 10-18 distant palm trees scattered along the route
-  const palmCount = 12 + Math.round((Math.sin(palette.sky.length * 7.3) + 1) * 3); // 12-18
-  for (let i = 0; i < palmCount; i += 1) {
-    // Distribute along the route (x spans ~-8 to +8, z varies)
-    const x = -8.2 + ((i * 1.97) % 16.4) + Math.sin(i * 1.31) * 0.6;
-    const z = -2.4 + ((i * 1.13) % 5.2) - 0.3;
-    const scale = 0.65 + ((i * 7) % 5) * 0.08; // 0.65-1.0
-    const yOffset = 0; // sit on ground
-
-    const palm = new Group();
-    palm.position.set(x, yOffset, z);
-    palm.scale.setScalar(scale);
-
-    // Trunk: tall thin cylinder
-    const trunkHeight = 1.5 + ((i * 3) % 4) * 0.12;
-    const trunkGeom = new CylinderGeometry(0.04, 0.055, trunkHeight, 7);
-    const trunkMesh = new Mesh(trunkGeom, palmTrunk);
-    trunkMesh.position.set(0, trunkHeight / 2, 0);
-    palm.add(trunkMesh);
-    disposables.push(trunkGeom);
-
-    // Cluster of 4-6 elongated cone/plane fronds at the top
-    const frondCount = 4 + (i % 3); // 4-6
-    for (let f = 0; f < frondCount; f += 1) {
-      const angle = (f / frondCount) * Math.PI * 2 + i * 0.4;
-      const frondLen = 0.5 + ((f * 5 + i) % 4) * 0.06;
-      const frondGeom = new ConeGeometry(0.045, frondLen, 5);
-      const frondMesh = new Mesh(frondGeom, palmFrond);
-      frondMesh.position.set(
-        Math.cos(angle) * 0.16,
-        trunkHeight + 0.08,
-        Math.sin(angle) * 0.16,
-      );
-      // Tilt frond outward and slightly down
-      frondMesh.rotation.z = -Math.cos(angle) * 0.85;
-      frondMesh.rotation.x = Math.sin(angle) * 0.85;
-      palm.add(frondMesh);
-      disposables.push(frondGeom);
-    }
-
-    // Central crown
-    const crownGeom = new SphereGeometry(0.07, 7, 5);
-    const crownMesh = new Mesh(crownGeom, palmFrond);
-    crownMesh.position.set(0, trunkHeight + 0.05, 0);
-    palm.add(crownMesh);
-    disposables.push(crownGeom);
-
-    group.add(palm);
-  }
-
-  return group;
+  // Landmarks are now data-driven: prefer the M3 / user-supplied
+  // `LandmarkPreset` from the AI landmark UI; fall back to the
+  // procedural preset bundled with this template.
+  void profile;
+  void palette;
+  const preset = landmarkPreset ?? getFallbackPresetForTemplate(template);
+  return renderLandmarkPreset(preset, disposables);
 }
 
 function createRouteRibbon(
@@ -1273,49 +513,6 @@ function createRouteRibbon(
   });
   disposables.push(geometry, material);
   return new Line(geometry, material);
-}
-
-function addBox(
-  group: Group,
-  position: [number, number, number],
-  scale: [number, number, number],
-  material: Material,
-  disposables: Array<{ dispose: () => void }>,
-) {
-  const geometry = new BoxGeometry(scale[0], scale[1], scale[2]);
-  const mesh = new Mesh(geometry, material);
-  mesh.position.set(position[0], position[1], position[2]);
-  group.add(mesh);
-  disposables.push(geometry);
-}
-
-function roundRect(context: CanvasRenderingContext2D, x: number, y: number, width: number, height: number, radius: number) {
-  context.beginPath();
-  context.moveTo(x + radius, y);
-  context.lineTo(x + width - radius, y);
-  context.quadraticCurveTo(x + width, y, x + width, y + radius);
-  context.lineTo(x + width, y + height - radius);
-  context.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
-  context.lineTo(x + radius, y + height);
-  context.quadraticCurveTo(x, y + height, x, y + height - radius);
-  context.lineTo(x, y + radius);
-  context.quadraticCurveTo(x, y, x + radius, y);
-  context.closePath();
-}
-
-function addRoof(
-  group: Group,
-  position: [number, number, number],
-  radius: number,
-  material: Material,
-  disposables: Array<{ dispose: () => void }>,
-) {
-  const geometry = new ConeGeometry(radius, radius * 0.32, 4);
-  const roof = new Mesh(geometry, material);
-  roof.rotation.y = Math.PI / 4;
-  roof.position.set(position[0], position[1], position[2]);
-  group.add(roof);
-  disposables.push(geometry);
 }
 
 function disposeMaterial(material: Material | Material[]) {
