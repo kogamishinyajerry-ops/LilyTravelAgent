@@ -43,6 +43,8 @@ import type {
 import { sampleRoadbook } from "@/lib/sample-roadbook";
 import { DreamMiniMap } from "@/components/dream-mini-map";
 import { DreamSkylineScene } from "@/components/dream-skyline-scene";
+import { ErrorStateBanner } from "@/components/error-ux";
+import type { M3Error, M3ErrorCategory } from "@/lib/m3-error-classifier";
 
 const RealSkylineScene = dynamic(
   () => import("@/components/real-skyline-scene").then((mod) => mod.default),
@@ -145,6 +147,8 @@ export function DreamRoadbook() {
   const [landmarkPreset, setLandmarkPreset] = useState<LandmarkPreset | null>(null);
   const [landmarkLoading, setLandmarkLoading] = useState(false);
   const [landmarkError, setLandmarkError] = useState("");
+  const [landmarkErrorInfo, setLandmarkErrorInfo] = useState<M3Error | null>(null);
+  const [landmarkConfigTipOpen, setLandmarkConfigTipOpen] = useState(false);
   const [landmarkStage, setLandmarkStage] = useState<LandmarkSkillStage>("idle");
   const [landmarkModel, setLandmarkModel] = useState("");
   const [useRealTerrain, setUseRealTerrain] = useState(false);
@@ -630,6 +634,8 @@ export function DreamRoadbook() {
 
     setLandmarkLoading(true);
     setLandmarkError("");
+    setLandmarkErrorInfo(null);
+    setLandmarkConfigTipOpen(false);
     setLandmarkStage("generating");
 
     try {
@@ -664,6 +670,7 @@ export function DreamRoadbook() {
         setLandmarkModel(result.model || "");
         setLandmarkStage(result.preset.source === "m3-generated" ? "ready" : "fallback");
         setLandmarkError("");
+        setLandmarkErrorInfo(null);
         return;
       }
 
@@ -671,11 +678,14 @@ export function DreamRoadbook() {
       setLandmarkModel("");
       setLandmarkStage("error");
       setLandmarkError(result.message || "AI 地标预设生成失败。");
+      setLandmarkErrorInfo(buildLandmarkM3Error(result.code, response.status, result.message || "AI 地标预设生成失败。"));
     } catch (caught) {
       setLandmarkPreset(null);
       setLandmarkModel("");
       setLandmarkStage("error");
-      setLandmarkError(caught instanceof Error ? caught.message : "AI 地标预设生成失败。");
+      const message = caught instanceof Error ? caught.message : "AI 地标预设生成失败。";
+      setLandmarkError(message);
+      setLandmarkErrorInfo(buildLandmarkM3Error(undefined, 0, message));
     } finally {
       setLandmarkLoading(false);
     }
@@ -1003,6 +1013,8 @@ export function DreamRoadbook() {
     setLandmarkPreset(null);
     setLandmarkLoading(false);
     setLandmarkError("");
+    setLandmarkErrorInfo(null);
+    setLandmarkConfigTipOpen(false);
     setLandmarkStage("idle");
     setLandmarkModel("");
 
@@ -1057,6 +1069,8 @@ export function DreamRoadbook() {
     setLandmarkPreset(null);
     setLandmarkLoading(false);
     setLandmarkError("");
+    setLandmarkErrorInfo(null);
+    setLandmarkConfigTipOpen(false);
     setLandmarkStage("idle");
     setLandmarkModel("");
     setPoints([]);
@@ -1513,13 +1527,38 @@ export function DreamRoadbook() {
                 </button>
               </div>
             </div>
-            <p>
-              {landmarkError
-                ? landmarkError
-                : landmarkPreset
-                  ? `${landmarkPreset.name} · ${formatLandmarkSource(landmarkPreset.source)}${landmarkModel ? ` · ${landmarkModel}` : ""}`
-                  : "基于当前路书 + 模板 + 气质调用 M3 生成 LandmarkPreset；未配置 MiniMax Key 时会回退到程序化预设。"}
-            </p>
+            {landmarkErrorInfo && landmarkStage === "error" ? (
+              <div className="dream-landmark-error">
+                <ErrorStateBanner
+                  error={landmarkErrorInfo}
+                  retrying={landmarkLoading}
+                  onRetry={() => void generateLandmarkPresetFromAI()}
+                  onAction={(action) => {
+                    if (action === "configure-api-key") {
+                      setLandmarkConfigTipOpen((current) => !current);
+                    }
+                  }}
+                />
+                {landmarkErrorInfo.category === "auth" && landmarkConfigTipOpen ? (
+                  <div className="dream-landmark-config-tip" role="note">
+                    <strong>MINIMAX_API_KEY 配置说明</strong>
+                    <p>在项目根目录新建或编辑 <code>.env.local</code>，加入下面这行后重启 <code>npm run dev</code>：</p>
+                    <pre>
+                      <code>MINIMAX_API_KEY=your_minimax_key</code>
+                    </pre>
+                    <p>同时确保 <code>MINIMAX_BASE_URL</code> 指向 <code>https://api.minimaxi.com/v1</code>，否则调用会失败。</p>
+                  </div>
+                ) : null}
+              </div>
+            ) : (
+              <p>
+                {landmarkError
+                  ? landmarkError
+                  : landmarkPreset
+                    ? `${landmarkPreset.name} · ${formatLandmarkSource(landmarkPreset.source)}${landmarkModel ? ` · ${landmarkModel}` : ""}`
+                    : "基于当前路书 + 模板 + 气质调用 M3 生成 LandmarkPreset；未配置 MiniMax Key 时会回退到程序化预设。"}
+              </p>
+            )}
             {landmarkPreset ? (
               <div className="dream-landmark-blueprint">
                 <strong>{landmarkPreset.name}</strong>
@@ -1892,4 +1931,38 @@ function readBlobAsDataUrl(blob: Blob) {
     reader.onerror = () => reject(new Error("图片读取失败。"));
     reader.readAsDataURL(blob);
   });
+}
+
+/**
+ * Map a landmark route error code (or HTTP status) onto an M3 error
+ * category so the error UX banner can pick a coherent state. Falls back
+ * to `unknown` when the failure cannot be classified.
+ */
+function mapLandmarkErrorToCategory(
+  code: string | undefined,
+  status: number,
+): M3ErrorCategory {
+  if (code === "missing_minimax_key") return "auth";
+  if (code === "parse_error") return "parse";
+  if (code === "schema_error") return "schema";
+  if (code === "invalid_request") return "invalid_request";
+  if (status === 401 || status === 403) return "auth";
+  if (status === 429) return "rate_limit";
+  if (status === 400) return "invalid_request";
+  if (status === 408) return "timeout";
+  if (status >= 500) return "server";
+  return "unknown";
+}
+
+function buildLandmarkM3Error(
+  code: string | undefined,
+  status: number,
+  message: string,
+): M3Error {
+  return {
+    category: mapLandmarkErrorToCategory(code, status),
+    message,
+    retryable: status === 0 || status === 408 || status === 429 || status >= 500,
+    ...(status > 0 ? { statusCode: status, httpStatus: status } : {}),
+  };
 }

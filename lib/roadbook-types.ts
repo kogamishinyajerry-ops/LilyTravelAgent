@@ -145,6 +145,22 @@ export type ZodFieldIssue = {
   code: string;
 };
 
+/**
+ * M3 failure categories surfaced by `lib/m3-error-classifier`. Routes
+ * include this on the error response so the UI can group and label
+ * failures consistently. Optional because legacy clients may omit it.
+ */
+export type M3ErrorCategory =
+  | "network"
+  | "timeout"
+  | "rate_limit"
+  | "server"
+  | "auth"
+  | "invalid_request"
+  | "parse"
+  | "schema"
+  | "unknown";
+
 export type GenerateRoadbookResponse =
   | {
       ok: true;
@@ -157,6 +173,8 @@ export type GenerateRoadbookResponse =
       ok: false;
       code: "missing_minimax_key" | "minimax_error" | "parse_error" | "invalid_request";
       message: string;
+      /** Classified M3 failure category (see `M3ErrorCategory`). */
+      category?: M3ErrorCategory;
       details?: string;
       fieldIssues?: ZodFieldIssue[];
     };
@@ -176,6 +194,7 @@ export type GeneratePreviewAssetResponse =
       ok: false;
       code: "missing_minimax_key" | "minimax_error" | "invalid_request";
       message: string;
+      category?: M3ErrorCategory;
       details?: string;
       asset?: PreviewAsset;
     };
@@ -189,6 +208,7 @@ export type GenerateScenicRenderDesignResponse =
       ok: false;
       code: "missing_minimax_key" | "minimax_error" | "parse_error" | "invalid_request";
       message: string;
+      category?: M3ErrorCategory;
       details?: string;
       fieldIssues?: ZodFieldIssue[];
       design?: ScenicRenderDesign;

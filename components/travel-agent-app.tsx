@@ -34,6 +34,8 @@ import type {
 } from "@/lib/roadbook-types";
 import { clipBlueprints, creatorMilestones, vibeCodingLessons } from "@/lib/vibe-coding-content";
 import { RoadbookMap } from "@/components/roadbook-map";
+import { ErrorStateBanner } from "@/components/error-ux";
+import type { M3Error, M3ErrorCategory } from "@/lib/m3-error-classifier";
 
 const interestOptions = ["洱海骑行", "古城 Citywalk", "咖啡", "白族文化", "日落", "拍照点", "民宿", "市集"];
 
@@ -62,13 +64,50 @@ function statusText(stage: Stage) {
   return "等待输入";
 }
 
+/**
+ * Map a generate-roadbook response `code` field (or HTTP status) onto an
+ * M3 error category. Falls back to `unknown` when the failure cannot be
+ * classified.
+ */
+function mapRoadbookErrorToCategory(
+  code: string | undefined,
+  status: number,
+  message: string,
+): M3ErrorCategory {
+  if (code === "missing_minimax_key") return "auth";
+  if (code === "parse_error") return "parse";
+  if (code === "invalid_request") return "invalid_request";
+  if (status === 401 || status === 403) return "auth";
+  if (status === 429) return "rate_limit";
+  if (status === 400) return "invalid_request";
+  if (status === 408) return "timeout";
+  if (status >= 500) return "server";
+  if (/timeout/i.test(message)) return "timeout";
+  if (/network|fetch/i.test(message)) return "network";
+  return "unknown";
+}
+
+function buildRoadbookM3Error(
+  code: string | undefined,
+  status: number,
+  message: string,
+): M3Error {
+  const category = mapRoadbookErrorToCategory(code, status, message);
+  return {
+    category,
+    message,
+    retryable: category === "network" || category === "timeout" || category === "rate_limit" || category === "server" || status >= 500 || status === 429,
+    ...(status > 0 ? { statusCode: status, httpStatus: status } : {}),
+  };
+}
+
 export function TravelAgentApp() {
   const [brief, setBrief] = useState<TravelBrief>(defaultBrief);
   const [roadbook, setRoadbook] = useState<Roadbook | null>(null);
   const [points, setPoints] = useState<GeocodePoint[]>([]);
   const [mapConfigured, setMapConfigured] = useState<boolean | null>(null);
   const [stage, setStage] = useState<Stage>("idle");
-  const [error, setError] = useState<string>("");
+  const [errorInfo, setErrorInfo] = useState<M3Error | null>(null);
   const [model, setModel] = useState(process.env.NEXT_PUBLIC_AGENT_MODEL_LABEL || "MiniMax-M3");
 
   const okPointCount = useMemo(() => points.filter((point) => point.status === "ok").length, [points]);
@@ -107,10 +146,10 @@ export function TravelAgentApp() {
     setStage("ready");
   }
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+  async function handleSubmit(event?: FormEvent<HTMLFormElement>) {
+    event?.preventDefault();
     setStage("generating");
-    setError("");
+    setErrorInfo(null);
     setRoadbook(null);
     setPoints([]);
     setMapConfigured(null);
@@ -123,7 +162,9 @@ export function TravelAgentApp() {
       });
       const data = (await response.json()) as GenerateRoadbookResponse;
       if (!data.ok) {
-        setError(data.message);
+        setErrorInfo(
+          buildRoadbookM3Error(data.code, response.status, data.message),
+        );
         setStage("error");
         return;
       }
@@ -131,7 +172,8 @@ export function TravelAgentApp() {
       setModel(data.model);
       await geocodeRoadbook(data.roadbook);
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : "生成路书时出现未知错误。");
+      const message = caught instanceof Error ? caught.message : "生成路书时出现未知错误。";
+      setErrorInfo(buildRoadbookM3Error(undefined, 0, message));
       setStage("error");
     }
   }
@@ -242,13 +284,20 @@ export function TravelAgentApp() {
         </aside>
 
         <section className="preview-pane">
-          {error ? (
-            <div className="error-banner" role="alert">
-              <AlertTriangle size={18} />
-              <div>
-                <strong>暂时不能生成</strong>
-                <p>{error}</p>
-              </div>
+          {errorInfo && stage === "error" ? (
+            <div className="app-error" data-testid="roadbook-error-banner">
+              <ErrorStateBanner
+                error={errorInfo}
+                retrying={false}
+                onRetry={() => void handleSubmit()}
+                onAction={(action) => {
+                  if (action === "configure-api-key") {
+                    window.alert(
+                      "请在 .env.local 中填入 MINIMAX_API_KEY 后重启 npm run dev。",
+                    );
+                  }
+                }}
+              />
             </div>
           ) : null}
 
