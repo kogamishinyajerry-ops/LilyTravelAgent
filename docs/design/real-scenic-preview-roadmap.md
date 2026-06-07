@@ -56,6 +56,42 @@ Three pillars land together for v0.4.0:
 
 All three pillars are isolated behind the existing interfaces, so the Phase C / D contracts stay intact and the procedural fallback still works for anyone without tokens.
 
+## Phase I (v0.8.0) — M3 Stability + Error UX
+
+### What was added
+
+- `lib/m3-client.ts`: 中心化的 M3 客户端，统一封装请求、timeout、取消与重试入口。所有 M3 路由（dream / scenic / landmark / preview asset）都走它，避免每个调用点重复写重试逻辑。
+- `lib/m3-error-classifier.ts`: 把 M3 返回的异常归类到 8 种错误类型（见下表），为上层决定是否重试和展示什么文案提供依据。
+- `lib/retry-policy.ts`: 通用重试策略——3 次尝试 + 指数退避 + 抖动（exponential backoff with jitter），并按错误类型白名单决定是否触发重试。
+- `lib/error-ux.ts`: 错误文案与 UI 状态映射层，负责把分类后的错误转成中文提示、重试按钮可见性与兜底提示。
+- `components/error-ux.tsx`: 错误展示组件，渲染中文错误消息、"重试"按钮和"已回退到程序化资产"等兜底提示，挂在 `/dream` 与生成按钮的失败态上。
+
+### Retry policy
+
+- **最多 3 次尝试**（含首次）。
+- **指数退避**：基础间隔 × 2^(attempt-1)，例如 1s / 2s / 4s。
+- **抖动（jitter）**：在每次退避基础上叠加随机偏移，避免多个并发请求在同一时刻重试打挂上游。
+- **按错误类型白名单触发**：仅对可恢复错误自动重试，不可恢复错误直接走 UX 兜底。
+
+### Error categories
+
+| Category | Retryable | 典型场景 |
+| --- | --- | --- |
+| `network` | 是 | DNS 失败、连接被重置、socket 异常 |
+| `timeout` | 是 | 上游超过 `MINIMAX_TIMEOUT_MS` 未响应 |
+| `rate_limit` | 是 | 上游返回 429 / 限流提示 |
+| `server` | 是 | 上游 5xx、网关错误 |
+| `auth` | 否 | API key 缺失或无效（401/403） |
+| `parse` | 否 | 返回体不是合法 JSON |
+| `schema` | 否 | JSON 不符合预期 schema（被 schema 校验拦下） |
+| `invalid_request` | 否 | 请求参数缺失或非法（400） |
+
+### UX behavior
+
+- 失败时优先展示**中文错误消息**（`lib/error-ux.ts` 提供），避免英文堆栈暴露给最终用户。
+- 文案旁边提供**"重试"按钮**，点击后重新走 `m3-client`，对可恢复错误会按策略自动重试，对不可恢复错误也允许用户手动再试一次。
+- 凡是触发回退（例如回到程序化 Three.js 场景或程序化 landmark preset），界面都会出现**"已回退"提示**，让录屏与真实使用场景都能直观看到降级路径。
+
 ## Phase H (v0.7.0) — AI Landmark Preset
 
 ### What was added

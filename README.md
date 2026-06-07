@@ -70,6 +70,10 @@ After a cover is locked, the share-preview card presents the final cover, roadbo
 
 v0.7.0 adds AI-generated landmark presets via M3. Click "生成 AI 地标" in `/dream` to use M3-generated geometry, or rely on the 8 procedural fallbacks. The schema lives in `lib/landmark-preset.ts`; results are cached under `.lily-cache/landmark-presets/`.
 
+### Error handling (v0.8.0)
+
+v0.8.0 wraps every M3 call in `lib/m3-client.ts` with a centralized retry policy (3 attempts, exponential backoff with jitter) and `lib/m3-error-classifier.ts` to categorize failures into 8 types — `network` / `timeout` / `rate_limit` / `server` are retryable; `auth` / `parse` / `schema` / `invalid_request` are not. `components/error-ux.tsx` surfaces a Chinese error message, a "重试" button, and a fallback notice whenever a request degrades to procedural assets, so the failure path is visible during recording as well as in real use.
+
 ## Real Terrain Pipeline (Optional)
 
 To enable real terrain in /dream: set MAPBOX_TOKEN in .env.local. The "真实地形管线" toggle in the /dream right panel will then fetch Mapbox terrain-rgb + OSM Overpass buildings. Without a token, the toggle falls back to the procedural Three.js scene.
