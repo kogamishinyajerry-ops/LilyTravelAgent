@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, Compass, Eye, Layers3, Loader2, MapPinned, Moon, Pause, PlayCircle, RotateCcw, Sparkles, Trash2 } from "lucide-react";
+import { ArrowLeft, Building2, Compass, Eye, Hourglass, Layers3, Loader2, MapPinned, Moon, Pause, PlayCircle, RotateCcw, Sparkles, Trash2 } from "lucide-react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { type ChangeEvent, type FormEvent, useEffect, useMemo, useRef, useState } from "react";
@@ -1164,7 +1164,11 @@ export function DreamRoadbook() {
   }
 
   return (
-    <main className={`dream-page dream-mood-${mood} dream-template-${template}`}>
+    <main
+      id="main-content"
+      tabIndex={-1}
+      className={`dream-page dream-mood-${mood} dream-template-${template}`}
+    >
       <section className="dream-shell">
         <header className="dream-topbar">
           <div>
@@ -1204,7 +1208,7 @@ export function DreamRoadbook() {
                   onClick={playTrackDemo}
                   aria-label="播放录屏讲解模式"
                 >
-                  <PlayCircle size={13} />
+                  <PlayCircle size={13} aria-hidden="true" />
                   {isTrackDemo ? "重播" : "讲解"}
                 </button>
               </div>
@@ -1342,7 +1346,8 @@ export function DreamRoadbook() {
                       ["--mood-ring" as string]: swatch.ring,
                       ["--mood-soft" as string]: swatch.soft,
                     }}
-                    title={dreamMoodNotes[item.id]}
+                    aria-label={`${item.label} 气质 · ${dreamMoodNotes[item.id]}${isActive ? "（已选）" : ""}`}
+                    title={`${item.label} · ${dreamMoodNotes[item.id]}`}
                   >
                     <span className="dream-mood-swatch-chip" aria-hidden="true" />
                     <strong className="dream-mood-swatch-label">{item.label}</strong>
@@ -1378,6 +1383,9 @@ export function DreamRoadbook() {
             <div
               className={`dream-recording-progress ${recordingStatus === "recording" ? "live" : ""} ${transitionFlash > 0 ? "flash" : ""}`}
               data-flash={transitionFlash}
+              role="status"
+              aria-live="polite"
+              aria-atomic="true"
               aria-label="录屏进度"
             >
               <div className="dream-recording-progress-head">
@@ -1415,10 +1423,10 @@ export function DreamRoadbook() {
 
             {recordingStatus === "finished" ? (
               <div className="dream-recording-toast finished" role="status" aria-live="polite">
-                <Sparkles size={14} />
+                <Sparkles size={14} aria-hidden="true" />
                 <span>录制完成 · 共 {recordingProgress.total} 组模板 × 气质组合已全部过一遍。</span>
-                <button type="button" onClick={reRecord}>
-                  <RotateCcw size={12} />
+                <button type="button" onClick={reRecord} aria-label="重新录屏">
+                  <RotateCcw size={12} aria-hidden="true" />
                   重新录制
                 </button>
               </div>
@@ -1426,10 +1434,10 @@ export function DreamRoadbook() {
 
             {recordingStatus === "stopped" ? (
               <div className="dream-recording-toast stopped" role="status" aria-live="polite">
-                <Pause size={14} />
+                <Pause size={14} aria-hidden="true" />
                 <span>已停止 · 进度停留在 D{recordingProgress.step}/{recordingProgress.total}。</span>
-                <button type="button" onClick={reRecord}>
-                  <RotateCcw size={12} />
+                <button type="button" onClick={reRecord} aria-label="重新录屏">
+                  <RotateCcw size={12} aria-hidden="true" />
                   重新录制
                 </button>
               </div>
@@ -1457,28 +1465,54 @@ export function DreamRoadbook() {
             </div>
             <div className="dream-recording-actions">
               {isRecording ? (
-                <button type="button" className="dream-recording-stop" onClick={stopRecording}>
-                  <Pause size={14} />
+                <button
+                  type="button"
+                  className="dream-recording-stop"
+                  onClick={stopRecording}
+                  aria-label="停止录屏"
+                >
+                  <Pause size={14} aria-hidden="true" />
                   Stop
                 </button>
               ) : (
-                <button type="button" className="dream-recording-start" onClick={startRecording}>
-                  <PlayCircle size={14} />
+                <button
+                  type="button"
+                  className="dream-recording-start"
+                  onClick={startRecording}
+                  aria-label={`开始录屏，共 ${getTotalCombinations(recordingConfig)} 组组合`}
+                >
+                  <PlayCircle size={14} aria-hidden="true" />
                   录制
                 </button>
               )}
               {recordingConfig.mode === "manual" && !isRecording ? (
                 <>
-                  <button type="button" onClick={() => stepManualTemplate(-1)}>
+                  <button
+                    type="button"
+                    onClick={() => stepManualTemplate(-1)}
+                    aria-label="上一个模板"
+                  >
                     模板 ◀
                   </button>
-                  <button type="button" onClick={() => stepManualTemplate(1)}>
+                  <button
+                    type="button"
+                    onClick={() => stepManualTemplate(1)}
+                    aria-label="下一个模板"
+                  >
                     模板 ▶
                   </button>
-                  <button type="button" onClick={() => stepManualMood(-1)}>
+                  <button
+                    type="button"
+                    onClick={() => stepManualMood(-1)}
+                    aria-label="上一组气质"
+                  >
                     气质 ◀
                   </button>
-                  <button type="button" onClick={() => stepManualMood(1)}>
+                  <button
+                    type="button"
+                    onClick={() => stepManualMood(1)}
+                    aria-label="下一组气质"
+                  >
                     气质 ▶
                   </button>
                 </>
@@ -1572,7 +1606,12 @@ export function DreamRoadbook() {
 
           <div className="dream-mini-route">
             {activePlan.stops.slice(0, 3).map((stop) => (
-              <button key={stop.id} type="button">
+              <button
+                key={stop.id}
+                type="button"
+                aria-label={`${stop.time} · ${stop.name}`}
+                title={`${stop.time} · ${stop.name}`}
+              >
                 <small>{stop.time}</small>
                 <strong>{stop.name.replace("大理", "")}</strong>
               </button>
@@ -1673,15 +1712,59 @@ export function DreamRoadbook() {
                 <button
                   type="button"
                   onClick={generateLandmarkPresetFromAI}
-                  disabled={landmarkLoading || isBusy}
+                  disabled={landmarkLoading || isBusy || roadbook.days.length === 0}
                   aria-label="生成 AI 地标"
+                  title={roadbook.days.length === 0 ? "需要先生成路书" : undefined}
                 >
                   {landmarkLoading ? <Loader2 size={12} className="dream-spin" /> : <Sparkles size={12} />}
                   生成 AI 地标
                 </button>
               </div>
             </div>
-            {landmarkErrorInfo && landmarkStage === "error" ? (
+            {roadbook.days.length === 0 ? (
+              <div className="dream-landmark-empty" role="status" aria-live="polite">
+                <span className="dream-landmark-empty-icon" aria-hidden="true">
+                  <MapPinned size={18} />
+                </span>
+                <div>
+                  <strong>需要先生成路书</strong>
+                  <p>AI 地标会基于路书的每日行程、当前模板和气质生成。请先点击 “生成梦境路书” 拿到行程后再生成地标。</p>
+                </div>
+              </div>
+            ) : landmarkStage === "generating" ? (
+              <div className="dream-landmark-loading" role="status" aria-live="polite" data-testid="dream-landmark-loading">
+                <span className="dream-landmark-loading-icon" aria-hidden="true">
+                  <Loader2 size={18} className="dream-spin" />
+                </span>
+                <div>
+                  <strong>M3 生成中</strong>
+                  <p>通常需要 3-10 秒，正在调用 M3 写入 LandmarkPreset（几何体 / 灯光 / 材质）。</p>
+                </div>
+                <span className="dream-landmark-loading-hint" aria-hidden="true">
+                  <Hourglass size={12} />
+                  3-10s
+                </span>
+              </div>
+            ) : landmarkStage === "idle" && !landmarkPreset && !landmarkErrorInfo ? (
+              <div className="dream-landmark-empty" data-testid="dream-landmark-empty">
+                <span className="dream-landmark-empty-icon" aria-hidden="true">
+                  <Building2 size={18} />
+                </span>
+                <div>
+                  <strong>AI 地标未生成</strong>
+                  <p>当前路书已就绪，但还没有为今日场景生成 AI 地标。点击 “生成 AI 地标” 调起 M3，未配置 Key 时会回退到程序化预设。</p>
+                </div>
+                <button
+                  type="button"
+                  className="dream-landmark-empty-action"
+                  onClick={generateLandmarkPresetFromAI}
+                  disabled={landmarkLoading || isBusy}
+                >
+                  <Sparkles size={12} />
+                  点击生成
+                </button>
+              </div>
+            ) : landmarkErrorInfo && landmarkStage === "error" ? (
               <div className="dream-landmark-error">
                 <ErrorStateBanner
                   error={landmarkErrorInfo}
@@ -1705,7 +1788,7 @@ export function DreamRoadbook() {
                 ) : null}
               </div>
             ) : (
-              <p>
+              <p role="status" aria-live="polite" aria-atomic="true">
                 {landmarkError
                   ? landmarkError
                   : landmarkPreset
@@ -1791,8 +1874,18 @@ export function DreamRoadbook() {
                         className="dream-asset-history-main"
                         onClick={() => restorePreviewAssetHistory(item)}
                         disabled={isAssetWorking || isCurrent}
+                        aria-label={
+                          isCurrent
+                            ? `当前版本 · ${formatAssetTime(item.createdAt)}`
+                            : `恢复版本 ${assetHistory.length - index} · ${formatAssetTime(item.createdAt)}`
+                        }
+                        title={
+                          isCurrent
+                            ? `当前版本 · ${formatAssetTime(item.createdAt)}`
+                            : `恢复版本 ${assetHistory.length - index} · ${formatAssetTime(item.createdAt)}`
+                        }
                       >
-                        <span className="dream-asset-thumb" style={{ backgroundImage: `url(${item.imageDataUrl})` }} />
+                        <span className="dream-asset-thumb" style={{ backgroundImage: `url(${item.imageDataUrl})` }} aria-hidden="true" />
                         <span>
                           <strong>{item.isCover ? "最终封面" : isCurrent ? "当前版本" : `版本 ${assetHistory.length - index}`}</strong>
                           <small>{formatAssetTime(item.createdAt)} / {item.mood || item.template || "visual"}</small>
@@ -1804,6 +1897,11 @@ export function DreamRoadbook() {
                         className="dream-cover-pick-button"
                         onClick={() => setPreviewAssetCover(item)}
                         disabled={isAssetWorking || item.isCover}
+                        aria-label={
+                          item.isCover
+                            ? `当前已是最终封面 · 版本 ${assetHistory.length - index}`
+                            : `将版本 ${assetHistory.length - index} 设为最终封面`
+                        }
                       >
                         {isCovering ? "标记中" : item.isCover ? "封面" : "设封面"}
                       </button>
