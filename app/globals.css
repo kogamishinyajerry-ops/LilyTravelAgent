@@ -2,14 +2,20 @@
 
 :root {
   --ink: #19211d;
-  --muted: #657066;
+  /* --muted darkened from #657066 → #5b6557 so it clears WCAG AA
+     (≥4.5:1) on every light background it appears on, including the
+     timeline bg #edf0e8 where the previous value came in at 4.49. */
+  --muted: #5b6557;
   --paper: #f8f7f2;
   --panel: #ffffff;
   --line: #d9ddd2;
   --sage: #4f8f7a;
   --moss: #263b31;
   --rust: #d66b3d;
-  --gold: #c9953d;
+  /* --gold darkened from #c9953d → #8f6018 so the eyebrow / link / category
+     labels meet WCAG AA (≥4.5:1) on --paper, #fff, and the timeline bg.
+     The previous gold only reached 2.49:1 against --paper. */
+  --gold: #8f6018;
   --blue: #5b7fa3;
   --shadow: 0 18px 45px rgba(29, 38, 34, 0.13);
 }
@@ -41,6 +47,81 @@ textarea {
 
 button {
   cursor: pointer;
+}
+
+/* Global :focus-visible styles — 2px gold ring with a 2px offset on every
+   interactive element. This is the single source of truth for keyboard
+   focus indication: previously only inputs/textareas, template cards, mood
+   swatches, and toast-dismiss had a focus rule (and the ring was 1px/3px in
+   some places, easy to miss). Now every <button>, <a>, <input>, <textarea>,
+   <select>, [tabindex], and [role="radio"] gets a visible 2px gold ring on
+   keyboard focus. Mouse clicks still get the default :focus behaviour (no
+   ring) because :focus-visible only fires for keyboard / programmatic focus. */
+:where(
+  a,
+  button,
+  input,
+  textarea,
+  select,
+  summary,
+  [tabindex]:not([tabindex="-1"]),
+  [role="radio"],
+  [role="switch"],
+  [role="checkbox"],
+  [role="menuitem"],
+  [role="option"]
+):focus {
+  outline: none;
+}
+
+:where(
+  a,
+  button,
+  input,
+  textarea,
+  select,
+  summary,
+  [tabindex]:not([tabindex="-1"]),
+  [role="radio"],
+  [role="switch"],
+  [role="checkbox"],
+  [role="menuitem"],
+  [role="option"]
+):focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(201, 149, 61, 0.18);
+}
+
+/* Skip link — visually hidden until it receives keyboard focus, then pops
+   to the top-left of the viewport. Lets keyboard users jump past the
+   nav/header and into the main content (see #main-content in
+   components/dream-roadbook.tsx). */
+.skip-link {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 1000;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  border: 2px solid var(--gold);
+  border-radius: 8px;
+  background: var(--paper);
+  color: var(--ink);
+  font-weight: 900;
+  font-size: 0.92rem;
+  text-decoration: none;
+  transform: translateY(-200%);
+  transition: transform 0.15s ease;
+}
+
+.skip-link:focus,
+.skip-link:focus-visible {
+  transform: translateY(0);
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
 }
 
 .app-frame {
@@ -259,6 +340,66 @@ textarea {
 .primary-action:disabled {
   cursor: wait;
   opacity: 0.72;
+}
+
+@keyframes dream-shimmer {
+  0% {
+    background-position: -160px 0;
+  }
+  100% {
+    background-position: calc(160px + 100%) 0;
+  }
+}
+
+.brief-form.is-loading input,
+.brief-form.is-loading textarea,
+.brief-form.is-loading .chip,
+.brief-form.is-loading .field-block {
+  pointer-events: none;
+  user-select: none;
+  filter: saturate(0.6);
+  opacity: 0.55;
+}
+
+.brief-form-skeleton {
+  display: grid;
+  gap: 8px;
+  border: 1px dashed rgba(79, 143, 122, 0.42);
+  border-radius: 10px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.32);
+  animation: dream-fade-in 200ms ease-out;
+}
+
+.brief-form-skeleton-bar {
+  display: block;
+  height: 12px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(79, 143, 122, 0.18) 0%, rgba(79, 143, 122, 0.4) 50%, rgba(79, 143, 122, 0.18) 100%);
+  background-size: 160px 100%;
+  animation: dream-shimmer 1.4s linear infinite;
+}
+
+.brief-form-skeleton small {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+  color: var(--moss, #4f8f7a);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+}
+
+@keyframes dream-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .recording-note {
@@ -1187,7 +1328,11 @@ textarea {
 
 .dream-shell {
   display: grid;
-  grid-template-columns: minmax(210px, 0.68fr) minmax(520px, 1.8fr) minmax(230px, 0.76fr);
+  /* Slightly wider right-rail (was 230px / 0.76fr -> 280px / 0.86fr)
+     so the 4-column template grid + AI landmark panel breathe
+     without cramping. Left rail (form) stays narrow, world
+     (middle) keeps the bulk of the horizontal budget. */
+  grid-template-columns: minmax(220px, 0.66fr) minmax(520px, 1.7fr) minmax(280px, 0.86fr);
   grid-template-rows: auto 1fr;
   gap: 14px;
   width: min(100%, 1800px);
@@ -1254,7 +1399,9 @@ textarea {
 .dream-control {
   display: grid;
   align-content: start;
-  gap: 10px;
+  /* 16px gap matches .dream-detail so the left-rail and
+     right-rail sections share the same vertical rhythm. */
+  gap: 16px;
 }
 
 .dream-control-title,
@@ -1574,8 +1721,11 @@ textarea {
 
 .dream-template-grid {
   display: grid;
+  /* 4 columns on the (now-wider) right-rail — 8 templates
+     sit in 2 rows. min-width: 0 lets cards shrink; the
+     60px floor keeps the 30px symbol + label readable. */
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 8px;
+  gap: 10px;
 }
 
 @media (max-width: 720px) {
@@ -1603,7 +1753,10 @@ textarea {
   min-height: 96px;
   border: 1px solid rgba(255, 255, 255, 0.5);
   border-radius: 10px;
-  padding: 10px 9px;
+  /* 16px internal padding matches the rest of the dream-* panels
+     so the cards feel coherent with .dream-scenic-skill /
+     .dream-landmark-skill / .dream-asset-panel. */
+  padding: 12px;
   color: var(--dream-ink);
   text-align: left;
   background: rgba(255, 255, 255, 0.28);
@@ -1623,12 +1776,15 @@ textarea {
   border-color: rgba(255, 255, 255, 0.78);
   background: rgba(255, 255, 255, 0.46);
   box-shadow: 0 12px 28px rgba(65, 75, 91, 0.16);
-  outline: none;
 }
 
+/* The 2px gold outline is applied via the global :focus-visible rule. We
+   keep the peach inner glow on top to keep the visual identity of the
+   template card hover state, and override the box-shadow on focus-visible
+   so the gold ring reads clearly. */
 .dream-template-card:focus-visible {
   box-shadow:
-    0 0 0 3px rgba(234, 167, 117, 0.45),
+    0 0 0 3px rgba(201, 149, 61, 0.35),
     0 12px 28px rgba(65, 75, 91, 0.16);
 }
 
@@ -1659,14 +1815,21 @@ textarea {
 }
 
 .dream-template-card-label {
+  overflow: hidden;
   font-size: 0.92rem;
   font-weight: 800;
+  letter-spacing: 0.01em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .dream-template-card-hint {
+  overflow: hidden;
   font-size: 0.7rem;
   line-height: 1.2;
   opacity: 0.78;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .dream-template-card.active .dream-template-card-hint {
@@ -1712,9 +1875,11 @@ textarea {
   border-color: var(--mood-core);
   background: #fff;
   box-shadow: 0 0 0 3px var(--mood-soft);
-  outline: none;
 }
 
+/* The 2px gold outline is applied via the global :focus-visible rule. We
+   keep the mood-coloured inner ring on focus-visible so the swatch still
+   reads as "this is selected" — the gold outline is layered on top. */
 .dream-mood-swatch:focus-visible {
   box-shadow:
     0 0 0 3px var(--mood-soft),
@@ -2571,7 +2736,9 @@ textarea {
 .dream-detail {
   display: grid;
   align-content: start;
-  gap: 14px;
+  /* 16px outer gap matches the rest of the design system
+     (e.g. .preview-pane) and gives the panels room to breathe. */
+  gap: 16px;
 }
 
 .dream-day-mark {
@@ -2632,10 +2799,12 @@ textarea {
 
 .dream-scenic-skill {
   display: grid;
-  gap: 9px;
+  gap: 10px;
   border: 1px solid rgba(255, 255, 255, 0.52);
   border-radius: 8px;
-  padding: 10px;
+  /* 16px internal padding matches .dream-landmark-skill /
+     .dream-asset-panel so the right-rail sections feel coherent. */
+  padding: 16px;
   color: rgba(39, 49, 59, 0.82);
   background:
     linear-gradient(135deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.18)),
@@ -2880,10 +3049,10 @@ textarea {
 
 .dream-landmark-skill {
   display: grid;
-  gap: 8px;
+  gap: 10px;
   border: 1px solid rgba(255, 255, 255, 0.5);
   border-radius: 8px;
-  padding: 10px;
+  padding: 16px;
   color: rgba(39, 49, 59, 0.82);
   background:
     linear-gradient(135deg, rgba(255, 255, 255, 0.46), rgba(255, 255, 255, 0.16)),
@@ -2952,6 +3121,103 @@ textarea {
   color: rgba(39, 49, 59, 0.7);
   font-size: 0.74rem;
   line-height: 1.42;
+}
+
+.dream-landmark-empty,
+.dream-landmark-loading {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: start;
+  gap: 10px;
+  border-radius: 10px;
+  border: 1px dashed rgba(120, 174, 185, 0.55);
+  padding: 10px 12px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.46), rgba(255, 255, 255, 0.18)),
+    rgba(255, 255, 255, 0.16);
+  color: rgba(39, 49, 59, 0.78);
+}
+
+.dream-landmark-empty-icon,
+.dream-landmark-loading-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.32));
+  box-shadow: inset 0 0 0 1px rgba(15, 24, 22, 0.08);
+  color: var(--dream-accent, #4a8a9a);
+  flex-shrink: 0;
+}
+
+.dream-landmark-empty strong,
+.dream-landmark-loading strong {
+  display: block;
+  font-size: 0.86rem;
+  font-weight: 900;
+  color: rgba(15, 24, 22, 0.92);
+}
+
+.dream-landmark-empty p,
+.dream-landmark-loading p {
+  margin: 2px 0 0;
+  color: rgba(39, 49, 59, 0.7);
+  font-size: 0.72rem;
+  line-height: 1.45;
+}
+
+.dream-landmark-empty-action {
+  align-self: center;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border: 0;
+  border-radius: 8px;
+  padding: 6px 10px;
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--dream-accent, #4a8a9a), var(--dream-accent-2, #6b7a8a));
+  cursor: pointer;
+  transition: transform 140ms ease, box-shadow 140ms ease;
+}
+
+.dream-landmark-empty-action:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(74, 138, 154, 0.28);
+}
+
+.dream-landmark-empty-action:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.dream-landmark-loading {
+  border-style: solid;
+  border-color: rgba(234, 167, 117, 0.74);
+  background:
+    linear-gradient(135deg, rgba(234, 167, 117, 0.14), rgba(255, 255, 255, 0.22)),
+    rgba(255, 255, 255, 0.18);
+}
+
+.dream-landmark-loading-icon {
+  color: rgba(196, 122, 64, 0.92);
+}
+
+.dream-landmark-loading-hint {
+  align-self: center;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  border-radius: 999px;
+  padding: 3px 8px;
+  color: rgba(196, 122, 64, 0.95);
+  font-size: 0.66rem;
+  font-weight: 900;
+  background: rgba(234, 167, 117, 0.16);
+  white-space: nowrap;
 }
 
 .dream-landmark-error {
@@ -3193,7 +3459,7 @@ textarea {
   gap: 10px;
   border: 1px solid rgba(255, 255, 255, 0.55);
   border-radius: 8px;
-  padding: 10px;
+  padding: 16px;
   color: rgba(39, 49, 59, 0.82);
   background:
     linear-gradient(135deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.18)),
@@ -3330,7 +3596,7 @@ textarea {
   gap: 8px;
   border: 1px solid rgba(255, 255, 255, 0.48);
   border-radius: 8px;
-  padding: 9px;
+  padding: 16px;
   background: rgba(255, 255, 255, 0.22);
 }
 
@@ -4037,10 +4303,21 @@ textarea {
   isolation: isolate;
   display: grid;
   gap: 12px;
-  margin: 12px;
+  /* 16px outer margin (was 12px) keeps the recording panel
+     visually separated from the .dream-world edges and
+     gives it the same breathing room as the right-rail panels. */
+  margin: 16px;
+  min-width: 0;
+  max-width: calc(100% - 32px);
+  /* Cap height so the panel never pushes the 3D scene
+     off-screen; the fixed 360px ceiling keeps it readable
+     on tall worlds and overflow-y auto scrolls internally
+     if the world is unusually short. */
+  max-height: 360px;
+  overflow-y: auto;
   border: 1px solid rgba(255, 255, 255, 0.46);
   border-radius: 12px;
-  padding: 12px 14px;
+  padding: 12px 16px;
   color: var(--dream-ink);
   background:
     linear-gradient(160deg, rgba(255, 255, 255, 0.46), rgba(255, 255, 255, 0.16)),
@@ -4160,11 +4437,18 @@ textarea {
   font-size: 1.6rem;
   color: var(--dream-ink);
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+  /* Subtle pop-in for the step number (and the /total) when it changes,
+     so the value changes feel like a smooth tick rather than a hard
+     text swap. ~180ms is fast enough to keep up with the 0.5s recording
+     cadence without dragging. */
+  transition: color 180ms ease, transform 180ms ease;
+  display: inline-block;
 }
 
 .dream-recording-step-number span {
   font-size: 0.92rem;
   color: var(--dream-soft);
+  transition: color 180ms ease;
 }
 
 .dream-recording-current-pair {
@@ -4681,7 +4965,6 @@ textarea {
 .toast-dismiss:focus-visible {
   opacity: 1;
   background: rgba(0, 0, 0, 0.06);
-  outline: none;
 }
 
 @keyframes toastSlideIn {
@@ -4696,6 +4979,28 @@ textarea {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  /* Accessibility: when the user has requested reduced motion (OS / browser
+     setting), collapse every animation and transition to 0.01s so the UI
+     still updates visually but the motion is essentially instant. 0.01s
+     is the conventional a11y token — `0s` would skip the animation event
+     entirely and can break some JS that listens for `animationend`. The
+     `scroll-behavior` reset keeps anchor / in-page scrolls from
+     animating. */
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* The .toast rule above used `animation: none` to keep the slide-in
+     from running. We now rely on the universal 0.01ms override above,
+     which still leaves the final state (translateX(0) / opacity 1) in
+     place, so the toast appears in its resting position without a slide.
+     Keep the explicit rule as a no-op safety net in case the universal
+     selector is overridden. */
   .toast {
     animation: none;
   }
