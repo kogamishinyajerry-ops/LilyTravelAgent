@@ -12,6 +12,7 @@ import {
   type DreamTemplate,
 } from "@/lib/dream-design-skill";
 import { defaultBrief } from "@/lib/default-brief";
+import type { LandmarkPreset } from "@/lib/landmark-preset";
 import {
   createRecordingController,
   getTotalCombinations,
@@ -53,6 +54,7 @@ type TrackStepStatus = "idle" | "active" | "done" | "error";
 type PreviewAssetStage = "idle" | "generating" | "ready" | "fallback" | "error";
 type PreviewAssetAction = "idle" | "clearing" | "regenerating" | "restoring" | "covering";
 type ScenicSkillStage = "idle" | "selected" | "generating" | "ready" | "fallback" | "error";
+type LandmarkSkillStage = "idle" | "generating" | "ready" | "fallback" | "error";
 
 const dreamMoodNotes: Record<DreamMood, string> = {
   cloud: "柔光 / 轻盈 / 风",
@@ -140,6 +142,11 @@ export function DreamRoadbook() {
   const [scenicDesign, setScenicDesign] = useState<ScenicRenderDesign | null>(null);
   const [scenicStage, setScenicStage] = useState<ScenicSkillStage>("idle");
   const [scenicMessage, setScenicMessage] = useState("");
+  const [landmarkPreset, setLandmarkPreset] = useState<LandmarkPreset | null>(null);
+  const [landmarkLoading, setLandmarkLoading] = useState(false);
+  const [landmarkError, setLandmarkError] = useState("");
+  const [landmarkStage, setLandmarkStage] = useState<LandmarkSkillStage>("idle");
+  const [landmarkModel, setLandmarkModel] = useState("");
   const [useRealTerrain, setUseRealTerrain] = useState(false);
   const [realTerrainTokenMissing, setRealTerrainTokenMissing] = useState(false);
   const design = useMemo(() => buildDreamRoadbookDesign(roadbook), [roadbook]);
@@ -616,6 +623,64 @@ export function DreamRoadbook() {
     await generateScenicRenderDesignForImage(scenicImageDataUrl);
   }
 
+  async function generateLandmarkPresetFromAI() {
+    if (landmarkLoading) {
+      return;
+    }
+
+    setLandmarkLoading(true);
+    setLandmarkError("");
+    setLandmarkStage("generating");
+
+    try {
+      const response = await fetch("/api/generate-landmark-preset", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          roadbook,
+          activeDay,
+          template,
+          mood,
+          scenicDesign: scenicDesign || undefined,
+        }),
+      });
+      const result = (await response.json()) as
+        | {
+            ok: true;
+            preset: LandmarkPreset;
+            model: string;
+            cached: boolean;
+            durationMs: number;
+            cacheKey?: string;
+          }
+        | {
+            ok: false;
+            code: string;
+            message: string;
+          };
+
+      if (result.ok) {
+        setLandmarkPreset(result.preset);
+        setLandmarkModel(result.model || "");
+        setLandmarkStage(result.preset.source === "m3-generated" ? "ready" : "fallback");
+        setLandmarkError("");
+        return;
+      }
+
+      setLandmarkPreset(null);
+      setLandmarkModel("");
+      setLandmarkStage("error");
+      setLandmarkError(result.message || "AI 地标预设生成失败。");
+    } catch (caught) {
+      setLandmarkPreset(null);
+      setLandmarkModel("");
+      setLandmarkStage("error");
+      setLandmarkError(caught instanceof Error ? caught.message : "AI 地标预设生成失败。");
+    } finally {
+      setLandmarkLoading(false);
+    }
+  }
+
   async function generateScenicRenderDesignForImage(
     imageDataUrl: string,
     loadingMessage = "MiniMax-M3 正在把照片转成建模渲染蓝图。",
@@ -935,6 +1000,11 @@ export function DreamRoadbook() {
     setCoveringHistoryId("");
     setStage("generating");
     setError("");
+    setLandmarkPreset(null);
+    setLandmarkLoading(false);
+    setLandmarkError("");
+    setLandmarkStage("idle");
+    setLandmarkModel("");
 
     const requestBrief = buildRequestBrief();
 
@@ -984,6 +1054,11 @@ export function DreamRoadbook() {
     setScenicDesign(null);
     setScenicStage("idle");
     setScenicMessage("");
+    setLandmarkPreset(null);
+    setLandmarkLoading(false);
+    setLandmarkError("");
+    setLandmarkStage("idle");
+    setLandmarkModel("");
     setPoints([]);
     setMapConfigured(null);
     setMapLoading(false);
@@ -1295,6 +1370,7 @@ export function DreamRoadbook() {
               assetStage={assetStage}
               assetMessage={assetMessage}
               onSelectDay={setActiveDay}
+              landmarkPreset={landmarkPreset}
             />
           )}
           <div className="dream-title-block">
@@ -1416,6 +1492,48 @@ export function DreamRoadbook() {
                   {buildScenicBlueprintChips(scenicDesign).map((item) => (
                     <span key={item}>{item}</span>
                   ))}
+                </div>
+              </div>
+            ) : null}
+          </div>
+
+          <div className={`dream-landmark-skill ${landmarkStage}`} aria-label="AI 地标预设">
+            <div className="dream-landmark-head">
+              <span>AI Landmark</span>
+              <div className="dream-landmark-head-actions">
+                <strong>{buildLandmarkStatus(landmarkStage, landmarkPreset)}</strong>
+                <button
+                  type="button"
+                  onClick={generateLandmarkPresetFromAI}
+                  disabled={landmarkLoading || isBusy}
+                  aria-label="生成 AI 地标"
+                >
+                  {landmarkLoading ? <Loader2 size={12} className="dream-spin" /> : <Sparkles size={12} />}
+                  生成 AI 地标
+                </button>
+              </div>
+            </div>
+            <p>
+              {landmarkError
+                ? landmarkError
+                : landmarkPreset
+                  ? `${landmarkPreset.name} · ${formatLandmarkSource(landmarkPreset.source)}${landmarkModel ? ` · ${landmarkModel}` : ""}`
+                  : "基于当前路书 + 模板 + 气质调用 M3 生成 LandmarkPreset；未配置 MiniMax Key 时会回退到程序化预设。"}
+            </p>
+            {landmarkPreset ? (
+              <div className="dream-landmark-blueprint">
+                <strong>{landmarkPreset.name}</strong>
+                <small>
+                  来源 {formatLandmarkSource(landmarkPreset.source)}
+                  {landmarkModel ? ` · ${landmarkModel}` : ""}
+                </small>
+                {landmarkPreset.notes ? <p>{landmarkPreset.notes}</p> : null}
+                <div>
+                  <span>{landmarkPreset.primitives.length} 几何体</span>
+                  {landmarkPreset.lights && landmarkPreset.lights.length ? (
+                    <span>{landmarkPreset.lights.length} 灯光</span>
+                  ) : null}
+                  <span>模板 {landmarkPreset.template}</span>
                 </div>
               </div>
             ) : null}
@@ -1552,6 +1670,42 @@ function buildScenicBlueprintChips(design: ScenicRenderDesign) {
     .filter((item): item is string => Boolean(item))
     .map((item) => (item.length > 12 ? item.slice(0, 12) : item))
     .slice(0, 4);
+}
+
+function buildLandmarkStatus(stage: LandmarkSkillStage, preset: LandmarkPreset | null) {
+  if (stage === "generating") {
+    return "M3 生成中";
+  }
+
+  if (preset?.source === "m3-generated") {
+    return "M3 蓝图";
+  }
+
+  if (preset?.source === "procedural-fallback" || stage === "fallback") {
+    return "本地兜底";
+  }
+
+  if (stage === "error") {
+    return "需重试";
+  }
+
+  return "待生成";
+}
+
+function formatLandmarkSource(source: LandmarkPreset["source"]) {
+  if (source === "m3-generated") {
+    return "M3 生成";
+  }
+
+  if (source === "procedural-fallback") {
+    return "程序化兜底";
+  }
+
+  if (source === "user-uploaded") {
+    return "用户上传";
+  }
+
+  return source;
 }
 
 function buildPreviewAssetMessage(asset: PreviewAsset) {
