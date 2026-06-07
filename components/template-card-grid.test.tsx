@@ -269,4 +269,28 @@ describe("TemplateCardGrid", () => {
     });
     expect(onSelect).not.toHaveBeenCalled();
   });
+
+  it("exposes descriptive aria-labels and title attributes for screen readers and tooltips", () => {
+    render(
+      <TemplateCardGrid
+        templates={dreamTemplates}
+        activeId="monument"
+        onSelect={() => {}}
+      />,
+    );
+
+    // Inactive card: aria-label is "label 模板 · hint" (no "已选").
+    const island = getCard("island");
+    expect(island.getAttribute("aria-label")).toBe(
+      "漂浮岛屿 模板 · Floating islands",
+    );
+    expect(island.getAttribute("title")).toBe("漂浮岛屿 · Floating islands");
+
+    // Active card: aria-label is suffixed with "（已选）" but title is not.
+    const monument = getCard("monument");
+    expect(monument.getAttribute("aria-label")).toBe(
+      "纪念碑 模板 · Monumental vista（已选）",
+    );
+    expect(monument.getAttribute("title")).toBe("纪念碑 · Monumental vista");
+  });
 });

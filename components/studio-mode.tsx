@@ -109,7 +109,7 @@ export function StudioMode() {
   }
 
   return (
-    <main className="studio-page">
+    <main id="main-content" tabIndex={-1} className="studio-page">
       <section className="studio-stage">
         <header className="studio-topbar">
           <div className="studio-brand">

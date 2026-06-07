@@ -3,11 +3,13 @@
 exports[`TemplateCardGrid > matches the visual snapshot of a single card in the active state > template-card--shrine--active 1`] = `
 <button
   aria-checked="true"
+  aria-label="清冷神殿 模板 · Quiet shrine（已选）"
   class="dream-template-card active"
   data-template-id="shrine"
   role="radio"
   style="animation-delay: 300ms;"
   tabindex="0"
+  title="清冷神殿 · Quiet shrine"
   type="button"
 >
   <span
@@ -32,11 +34,13 @@ exports[`TemplateCardGrid > matches the visual snapshot of a single card in the 
 exports[`TemplateCardGrid > matches the visual snapshot of a single card in the default (rest) state > template-card--starlake--rest 1`] = `
 <button
   aria-checked="false"
+  aria-label="星湖 模板 · Floating starlake"
   class="dream-template-card "
   data-template-id="starlake"
   role="radio"
   style="animation-delay: 50ms;"
   tabindex="-1"
+  title="星湖 · Floating starlake"
   type="button"
 >
   <span
@@ -61,11 +65,13 @@ exports[`TemplateCardGrid > matches the visual snapshot of a single card in the 
 exports[`TemplateCardGrid > matches the visual snapshot of a single card in the hover state > template-card--lantern--hover 1`] = `
 <button
   aria-checked="false"
+  aria-label="灯火 模板 · Lantern-lit streets"
   class="dream-template-card "
   data-template-id="lantern"
   role="radio"
   style="animation-delay: 100ms;"
   tabindex="-1"
+  title="灯火 · Lantern-lit streets"
   type="button"
 >
   <span
@@ -90,12 +96,14 @@ exports[`TemplateCardGrid > matches the visual snapshot of a single card in the 
 exports[`TemplateCardGrid > matches the visual snapshot of a single card in the hover state > template-card--lantern--hover-data-hover 1`] = `
 <button
   aria-checked="false"
+  aria-label="灯火 模板 · Lantern-lit streets"
   class="dream-template-card "
   data-hover="true"
   data-template-id="lantern"
   role="radio"
   style="animation-delay: 100ms;"
   tabindex="-1"
+  title="灯火 · Lantern-lit streets"
   type="button"
 >
   <span
@@ -125,11 +133,13 @@ exports[`TemplateCardGrid > matches the visual snapshot of the inactive grid (no
 >
   <button
     aria-checked="true"
+    aria-label="纪念碑 模板 · Monumental vista（已选）"
     class="dream-template-card active"
     data-template-id="monument"
     role="radio"
     style="animation-delay: 0ms;"
     tabindex="0"
+    title="纪念碑 · Monumental vista"
     type="button"
   >
     <span
@@ -151,11 +161,13 @@ exports[`TemplateCardGrid > matches the visual snapshot of the inactive grid (no
   </button>
   <button
     aria-checked="false"
+    aria-label="星湖 模板 · Floating starlake"
     class="dream-template-card "
     data-template-id="starlake"
     role="radio"
     style="animation-delay: 50ms;"
     tabindex="-1"
+    title="星湖 · Floating starlake"
     type="button"
   >
     <span
@@ -177,11 +189,13 @@ exports[`TemplateCardGrid > matches the visual snapshot of the inactive grid (no
   </button>
   <button
     aria-checked="false"
+    aria-label="灯火 模板 · Lantern-lit streets"
     class="dream-template-card "
     data-template-id="lantern"
     role="radio"
     style="animation-delay: 100ms;"
     tabindex="-1"
+    title="灯火 · Lantern-lit streets"
     type="button"
   >
     <span
@@ -203,11 +217,13 @@ exports[`TemplateCardGrid > matches the visual snapshot of the inactive grid (no
   </button>
   <button
     aria-checked="false"
+    aria-label="雪原 模板 · Snowfield silence"
     class="dream-template-card "
     data-template-id="snowfield"
     role="radio"
     style="animation-delay: 150ms;"
     tabindex="-1"
+    title="雪原 · Snowfield silence"
     type="button"
   >
     <span
@@ -229,11 +245,13 @@ exports[`TemplateCardGrid > matches the visual snapshot of the inactive grid (no
   </button>
   <button
     aria-checked="false"
+    aria-label="霓虹都市 模板 · Neon city night"
     class="dream-template-card "
     data-template-id="neon-city"
     role="radio"
     style="animation-delay: 200ms;"
     tabindex="-1"
+    title="霓虹都市 · Neon city night"
     type="button"
   >
     <span
@@ -255,11 +273,13 @@ exports[`TemplateCardGrid > matches the visual snapshot of the inactive grid (no
   </button>
   <button
     aria-checked="false"
+    aria-label="漂浮岛屿 模板 · Floating islands"
     class="dream-template-card "
     data-template-id="island"
     role="radio"
     style="animation-delay: 250ms;"
     tabindex="-1"
+    title="漂浮岛屿 · Floating islands"
     type="button"
   >
     <span
@@ -281,11 +301,13 @@ exports[`TemplateCardGrid > matches the visual snapshot of the inactive grid (no
   </button>
   <button
     aria-checked="false"
+    aria-label="清冷神殿 模板 · Quiet shrine"
     class="dream-template-card "
     data-template-id="shrine"
     role="radio"
     style="animation-delay: 300ms;"
     tabindex="-1"
+    title="清冷神殿 · Quiet shrine"
     type="button"
   >
     <span
@@ -307,11 +329,13 @@ exports[`TemplateCardGrid > matches the visual snapshot of the inactive grid (no
   </button>
   <button
     aria-checked="false"
+    aria-label="大漠孤烟 模板 · Desert horizons"
     class="dream-template-card "
     data-template-id="desert"
     role="radio"
     style="animation-delay: 350ms;"
     tabindex="-1"
+    title="大漠孤烟 · Desert horizons"
     type="button"
   >
     <span

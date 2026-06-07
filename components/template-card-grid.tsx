@@ -100,6 +100,8 @@ export function TemplateCardGrid({ templates, activeId, onSelect }: TemplateCard
             className={`dream-template-card ${isActive ? "active" : ""}`}
             style={{ animationDelay: `${index * 50}ms` }}
             onClick={() => onSelect(item.id)}
+            aria-label={`${item.label} 模板 · ${meta.hint}${isActive ? "（已选）" : ""}`}
+            title={`${item.label} · ${meta.hint}`}
           >
             <span className="dream-template-card-symbol" aria-hidden="true">
               {meta.symbol}

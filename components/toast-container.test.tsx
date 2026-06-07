@@ -84,7 +84,7 @@ describe("ToastContainer", () => {
     const { container } = render(<ToastContainer />);
 
     expect(container.querySelector(".toast.toast--success")).toBeTruthy();
-    const close = screen.getByRole("button", { name: "关闭通知" });
+    const close = screen.getByRole("button", { name: "关闭通知：可关闭" });
     fireEvent.click(close);
 
     expect(container.querySelector(".toast.toast--success")).toBeNull();
@@ -96,7 +96,8 @@ describe("ToastContainer", () => {
     showInfo("dismiss me");
     render(<ToastContainer />);
 
-    const buttons = screen.getAllByRole("button", { name: "关闭通知" });
+    const buttons = screen.getAllByRole("button", { name: /关闭通知/ });
+    expect(buttons).toHaveLength(2);
     fireEvent.click(buttons[1]);
 
     expect(screen.getByText("keep me")).toBeTruthy();

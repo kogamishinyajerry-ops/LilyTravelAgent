@@ -21,6 +21,13 @@ export default function RootLayout({
   return (
     <html lang="zh-CN">
       <body>
+        {/* Skip link — keyboard users hit Tab on page load to surface it
+            and jump to #main-content (set in components/dream-roadbook.tsx
+            and components/travel-agent-app.tsx). Visually hidden until
+            focused, see .skip-link in app/globals.css. */}
+        <a href="#main-content" className="skip-link">
+          跳到主要内容
+        </a>
         {children}
         <ToastContainer />
       </body>

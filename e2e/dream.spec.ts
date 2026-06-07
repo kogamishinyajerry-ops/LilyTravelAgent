@@ -59,4 +59,48 @@ test.describe("/dream route", () => {
 
     expect(unexpectedErrors, `unexpected console errors:\n${unexpectedErrors.join("\n")}`).toEqual([]);
   });
+
+  /**
+   * Responsive behavior smoke test. Runs the same `/dream` page at three
+   * viewport sizes — desktop / tablet / mobile — and verifies the layout
+   * doesn't break (no horizontal overflow, main content is visible, the
+   * template picker is reachable).
+   */
+  test.describe("responsive behavior", () => {
+    for (const { label, width, height } of [
+      { label: "desktop", width: 1280, height: 800 },
+      { label: "tablet", width: 820, height: 1180 },
+      { label: "mobile", width: 390, height: 844 },
+    ]) {
+      test(`renders cleanly at ${label} (${width}x${height})`, async ({ page }) => {
+        await page.setViewportSize({ width, height });
+        await page.goto("/dream", { waitUntil: "domcontentloaded" });
+
+        const main = page.locator("main#main-content").first();
+        await expect(main).toBeVisible({ timeout: 30_000 });
+
+        // Body must not overflow horizontally — the layout should adapt
+        // to the viewport, not introduce a horizontal scrollbar.
+        const overflow = await page.evaluate(() => {
+          return {
+            scrollWidth: document.documentElement.scrollWidth,
+            clientWidth: document.documentElement.clientWidth,
+          };
+        });
+        expect(
+          overflow.scrollWidth,
+          `horizontal overflow at ${label}: scrollWidth=${overflow.scrollWidth} > clientWidth=${overflow.clientWidth}`,
+        ).toBeLessThanOrEqual(overflow.clientWidth + 1);
+
+        // The template picker should still be reachable.
+        const templateGrid = page.locator('[role="radiogroup"][aria-label="梦境模板"]');
+        await expect(templateGrid).toBeAttached();
+
+        // Snapshot at this viewport for the responsive-recording directory.
+        const snapPath = `e2e/screenshots/dream-responsive-${label}.png`;
+        await mkdir(dirname(snapPath), { recursive: true });
+        await page.screenshot({ path: snapPath, fullPage: true });
+      });
+    }
+  });
 });

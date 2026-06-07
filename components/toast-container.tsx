@@ -51,7 +51,8 @@ export function ToastContainer() {
             <button
               type="button"
               className="toast-dismiss"
-              aria-label="关闭通知"
+              aria-label={`关闭通知：${current.title}`}
+              title={`关闭通知：${current.title}`}
               onClick={() => toast.dismiss(current.id)}
             >
               <X size={14} />

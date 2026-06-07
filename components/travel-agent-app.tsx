@@ -183,7 +183,7 @@ export function TravelAgentApp() {
   }
 
   return (
-    <main className="app-frame">
+    <main id="main-content" tabIndex={-1} className="app-frame">
       <section className="workspace">
         <aside className="control-panel">
           <div className="brand-row">
@@ -207,7 +207,7 @@ export function TravelAgentApp() {
             </div>
           </div>
 
-          <form onSubmit={handleSubmit} className="brief-form">
+          <form onSubmit={handleSubmit} className={`brief-form ${stage === "generating" || stage === "geocoding" ? "is-loading" : ""}`} aria-busy={stage === "generating" || stage === "geocoding"}>
             <label>
               <span>目的地</span>
               <input value={brief.destination} onChange={(event) => updateBrief("destination", event.target.value)} />
@@ -270,6 +270,19 @@ export function TravelAgentApp() {
                 onChange={(event) => updateBrief("specialRequests", event.target.value)}
               />
             </label>
+
+            {stage === "generating" || stage === "geocoding" ? (
+              <div className="brief-form-skeleton" role="status" aria-live="polite" data-testid="roadbook-form-skeleton">
+                <span className="brief-form-skeleton-bar" style={{ width: "62%" }} />
+                <span className="brief-form-skeleton-bar" style={{ width: "88%" }} />
+                <span className="brief-form-skeleton-bar" style={{ width: "74%" }} />
+                <span className="brief-form-skeleton-bar" style={{ width: "92%" }} />
+                <small>
+                  <Loader2 className="spin" size={12} />
+                  {stage === "generating" ? "M3 正在生成中，通常需要 8-20 秒…" : "高德正在定位地点…"}
+                </small>
+              </div>
+            ) : null}
 
             <button className="primary-action" type="submit" disabled={stage === "generating" || stage === "geocoding"}>
               {stage === "generating" || stage === "geocoding" ? <Loader2 className="spin" size={18} /> : <Sparkles size={18} />}
