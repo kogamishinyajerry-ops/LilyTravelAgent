@@ -2814,6 +2814,53 @@ textarea {
   line-height: 1.42;
 }
 
+.dream-landmark-error {
+  display: grid;
+  gap: 8px;
+}
+
+.dream-landmark-config-tip {
+  display: grid;
+  gap: 4px;
+  border-radius: 8px;
+  border: 1px dashed rgba(139, 99, 88, 0.45);
+  padding: 8px 10px;
+  background: rgba(255, 255, 255, 0.42);
+  color: rgba(39, 49, 59, 0.78);
+  font-size: 0.72rem;
+  line-height: 1.45;
+}
+
+.dream-landmark-config-tip strong {
+  font-size: 0.78rem;
+  color: var(--rust, #b8332a);
+}
+
+.dream-landmark-config-tip code {
+  border-radius: 4px;
+  padding: 1px 4px;
+  font-size: 0.7rem;
+  background: rgba(15, 24, 22, 0.08);
+}
+
+.dream-landmark-config-tip pre {
+  margin: 2px 0;
+  padding: 6px 8px;
+  border-radius: 6px;
+  background: rgba(15, 24, 22, 0.08);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.7rem;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.dream-roadbook-error,
+.app-error {
+  display: grid;
+  gap: 8px;
+  margin: 12px 0;
+}
+
 .dream-landmark-blueprint {
   display: grid;
   gap: 5px;
@@ -3704,4 +3751,144 @@ textarea {
   .empty-visual h2 {
     font-size: 2.25rem;
   }
+}
+
+/* ---------- Error UX (v0.8.0) ---------- */
+
+.error-state-banner {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid rgba(214, 107, 61, 0.32);
+  border-radius: 8px;
+  padding: 12px 14px;
+  color: var(--ink);
+  background: #fff4ef;
+  box-shadow: var(--shadow);
+}
+
+.error-state-banner--info {
+  border-color: rgba(201, 149, 61, 0.32);
+  background: rgba(201, 149, 61, 0.08);
+}
+
+.error-state-banner--warning {
+  border-color: rgba(214, 107, 61, 0.32);
+  background: #fff4ef;
+}
+
+.error-state-banner--error {
+  border-color: rgba(122, 47, 31, 0.4);
+  background: rgba(214, 107, 61, 0.12);
+}
+
+.error-state-banner__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--rust);
+  box-shadow: 0 0 0 4px rgba(214, 107, 61, 0.18);
+}
+
+.error-state-banner__body {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.error-state-banner__title {
+  margin: 0;
+  color: var(--ink);
+  font-size: 0.98rem;
+  font-weight: 800;
+}
+
+.error-state-banner__description {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.86rem;
+  line-height: 1.5;
+}
+
+.error-state-banner__action {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  border: 0;
+  border-radius: 8px;
+  padding: 0 14px;
+  color: #fff;
+  font-weight: 800;
+  background: var(--moss);
+}
+
+.error-state-banner__action:disabled {
+  cursor: wait;
+  opacity: 0.78;
+}
+
+.error-state-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--gold);
+  border-radius: 999px;
+  padding: 3px 9px;
+  color: var(--muted);
+  font-size: 0.74rem;
+  font-weight: 800;
+  background: rgba(201, 149, 61, 0.08);
+}
+
+.error-state-chip__icon {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.78rem;
+  line-height: 1;
+}
+
+.error-state-chip__label {
+  letter-spacing: 0.02em;
+}
+
+.fallback-state-notice {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  border: 1px solid rgba(201, 149, 61, 0.32);
+  border-radius: 8px;
+  padding: 11px 14px;
+  color: var(--ink);
+  background: rgba(201, 149, 61, 0.08);
+}
+
+.fallback-state-notice__dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  background: var(--gold);
+  box-shadow: 0 0 0 4px rgba(201, 149, 61, 0.2);
+}
+
+.fallback-state-notice__body {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.fallback-state-notice__title {
+  margin: 0;
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.fallback-state-notice__description {
+  margin: 0;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--muted);
 }
