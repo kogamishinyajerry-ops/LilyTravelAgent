@@ -82,6 +82,9 @@ export type LandmarkPreset = {
   primitives: LandmarkPrimitive[];
   lights?: LandmarkLight[];
   notes?: string;
+  preview?: string;
+  sceneDay?: number;
+  symbol?: string;
 };
 
 // ---------------------------------------------------------------------------
