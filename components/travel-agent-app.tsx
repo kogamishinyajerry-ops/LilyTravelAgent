@@ -35,6 +35,7 @@ import type {
 import { clipBlueprints, creatorMilestones, vibeCodingLessons } from "@/lib/vibe-coding-content";
 import { RoadbookMap } from "@/components/roadbook-map";
 import { ErrorStateBanner } from "@/components/error-ux";
+import { showError, showInfo, showSuccess } from "@/lib/toast";
 import type { M3Error, M3ErrorCategory } from "@/lib/m3-error-classifier";
 
 const interestOptions = ["洱海骑行", "古城 Citywalk", "咖啡", "白族文化", "日落", "拍照点", "民宿", "市集"];
@@ -155,6 +156,7 @@ export function TravelAgentApp() {
     setMapConfigured(null);
 
     try {
+      showInfo("正在生成路书", "M3 正在为这一份 Brief 编排日程，预计 8-20 秒完成。");
       const response = await fetch("/api/generate-roadbook", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -171,10 +173,12 @@ export function TravelAgentApp() {
       setRoadbook(data.roadbook);
       setModel(data.model);
       await geocodeRoadbook(data.roadbook);
+      showSuccess("路书已生成", `${data.roadbook.title} — ${data.roadbook.days.length} 天行程已就绪。`);
     } catch (caught) {
       const message = caught instanceof Error ? caught.message : "生成路书时出现未知错误。";
       setErrorInfo(buildRoadbookM3Error(undefined, 0, message));
       setStage("error");
+      showError("路书生成失败", message);
     }
   }
 
