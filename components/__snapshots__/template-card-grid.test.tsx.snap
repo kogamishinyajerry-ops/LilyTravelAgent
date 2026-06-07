@@ -1,0 +1,335 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`TemplateCardGrid > matches the visual snapshot of a single card in the active state > template-card--shrine--active 1`] = `
+<button
+  aria-checked="true"
+  class="dream-template-card active"
+  data-template-id="shrine"
+  role="radio"
+  style="animation-delay: 300ms;"
+  tabindex="0"
+  type="button"
+>
+  <span
+    aria-hidden="true"
+    class="dream-template-card-symbol"
+  >
+    ⛩️
+  </span>
+  <strong
+    class="dream-template-card-label"
+  >
+    清冷神殿
+  </strong>
+  <small
+    class="dream-template-card-hint"
+  >
+    Quiet shrine
+  </small>
+</button>
+`;
+
+exports[`TemplateCardGrid > matches the visual snapshot of a single card in the default (rest) state > template-card--starlake--rest 1`] = `
+<button
+  aria-checked="false"
+  class="dream-template-card "
+  data-template-id="starlake"
+  role="radio"
+  style="animation-delay: 50ms;"
+  tabindex="-1"
+  type="button"
+>
+  <span
+    aria-hidden="true"
+    class="dream-template-card-symbol"
+  >
+    🌌
+  </span>
+  <strong
+    class="dream-template-card-label"
+  >
+    星湖
+  </strong>
+  <small
+    class="dream-template-card-hint"
+  >
+    Floating starlake
+  </small>
+</button>
+`;
+
+exports[`TemplateCardGrid > matches the visual snapshot of a single card in the hover state > template-card--lantern--hover 1`] = `
+<button
+  aria-checked="false"
+  class="dream-template-card "
+  data-template-id="lantern"
+  role="radio"
+  style="animation-delay: 100ms;"
+  tabindex="-1"
+  type="button"
+>
+  <span
+    aria-hidden="true"
+    class="dream-template-card-symbol"
+  >
+    🏮
+  </span>
+  <strong
+    class="dream-template-card-label"
+  >
+    灯火
+  </strong>
+  <small
+    class="dream-template-card-hint"
+  >
+    Lantern-lit streets
+  </small>
+</button>
+`;
+
+exports[`TemplateCardGrid > matches the visual snapshot of a single card in the hover state > template-card--lantern--hover-data-hover 1`] = `
+<button
+  aria-checked="false"
+  class="dream-template-card "
+  data-hover="true"
+  data-template-id="lantern"
+  role="radio"
+  style="animation-delay: 100ms;"
+  tabindex="-1"
+  type="button"
+>
+  <span
+    aria-hidden="true"
+    class="dream-template-card-symbol"
+  >
+    🏮
+  </span>
+  <strong
+    class="dream-template-card-label"
+  >
+    灯火
+  </strong>
+  <small
+    class="dream-template-card-hint"
+  >
+    Lantern-lit streets
+  </small>
+</button>
+`;
+
+exports[`TemplateCardGrid > matches the visual snapshot of the inactive grid (no hover state) > template-grid--inactive 1`] = `
+<div
+  aria-label="梦境模板"
+  class="dream-template-grid"
+  role="radiogroup"
+>
+  <button
+    aria-checked="true"
+    class="dream-template-card active"
+    data-template-id="monument"
+    role="radio"
+    style="animation-delay: 0ms;"
+    tabindex="0"
+    type="button"
+  >
+    <span
+      aria-hidden="true"
+      class="dream-template-card-symbol"
+    >
+      🗿
+    </span>
+    <strong
+      class="dream-template-card-label"
+    >
+      纪念碑
+    </strong>
+    <small
+      class="dream-template-card-hint"
+    >
+      Monumental vista
+    </small>
+  </button>
+  <button
+    aria-checked="false"
+    class="dream-template-card "
+    data-template-id="starlake"
+    role="radio"
+    style="animation-delay: 50ms;"
+    tabindex="-1"
+    type="button"
+  >
+    <span
+      aria-hidden="true"
+      class="dream-template-card-symbol"
+    >
+      🌌
+    </span>
+    <strong
+      class="dream-template-card-label"
+    >
+      星湖
+    </strong>
+    <small
+      class="dream-template-card-hint"
+    >
+      Floating starlake
+    </small>
+  </button>
+  <button
+    aria-checked="false"
+    class="dream-template-card "
+    data-template-id="lantern"
+    role="radio"
+    style="animation-delay: 100ms;"
+    tabindex="-1"
+    type="button"
+  >
+    <span
+      aria-hidden="true"
+      class="dream-template-card-symbol"
+    >
+      🏮
+    </span>
+    <strong
+      class="dream-template-card-label"
+    >
+      灯火
+    </strong>
+    <small
+      class="dream-template-card-hint"
+    >
+      Lantern-lit streets
+    </small>
+  </button>
+  <button
+    aria-checked="false"
+    class="dream-template-card "
+    data-template-id="snowfield"
+    role="radio"
+    style="animation-delay: 150ms;"
+    tabindex="-1"
+    type="button"
+  >
+    <span
+      aria-hidden="true"
+      class="dream-template-card-symbol"
+    >
+      ❄️
+    </span>
+    <strong
+      class="dream-template-card-label"
+    >
+      雪原
+    </strong>
+    <small
+      class="dream-template-card-hint"
+    >
+      Snowfield silence
+    </small>
+  </button>
+  <button
+    aria-checked="false"
+    class="dream-template-card "
+    data-template-id="neon-city"
+    role="radio"
+    style="animation-delay: 200ms;"
+    tabindex="-1"
+    type="button"
+  >
+    <span
+      aria-hidden="true"
+      class="dream-template-card-symbol"
+    >
+      🌃
+    </span>
+    <strong
+      class="dream-template-card-label"
+    >
+      霓虹都市
+    </strong>
+    <small
+      class="dream-template-card-hint"
+    >
+      Neon city night
+    </small>
+  </button>
+  <button
+    aria-checked="false"
+    class="dream-template-card "
+    data-template-id="island"
+    role="radio"
+    style="animation-delay: 250ms;"
+    tabindex="-1"
+    type="button"
+  >
+    <span
+      aria-hidden="true"
+      class="dream-template-card-symbol"
+    >
+      🏝️
+    </span>
+    <strong
+      class="dream-template-card-label"
+    >
+      漂浮岛屿
+    </strong>
+    <small
+      class="dream-template-card-hint"
+    >
+      Floating islands
+    </small>
+  </button>
+  <button
+    aria-checked="false"
+    class="dream-template-card "
+    data-template-id="shrine"
+    role="radio"
+    style="animation-delay: 300ms;"
+    tabindex="-1"
+    type="button"
+  >
+    <span
+      aria-hidden="true"
+      class="dream-template-card-symbol"
+    >
+      ⛩️
+    </span>
+    <strong
+      class="dream-template-card-label"
+    >
+      清冷神殿
+    </strong>
+    <small
+      class="dream-template-card-hint"
+    >
+      Quiet shrine
+    </small>
+  </button>
+  <button
+    aria-checked="false"
+    class="dream-template-card "
+    data-template-id="desert"
+    role="radio"
+    style="animation-delay: 350ms;"
+    tabindex="-1"
+    type="button"
+  >
+    <span
+      aria-hidden="true"
+      class="dream-template-card-symbol"
+    >
+      🏜️
+    </span>
+    <strong
+      class="dream-template-card-label"
+    >
+      大漠孤烟
+    </strong>
+    <small
+      class="dream-template-card-hint"
+    >
+      Desert horizons
+    </small>
+  </button>
+</div>
+`;
