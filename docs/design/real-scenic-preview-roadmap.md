@@ -56,6 +56,31 @@ Three pillars land together for v0.4.0:
 
 All three pillars are isolated behind the existing interfaces, so the Phase C / D contracts stay intact and the procedural fallback still works for anyone without tokens.
 
+## Phase H (v0.7.0) — AI Landmark Preset
+
+### What was added
+
+- `lib/landmark-preset.ts`: 新的 Landmark Preset schema 与 TypeScript 类型，描述几何体、材质、灯光、锚点等字段。
+- `lib/landmark-fallbacks.ts`: 8 个程序化兜底 preset，覆盖大理三塔、东方明珠、故宫角楼等高频目的地，M3 不可用时自动启用。
+- `lib/landmark-renderer.ts`: 渲染层，把 `Landmark Preset` JSON 翻译成 `THREE.Group`，挂到 `<DreamSkylineScene>` 的地标锚点。
+- `lib/landmark-generator.ts`: M3 调用层，输入目的地 / 风格 / 照片上下文，输出结构化 preset JSON，并做 schema 校验与回退。
+- `.lily-cache/landmark-presets/`: 本地缓存目录，按目的地 + preset hash 命中，刷新不重复调用 M3。
+- `/api/generate-landmark-preset`: 新的 API 路由，包装 generator + 缓存 + 回退逻辑，对外暴露统一接口。
+
+### How to plug in real M3
+
+1. 在 `.env.local` 中设置 `MINIMAX_API_KEY`（与现有 M3 通道共用）。
+2. 启动 `npm run dev`，进入 `/dream`。
+3. 在右侧资产面板点击"生成 AI 地标"按钮，前端会调用 `/api/generate-landmark-preset`，由 M3 实时生成 preset JSON 并渲染到场景中。
+4. 同一目的地再次点击会命中本地缓存；如需强制重新生成，点"清除"再点"生成"。
+
+### Fallback behavior
+
+- M3 调用失败、超时、返回非法 JSON、超出 schema 校验 → 自动从 `lib/landmark-fallbacks.ts` 选一个最接近的程序化 preset。
+- 缓存命中时直接读 `.lily-cache/landmark-presets/`，不调用 M3。
+- 8 个程序化兜底 preset 永远可用；不依赖任何 API key，也不依赖 M3 可用性，确保 `/dream` 在最差网络条件下也能正常展示地标几何。
+- 回退到程序化 preset 时，资产面板会标注来源为 `fallback`，方便录屏时区分 AI 生成 vs 兜底。
+
 ## Phase F Scaffolding (v0.5.0) — 高德 3D 建筑全量
 
 ### What was added

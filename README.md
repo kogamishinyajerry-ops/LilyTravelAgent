@@ -66,6 +66,10 @@ The `/dream` right-side asset panel shows the current cache key, cache time, sou
 
 After a cover is locked, the share-preview card presents the final cover, roadbook title, four-day route, cache key, and asset status as a clean recording-ready handoff view.
 
+## AI Landmark Preset (v0.7.0)
+
+v0.7.0 adds AI-generated landmark presets via M3. Click "生成 AI 地标" in `/dream` to use M3-generated geometry, or rely on the 8 procedural fallbacks. The schema lives in `lib/landmark-preset.ts`; results are cached under `.lily-cache/landmark-presets/`.
+
 ## Real Terrain Pipeline (Optional)
 
 To enable real terrain in /dream: set MAPBOX_TOKEN in .env.local. The "真实地形管线" toggle in the /dream right panel will then fetch Mapbox terrain-rgb + OSM Overpass buildings. Without a token, the toggle falls back to the procedural Three.js scene.
