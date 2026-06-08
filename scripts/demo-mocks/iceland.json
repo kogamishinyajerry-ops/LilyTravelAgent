@@ -1,0 +1,295 @@
+{
+  "ok": true,
+  "model": "MiniMax-M3 (mocked)",
+  "generationMode": "quality",
+  "phase": "full",
+  "roadbook": {
+    "title": "冰岛极光物语",
+    "subtitle": "雷克雅未克 / 黄金圈 / 南海岸 / 蓝湖温泉",
+    "destination": "冰岛",
+    "durationLabel": "7 天 6 晚",
+    "travelerLabel": "2 位自然 + 温泉型旅行者",
+    "budgetLabel": "高预算",
+    "concept": "把七天拆成两段：前四天走黄金圈与南海岸的瀑布冰湖，后三天在雷克雅未克与蓝湖之间慢下来等极光。",
+    "bestFor": ["第一次去冰岛", "想看极光", "喜欢温泉", "愿意开环岛部分路段"],
+    "highlights": ["哈尔格林姆斯教堂", "黄金瀑布", "辛格韦德利", "杰古沙龙冰河湖", "蓝湖温泉"],
+    "summary": {
+      "routeTheme": "黄金圈 + 南海岸 + 雷克雅未克",
+      "transportPlan": "租车自驾 + 1 段内陆短航",
+      "stayArea": "雷克雅未克市区 3 晚 + 维克小镇 2 晚 + 草帽山 1 晚",
+      "rhythm": "上午景区、下午温泉或小镇、夜晚追极光"
+    },
+    "days": [
+      {
+        "day": 1,
+        "title": "落地与首都温度",
+        "area": "雷克雅未克",
+        "mood": "短航后落地、慢走、北纬 64 度",
+        "routeSummary": "取车、入住、傍晚在市中心看建筑。",
+        "commuteNote": "凯夫拉维克机场到市区约 50 分钟车程。",
+        "budgetNote": "把第一餐留给市中心的羊肉汤。",
+        "stops": [
+          {
+            "id": "iceland-d1-1",
+            "name": "哈尔格林姆斯教堂",
+            "time": "16:00",
+            "category": "view",
+            "addressHint": "Hallgrimskirkja, Reykjavik",
+            "why": "冰岛最具辨识度的建筑，登顶可看全城。",
+            "duration": "1 小时",
+            "tip": "电梯票经常售完，建议提早买。"
+          },
+          {
+            "id": "iceland-d1-2",
+            "name": "Harpa 音乐厅",
+            "time": "18:00",
+            "category": "culture",
+            "addressHint": "Harpa Concert Hall, Reykjavik",
+            "why": "蜂窝状玻璃幕墙，傍晚打灯后很适合出片。",
+            "duration": "40 分钟",
+            "tip": "关注当晚是否有古典音乐演出。"
+          }
+        ],
+        "food": ["冰岛羊肉汤", "Skyr 酸奶", "热巧克力"],
+        "photoTips": ["Hallgrimskirkja 正面", "Harpa 玻璃倒影", "Laugavegur 街灯"]
+      },
+      {
+        "day": 2,
+        "title": "黄金圈一日",
+        "area": "辛格韦德利 / 间歇泉 / 黄金瀑布",
+        "mood": "裂谷、地热、彩虹",
+        "routeSummary": "经典一日环线：议会旧址 → 间歇泉 → 黄金瀑布。",
+        "commuteNote": "全程自驾约 280 公里。",
+        "budgetNote": "门票主要在间歇泉和 Þingvellir。",
+        "stops": [
+          {
+            "id": "iceland-d2-1",
+            "name": "辛格韦德利国家公园",
+            "time": "09:30",
+            "category": "view",
+            "addressHint": "Þingvellir National Park",
+            "why": "板块裂谷和议会旧址，是冰岛历史与地质的双起点。",
+            "duration": "1.5 小时",
+            "tip": "走 Silfra 浮潜需要提前预约。"
+          },
+          {
+            "id": "iceland-d2-2",
+            "name": "盖歇尔间歇泉",
+            "time": "12:30",
+            "category": "view",
+            "addressHint": "Geysir Geothermal Area, Haukadalur",
+            "why": "每 6-10 分钟喷发的 Strokkur 间歇泉最好抓拍。",
+            "duration": "45 分钟",
+            "tip": "等第二次喷发再拍，第一次常常只冒蒸汽。"
+          },
+          {
+            "id": "iceland-d2-3",
+            "name": "黄金瀑布",
+            "time": "15:00",
+            "category": "view",
+            "addressHint": "Gullfoss",
+            "why": "两段式瀑布，雨天有彩虹。",
+            "duration": "1 小时",
+            "tip": "风大，穿冲锋衣。"
+          }
+        ],
+        "food": ["黄金圈路上咖啡简餐", "Hvoll 餐厅羊肉"],
+        "photoTips": ["间歇泉喷发瞬间", "黄金瀑布彩虹", "裂谷远景"]
+      },
+      {
+        "day": 3,
+        "title": "南海岸 1：瀑布与黑沙滩",
+        "area": "塞里雅兰瀑布 / 斯科加瀑布 / 维克",
+        "mood": "瀑布、黑沙、雷神",
+        "routeSummary": "一路向东南，走两条标志性瀑布和黑沙滩。",
+        "commuteNote": "雷克雅未克到维克约 250 公里。",
+        "budgetNote": "晚餐留一份给小镇的鱼与薯条。",
+        "stops": [
+          {
+            "id": "iceland-d3-1",
+            "name": "塞里雅兰瀑布",
+            "time": "10:00",
+            "category": "view",
+            "addressHint": "Seljalandsfoss",
+            "why": "可以绕到水帘后面，是冰岛少有的互动型瀑布。",
+            "duration": "45 分钟",
+            "tip": "地面湿滑，穿防滑鞋。"
+          },
+          {
+            "id": "iceland-d3-2",
+            "name": "斯科加瀑布",
+            "time": "11:30",
+            "category": "view",
+            "addressHint": "Skógafoss",
+            "why": "落差 60 米，雨水多时水雾能打到半空。",
+            "duration": "45 分钟",
+            "tip": "可以爬顶部的步道看整条海岸线。"
+          },
+          {
+            "id": "iceland-d3-3",
+            "name": "黑沙滩 Reynisfjara",
+            "time": "16:00",
+            "category": "view",
+            "addressHint": "Reynisfjara Beach",
+            "why": "玄武岩柱与远处的 Reynisdrangar 尖石。",
+            "duration": "1 小时",
+            "tip": "留意 sneaker waves，永远不要背对海面。"
+          }
+        ],
+        "food": ["烟熏三文鱼", "Skyr 配莓果", "冰岛鱼与薯条"],
+        "photoTips": ["黑沙滩玄武岩柱", "瀑布彩虹", "海岸线剪影"]
+      },
+      {
+        "day": 4,
+        "title": "南海岸 2：冰河湖与钻石冰沙滩",
+        "area": "杰古沙龙冰河湖 / 钻石冰沙滩 / 霍芬",
+        "mood": "浮冰、钻石、慢",
+        "routeSummary": "从维克继续向东到冰河湖和钻石沙滩。",
+        "commuteNote": "维克到霍芬约 150 公里，冬季留意路面结冰。",
+        "budgetNote": "可加一项冰河湖游船，提前预约。",
+        "stops": [
+          {
+            "id": "iceland-d4-1",
+            "name": "杰古沙龙冰河湖",
+            "time": "11:00",
+            "category": "view",
+            "addressHint": "Jökulsárlón",
+            "why": "浮冰在静水中缓慢漂流，是冰岛最具镜头感的画面。",
+            "duration": "2 小时",
+            "tip": "游船至少提前一天预约。"
+          },
+          {
+            "id": "iceland-d4-2",
+            "name": "钻石冰沙滩",
+            "time": "13:00",
+            "category": "view",
+            "addressHint": "Diamond Beach",
+            "why": "碎冰被冲到黑沙上，像散落的钻石。",
+            "duration": "1 小时",
+            "tip": "看涨潮时间，光线更通透。"
+          }
+        ],
+        "food": ["龙虾汤 Hofn", "鲸鱼肉试吃", "本地羊排"],
+        "photoTips": ["浮冰剪影", "黑沙与冰块", "冰河湖天空倒影"]
+      },
+      {
+        "day": 5,
+        "title": "草帽山与温泉收尾",
+        "area": "斯奈山半岛",
+        "mood": "教会山、熔岩、温泉",
+        "routeSummary": "折返向西北走斯奈山半岛，傍晚泡温泉。",
+        "commuteNote": "霍芬到斯奈山约 380 公里，可拆两段。",
+        "budgetNote": "温泉门票 50-80 欧不等。",
+        "stops": [
+          {
+            "id": "iceland-d5-1",
+            "name": "教会山 Kirkjufell",
+            "time": "10:00",
+            "category": "view",
+            "addressHint": "Kirkjufell, Grundarfjörður",
+            "why": "草帽山是冰岛被拍最多的山峰。",
+            "duration": "1 小时",
+            "tip": "从瀑布一侧取景能拍到完整山尖。"
+          },
+          {
+            "id": "iceland-d5-2",
+            "name": "黑教堂 Búðir",
+            "time": "14:00",
+            "category": "culture",
+            "addressHint": "Búðakirkja, Búðir",
+            "why": "冰岛最上镜的孤独教堂。",
+            "duration": "30 分钟",
+            "tip": "经常有大风，拍侧风下的草地很好。"
+          },
+          {
+            "id": "iceland-d5-3",
+            "name": "Landbrotalaug 温泉",
+            "time": "18:00",
+            "category": "other",
+            "addressHint": "Landbrotalaug Hot Spring",
+            "why": "私人温泉池，对着大海泡澡。",
+            "duration": "1 小时",
+            "tip": "换上泳衣前先到洗手间换好。"
+          }
+        ],
+        "food": ["Skyr 早餐", "羊肉汤", "Búðir 餐厅晚餐"],
+        "photoTips": ["Kirkjufell 倒影", "黑教堂剪影", "温泉蒸汽"]
+      },
+      {
+        "day": 6,
+        "title": "雷克雅未克 + 极光",
+        "area": "雷克雅未克",
+        "mood": "城市、设计、极光",
+        "routeSummary": "白天逛博物馆与设计店，夜晚到郊外看极光。",
+        "commuteNote": "市区步行 + 出租车到郊外观景点。",
+        "budgetNote": "把晚餐留到市中心的设计餐厅。",
+        "stops": [
+          {
+            "id": "iceland-d6-1",
+            "name": "雷克雅未克旧港",
+            "time": "10:00",
+            "category": "view",
+            "addressHint": "Reykjavik Old Harbour",
+            "why": "彩色房子与远处的 Esja 山。",
+            "duration": "1 小时",
+            "tip": "拍太阳船雕塑与 Harpa 隔水呼应。"
+          },
+          {
+            "id": "iceland-d6-2",
+            "name": "北欧雷克雅未克食物厅",
+            "time": "12:30",
+            "category": "food",
+            "addressHint": "Hlemmur Mathöll",
+            "why": "几家本地厨师摊位集合，一次吃到多种冰岛味。",
+            "duration": "1.5 小时",
+            "tip": "记得试 hangikjöt 烟熏羊肉。"
+          },
+          {
+            "id": "iceland-d6-3",
+            "name": "Grótta 灯塔极光",
+            "time": "21:30",
+            "category": "view",
+            "addressHint": "Grótta Lighthouse",
+            "why": "市内最便利的极光观测点之一。",
+            "duration": "2 小时",
+            "tip": "看天气预报，KP 指数超过 3 再出门。"
+          }
+        ],
+        "food": ["冰岛热狗 Bæjarins Beztu", "发酵鲨鱼肉试吃", "热羊肉汤"],
+        "photoTips": ["极光与灯塔", "彩色港口倒影", "街头涂鸦"]
+      },
+      {
+        "day": 7,
+        "title": "蓝湖 + 返程",
+        "area": "蓝湖温泉 / 机场",
+        "mood": "收尾、温泉、飞机",
+        "routeSummary": "上午到蓝湖泡一场，再回机场。",
+        "commuteNote": "市区到蓝湖约 50 分钟，蓝湖到机场 20 分钟。",
+        "budgetNote": "蓝湖舒适套餐含一杯饮料。",
+        "stops": [
+          {
+            "id": "iceland-d7-1",
+            "name": "蓝湖温泉 Blue Lagoon",
+            "time": "10:00",
+            "category": "other",
+            "addressHint": "Blue Lagoon, Grindavík",
+            "why": "奶蓝色硅泥温泉，把七天的疲劳一次洗掉。",
+            "duration": "3 小时",
+            "tip": "提前 24 小时预约时段。"
+          }
+        ],
+        "food": ["蓝湖咖啡", "硅泥护肤套装"],
+        "photoTips": ["蓝湖蒸汽晨光", "硅泥涂抹特写", "返程公路火山"]
+      }
+    ],
+    "budget": [
+      { "label": "住宿", "amount": "9000-14000 元", "note": "精品酒店 6 晚，含小镇精品民宿。" },
+      { "label": "餐饮", "amount": "4500-6500 元", "note": "含龙虾汤、羊肉、设计餐厅。" },
+      { "label": "交通", "amount": "3500-5500 元", "note": "租车 + 油费 + 保险。" },
+      { "label": "门票与温泉", "amount": "2500-4000 元", "note": "蓝湖、间歇泉、温泉组合。" }
+    ],
+    "packing": ["冲锋衣", "防滑鞋", "泳衣", "暖宝宝", "保温杯", "太阳镜"],
+    "reminders": ["冬季自驾留意路面结冰", "极光需要 KP 指数 + 云层", "黑沙滩绝对不要背对海浪", "提前预约游船与温泉"],
+    "disclaimer": "AI 生成的旅行建议仅用于规划参考。出发前请核验营业时间、票价、预约、交通、天气与安全信息。"
+  }
+}

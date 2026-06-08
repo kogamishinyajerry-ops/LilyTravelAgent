@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LilyTravelAgent v0.8.2 · 5 真实操作路书生成 · Demo Gallery</title>
+<style>
+  :root {
+    --bg-0: #06070c;
+    --bg-1: #0b0e18;
+    --bg-2: #11162a;
+    --bg-3: #181f3a;
+    --line: #232a48;
+    --line-soft: #1b2138;
+    --text-0: #f7f9ff;
+    --text-1: #c8cee5;
+    --text-2: #8d96b8;
+    --text-3: #5a6380;
+    --accent: #6ee7b7;
+    --accent-2: #60a5fa;
+    --accent-3: #f0abfc;
+    --warn: #fbbf24;
+    --err: #f87171;
+    --grad-1: linear-gradient(135deg, #60a5fa 0%, #6ee7b7 50%, #f0abfc 100%);
+    --grad-2: linear-gradient(120deg, rgba(96,165,250,0.18), rgba(110,231,183,0.12), rgba(240,171,252,0.18));
+    --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.55);
+    --shadow-md: 0 8px 32px rgba(0, 0, 0, 0.4);
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg-0);
+    color: var(--text-0);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+      "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    scroll-behavior: smooth;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(1200px 800px at 80% -10%, rgba(96, 165, 250, 0.10), transparent 60%),
+      radial-gradient(900px 700px at -10% 20%, rgba(110, 231, 183, 0.08), transparent 60%),
+      radial-gradient(900px 800px at 50% 110%, rgba(240, 171, 252, 0.06), transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+    animation: drift 22s ease-in-out infinite alternate;
+  }
+  @keyframes drift {
+    0%   { transform: translate3d(0, 0, 0) scale(1); }
+    100% { transform: translate3d(-2%, 1%, 0) scale(1.04); }
+  }
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+    background-size: 56px 56px;
+    pointer-events: none;
+    z-index: 0;
+    mask-image: radial-gradient(ellipse at center, #000 30%, transparent 80%);
+  }
+
+  .layout {
+    position: relative;
+    z-index: 1;
+    max-width: 1480px;
+    margin: 0 auto;
+    padding: 32px;
+  }
+  @media (max-width: 720px) {
+    .layout { padding: 18px; }
+  }
+
+  /* Hero */
+  header.hero {
+    position: relative;
+    border: 1px solid var(--line);
+    border-radius: 24px;
+    background:
+      linear-gradient(180deg, rgba(96, 165, 250, 0.12), rgba(110, 231, 183, 0.05) 60%, transparent),
+      var(--bg-1);
+    padding: 56px 48px;
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+  }
+  header.hero::after {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border-radius: 24px;
+    padding: 1px;
+    background: linear-gradient(120deg, rgba(96, 165, 250, 0.55), transparent 30%,
+                                rgba(110, 231, 183, 0.45) 60%, transparent 90%);
+    -webkit-mask: linear-gradient(#000, #000) content-box, linear-gradient(#000, #000);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
+    pointer-events: none;
+  }
+  .hero-bg-glow {
+    position: absolute;
+    width: 520px; height: 520px;
+    right: -120px; top: -120px;
+    background: radial-gradient(circle, rgba(240,171,252,0.18), transparent 60%);
+    filter: blur(30px);
+    pointer-events: none;
+  }
+  @media (max-width: 720px) {
+    header.hero { padding: 36px 24px; }
+  }
+
+  .eyebrow {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: rgba(110, 231, 183, 0.08);
+    border: 1px solid rgba(110, 231, 183, 0.28);
+    padding: 6px 12px;
+    border-radius: 999px;
+    margin-bottom: 20px;
+  }
+  .eyebrow .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 0 4px rgba(110, 231, 183, 0.18);
+    animation: pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50%      { transform: scale(1.25); opacity: 0.7; }
+  }
+
+  h1.title {
+    position: relative;
+    font-size: clamp(32px, 4.4vw, 52px);
+    line-height: 1.1;
+    margin: 0 0 18px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+  h1.title .accent {
+    background: var(--grad-1);
+    -webkit-background-clip: text;
+            background-clip: text;
+    color: transparent;
+  }
+
+  .lede {
+    position: relative;
+    color: var(--text-1);
+    font-size: 17px;
+    max-width: 760px;
+    margin: 0 0 32px;
+  }
+
+  .meta-grid {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 12px;
+  }
+  .meta {
+    background: rgba(17, 22, 42, 0.65);
+    border: 1px solid var(--line-soft);
+    border-radius: 12px;
+    padding: 14px 16px;
+    backdrop-filter: blur(8px);
+  }
+  .meta .k {
+    font-size: 11px;
+    color: var(--text-3);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .meta .v {
+    font-size: 15px;
+    color: var(--text-0);
+    margin-top: 4px;
+    font-weight: 600;
+  }
+
+  /* Scenario card */
+  section.scenario {
+    position: relative;
+    margin-top: 40px;
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    background: rgba(11, 14, 24, 0.78);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+    scroll-margin-top: 24px;
+    backdrop-filter: blur(6px);
+  }
+  section.scenario::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--accent);
+    opacity: 0.7;
+  }
+  section.scenario[data-accent="kyoto"]::before  { background: #f0abfc; }
+  section.scenario[data-accent="iceland"]::before { background: #60a5fa; }
+  section.scenario[data-accent="morocco"]::before { background: #fbbf24; }
+  section.scenario[data-accent="newyork"]::before { background: #f87171; }
+  section.scenario[data-accent="dali"]::before    { background: #6ee7b7; }
+
+  .scenario-head {
+    padding: 28px 32px 18px;
+    border-bottom: 1px solid var(--line-soft);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.025), transparent);
+  }
+  .scenario-head .row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .scenario-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 48px;
+    height: 30px;
+    padding: 0 12px;
+    border-radius: 999px;
+    background: var(--grad-1);
+    color: #06122a;
+    font-weight: 800;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+  }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 5px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    color: var(--text-2);
+    background: rgba(11, 14, 24, 0.6);
+    font-weight: 600;
+  }
+  .badge.template {
+    color: var(--accent-2);
+    border-color: rgba(96, 165, 250, 0.45);
+    background: rgba(96, 165, 250, 0.08);
+  }
+  .badge.mood {
+    color: var(--accent-3);
+    border-color: rgba(240, 171, 252, 0.45);
+    background: rgba(240, 171, 252, 0.08);
+  }
+  .badge.dot::before {
+    content: "";
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  .scenario-head h2 {
+    margin: 0;
+    font-size: clamp(22px, 2.4vw, 30px);
+    line-height: 1.3;
+    color: var(--text-0);
+    letter-spacing: -0.01em;
+  }
+  .scenario-head .subtitle {
+    color: var(--text-2);
+    font-size: 14px;
+    margin-top: 6px;
+  }
+
+  .scenario-body {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+    gap: 0;
+  }
+  @media (max-width: 900px) {
+    .scenario-body { grid-template-columns: 1fr; }
+  }
+
+  .shot {
+    position: relative;
+    background:
+      linear-gradient(135deg, #0a0d18 0%, #050608 100%);
+    border-right: 1px solid var(--line-soft);
+    overflow: hidden;
+  }
+  @media (max-width: 900px) {
+    .shot { border-right: none; border-bottom: 1px solid var(--line-soft); }
+  }
+  .shot img {
+    display: block;
+    width: 100%;
+    height: auto;
+    background: #000;
+    transition: transform 0.6s ease;
+  }
+  .scenario:hover .shot img { transform: scale(1.015); }
+  .shot .caption {
+    position: absolute;
+    left: 12px;
+    bottom: 12px;
+    background: rgba(7, 8, 13, 0.78);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    color: var(--text-1);
+    font-size: 12px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    font-variant-numeric: tabular-nums;
+  }
+  .shot .badge-shot {
+    position: absolute;
+    right: 12px;
+    top: 12px;
+    background: rgba(7, 8, 13, 0.78);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    color: var(--accent);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    padding: 5px 10px;
+    border-radius: 6px;
+    border: 1px solid rgba(110, 231, 183, 0.3);
+  }
+
+  .shot-stack {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1px;
+    background: var(--line-soft);
+  }
+  .shot-stack .shot {
+    border-right: none;
+  }
+
+  .narrate {
+    padding: 28px 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .narrate .lead {
+    color: var(--text-0);
+    font-size: 15px;
+    line-height: 1.75;
+  }
+  .narrate .lead code {
+    background: var(--bg-2);
+    border: 1px solid var(--line-soft);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 13px;
+    color: var(--accent);
+  }
+  .narrate .voice {
+    color: var(--text-2);
+    font-size: 13px;
+    line-height: 1.7;
+    border-left: 2px solid var(--line);
+    padding: 4px 0 4px 14px;
+    font-style: italic;
+  }
+
+  /* Technical metadata grid */
+  .tech-meta {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+  .tech-meta .cell {
+    background: var(--bg-2);
+    border: 1px solid var(--line-soft);
+    border-radius: 10px;
+    padding: 10px 12px;
+  }
+  .tech-meta .k {
+    font-size: 10px;
+    color: var(--text-3);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+  .tech-meta .v {
+    font-size: 18px;
+    color: var(--text-0);
+    font-weight: 700;
+    margin-top: 2px;
+    font-variant-numeric: tabular-nums;
+  }
+  .tech-meta .v small {
+    font-size: 12px;
+    color: var(--text-2);
+    font-weight: 500;
+    margin-left: 4px;
+  }
+
+  /* Footer */
+  footer.page {
+    margin-top: 80px;
+    padding: 40px 36px;
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    background:
+      linear-gradient(180deg, rgba(96, 165, 250, 0.06), transparent),
+      var(--bg-1);
+    box-shadow: var(--shadow-md);
+  }
+  footer.page h3 {
+    margin: 0 0 16px;
+    font-size: 14px;
+    color: var(--text-2);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+  footer.page .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  footer.page a.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 18px;
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    color: var(--text-0);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background 0.15s, border-color 0.15s, transform 0.05s;
+  }
+  footer.page a.btn:hover {
+    background: var(--bg-3);
+    border-color: var(--accent-2);
+  }
+  footer.page a.btn:active { transform: translateY(1px); }
+  footer.page a.btn.primary {
+    background: var(--grad-1);
+    color: #06122a;
+    border-color: transparent;
+    font-weight: 700;
+  }
+  footer.page a.btn .arrow { color: var(--accent); }
+  footer.page a.btn.primary .arrow { color: #06122a; }
+  footer.page .signoff {
+    margin-top: 28px;
+    color: var(--text-3);
+    font-size: 12px;
+    line-height: 1.7;
+  }
+  footer.page .signoff strong { color: var(--text-1); }
+  footer.page .signoff code {
+    background: var(--bg-2);
+    border: 1px solid var(--line-soft);
+    padding: 1px 6px;
+    border-radius: 4px;
+    color: var(--text-1);
+  }
+
+  /* Reveal animation */
+  .scenario { opacity: 0; transform: translateY(14px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .scenario.in { opacity: 1; transform: none; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .scenario { opacity: 1; transform: none; transition: none; }
+    body::before { animation: none; }
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+
+  <!-- ===================== HERO ===================== -->
+  <header class="hero">
+    <div class="hero-bg-glow"></div>
+    <span class="eyebrow"><span class="dot"></span>v0.8.2 · Vibe Coding · 5 真实路书 · 一键生成</span>
+    <h1 class="title">LilyTravelAgent <span class="accent">5 真实操作路书生成</span></h1>
+    <p class="lede">
+      Demo Gallery · v0.8.2:把 5 份真实旅行需求丢进 <code>/studio</code>,从空表单到结构化路书、视觉模板切换、最终成片,一条不落。
+      截图全部由 <code>scripts/demo-5-roadbooks.js</code> 真实驱动 Playwright 抓取,可直接转发给团队评审。
+    </p>
+    <div class="meta-grid">
+      <div class="meta"><div class="k">VERSION</div><div class="v">v0.8.2</div></div>
+      <div class="meta"><div class="k">SCENARIOS</div><div class="v">5 真实路书</div></div>
+      <div class="meta"><div class="k">DESTINATIONS</div><div class="v">京都 / 冰岛 / 摩洛哥 / 纽约 / 大理</div></div>
+      <div class="meta"><div class="k">DAYS COVERED</div><div class="v">3 / 7 / 6 / 5 / 3 = 24 天</div></div>
+      <div class="meta"><div class="k">DRIVER</div><div class="v">Playwright + 5 mock JSON</div></div>
+      <div class="meta"><div class="k">PURPOSE</div><div class="v">Vibe Coding · 录屏 · 分享</div></div>
+    </div>
+  </header>
+
+  <!-- ===================== 01 Kyoto ===================== -->
+  <section class="scenario" data-accent="kyoto" id="kyoto">
+    <div class="scenario-head">
+      <div class="row">
+        <span class="scenario-num">01</span>
+        <span class="badge template dot">TEMPLATE · SHRINE</span>
+        <span class="badge mood dot">MOOD · 古寺 / 哲学 / 和菓子</span>
+      </div>
+      <h2>京都三日漫游 · 京都三都物语</h2>
+      <div class="subtitle">东山的人间烟火 · 北山金阁 · 哲学之道晨雾</div>
+    </div>
+    <div class="scenario-body">
+      <div class="shot-stack">
+        <div class="shot">
+          <img src="kyoto-04-fullpage.png" alt="京都三日漫游 · 全页路书" loading="lazy" />
+          <div class="caption">kyoto-04-fullpage.png · HD</div>
+          <div class="badge-shot">FULL ROADBOOK</div>
+        </div>
+        <div class="shot">
+          <img src="kyoto-02-days-highlights.png" alt="京都三日 · 行程高光" loading="lazy" />
+          <div class="caption">kyoto-02-days-highlights.png · HD</div>
+          <div class="badge-shot">DAYS + HIGHLIGHTS</div>
+        </div>
+      </div>
+      <div class="narrate">
+        <p class="lead">
+          一句话需求 <code>"京都三日慢节奏,想看古寺和菓子"</code> → M3 输出三座"精神城市":
+          <strong>东山</strong>的人间烟火、<strong>北山</strong>的金阁静谧、<strong>东山</strong>的哲学回声。
+          SHRINE 模板把视觉拉到山门石阶、晨雾、宝塔剪影,与"慢节奏文化爱好者"的人设天然契合。
+        </p>
+        <div class="tech-meta" aria-label="京都路书技术元数据">
+          <div class="cell"><div class="k">DAYS</div><div class="v">3<small>天 2 晚</small></div></div>
+          <div class="cell"><div class="k">STOPS</div><div class="v">11<small>个核心点位</small></div></div>
+          <div class="cell"><div class="k">FOOD</div><div class="v">9<small>条餐饮建议</small></div></div>
+          <div class="cell"><div class="k">PHOTO TIPS</div><div class="v">9<small>条拍摄机位</small></div></div>
+        </div>
+        <p class="voice">"我不需要一份攻略,我需要一份能让我慢下来、按节奏走的京都。"</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 02 Iceland ===================== -->
+  <section class="scenario" data-accent="iceland" id="iceland">
+    <div class="scenario-head">
+      <div class="row">
+        <span class="scenario-num">02</span>
+        <span class="badge template dot">TEMPLATE · STARLAKE</span>
+        <span class="badge mood dot">MOOD · 极光 / 温泉 / 浮冰</span>
+      </div>
+      <h2>冰岛极光物语 · 7 天 6 晚环岛浓缩</h2>
+      <div class="subtitle">黄金圈 · 南海岸瀑布 · 冰河湖 · 草帽山 · 蓝湖</div>
+    </div>
+    <div class="scenario-body">
+      <div class="shot-stack">
+        <div class="shot">
+          <img src="iceland-04-fullpage.png" alt="冰岛极光物语 · 全页路书" loading="lazy" />
+          <div class="caption">iceland-04-fullpage.png · HD</div>
+          <div class="badge-shot">FULL ROADBOOK</div>
+        </div>
+        <div class="shot">
+          <img src="iceland-02-days-highlights.png" alt="冰岛 · 行程高光" loading="lazy" />
+          <div class="caption">iceland-02-days-highlights.png · HD</div>
+          <div class="badge-shot">DAYS + HIGHLIGHTS</div>
+        </div>
+      </div>
+      <div class="narrate">
+        <p class="lead">
+          <code>"冰岛 7 天,自然 + 温泉型旅行者"</code> → M3 把 7 天拆成 7 段质感差异极强的节奏:
+          首都慢走 → 黄金圈 → 黑沙滩 → 冰河湖 → 草帽山 → 极光 → 蓝湖收尾。
+          STARLAKE 模板把深紫底色 + 镜面湖面 + 星点拉满,跟"极光"叙事一秒对上。
+        </p>
+        <div class="tech-meta" aria-label="冰岛路书技术元数据">
+          <div class="cell"><div class="k">DAYS</div><div class="v">7<small>天 6 晚</small></div></div>
+          <div class="cell"><div class="k">STOPS</div><div class="v">17<small>个核心点位</small></div></div>
+          <div class="cell"><div class="k">FOOD</div><div class="v">19<small>条餐饮建议</small></div></div>
+          <div class="cell"><div class="k">PHOTO TIPS</div><div class="v">21<small>条拍摄机位</small></div></div>
+        </div>
+        <p class="voice">"环岛路线难的不是开车,是怎么在 7 天里把南海岸的天气和极光窗口都装下。"</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 03 Morocco ===================== -->
+  <section class="scenario" data-accent="morocco" id="morocco">
+    <div class="scenario-head">
+      <div class="row">
+        <span class="scenario-num">03</span>
+        <span class="badge template dot">TEMPLATE · DESERT</span>
+        <span class="badge mood dot">MOOD · 撒哈拉 / 古城 / 染缸</span>
+      </div>
+      <h2>撒哈拉与古城 · 摩洛哥 6 天</h2>
+      <div class="subtitle">马拉喀什 · 阿特拉斯 · 撒哈拉 · 非斯 · 舍夫沙万</div>
+    </div>
+    <div class="scenario-body">
+      <div class="shot-stack">
+        <div class="shot">
+          <img src="morocco-04-fullpage.png" alt="撒哈拉与古城 · 全页路书" loading="lazy" />
+          <div class="caption">morocco-04-fullpage.png · HD</div>
+          <div class="badge-shot">FULL ROADBOOK</div>
+        </div>
+        <div class="shot">
+          <img src="morocco-02-days-highlights.png" alt="摩洛哥 · 行程高光" loading="lazy" />
+          <div class="caption">morocco-02-days-highlights.png · HD</div>
+          <div class="badge-shot">DAYS + HIGHLIGHTS</div>
+        </div>
+      </div>
+      <div class="narrate">
+        <p class="lead">
+          <code>"摩洛哥 6 天 5 晚,沙漠 + 老城型"</code> → M3 把红城、土堡、撒哈拉一夜、皮革染缸、蓝色小镇串成 6 个反差强烈的画面。
+          DESERT 模板的低多边形沙丘 + 暖色夕光,与"撒哈拉一夜"段落完全共振;在 Morocco 演示里还手动切到 <code>STARLAKE</code> 模板做了一次世界观对比。
+        </p>
+        <div class="tech-meta" aria-label="摩洛哥路书技术元数据">
+          <div class="cell"><div class="k">DAYS</div><div class="v">6<small>天 5 晚</small></div></div>
+          <div class="cell"><div class="k">STOPS</div><div class="v">17<small>个核心点位</small></div></div>
+          <div class="cell"><div class="k">FOOD</div><div class="v">18<small>条餐饮建议</small></div></div>
+          <div class="cell"><div class="k">PHOTO TIPS</div><div class="v">18<small>条拍摄机位</small></div></div>
+        </div>
+        <p class="voice">"撒哈拉不只是一晚沙漠,它的白天和星空,是两个完全不同的路书节奏。"</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 04 NewYork ===================== -->
+  <section class="scenario" data-accent="newyork" id="newyork">
+    <div class="scenario-head">
+      <div class="row">
+        <span class="scenario-num">04</span>
+        <span class="badge template dot">TEMPLATE · NEON CITY</span>
+        <span class="badge mood dot">MOOD · 霓虹 / 美食 / 艺术</span>
+      </div>
+      <h2>纽约客不夜城 · 5 天 4 晚</h2>
+      <div class="subtitle">中央公园 · MoMA · SoHo · 高线 · 布鲁克林</div>
+    </div>
+    <div class="scenario-body">
+      <div class="shot-stack">
+        <div class="shot">
+          <img src="newyork-04-fullpage.png" alt="纽约客不夜城 · 全页路书" loading="lazy" />
+          <div class="caption">newyork-04-fullpage.png · HD</div>
+          <div class="badge-shot">FULL ROADBOOK</div>
+        </div>
+        <div class="shot">
+          <img src="newyork-02-days-highlights.png" alt="纽约 · 行程高光" loading="lazy" />
+          <div class="caption">newyork-02-days-highlights.png · HD</div>
+          <div class="badge-shot">DAYS + HIGHLIGHTS</div>
+        </div>
+        <div class="shot">
+          <img src="newyork-06-day2-detail.png" alt="纽约 Day2 详情" loading="lazy" />
+          <div class="caption">newyork-06-day2-detail.png · HD</div>
+          <div class="badge-shot">DAY 2 DETAIL</div>
+        </div>
+      </div>
+      <div class="narrate">
+        <p class="lead">
+          <code>"纽约 5 天 4 晚,快节奏美食 + 艺术型"</code> → M3 把中央公园、MoMA、SoHo、自由女神、布鲁克林按"白天 vs 夜晚"切对仗。
+          NEON CITY 模板的紫色霓虹 + 楼宇方块,跟时代广场、布鲁克林夜景一拍即合。
+          <code>Day 2</code> 单独抓了 detail 截图,验证停留时长 / 拍照机位 / 美食建议三项在单日视图里都成立。
+        </p>
+        <div class="tech-meta" aria-label="纽约路书技术元数据">
+          <div class="cell"><div class="k">DAYS</div><div class="v">5<small>天 4 晚</small></div></div>
+          <div class="cell"><div class="k">STOPS</div><div class="v">14<small>个核心点位</small></div></div>
+          <div class="cell"><div class="k">FOOD</div><div class="v">15<small>条餐饮建议</small></div></div>
+          <div class="cell"><div class="k">PHOTO TIPS</div><div class="v">15<small>条拍摄机位</small></div></div>
+        </div>
+        <p class="voice">"城市节奏的密度比城市数量更关键,5 天里我把 MoMA 留了半天,SoHo 留了 1.5 天。"</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 05 Dali ===================== -->
+  <section class="scenario" data-accent="dali" id="dali">
+    <div class="scenario-head">
+      <div class="row">
+        <span class="scenario-num">05</span>
+        <span class="badge template dot">TEMPLATE · LAMPLIGHT</span>
+        <span class="badge mood dot">MOOD · 苍山 / 洱海 / 古城</span>
+      </div>
+      <h2>大理三日漫游 · 苍山洱海古城</h2>
+      <div class="subtitle">古城慢走 · 洱海环线 · 苍山三塔</div>
+    </div>
+    <div class="scenario-body">
+      <div class="shot-stack">
+        <div class="shot">
+          <img src="dali-04-fullpage.png" alt="大理三日漫游 · 全页路书" loading="lazy" />
+          <div class="caption">dali-04-fullpage.png · HD</div>
+          <div class="badge-shot">FULL ROADBOOK</div>
+        </div>
+        <div class="shot">
+          <img src="dali-02-days-highlights.png" alt="大理 · 行程高光" loading="lazy" />
+          <div class="caption">dali-02-days-highlights.png · HD</div>
+          <div class="badge-shot">DAYS + HIGHLIGHTS</div>
+        </div>
+      </div>
+      <div class="narrate">
+        <p class="lead">
+          <code>"大理 3 天 2 晚,古城 + 自然 + 摄影型"</code> → M3 输出"落地慢走 → 洱海环线 → 苍山三塔"三段典型云南节奏。
+          LAMPLIGHT 模板的窄巷纵深 + 暖黄路灯 + 长阴影,把古城夜景的语言压在路书氛围里;
+          Day 2 的洱海骑行 + 落日机位,跟 LAMPLIGHT 模板的"暖色记忆点"形成对照。
+        </p>
+        <div class="tech-meta" aria-label="大理路书技术元数据">
+          <div class="cell"><div class="k">DAYS</div><div class="v">3<small>天 2 晚</small></div></div>
+          <div class="cell"><div class="k">STOPS</div><div class="v">9<small>个核心点位</small></div></div>
+          <div class="cell"><div class="k">FOOD</div><div class="v">10<small>条餐饮建议</small></div></div>
+          <div class="cell"><div class="k">PHOTO TIPS</div><div class="v">9<small>条拍摄机位</small></div></div>
+        </div>
+        <p class="voice">"大理不需要堆景点,把苍山、洱海、三个时段的光线抓住,三天就能拍出一年的朋友圈。"</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer class="page">
+    <h3>Mock JSON · 数据源</h3>
+    <div class="links">
+      <a class="btn primary" href="../../scripts/demo-mocks/kyoto.json">
+        <span class="arrow">↗</span> kyoto.json · 京都
+      </a>
+      <a class="btn" href="../../scripts/demo-mocks/iceland.json">
+        <span class="arrow">↗</span> iceland.json · 冰岛
+      </a>
+      <a class="btn" href="../../scripts/demo-mocks/morocco.json">
+        <span class="arrow">↗</span> morocco.json · 摩洛哥
+      </a>
+      <a class="btn" href="../../scripts/demo-mocks/newyork.json">
+        <span class="arrow">↗</span> newyork.json · 纽约
+      </a>
+      <a class="btn" href="../../scripts/demo-mocks/dali.json">
+        <span class="arrow">↗</span> dali.json · 大理
+      </a>
+    </div>
+
+    <h3 style="margin-top: 32px;">Recap · 资源</h3>
+    <div class="links">
+      <a class="btn primary" href="README.md">
+        <span class="arrow">▶</span> 录制 README
+      </a>
+      <a class="btn" href="narration.md">
+        <span class="arrow">▶</span> narration.md · 旁白脚本
+      </a>
+      <a class="btn" href="../../scripts/demo-5-roadbooks.js">
+        <span class="arrow">↗</span> demo-5-roadbooks.js · 驱动脚本
+      </a>
+      <a class="btn" href="../../scripts/demo-mocks/">
+        <span class="arrow">↗</span> scripts/demo-mocks/
+      </a>
+    </div>
+
+    <div class="signoff">
+      <strong>Built with Vibe Coding</strong> · MiniMax-M3 + MiniMax-M2.7-highspeed · Next.js 16 · Three.js 0.184
+      <br />
+      © 2026 LilyTravelAgent · <strong>v0.8.2 · Demo Gallery</strong> · 5 真实路书 · 24 天行程
+      <br />
+      Source: <code>recording-shots/roadbook-demo/demo-gallery.html</code>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+  // Soft reveal-on-scroll for sections
+  const io = new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      if (e.isIntersecting) {
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      }
+    }
+  }, { threshold: 0.06 });
+  document.querySelectorAll('section.scenario').forEach(s => io.observe(s));
+</script>
+</body>
+</html>

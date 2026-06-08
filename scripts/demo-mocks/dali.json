@@ -1,0 +1,163 @@
+{
+  "ok": true,
+  "model": "MiniMax-M3 (mocked)",
+  "generationMode": "quality",
+  "phase": "full",
+  "roadbook": {
+    "title": "大理三日漫游",
+    "subtitle": "苍山 / 洱海 / 古城",
+    "destination": "云南大理",
+    "durationLabel": "3 天 2 晚",
+    "travelerLabel": "2 位古城 + 自然 + 摄影型旅行者",
+    "budgetLabel": "中等预算",
+    "concept": "把三天拆成三段：古城人文、洱海风景、苍山远眺。每天一个主轴，不赶路。",
+    "bestFor": ["第一次去大理", "想拍古城", "对自然风光感兴趣", "喜欢慢节奏"],
+    "highlights": ["大理古城", "喜洲古镇", "苍山", "洱海", "崇圣寺三塔"],
+    "summary": {
+      "routeTheme": "古城 - 洱海 - 苍山",
+      "transportPlan": "电动车 + 包车 + 步行",
+      "stayArea": "大理古城或才村",
+      "rhythm": "上午慢、下午重点体验、傍晚日落"
+    },
+    "days": [
+      {
+        "day": 1,
+        "title": "抵达大理，城里慢走",
+        "area": "大理古城",
+        "mood": "落地、慢走、白族烟火",
+        "routeSummary": "入住古城后从南门走到五华楼，傍晚人民路。",
+        "commuteNote": "大理机场到古城约 40 分钟。",
+        "budgetNote": "第一天以住宿和轻餐为主。",
+        "stops": [
+          {
+            "id": "dali-d1-1",
+            "name": "大理古城南门",
+            "time": "15:00",
+            "category": "culture",
+            "addressHint": "云南大理大理古城南门",
+            "why": "进入古城主街区的入口，建立路线感。",
+            "duration": "30 分钟",
+            "tip": "城楼上方可以拍到五华楼与苍山。"
+          },
+          {
+            "id": "dali-d1-2",
+            "name": "五华楼",
+            "time": "17:00",
+            "category": "view",
+            "addressHint": "云南大理五华楼",
+            "why": "古城地标，傍晚光线最适合登楼。",
+            "duration": "40 分钟",
+            "tip": "如果当天疲惫，可只做外观打卡。"
+          },
+          {
+            "id": "dali-d1-3",
+            "name": "人民路",
+            "time": "19:00",
+            "category": "shopping",
+            "addressHint": "云南大理人民路",
+            "why": "咖啡、小店、街头音乐的集中。",
+            "duration": "1.5 小时",
+            "tip": "注意避开人最多的路口。"
+          }
+        ],
+        "food": ["白族家常菜", "古城咖啡", "鲜花饼试吃"],
+        "photoTips": ["城楼剪影", "五华楼远眺苍山", "人民路店招"]
+      },
+      {
+        "day": 2,
+        "title": "洱海环线一整天",
+        "area": "才村 / 磻溪 S 湾 / 廊桥",
+        "mood": "骑行、风景、日落",
+        "routeSummary": "沿洱海西线慢慢移动，把拍照点和咖啡时间留足。",
+        "commuteNote": "电动车或包车，注意防晒。",
+        "budgetNote": "交通和咖啡是主要花费。",
+        "stops": [
+          {
+            "id": "dali-d2-1",
+            "name": "才村码头",
+            "time": "10:00",
+            "category": "view",
+            "addressHint": "云南大理才村码头",
+            "why": "离古城近，开始洱海慢行的最佳起点。",
+            "duration": "1 小时",
+            "tip": "上午人少，水面平静适合长曝。"
+          },
+          {
+            "id": "dali-d2-2",
+            "name": "磻溪 S 湾",
+            "time": "14:30",
+            "category": "view",
+            "addressHint": "云南大理磻溪村 S 湾",
+            "why": "环洱海最具辨识度的 S 形弯道。",
+            "duration": "1.5 小时",
+            "tip": "走离主拍点 50 米反而更出片。"
+          },
+          {
+            "id": "dali-d2-3",
+            "name": "廊桥",
+            "time": "17:30",
+            "category": "view",
+            "addressHint": "云南大理洱海廊桥",
+            "why": "等一场不赶路的日落。",
+            "duration": "1 小时",
+            "tip": "提前查当天云量。"
+          }
+        ],
+        "food": ["洱海边咖啡", "烤乳扇", "菌菇火锅"],
+        "photoTips": ["S 湾弯道", "洱海逆光", "骑行背影"]
+      },
+      {
+        "day": 3,
+        "title": "苍山与三塔收尾",
+        "area": "苍山 / 崇圣寺三塔 / 喜洲",
+        "mood": "远山、白塔、白族",
+        "routeSummary": "上午上苍山看云，下午回古城北看三塔，最后顺路到喜洲。",
+        "commuteNote": "缆车提前一天预约。",
+        "budgetNote": "苍山缆车是主要支出。",
+        "stops": [
+          {
+            "id": "dali-d3-1",
+            "name": "苍山洗马潭索道",
+            "time": "09:00",
+            "category": "view",
+            "addressHint": "云南大理苍山洗马潭索道",
+            "why": "直达 4000 米海拔，云海与杜鹃。",
+            "duration": "2.5 小时",
+            "tip": "高原注意防晒，紫外线强。"
+          },
+          {
+            "id": "dali-d3-2",
+            "name": "崇圣寺三塔",
+            "time": "14:00",
+            "category": "culture",
+            "addressHint": "云南大理崇圣寺三塔",
+            "why": "大理最具辨识度的古塔，苍山倒影是经典画面。",
+            "duration": "1.5 小时",
+            "tip": "倒影池在下午 3 点后最稳。"
+          },
+          {
+            "id": "dali-d3-3",
+            "name": "喜洲古镇",
+            "time": "16:30",
+            "category": "culture",
+            "addressHint": "云南大理喜洲古镇",
+            "why": "白族建筑和小镇生活感集中。",
+            "duration": "1.5 小时",
+            "tip": "可以买一份喜洲粑粑带走。"
+          }
+        ],
+        "food": ["砂锅鱼", "乳扇", "喜洲粑粑", "饵丝"],
+        "photoTips": ["三塔倒影", "苍山云海", "喜洲白墙青瓦"]
+      }
+    ],
+    "budget": [
+      { "label": "住宿", "amount": "800-1500 元", "note": "古城或才村舒适民宿 2 晚。" },
+      { "label": "餐饮", "amount": "500-900 元", "note": "含白族家常、菌菇火锅、咖啡。" },
+      { "label": "交通", "amount": "300-700 元", "note": "电动车或包车。" },
+      { "label": "门票", "amount": "200-400 元", "note": "苍山索道 + 三塔。" }
+    ],
+    "packing": ["防晒霜", "墨镜", "薄外套", "舒服鞋", "充电宝", "可折叠袋"],
+    "reminders": ["苍山紫外线强", "环海注意风", "返程保留机动时间", "不要把 AI 内容当成已核验事实"],
+    "disclaimer": "AI 生成的旅行建议仅用于规划参考。出发前请核验营业时间、票价、预约、交通、天气与安全信息。"
+  }
+}

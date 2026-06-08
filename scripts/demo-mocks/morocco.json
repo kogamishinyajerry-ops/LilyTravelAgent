@@ -1,0 +1,282 @@
+{
+  "ok": true,
+  "model": "MiniMax-M3 (mocked)",
+  "generationMode": "quality",
+  "phase": "full",
+  "roadbook": {
+    "title": "撒哈拉与古城",
+    "subtitle": "马拉喀什 / 撒哈拉 / 非斯 / 舍夫沙万",
+    "destination": "摩洛哥",
+    "durationLabel": "6 天 5 晚",
+    "travelerLabel": "2 位沙漠 + 老城型旅行者",
+    "budgetLabel": "中等预算",
+    "concept": "把六天拆成两段：前四天走马拉喀什-撒哈拉-非斯，后两天用舍夫沙万的蓝与艾西拉的海收尾。",
+    "bestFor": ["第一次去摩洛哥", "想看沙漠", "对老城与色彩有兴趣", "愿意坐长途车"],
+    "highlights": ["杰马夫纳广场", "撒哈拉沙漠", "哈桑二世清真寺", "舍夫沙万蓝城", "菲斯麦地那"],
+    "summary": {
+      "routeTheme": "马拉喀什 - 撒哈拉 - 非斯 - 舍夫沙万",
+      "transportPlan": "城际小巴 + 沙漠段 4x4 拼车 + 当地出租车",
+      "stayArea": "Riad 民宿为主，沙漠一晚露营",
+      "rhythm": "上午老城，傍晚天台，夜晚集市"
+    },
+    "days": [
+      {
+        "day": 1,
+        "title": "马拉喀什的红色之城",
+        "area": "杰马夫纳广场 / 麦地那",
+        "mood": "红色、喧闹、薄荷茶",
+        "routeSummary": "进入麦地那感受红城节奏，傍晚到广场。",
+        "commuteNote": "机场到 Riad 约 20 分钟，预约接送避免绕路。",
+        "budgetNote": "Riad 民宿包含早餐。",
+        "stops": [
+          {
+            "id": "morocco-d1-1",
+            "name": "本优素福神学院",
+            "time": "10:00",
+            "category": "culture",
+            "addressHint": "Ben Youssef Madrasa, Marrakech",
+            "why": "雪松木雕与 zellige 拼花的代表。",
+            "duration": "1 小时",
+            "tip": "中庭仰拍几何对称最出片。"
+          },
+          {
+            "id": "morocco-d1-2",
+            "name": "巴伊亚宫",
+            "time": "12:00",
+            "category": "culture",
+            "addressHint": "Palais de la Bahia, Marrakech",
+            "why": "了解摩洛哥宫廷庭院美学的入口。",
+            "duration": "1 小时",
+            "tip": "避开正午团客，早上最舒服。"
+          },
+          {
+            "id": "morocco-d1-3",
+            "name": "杰马夫纳广场",
+            "time": "19:00",
+            "category": "view",
+            "addressHint": "Jemaa el-Fnaa, Marrakech",
+            "why": "UNESCO 非遗，傍晚有说书人、耍蛇人。",
+            "duration": "2 小时",
+            "tip": "拍耍蛇人需要给小费，先问价。"
+          }
+        ],
+        "food": ["塔吉锅", "薄荷茶", "Méchoui 烤羊头"],
+        "photoTips": ["广场上方天台俯瞰", "本优素福庭院", "Riad 庭院水池"]
+      },
+      {
+        "day": 2,
+        "title": "阿特拉斯与沙漠门户",
+        "area": "阿特拉斯山脉 / 艾本哈杜 / 瓦尔扎扎特",
+        "mood": "雪顶、土堡、公路",
+        "routeSummary": "翻越阿特拉斯，到瓦尔扎扎特住进土堡。",
+        "commuteNote": "全程包车 6-7 小时，分段拍照。",
+        "budgetNote": "晚餐在土堡酒店，比马拉喀什稍贵。",
+        "stops": [
+          {
+            "id": "morocco-d2-1",
+            "name": "Tizi n'Tichka 垭口",
+            "time": "10:00",
+            "category": "view",
+            "addressHint": "Tizi n'Tichka Pass",
+            "why": "海拔 2260 米，可远眺雪顶与红色土丘。",
+            "duration": "30 分钟",
+            "tip": "风大，多穿一件。"
+          },
+          {
+            "id": "morocco-d2-2",
+            "name": "艾本哈杜 Aït Benhaddou",
+            "time": "13:00",
+            "category": "culture",
+            "addressHint": "Aït Benhaddou, Ouarzazate",
+            "why": "UNESCO 土堡村，《权力的游戏》取景地。",
+            "duration": "1.5 小时",
+            "tip": "走到对岸拍全景最经典。"
+          },
+          {
+            "id": "morocco-d2-3",
+            "name": "瓦尔扎扎特电影城",
+            "time": "16:00",
+            "category": "culture",
+            "addressHint": "Atlas Studios, Ouarzazate",
+            "why": "非洲好莱坞的棚景，可看到《角斗士》《阿拉伯的劳伦斯》道具。",
+            "duration": "1.5 小时",
+            "tip": "对电影感兴趣再选，否则直接跳过。"
+          }
+        ],
+        "food": ["塔吉锅午餐", "柏柏尔薄荷茶", "烤羊排"],
+        "photoTips": ["土堡全景", "垭口公路", "电影城道具"]
+      },
+      {
+        "day": 3,
+        "title": "撒哈拉一夜",
+        "area": "梅尔祖卡 / 撒哈拉沙漠",
+        "mood": "沙丘、骆驼、星",
+        "routeSummary": "进入沙漠，骑骆驼到营地，看日落。",
+        "commuteNote": "瓦尔扎扎特到梅尔祖卡约 5 小时。",
+        "budgetNote": "沙漠营地为当晚最大支出。",
+        "stops": [
+          {
+            "id": "morocco-d3-1",
+            "name": "Todra 峡谷",
+            "time": "11:00",
+            "category": "view",
+            "addressHint": "Todra Gorge",
+            "why": "300 米高的红岩裂缝，可徒步。",
+            "duration": "1 小时",
+            "tip": "不要走到最窄处，以免落石。"
+          },
+          {
+            "id": "morocco-d3-2",
+            "name": "Erg Chebbi 沙丘",
+            "time": "18:00",
+            "category": "view",
+            "addressHint": "Erg Chebbi, Merzouga",
+            "why": "撒哈拉最具辨识度的橙色沙丘。",
+            "duration": "过夜",
+            "tip": "备好头灯，夜晚沙地无光。"
+          }
+        ],
+        "food": ["营地塔吉", "柏柏尔面包", "篝火薄荷茶"],
+        "photoTips": ["沙丘日落", "骆驼剪影", "星空银河"]
+      },
+      {
+        "day": 4,
+        "title": "从沙漠到非斯",
+        "area": "梅尔祖卡 / 米德勒特 / 伊夫兰 / 非斯",
+        "mood": "沙退、雪松、老城",
+        "routeSummary": "清晨看完沙漠日出，驱车往非斯。",
+        "commuteNote": "梅尔祖卡到非斯约 7 小时，建议带零食。",
+        "budgetNote": "在伊夫兰吃午饭最划算。",
+        "stops": [
+          {
+            "id": "morocco-d4-1",
+            "name": "撒哈拉日出",
+            "time": "06:30",
+            "category": "view",
+            "addressHint": "Erg Chebbi, Merzouga",
+            "why": "晨光把沙丘染成金红色。",
+            "duration": "1 小时",
+            "tip": "提前问好营地看日出位置。"
+          },
+          {
+            "id": "morocco-d4-2",
+            "name": "伊夫兰 Ifrane",
+            "time": "15:00",
+            "category": "view",
+            "addressHint": "Ifrane, Middle Atlas",
+            "why": "摩洛哥“小瑞士”，雪松与红色屋顶。",
+            "duration": "1 小时",
+            "tip": "可与雪松森林连成一段。"
+          },
+          {
+            "id": "morocco-d4-3",
+            "name": "非斯麦地那",
+            "time": "20:00",
+            "category": "culture",
+            "addressHint": "Fes el Bali",
+            "why": "世界最复杂的老城之一，9000 多条小巷。",
+            "duration": "2 小时",
+            "tip": "一定请当地向导，避免迷路。"
+          }
+        ],
+        "food": ["牛肉塔吉", "骆驼汉堡", "非斯传统餐厅"],
+        "photoTips": ["沙丘晨光", "伊夫兰红顶", "麦地那夜景"]
+      },
+      {
+        "day": 5,
+        "title": "非斯手作与非斯染色",
+        "area": "非斯 / 沃吕比利斯 / 梅克内斯",
+        "mood": "皮革、染缸、古罗马",
+        "routeSummary": "上午看皮革染坊与制革工坊，下午看沃吕比利斯古罗马遗址。",
+        "commuteNote": "非斯到沃吕比利斯约 1 小时。",
+        "budgetNote": "皮革店砍价空间大，留足现金。",
+        "stops": [
+          {
+            "id": "morocco-d5-1",
+            "name": "Chouara 皮革染坊",
+            "time": "09:00",
+            "category": "culture",
+            "addressHint": "Chouara Tannery, Fes",
+            "why": "世界最古老的皮革染坊，俯瞰五颜六色的染缸。",
+            "duration": "1 小时",
+            "tip": "从皮革店天台拍最经典，店主会送薄荷叶遮味。"
+          },
+          {
+            "id": "morocco-d5-2",
+            "name": "Al-Attarine Madrasa",
+            "time": "11:00",
+            "category": "culture",
+            "addressHint": "Medersa Al-Attarine, Fes",
+            "why": "14 世纪伊斯兰学院，zellige 拼花极精。",
+            "duration": "45 分钟",
+            "tip": "进门脱鞋，尊重礼拜场所。"
+          },
+          {
+            "id": "morocco-d5-3",
+            "name": "沃吕比利斯 Volubilis",
+            "time": "14:30",
+            "category": "culture",
+            "addressHint": "Volubilis, Meknes",
+            "why": "保存最完好的罗马遗址，马赛克地板依然清晰。",
+            "duration": "1.5 小时",
+            "tip": "下午 4 点后光线最柔。"
+          }
+        ],
+        "food": ["非斯传统沙拉", "Pastilla 鸽肉派", "薄荷茶"],
+        "photoTips": ["染缸俯瞰", "中庭对称", "马赛克地板"]
+      },
+      {
+        "day": 6,
+        "title": "蓝色小镇舍夫沙万",
+        "area": "舍夫沙万 / 艾西拉",
+        "mood": "蓝、白、海风",
+        "routeSummary": "从非斯到舍夫沙万后转艾西拉，傍晚看海。",
+        "commuteNote": "非斯到舍夫沙万约 4 小时，舍夫沙万到艾西拉约 2.5 小时。",
+        "budgetNote": "最后一晚留给艾西拉的烤鱼。",
+        "stops": [
+          {
+            "id": "morocco-d6-1",
+            "name": "舍夫沙万麦地那",
+            "time": "10:00",
+            "category": "view",
+            "addressHint": "Chefchaouen Medina",
+            "why": "全城蓝色涂墙，是摩洛哥最有镜头感的城市。",
+            "duration": "3 小时",
+            "tip": "穿白色衣服，对比蓝色更好看。"
+          },
+          {
+            "id": "morocco-d6-2",
+            "name": "西班牙清真寺山头",
+            "time": "13:00",
+            "category": "view",
+            "addressHint": "Spanish Mosque Hill, Chefchaouen",
+            "why": "俯瞰整个蓝城的最佳位置。",
+            "duration": "1 小时",
+            "tip": "走 20 分钟上坡，可打车到入口。"
+          },
+          {
+            "id": "morocco-d6-3",
+            "name": "艾西拉涂鸦墙",
+            "time": "18:00",
+            "category": "culture",
+            "addressHint": "Asilah Old Town",
+            "why": "海边白蓝小镇，整条麦地那都是潮人涂鸦。",
+            "duration": "2 小时",
+            "tip": "傍晚海风凉，可以慢逛。"
+          }
+        ],
+        "food": ["Goat Cheese 沙拉", "Tanjia 慢炖", "艾西拉烤鱼"],
+        "photoTips": ["蓝白街巷", "清真寺山头全景", "海边涂鸦墙"]
+      }
+    ],
+    "budget": [
+      { "label": "住宿", "amount": "2500-4500 元", "note": "Riad 民宿 4 晚 + 沙漠营地 1 晚 + 艾西拉 1 晚。" },
+      { "label": "餐饮", "amount": "1200-1800 元", "note": "含塔吉、烤羊、Pastilla 体验。" },
+      { "label": "交通", "amount": "2200-3200 元", "note": "包车 + 大巴 + 沙漠骆驼。" },
+      { "label": "门票与向导", "amount": "600-1200 元", "note": "皮革染坊、马德萨、向导小费。" }
+    ],
+    "packing": ["舒服步行鞋", "薄外套", "头巾", "防晒", "现金迪拉姆", "可折叠袋"],
+    "reminders": ["麦地那务必请向导", "尊重当地人拍照意愿", "沙漠昼夜温差大", "饮用水从 Riad 补给"],
+    "disclaimer": "AI 生成的旅行建议仅用于规划参考。出发前请核验营业时间、票价、预约、交通、天气与安全信息。"
+  }
+}

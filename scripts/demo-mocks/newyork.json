@@ -1,0 +1,239 @@
+{
+  "ok": true,
+  "model": "MiniMax-M3 (mocked)",
+  "generationMode": "quality",
+  "phase": "full",
+  "roadbook": {
+    "title": "纽约客不夜城",
+    "subtitle": "曼哈顿 / 布鲁克林 / SoHo / 时代广场",
+    "destination": "美国纽约",
+    "durationLabel": "5 天 4 晚",
+    "travelerLabel": "2 位快节奏美食 + 艺术型旅行者",
+    "budgetLabel": "高预算",
+    "concept": "把五天拆成两条线：上城艺术 + 下城美食，傍晚时代广场收尾。中央公园和布鲁克林桥负责慢节奏。",
+    "bestFor": ["第一次去纽约", "想吃本城名店", "对当代艺术感兴趣", "愿意走路 + 偶尔打车"],
+    "highlights": ["中央公园", "大都会博物馆", "MoMA", "自由女神像", "高线公园"],
+    "summary": {
+      "routeTheme": "上城艺术 - 中城摩天 - 下城美食",
+      "transportPlan": "Metro Card 7 天无限次 + 偶尔打车",
+      "stayArea": "Midtown 或 Chelsea，方便地铁与餐厅",
+      "rhythm": "上午博物馆、下午街区、傍晚公园、夜晚餐厅"
+    },
+    "days": [
+      {
+        "day": 1,
+        "title": "中央公园与上东区",
+        "area": "中央公园 / 大都会博物馆",
+        "mood": "草坪、博物馆、楼景",
+        "routeSummary": "上午在中央公园散步，下午看大都会。",
+        "commuteNote": "从酒店步行到中央公园南端。",
+        "budgetNote": "大都会门票自愿付费。",
+        "stops": [
+          {
+            "id": "nyc-d1-1",
+            "name": "中央公园 Bethesda Terrace",
+            "time": "10:00",
+            "category": "view",
+            "addressHint": "Bethesda Terrace, Central Park, NYC",
+            "why": "喷泉 + 拱廊，是中央公园最有故事感的角落。",
+            "duration": "1 小时",
+            "tip": "上午光线柔，自带野餐垫能在草坪上歇 30 分钟。"
+          },
+          {
+            "id": "nyc-d1-2",
+            "name": "大都会艺术博物馆",
+            "time": "13:00",
+            "category": "culture",
+            "addressHint": "Metropolitan Museum of Art, 1000 5th Ave",
+            "why": "300 万件藏品，埃及丹铎神庙是必看。",
+            "duration": "3 小时",
+            "tip": "挑 2-3 个区看，不要试图全走完。"
+          }
+        ],
+        "food": ["米其林二星 Eleven Madison Park 午餐", "Shake Shack 简餐", "Magnolia Bakery 香蕉布丁"],
+        "photoTips": ["喷泉拱廊对称", "丹铎神庙", "中央公园天际线"]
+      },
+      {
+        "day": 2,
+        "title": "MoMA + 时代广场",
+        "area": "中城 / MoMA / 时代广场",
+        "mood": "现代艺术、霓虹、剧院",
+        "routeSummary": "上午 MoMA 沉浸式看现代艺术，下午到时代广场。",
+        "commuteNote": "步行串联中城景点。",
+        "budgetNote": "MoMA 早 9 点免费时段可查询。",
+        "stops": [
+          {
+            "id": "nyc-d2-1",
+            "name": "MoMA 现代艺术博物馆",
+            "time": "10:30",
+            "category": "culture",
+            "addressHint": "Museum of Modern Art, 11 W 53rd St",
+            "why": "《星夜》《睡莲》《亚维农少女》。",
+            "duration": "2.5 小时",
+            "tip": "六楼绘画厅是必看。"
+          },
+          {
+            "id": "nyc-d2-2",
+            "name": "洛克菲勒中心 Top of the Rock",
+            "time": "14:00",
+            "category": "view",
+            "addressHint": "Top of the Rock, 30 Rockefeller Plaza",
+            "why": "夜景比白天更适合出片。",
+            "duration": "1.5 小时",
+            "tip": "日落前 1 小时入场最划算。"
+          },
+          {
+            "id": "nyc-d2-3",
+            "name": "时代广场",
+            "time": "20:00",
+            "category": "view",
+            "addressHint": "Times Square, NYC",
+            "why": "霓虹看板与人潮是纽约最具辨识度的画面。",
+            "duration": "1.5 小时",
+            "tip": "上二楼 DKNY 露台拍夜景最高级。"
+          }
+        ],
+        "food": ["Joe's Pizza 经典纽约披萨", "Katz's Deli 熏牛肉三明治", "Junior's 起司蛋糕"],
+        "photoTips": ["时代广场仰拍", "Top of the Rock 黄昏", "MoMA 中庭"]
+      },
+      {
+        "day": 3,
+        "title": "SoHo + 下城美食日",
+        "area": "SoHo / 小意大利 / 下东城",
+        "mood": "购物、披萨、意面",
+        "routeSummary": "上午 SoHo 购物，下午以吃为主线。",
+        "commuteNote": "全程地铁 + 步行。",
+        "budgetNote": "午餐在 Di Fara 排队 1 小时是常态。",
+        "stops": [
+          {
+            "id": "nyc-d3-1",
+            "name": "SoHo 街区",
+            "time": "10:00",
+            "category": "shopping",
+            "addressHint": "SoHo, Manhattan",
+            "why": "铸铁建筑 + 设计师店 + 街头摄影。",
+            "duration": "2.5 小时",
+            "tip": "百老汇大道和 Spring 街十字路口最经典。"
+          },
+          {
+            "id": "nyc-d3-2",
+            "name": "小意大利 Mulberry St",
+            "time": "13:00",
+            "category": "food",
+            "addressHint": "Mulberry St, Little Italy",
+            "why": "意式 cannoli、意面与 espresso 街。",
+            "duration": "1.5 小时",
+            "tip": "到 Ferrara 拿一份 espresso + sfogliatelle。"
+          },
+          {
+            "id": "nyc-d3-3",
+            "name": "布鲁克林大桥",
+            "time": "17:30",
+            "category": "view",
+            "addressHint": "Brooklyn Bridge",
+            "why": "走一趟桥本身就是纽约体验。",
+            "duration": "1.5 小时",
+            "tip": "曼哈顿侧走往布鲁克林侧，光线最顺。"
+          }
+        ],
+        "food": ["Di Fara Pizza", "Russ & Daughters 烟熏三文鱼 bagel", "Peter Luger 牛排"],
+        "photoTips": ["SoHo 铸铁建筑", "小意大利霓虹", "布鲁克林桥黄昏"]
+      },
+      {
+        "day": 4,
+        "title": "自由女神 + 高线 + 切尔西",
+        "area": "Battery Park / 高线 / Chelsea",
+        "mood": "海风、涂鸦、市场",
+        "routeSummary": "早上渡轮看自由女神，下午走高线公园。",
+        "commuteNote": "地铁到 Whitehall St，乘斯塔滕岛渡轮免费看女神。",
+        "budgetNote": "高线免费，Chelsea Market 餐厅消费。",
+        "stops": [
+          {
+            "id": "nyc-d4-1",
+            "name": "自由女神像",
+            "time": "09:30",
+            "category": "view",
+            "addressHint": "Statue of Liberty, Liberty Island",
+            "why": "近距离开船看女神，是纽约最经典的欢迎仪式。",
+            "duration": "2 小时",
+            "tip": "提前 24 小时预约上岛门票，否则乘免费渡轮看外景。"
+          },
+          {
+            "id": "nyc-d4-2",
+            "name": "高线公园",
+            "time": "14:00",
+            "category": "view",
+            "addressHint": "High Line, Chelsea",
+            "why": "高架铁路上改造的绿带公园。",
+            "duration": "1.5 小时",
+            "tip": "走到 23rd St 段能看 Hudson Yard 玻璃楼。"
+          },
+          {
+            "id": "nyc-d4-3",
+            "name": "Chelsea Market",
+            "time": "16:00",
+            "category": "food",
+            "addressHint": "Chelsea Market, 75 9th Ave",
+            "why": "海鲜、奶酪、可颂的集合地。",
+            "duration": "1.5 小时",
+            "tip": "Los Tacos No. 1 与 Lobster Place 都要排。"
+          }
+        ],
+        "food": ["Los Tacos No. 1", "Chelsea Market 海鲜", "Momofuku Noodle Bar"],
+        "photoTips": ["渡轮看女神外景", "高线玻璃楼合影", "切尔西市场光影"]
+      },
+      {
+        "day": 5,
+        "title": "布鲁克林本地一日",
+        "area": "布鲁克林 / 威廉斯堡 / DUMBO",
+        "mood": "嘻哈、河景、咖啡",
+        "routeSummary": "上午在布鲁克林博物馆或威廉斯堡，下午到 DUMBO 看河景。",
+        "commuteNote": "乘 L 列车到 Bedford Ave。",
+        "budgetNote": "布鲁克林咖啡馆价格适中。",
+        "stops": [
+          {
+            "id": "nyc-d5-1",
+            "name": "布鲁克林博物馆",
+            "time": "10:00",
+            "category": "culture",
+            "addressHint": "Brooklyn Museum, 200 Eastern Pkwy",
+            "why": "埃及特展 + Judy Chicago《晚宴》是常设。",
+            "duration": "2.5 小时",
+            "tip": "First Saturday 免费活动值得关注。"
+          },
+          {
+            "id": "nyc-d5-2",
+            "name": "威廉斯堡 Bedford Ave",
+            "time": "13:00",
+            "category": "shopping",
+            "addressHint": "Bedford Ave, Williamsburg",
+            "why": "vintage 店、独立书店、涂鸦墙。",
+            "duration": "2 小时",
+            "tip": "Smorgasburg 周六限定美食市集可看。"
+          },
+          {
+            "id": "nyc-d5-3",
+            "name": "DUMBO 河景",
+            "time": "17:00",
+            "category": "view",
+            "addressHint": "DUMBO, Brooklyn",
+            "why": "曼哈顿桥下的鹅卵石街道是经典取景。",
+            "duration": "1.5 小时",
+            "tip": "到 Time Out Market 吃一餐收尾。"
+          }
+        ],
+        "food": ["Juliana's Pizza", "Devoción 咖啡", "Time Out Market 多国美食"],
+        "photoTips": ["曼哈顿桥洞", "Bedford 涂鸦墙", "DUMBO 鹅卵石街"]
+      }
+    ],
+    "budget": [
+      { "label": "住宿", "amount": "7000-11000 元", "note": "中城 / Chelsea 4 晚精品酒店。" },
+      { "label": "餐饮", "amount": "3500-5500 元", "note": "含 Peter Luger、米其林、街头餐。" },
+      { "label": "交通", "amount": "700-1000 元", "note": "7 天无限次 Metro Card + 渡轮。" },
+      { "label": "门票与体验", "amount": "1500-2500 元", "note": "大都会、MoMA、Top of the Rock。" }
+    ],
+    "packing": ["舒服步行鞋", "薄外套", "充电宝", "轻便雨衣", "护照", "现金 200 美元"],
+    "reminders": ["地铁晚 11 点后班次变少", "餐厅预约提前一周", "餐厅小费 18-20%", "保管好随身包"],
+    "disclaimer": "AI 生成的旅行建议仅用于规划参考。出发前请核验营业时间、票价、预约、交通、天气与安全信息。"
+  }
+}
