@@ -8,6 +8,7 @@ An AI travel-roadbook prototype for generating cinematic, recording-ready trip g
 
 - Generates a customized Chinese travel roadbook from a short trip brief.
 - Shows a `/dream` roadbook with minimal text, 2.5D terrain, day switching, a compact map, and asset controls.
+- Upgrades the `/dream` WebGL layer with filmic tone mapping, soft shadows, animated water, atmospheric haze, and real-terrain renderer parity.
 - Uses a two-stage Agent flow: fast preview first, then fuller travel details in the background.
 - Turns uploaded or sample landscape photos into MiniMax-M3 render blueprints for cinematic destination previews.
 - Caches generated preview assets locally, keeps history versions, and lets you mark a final cover.
@@ -68,7 +69,7 @@ Open `http://localhost:3000`.
 
 Use `http://localhost:3000/studio` for the 16:9 recording mode.
 
-Use `http://localhost:3000/dream` for the generative dream-roadbook prototype with minimal text, Three.js terrain, and an optional MiniMax cinematic preview image layer.
+Use `http://localhost:3000/dream` for the generative dream-roadbook prototype with minimal text, Three.js terrain, and an optional MiniMax cinematic preview image layer. The default renderer uses ACES filmic tone mapping, soft shadows, animated water, atmospheric haze, and a composited AI-image backdrop so the fallback view still feels cinematic when image generation is unavailable.
 
 Use `http://localhost:3000/share-preview` for the 16:9 post-cover recording card. `/dream` generates the query link automatically from the current roadbook and asset cache.
 
@@ -94,7 +95,7 @@ v0.8.0 wraps every M3 call in `lib/m3-client.ts` with a centralized retry policy
 
 ## Real Terrain Pipeline (Optional)
 
-To enable real terrain in /dream: set MAPBOX_TOKEN in .env.local. The "真实地形管线" toggle in the /dream right panel will then fetch Mapbox terrain-rgb + OSM Overpass buildings. Without a token, the toggle falls back to the procedural Three.js scene.
+To enable real terrain in /dream: set MAPBOX_TOKEN in .env.local. The "真实地形管线" toggle in the /dream right panel will then fetch Mapbox terrain-rgb + OSM Overpass buildings. Without a token, the toggle falls back to the procedural Three.js scene. Both renderer paths share the same high-quality WebGL baseline: color-managed output, ACES tone mapping, high-performance antialiasing, and soft shadow maps.
 
 v0.5.0 adds full 高德 3D building pipeline: extensions=all, multi-type-code queries, heuristic height estimation. Set `AMAP_KEY` in `.env.local`. The pipeline runs alongside the Mapbox/Overpass sources; missing tokens gracefully fall back to procedural buildings.
 

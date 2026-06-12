@@ -1981,6 +1981,31 @@ textarea {
   position: absolute;
   inset: 0;
   overflow: hidden;
+  isolation: isolate;
+}
+
+.real-skyline-scene::before,
+.real-skyline-scene::after {
+  position: absolute;
+  inset: 0;
+  content: "";
+  pointer-events: none;
+}
+
+.real-skyline-scene::before {
+  z-index: 1;
+  background:
+    radial-gradient(circle at 26% 17%, rgba(255, 236, 192, 0.44), transparent 18%),
+    linear-gradient(180deg, rgba(244, 247, 248, 0.26), transparent 38%);
+  mix-blend-mode: screen;
+}
+
+.real-skyline-scene::after {
+  z-index: 4;
+  background:
+    radial-gradient(ellipse at center, transparent 42%, rgba(18, 29, 39, 0.28) 100%),
+    linear-gradient(0deg, rgba(23, 35, 43, 0.22), transparent 26%);
+  mix-blend-mode: soft-light;
 }
 
 .real-skyline-canvas {
@@ -2113,6 +2138,7 @@ textarea {
   position: absolute;
   inset: 0;
   overflow: hidden;
+  isolation: isolate;
 }
 
 .dream-skyline-scene::before,
@@ -2127,16 +2153,18 @@ textarea {
 .dream-skyline-scene::before {
   z-index: 1;
   background:
-    linear-gradient(112deg, rgba(255, 255, 255, 0.55), transparent 30%),
-    radial-gradient(circle at 28% 24%, rgba(255, 250, 228, 0.58), transparent 18%),
-    radial-gradient(circle at 80% 14%, rgba(139, 183, 189, 0.22), transparent 24%);
+    linear-gradient(112deg, rgba(255, 255, 255, 0.48), transparent 29%),
+    radial-gradient(circle at 25% 20%, rgba(255, 241, 196, 0.7), transparent 18%),
+    radial-gradient(circle at 80% 14%, rgba(139, 183, 189, 0.24), transparent 24%);
+  mix-blend-mode: screen;
 }
 
 .dream-skyline-scene::after {
   z-index: 4;
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.18), transparent 36%),
-    linear-gradient(0deg, rgba(32, 44, 54, 0.2), transparent 24%);
+    radial-gradient(ellipse at center, transparent 46%, rgba(28, 38, 48, 0.28) 100%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.16), transparent 36%),
+    linear-gradient(0deg, rgba(32, 44, 54, 0.24), transparent 24%);
   mix-blend-mode: soft-light;
 }
 
@@ -2154,16 +2182,17 @@ textarea {
   z-index: 0;
   background-position: center;
   background-size: cover;
-  filter: saturate(0.92) contrast(0.94);
-  opacity: 0.5;
+  filter: saturate(1.04) contrast(1.04) brightness(0.96);
+  opacity: 0.46;
   transform: scale(1.02);
 }
 
 .dream-skyline-glass {
   z-index: 3;
   background:
-    linear-gradient(90deg, rgba(255, 255, 255, 0.22), transparent 18%, transparent 78%, rgba(255, 255, 255, 0.2)),
-    radial-gradient(ellipse at 50% 72%, transparent 34%, rgba(255, 255, 255, 0.22) 78%);
+    linear-gradient(90deg, rgba(255, 255, 255, 0.2), transparent 18%, transparent 78%, rgba(255, 255, 255, 0.18)),
+    radial-gradient(ellipse at 50% 72%, transparent 34%, rgba(255, 255, 255, 0.18) 78%),
+    linear-gradient(180deg, transparent 0%, rgba(255, 255, 255, 0.08) 55%, rgba(255, 255, 255, 0.18) 100%);
 }
 
 .dream-skyline-island {
@@ -4148,7 +4177,10 @@ textarea {
   .dream-shell {
     grid-template-columns: 1fr;
     aspect-ratio: auto;
+    grid-template-rows: auto;
+    height: auto;
     max-height: none;
+    min-height: 0;
   }
 
   .dream-world {
@@ -4251,10 +4283,41 @@ textarea {
     grid-template-columns: 1fr;
   }
 
+  .dream-page {
+    padding: 10px;
+  }
+
   .dream-topbar,
   .dream-nav {
     align-items: flex-start;
+  }
+
+  .dream-topbar {
     flex-direction: column;
+    gap: 12px;
+    padding: 14px;
+  }
+
+  .dream-topbar h1 {
+    font-size: 1.55rem;
+    line-height: 1.15;
+  }
+
+  .dream-eyebrow {
+    font-size: 0.66rem;
+    line-height: 1.35;
+  }
+
+  .dream-nav {
+    flex-flow: row wrap;
+    width: 100%;
+  }
+
+  .dream-nav a {
+    flex: 1 1 130px;
+    justify-content: center;
+    min-height: 44px;
+    font-size: 0.95rem;
   }
 
   .dream-world {

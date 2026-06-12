@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
+  ACESFilmicToneMapping,
   AmbientLight,
   BoxGeometry,
   Color,
@@ -12,8 +13,10 @@ import {
   HemisphereLight,
   Mesh,
   MeshStandardMaterial,
+  PCFShadowMap,
   PerspectiveCamera,
   PlaneGeometry,
+  SRGBColorSpace,
   Scene,
   Vector3,
   WebGLRenderer,
@@ -184,15 +187,16 @@ function createTerrainMesh(
 
     const material = new MeshStandardMaterial({
       color: new Color("#6b7a4a"),
-      roughness: 0.96,
-      metalness: 0.02,
-      flatShading: true,
+      roughness: 0.9,
+      metalness: 0.03,
+      flatShading: false,
       side: DoubleSide,
     });
     disposables.push(material);
 
     const mesh = new Mesh(geometry, material);
     mesh.name = `terrain-tile-${tile.tile?.x ?? "?"}-${tile.tile?.y ?? "?"}-${tile.tile?.z ?? "?"}`;
+    mesh.receiveShadow = true;
 
     // PlaneGeometry is in the XY plane; rotate so the heightfield lies on XZ.
     mesh.rotation.x = -Math.PI / 2;
@@ -235,8 +239,8 @@ function createBuildingMeshes(
 
   const material = new MeshStandardMaterial({
     color: new Color("#cdbfa9"),
-    roughness: 0.78,
-    metalness: 0.04,
+    roughness: 0.68,
+    metalness: 0.08,
   });
   disposables.push(material);
 
@@ -262,6 +266,8 @@ function createBuildingMeshes(
     const mesh = new Mesh(geometry, material);
     mesh.position.set(x, height / 2, z);
     mesh.name = `building-${building.id}`;
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
     group.add(mesh);
 
     // Avoid letting unused-vars warning fire on the footprint import shape.
@@ -361,16 +367,37 @@ export default function RealSkylineScene({
     camera.position.set(0, 1800, 2400);
     camera.lookAt(0, 0, 0);
 
-    const renderer = new WebGLRenderer({ canvas, antialias: true, alpha: true });
+    const renderer = new WebGLRenderer({
+      canvas,
+      antialias: true,
+      alpha: true,
+      preserveDrawingBuffer: true,
+      powerPreference: "high-performance",
+      stencil: false,
+    });
     renderer.setClearColor(0x000000, 0);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.outputColorSpace = SRGBColorSpace;
+    renderer.toneMapping = ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.08;
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = PCFShadowMap;
     disposables.push(renderer);
 
-    scene.add(new AmbientLight(0xffffff, 1.6));
-    scene.add(new HemisphereLight(new Color("#e9eef5"), new Color("#4a4a3a"), 1.2));
+    scene.add(new AmbientLight(0xffffff, 1.15));
+    scene.add(new HemisphereLight(new Color("#e9eef5"), new Color("#4a4a3a"), 1.15));
 
-    const sun = new DirectionalLight(new Color("#fff1d6"), 2.6);
+    const sun = new DirectionalLight(new Color("#fff1d6"), 3.2);
     sun.position.set(-2500, 3500, 1800);
+    sun.castShadow = true;
+    sun.shadow.mapSize.set(2048, 2048);
+    sun.shadow.camera.near = 100;
+    sun.shadow.camera.far = 9000;
+    sun.shadow.camera.left = -4500;
+    sun.shadow.camera.right = 4500;
+    sun.shadow.camera.top = 4500;
+    sun.shadow.camera.bottom = -4500;
+    sun.shadow.bias = -0.0008;
     scene.add(sun);
 
     const rim = new DirectionalLight(new Color("#a4c0ff"), 0.9);

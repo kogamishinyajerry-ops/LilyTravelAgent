@@ -13,6 +13,7 @@
 - `/dream` 右侧资产面板会显示当前 cache key、时间、来源，并提供“清除”和“重生成”，用于录屏展示 Agent 的视觉资产管线。
 - 每次真实图片生成会额外写入历史版本；历史抽屉可回看和恢复旧版画面。最新缓存负责快速复用，历史库负责保留多版视觉资产。
 - 历史抽屉支持“设封面”，把某一版标记为最终路书封面，并同步为当前预览图，方便录屏展示从多版生成图里挑封面的工作流。
+- `/dream` 默认程序化场景和可选真实地形场景都使用同一套高质量 WebGL 渲染基线：ACES 电影色调、sRGB 输出、软阴影、高性能抗锯齿、动态水面、分层雾气和胶片合成层。
 - `/share-preview` 会读取最终封面和路书 query 信息，生成一个 16:9 分享预览卡片，用来展示用户最终拿到的动态路书。
 - `/dream` 已加入 Scenic Render Skill：上传风景照片后，MiniMax-M3 会生成地形、建筑、水体植被、光照、镜头、材质和图片 prompt 蓝图；后续预览资产重生成会把这份蓝图注入 cinematic prompt。
 - 默认大理路线会按当天内容切换：
@@ -32,6 +33,27 @@
 3. 前端根据目的地和每天关键词生成 3D 场景。
 4. 同步生成一张 AI cinematic preview 图，作为远景贴片。
 5. 后续再把程序化占位替换成真实地形和真实资产。
+
+## Phase N: WebGL Render Quality Baseline (v0.8.3, 2026-06-13)
+
+This phase answers the product-quality gap directly: the destination preview cannot feel like a rough toy scene if it is meant to compete as a travel product.
+
+### What changed
+
+- `components/dream-skyline-scene.tsx` now uses a high-quality renderer setup: `powerPreference: "high-performance"`, sRGB output, ACES filmic tone mapping, exposure tuning per mood, and soft shadow maps.
+- The default `/dream` scene gained cinematic lighting and atmosphere: lower ambient wash, stronger directional sun, a background sun disc, layered haze planes, vignette composition, and a more camera-like framing.
+- Water is now an animated `MeshPhysicalMaterial` surface with clearcoat, reflectivity, specular route ribbons, per-frame vertex waves, and real shadow receiving.
+- Terrain moved from flat-shaded faceting toward smoother normals and shadow-receiving material, so the scene reads more like stylized terrain rather than raw boxes.
+- `components/real-skyline-scene.tsx` gets renderer parity: ACES tone mapping, sRGB output, high-performance WebGL settings, shadow maps, softer terrain material, and shadowed building extrusions.
+- `app/globals.css` adds the final composition layer: brighter background-photo integration, light bloom, subtle dark vignette, and real-scene film overlays.
+
+### Why this matters
+
+The previous scene proved the workflow, but the visual ceiling was too low. This baseline does not claim real photogrammetry or Unreal-style fidelity; it establishes the minimum web-rendering quality needed before investing in heavier real-world asset pipelines. From here, every future layer can be judged against a clearer product bar: higher fidelity geometry, better landmark presets, real terrain, and AI-generated backplates all need to improve a scene that already has credible lighting and camera treatment.
+
+### Recording angle
+
+> 我没有先换复杂 3D 引擎，而是先把网页端 Three.js 的渲染基线拉起来：色调映射、软阴影、动态水面、雾气、镜头暗角。这样即使真实照片或真实地形还没完全接上，用户看到的也不再是粗糙方块，而是一个有电影感的目的地预览。
 
 ## Phase D: real data sources (2026-06-07)
 

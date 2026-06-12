@@ -2,9 +2,12 @@
 
 import { useEffect, useMemo, useRef } from "react";
 import {
+  ACESFilmicToneMapping,
+  AdditiveBlending,
   AmbientLight,
   BufferGeometry,
   CatmullRomCurve3,
+  CircleGeometry,
   Color,
   DirectionalLight,
   DoubleSide,
@@ -16,7 +19,9 @@ import {
   LineBasicMaterial,
   Mesh,
   MeshBasicMaterial,
+  MeshPhysicalMaterial,
   MeshStandardMaterial,
+  PCFShadowMap,
   PerspectiveCamera,
   PlaneGeometry,
   SRGBColorSpace,
@@ -67,6 +72,12 @@ type SkylinePalette = {
   stone: string;
   roof: string;
   light: string;
+};
+
+type AnimatedWaterMesh = Mesh<PlaneGeometry, MeshPhysicalMaterial> & {
+  userData: {
+    baseWaveZ?: Float32Array;
+  };
 };
 
 const palettes: Record<DreamMood, SkylinePalette> = {
@@ -149,29 +160,51 @@ export function DreamSkylineScene({
     scene.fog = new Fog(new Color(palette.fog), 12, 26);
 
     const camera = new PerspectiveCamera(38, 1, 0.1, 90);
-    camera.position.set(0, 5.3, 12.5);
-    camera.lookAt(0, 1.05, 0);
+    camera.position.set(0.55, 5.2, 12.15);
+    camera.lookAt(0, 1.08, 0);
 
-    const renderer = new WebGLRenderer({ canvas, antialias: true, alpha: true, preserveDrawingBuffer: true });
+    const renderer = new WebGLRenderer({
+      canvas,
+      antialias: true,
+      alpha: true,
+      preserveDrawingBuffer: true,
+      powerPreference: "high-performance",
+      stencil: false,
+    });
     renderer.setClearColor(0x000000, 0);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.outputColorSpace = SRGBColorSpace;
+    renderer.toneMapping = ACESFilmicToneMapping;
+    renderer.toneMappingExposure = mood === "neon" ? 1.18 : mood === "dusk" ? 1.08 : 1.02;
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = PCFShadowMap;
     disposables.push(renderer);
 
     const root = new Group();
     root.rotation.x = -0.06;
     scene.add(root);
 
-    scene.add(new AmbientLight(0xffffff, 1.9));
-    scene.add(new HemisphereLight(new Color(palette.sky), new Color(palette.ground), 1.7));
+    scene.add(new AmbientLight(0xffffff, mood === "neon" ? 1.05 : 1.35));
+    scene.add(new HemisphereLight(new Color(palette.sky), new Color(palette.ground), mood === "neon" ? 1.35 : 1.55));
 
     const sun = new DirectionalLight(new Color(palette.light), mood === "dusk" ? 4.3 : 3.4);
     sun.position.set(-5.5, 8, 7);
+    sun.castShadow = true;
+    sun.shadow.mapSize.set(2048, 2048);
+    sun.shadow.camera.near = 1;
+    sun.shadow.camera.far = 36;
+    sun.shadow.camera.left = -13;
+    sun.shadow.camera.right = 13;
+    sun.shadow.camera.top = 13;
+    sun.shadow.camera.bottom = -13;
+    sun.shadow.bias = -0.0006;
     scene.add(sun);
 
     const rim = new DirectionalLight(0xffffff, 1.2);
     rim.position.set(6, 4, -8);
     scene.add(rim);
 
+    root.add(createAtmosphere(palette, mood, disposables));
     const terrain = createTerrain(profile, palette, disposables);
     root.add(terrain);
 
@@ -179,13 +212,16 @@ export function DreamSkylineScene({
       root.add(createPreviewAssetBillboard(assetSource, disposables));
     }
 
-    if (profile.hasWater) {
-      root.add(createWater(palette, disposables));
+    const water = profile.hasWater ? createWater(palette, disposables) : null;
+    if (water) {
+      root.add(water);
+      root.add(createWaterSpecularRibbons(palette, disposables));
     }
 
     root.add(createSkyline(profile, palette, template, disposables));
     root.add(createRouteRibbon(palette, design.routeStops.length, disposables));
     root.add(createLandmark(profile, palette, template, disposables, landmarkPreset));
+    applyHighQualityShading(root);
 
     const resize = () => {
       const rect = wrap.getBoundingClientRect();
@@ -206,6 +242,9 @@ export function DreamSkylineScene({
       const elapsed = (now - start) / 1000;
       root.rotation.y = Math.sin(elapsed * 0.22) * 0.035;
       root.position.y = Math.sin(elapsed * 0.55) * 0.045;
+      if (water) {
+        animateWater(water, elapsed);
+      }
       renderer.render(scene, camera);
       frameId = window.requestAnimationFrame(animate);
     };
@@ -287,6 +326,68 @@ function createPreviewAssetBillboard(assetSource: string, disposables: Array<{ d
   billboard.position.set(0, 2.45, -5.2);
   disposables.push(texture, geometry, material);
   return billboard;
+}
+
+function createAtmosphere(
+  palette: SkylinePalette,
+  mood: DreamMood,
+  disposables: Array<{ dispose: () => void }>,
+) {
+  const group = new Group();
+  group.name = "atmosphere";
+
+  const sunGeometry = new CircleGeometry(1.35, 48);
+  const sunMaterial = new MeshBasicMaterial({
+    color: new Color(palette.light),
+    transparent: true,
+    opacity: mood === "neon" ? 0.26 : 0.5,
+    depthWrite: false,
+    blending: AdditiveBlending,
+  });
+  const sunDisc = new Mesh(sunGeometry, sunMaterial);
+  sunDisc.name = "atmosphere-sun-disc";
+  sunDisc.position.set(-5.9, 5.7, -6.35);
+  sunDisc.renderOrder = -4;
+  group.add(sunDisc);
+
+  const hazeGeometry = new PlaneGeometry(20, 8.2);
+  const hazeMaterial = new MeshBasicMaterial({
+    color: new Color(mood === "neon" ? palette.glass : palette.fog),
+    transparent: true,
+    opacity: mood === "neon" ? 0.2 : 0.34,
+    depthWrite: false,
+    side: DoubleSide,
+  });
+  const haze = new Mesh(hazeGeometry, hazeMaterial);
+  haze.name = "atmosphere-haze";
+  haze.position.set(0, 2.45, -3.8);
+  haze.renderOrder = -3;
+  group.add(haze);
+
+  const foregroundGeometry = new PlaneGeometry(24, 4.6);
+  const foregroundMaterial = new MeshBasicMaterial({
+    color: new Color(palette.fog),
+    transparent: true,
+    opacity: mood === "neon" ? 0.08 : 0.18,
+    depthWrite: false,
+    side: DoubleSide,
+  });
+  const foregroundHaze = new Mesh(foregroundGeometry, foregroundMaterial);
+  foregroundHaze.name = "atmosphere-foreground-haze";
+  foregroundHaze.position.set(0, 0.55, 4.85);
+  foregroundHaze.rotation.x = -0.08;
+  foregroundHaze.renderOrder = 5;
+  group.add(foregroundHaze);
+
+  disposables.push(
+    sunGeometry,
+    sunMaterial,
+    hazeGeometry,
+    hazeMaterial,
+    foregroundGeometry,
+    foregroundMaterial,
+  );
+  return group;
 }
 
 function buildAssetStatusLabel(assetStage: DreamSkylineSceneProps["assetStage"], previewAsset?: PreviewAsset | null) {
@@ -424,30 +525,109 @@ function createTerrain(
 
   const material = new MeshStandardMaterial({
     color: new Color(profile.hasMountain ? palette.mountain : palette.ground),
-    roughness: 0.92,
-    metalness: 0.02,
-    flatShading: true,
+    roughness: 0.86,
+    metalness: 0.04,
+    flatShading: false,
   });
   disposables.push(geometry, material);
 
-  return new Mesh(geometry, material);
+  const terrain = new Mesh(geometry, material);
+  terrain.name = "cinematic-terrain";
+  terrain.receiveShadow = true;
+  return terrain;
 }
 
 function createWater(palette: SkylinePalette, disposables: Array<{ dispose: () => void }>) {
-  const geometry = new PlaneGeometry(25, 8, 32, 6);
-  const material = new MeshStandardMaterial({
+  const geometry = new PlaneGeometry(25, 8, 96, 24);
+  const position = geometry.getAttribute("position") as Float32BufferAttribute;
+  const baseWaveZ = new Float32Array(position.count);
+  for (let index = 0; index < position.count; index += 1) {
+    baseWaveZ[index] = position.getZ(index);
+  }
+
+  const material = new MeshPhysicalMaterial({
     color: new Color(palette.water),
     transparent: true,
-    opacity: 0.62,
-    roughness: 0.28,
-    metalness: 0.12,
+    opacity: 0.7,
+    roughness: 0.16,
+    metalness: 0.04,
+    clearcoat: 0.72,
+    clearcoatRoughness: 0.18,
+    reflectivity: 0.34,
     side: DoubleSide,
   });
-  const water = new Mesh(geometry, material);
+  const water = new Mesh(geometry, material) as AnimatedWaterMesh;
+  water.name = "cinematic-water";
   water.rotation.x = -Math.PI / 2;
   water.position.set(0, -0.13, 2.8);
+  water.receiveShadow = true;
+  water.userData.baseWaveZ = baseWaveZ;
   disposables.push(geometry, material);
   return water;
+}
+
+function createWaterSpecularRibbons(
+  palette: SkylinePalette,
+  disposables: Array<{ dispose: () => void }>,
+) {
+  const group = new Group();
+  group.name = "water-specular-ribbons";
+
+  for (let ribbonIndex = 0; ribbonIndex < 5; ribbonIndex += 1) {
+    const y = -1.7 + ribbonIndex * 0.72;
+    const points = Array.from({ length: 26 }, (_, index) => {
+      const t = index / 25;
+      const x = -7.8 + t * 15.6;
+      const z = 2.2 + y * 0.22 + Math.sin(t * Math.PI * 2 + ribbonIndex) * 0.18;
+      return new Vector3(x, 0.035 + ribbonIndex * 0.006, z);
+    });
+    const geometry = new BufferGeometry().setFromPoints(points);
+    const material = new LineBasicMaterial({
+      color: new Color(palette.light),
+      transparent: true,
+      opacity: 0.1 + ribbonIndex * 0.025,
+    });
+    const line = new Line(geometry, material);
+    line.name = "water-specular-ribbon";
+    group.add(line);
+    disposables.push(geometry, material);
+  }
+
+  return group;
+}
+
+function animateWater(water: AnimatedWaterMesh, elapsed: number) {
+  const position = water.geometry.getAttribute("position") as Float32BufferAttribute;
+  const baseWaveZ = water.userData.baseWaveZ;
+  if (!baseWaveZ) {
+    return;
+  }
+
+  for (let index = 0; index < position.count; index += 1) {
+    const x = position.getX(index);
+    const y = position.getY(index);
+    const wave =
+      Math.sin(x * 0.88 + elapsed * 0.82) * 0.036 +
+      Math.cos(y * 2.05 + elapsed * 1.22) * 0.022 +
+      Math.sin((x + y) * 0.42 + elapsed * 0.54) * 0.014;
+    position.setZ(index, baseWaveZ[index] + wave);
+  }
+
+  position.needsUpdate = true;
+  water.geometry.computeVertexNormals();
+}
+
+function applyHighQualityShading(root: Group) {
+  root.traverse((object) => {
+    if (!(object instanceof Mesh)) {
+      return;
+    }
+
+    const material = Array.isArray(object.material) ? object.material[0] : object.material;
+    const isTransparent = Boolean(material?.transparent) || object.name.startsWith("atmosphere");
+    object.castShadow = !isTransparent;
+    object.receiveShadow = !object.name.startsWith("atmosphere");
+  });
 }
 
 function createSkyline(
