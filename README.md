@@ -1,6 +1,24 @@
 # LilyTravelAgent
 
-Local MVP for a travel-roadbook Agent. It generates a customized Chinese travel itinerary with MiniMax, geocodes generated places through Amap Web Service, and renders a magazine-style roadbook with a Leaflet map.
+An AI travel-roadbook prototype for generating cinematic, recording-ready trip guides. LilyTravelAgent uses MiniMax for itinerary and visual-design generation, Amap for map coordinates, and a Three.js dream-roadbook interface for a more expressive pre-trip preview.
+
+![LilyTravelAgent dream roadbook preview](docs/assets/lilytravelagent-dream-preview.png)
+
+## What It Does
+
+- Generates a customized Chinese travel roadbook from a short trip brief.
+- Shows a `/dream` roadbook with minimal text, 2.5D terrain, day switching, a compact map, and asset controls.
+- Uses a two-stage Agent flow: fast preview first, then fuller travel details in the background.
+- Turns uploaded or sample landscape photos into MiniMax-M3 render blueprints for cinematic destination previews.
+- Caches generated preview assets locally, keeps history versions, and lets you mark a final cover.
+- Includes `/studio`, recording docs, and a one-click sample-photo library for Vibe Coding content creation.
+
+## Demo Routes
+
+- `/` - practical roadbook generator
+- `/dream` - cinematic dream-roadbook prototype
+- `/studio` - 16:9 recording mode
+- `/share-preview` - final cover and roadbook share-card view
 
 ## Setup
 
