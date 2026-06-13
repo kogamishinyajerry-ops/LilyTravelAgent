@@ -718,3 +718,14 @@ Files shown: scripts/check-studio-dream-handoff.mjs, package.json, README.md, do
 Command/result: npm run check:studio-dream-handoff && npm run lint && npm test && npm run build
 Voiceover note: "我把双向演示路径做成自动检查脚本。以后改 UI 之前先跑它，就知道 Studio 和 Dream 的桥还通不通。"
 Usable for: QA-script clip, workflow verification, Vibe Coding evidence loop, continued goal run round 46
+
+## Phase BH: v0.8.49 — Recording Suite Handoff Coverage
+
+Date: 2026-06-13
+Clip title: Phase BH: v0.8.49 — Recording Suite Handoff Coverage
+What changed: Added the Studio-Dream handoff QA step into `scripts/check-recording-suite.mjs`, so the full recording suite now covers Dali Dream QA, coastal Dream QA, Studio QA, cross-page handoff QA, and local recording asset indexing in one command.
+Why this matters: The creator workflow has one obvious verification rail. Before recording, the operator can run a single suite and know that the cinematic page, recording page, bridge links, and local asset index are aligned.
+Files shown: scripts/check-recording-suite.mjs, README.md, docs/recording/dev-log.md
+Command/result: npm run check:recording-suite && npm run lint && npm test && npm run build
+Voiceover note: "我把双向桥接检查接进总 recording suite。以后录屏前跑一条命令，就能同时检查 Dream、Studio、页面跳转和素材索引。"
+Usable for: recording-suite clip, automated QA workflow, Vibe Coding verification rail, continued goal run round 47

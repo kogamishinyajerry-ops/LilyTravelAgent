@@ -3,6 +3,7 @@ import { spawn } from "node:child_process";
 const baseUrl = process.env.RECORDING_SUITE_BASE_URL || "http://localhost:3000";
 const dreamUrl = process.env.DREAM_URL || new URL("/dream", baseUrl).toString();
 const studioUrl = process.env.STUDIO_URL || new URL("/studio", baseUrl).toString();
+const handoffBaseUrl = process.env.HANDOFF_BASE_URL || baseUrl;
 const npmCommand = process.platform === "win32" ? "npm.cmd" : "npm";
 
 const steps = [
@@ -20,6 +21,11 @@ const steps = [
     label: "Studio recording QA",
     args: ["run", "check:studio-visuals"],
     env: { STUDIO_URL: studioUrl },
+  },
+  {
+    label: "Studio-Dream handoff QA",
+    args: ["run", "check:studio-dream-handoff"],
+    env: { HANDOFF_BASE_URL: handoffBaseUrl },
   },
   {
     label: "Recording asset index",
