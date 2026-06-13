@@ -806,3 +806,14 @@ Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, README
 Command/result: npm test -- components/studio-mode.test.tsx && npm run lint && npm test && npm run build
 Voiceover note: "我把 Bridge QA 做成脚本模式里的第四步。录屏时不是临时想起证据，而是跟着轨道讲到页面闭环。"
 Usable for: Bridge evidence script clip, walkthrough pacing, Vibe Coding recording workflow, continued goal run round 54
+
+## Phase BP: v0.8.57 — Bridge QA Evidence Status Card
+
+Date: 2026-06-13
+Clip title: Phase BP: v0.8.57 — Bridge QA Evidence Status Card
+What changed: Added a compact Bridge QA evidence status card next to `/studio` script mode. It shows whether bridge assets are present and summarizes the Studio-Dream loop evidence.
+Why this matters: The creator no longer needs to scan the full recent asset list before speaking. The script track has a direct status anchor for the bridge proof.
+Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, app/globals.css, README.md, docs/recording/dev-log.md
+Command/result: npm test -- components/studio-mode.test.tsx && npm run lint && npm test && npm run build
+Voiceover note: "我给脚本模式旁边加了一张 Bridge QA 状态卡。看到 1 个桥接素材，就可以直接讲 Studio-Dream 闭环已经被验证。"
+Usable for: Bridge evidence status clip, script-mode proof cue, Vibe Coding recording workflow, continued goal run round 55

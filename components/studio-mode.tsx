@@ -228,6 +228,31 @@ function getRecordingAssetReadiness(summary: Extract<RecordingAssetsState, { sta
   };
 }
 
+function getBridgeEvidenceCue(recordingAssets: RecordingAssetsState) {
+  if (recordingAssets.status !== "ready") {
+    return {
+      state: "pending",
+      title: "Bridge QA 读取中",
+      detail: "等待素材面板读取本地桥接证据。",
+    };
+  }
+
+  const bridgeCount = recordingAssets.countsByType.bridge;
+  if (bridgeCount > 0) {
+    return {
+      state: "ready",
+      title: `${bridgeCount} 个桥接素材`,
+      detail: "Studio-Dream 闭环已验证，可以作为讲解证据。",
+    };
+  }
+
+  return {
+    state: "missing",
+    title: "等待 Bridge QA",
+    detail: "运行 recording suite 后会生成桥接截图素材。",
+  };
+}
+
 export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
   const initialDemoRoadbook = getStudioDemoRoadbook(initialDemo);
   const [brief, setBrief] = useState<TravelBrief>(initialDemoRoadbook.brief);
@@ -545,6 +570,16 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
                     </div>
                   ))}
                 </div>
+                {(() => {
+                  const bridgeEvidence = getBridgeEvidenceCue(recordingAssets);
+                  return (
+                    <div className={`studio-bridge-evidence ${bridgeEvidence.state}`} aria-label="Bridge QA 证据状态">
+                      <span>Bridge QA 证据</span>
+                      <strong>{bridgeEvidence.title}</strong>
+                      <p>{bridgeEvidence.detail}</p>
+                    </div>
+                  );
+                })()}
                 <div className="studio-shot-cue" aria-label="当前镜头建议">
                   <span>{studioShotCue.title}</span>
                   <strong>{studioShotCue.primary}</strong>

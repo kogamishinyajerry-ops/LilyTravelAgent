@@ -222,6 +222,8 @@ describe("StudioMode demo roadbooks", () => {
     expect(screen.getByText("沉淀素材")).toBeTruthy();
     expect(screen.getByText("桥接证据")).toBeTruthy();
     expect(screen.getByText("指向 Bridge QA 卡片，说明 Studio 和 Dream 的闭环已验证。")).toBeTruthy();
+    expect(screen.getByLabelText("Bridge QA 证据状态").textContent).toContain("1 个桥接素材");
+    expect(screen.getByLabelText("Bridge QA 证据状态").textContent).toContain("Studio-Dream 闭环已验证");
     expect(screen.getByText("讲解轨道已打开")).toBeTruthy();
     expect(screen.getByRole("button", { name: /脚本模式/ }).getAttribute("aria-pressed")).toBe("true");
   });

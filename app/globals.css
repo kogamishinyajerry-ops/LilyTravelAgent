@@ -1349,6 +1349,44 @@ textarea {
   line-height: 1.35;
 }
 
+.studio-bridge-evidence {
+  display: grid;
+  gap: 4px;
+  border: 1px solid rgba(108, 123, 217, 0.24);
+  border-left: 4px solid #6c7bd9;
+  border-radius: 8px;
+  padding: 9px;
+  background: rgba(245, 247, 255, 0.78);
+}
+
+.studio-bridge-evidence.missing {
+  border-color: rgba(191, 128, 85, 0.24);
+  border-left-color: var(--rust);
+  background: rgba(191, 128, 85, 0.1);
+}
+
+.studio-bridge-evidence span {
+  color: #5360ad;
+  font-size: 0.72rem;
+  font-weight: 950;
+}
+
+.studio-bridge-evidence.missing span {
+  color: var(--rust);
+}
+
+.studio-bridge-evidence strong {
+  color: var(--moss);
+  font-size: 0.88rem;
+}
+
+.studio-bridge-evidence p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.76rem;
+  line-height: 1.35;
+}
+
 .studio-shot-cue {
   display: grid;
   gap: 5px;

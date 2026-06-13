@@ -49,4 +49,4 @@ This recap closes the Studio-Dream bridge run. The theme was turning two separat
 
 ## Next useful slice
 
-The next narrow product slice should add a compact Bridge QA status card near the Studio script track, so the creator can see whether bridge evidence is present without scanning the full asset list.
+The next narrow product slice should update the Studio-Dream demo script to call out the Bridge QA status card, so the written recording path matches the product surface.
