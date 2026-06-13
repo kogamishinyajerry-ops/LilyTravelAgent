@@ -90,6 +90,23 @@ Static 3D scenes feel like thumbnails. A roadbook needs direction: every day sho
 
 > 大理有了视觉资产之后，我继续加“导演层”：D1 古城、D2 洱海、D3 喜洲，不只是按钮文案变，镜头也会跟着当天焦点轻微换构图。这样路书开始像一个动态预告片，而不是静态地图。
 
+## Phase Q: Cinematic Route Rail (2026-06-13)
+
+### What changed
+
+- Added `buildCinematicRouteRail()` to `lib/cinematic-scene-preset.ts`.
+- The helper turns D1-D4 focus anchors into a stable world-space route rail with an active-day index.
+- `components/dream-skyline-scene.tsx` renders the route rail inside the Three.js scene: a soft full-route line, a brighter active-progress segment, and glowing day anchors.
+- `lib/cinematic-scene-preset.test.ts` verifies route ordering, active-day detection, and unknown-day fallback.
+
+### Why this matters
+
+The roadbook already had day buttons and a mini map, but the main 3D world did not yet communicate the route. This phase makes the itinerary spatial inside the hero scene: users can see that D1-D4 are not isolated cards, but connected travel beats across the same destination.
+
+### Recording angle
+
+> 我把路线从按钮搬进了 3D 世界。D1-D4 不再只是底部几个按钮，而是一条在场景里发光的 route rail：全路线是淡线，已经走到的段落会更亮。动态路书开始像一个可浏览的旅行预告片。
+
 ## Phase D: real data sources (2026-06-07)
 
 Replaced the Phase C procedural stubs with real implementations:

@@ -3,6 +3,7 @@ import { sampleRoadbook } from "./sample-roadbook";
 import type { Roadbook } from "./roadbook-types";
 import {
   buildCinematicCameraPose,
+  buildCinematicRouteRail,
   DALI_CINEMATIC_SCENE_PRESET,
   getCinematicDayFocus,
   resolveCinematicScenePreset,
@@ -95,5 +96,33 @@ describe("buildCinematicCameraPose", () => {
     expect(pose.fov).toBe(37);
     expect(pose.camera[0]).toBeLessThan(0.55);
     expect(pose.lookAt[0]).toBeLessThan(0);
+  });
+});
+
+describe("buildCinematicRouteRail", () => {
+  it("returns Dali focus points ordered by day", () => {
+    const rail = buildCinematicRouteRail(DALI_CINEMATIC_SCENE_PRESET, 1);
+
+    expect(rail.points.map((point) => point.day)).toEqual([1, 2, 3, 4]);
+    expect(rail.points.map((point) => point.label)).toEqual([
+      "古城南门",
+      "洱海西线",
+      "喜洲村落",
+      "古城收尾",
+    ]);
+  });
+
+  it("marks the active day and active route index", () => {
+    const rail = buildCinematicRouteRail(DALI_CINEMATIC_SCENE_PRESET, 3);
+
+    expect(rail.activeIndex).toBe(2);
+    expect(rail.points.filter((point) => point.isActive).map((point) => point.day)).toEqual([3]);
+  });
+
+  it("falls back to the first segment when active day is unknown", () => {
+    const rail = buildCinematicRouteRail(DALI_CINEMATIC_SCENE_PRESET, 99);
+
+    expect(rail.activeIndex).toBe(0);
+    expect(rail.points.some((point) => point.isActive)).toBe(false);
   });
 });

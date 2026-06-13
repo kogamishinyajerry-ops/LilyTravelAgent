@@ -245,3 +245,14 @@ Files shown: lib/cinematic-scene-preset.ts, lib/cinematic-scene-preset.test.ts, 
 Command/result: npm test -- lib/cinematic-scene-preset.test.ts && npm run lint && npm run build && Playwright desktop/mobile canvas pixel checks
 Voiceover note: "现在我给大理 scene preset 加了一个导演层：D1 古城、D2 洱海、D3 喜洲，不只是按钮和文案变，camera position、lookAt、FOV 都会轻微变。动态路书不能只是地图，它要像一个目的地预告片。"
 Usable for: "day switching as shot direction" clip, D1-D4 camera comparison, Vibe Coding pure-helper-first lesson, 10-goal continuation round 2
+
+## Phase Q: v0.8.6 — Cinematic Route Rail
+
+Date: 2026-06-13
+Clip title: Phase Q: v0.8.6 — Cinematic Route Rail
+What changed: Added a route-rail layer inside the Dali Three.js scene. `lib/cinematic-scene-preset.ts` now exports `buildCinematicRouteRail()`, which turns D1-D4 focus anchors into ordered world-space points plus an active-day index. `components/dream-skyline-scene.tsx` renders a soft full-route line, a brighter active-progress segment, and small glowing day anchors directly in the scene. `lib/cinematic-scene-preset.test.ts` verifies D1-D4 ordering, active-day detection, and unknown-day fallback.
+Why this matters: The roadbook already had day buttons and a mini map, but the hero 3D world did not yet show the route. This change makes the itinerary spatial: the user sees the days as connected travel beats across Dali, not just disconnected UI cards. It also gives future destination presets a reusable route grammar.
+Files shown: lib/cinematic-scene-preset.ts, lib/cinematic-scene-preset.test.ts, components/dream-skyline-scene.tsx, docs/design/real-scenic-preview-roadmap.md, docs/recording/dev-log.md
+Command/result: npm test -- lib/cinematic-scene-preset.test.ts && npm run lint && npm run build && Playwright D1-D4 canvas checks
+Voiceover note: "这一轮我把路线从 UI 按钮搬进 3D 世界：大理 D1-D4 的焦点锚点会生成一条 route rail，全路线是淡线，当前已走到的段落更亮。用户看到的不只是四张卡，而是一条真的在场景里流动的旅行线。"
+Usable for: route-in-3D demo, D1-D4 spatial itinerary clip, Vibe Coding helper-to-render pattern, 10-goal continuation round 3

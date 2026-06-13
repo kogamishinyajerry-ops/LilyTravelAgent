@@ -44,6 +44,17 @@ export type CinematicCameraPose = {
   parallaxWeight: number;
 };
 
+export type CinematicRouteRail = {
+  points: Array<{
+    day: number;
+    label: string;
+    x: number;
+    z: number;
+    isActive: boolean;
+  }>;
+  activeIndex: number;
+};
+
 export const DALI_CINEMATIC_SCENE_PRESET: CinematicScenePreset = {
   id: "dali-cangshan-erhai",
   destination: "云南大理",
@@ -115,6 +126,28 @@ export function buildCinematicCameraPose(focus?: CinematicSceneFocus | null): Ci
     camera: [0.55 + xBias, 5.15 + focusDepth, 12.08 - zBias],
     lookAt: [clamp(focus.x * 0.14, -0.62, 0.62), 1.08, clamp(focus.z * 0.16, 0.16, 0.54)],
     parallaxWeight: focus.anchorKind === "erhai" ? 1.24 : focus.anchorKind === "village" ? 1.12 : 1,
+  };
+}
+
+export function buildCinematicRouteRail(
+  preset: CinematicScenePreset,
+  activeDay: number,
+): CinematicRouteRail {
+  const points = [...preset.focusByDay]
+    .sort((left, right) => left.day - right.day)
+    .map((focus) => ({
+      day: focus.day,
+      label: focus.label,
+      x: focus.x,
+      z: focus.z,
+      isActive: focus.day === activeDay,
+    }));
+
+  const activeIndex = Math.max(0, points.findIndex((point) => point.day === activeDay));
+
+  return {
+    points,
+    activeIndex,
   };
 }
 

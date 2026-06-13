@@ -39,6 +39,7 @@ import { getFallbackPreset, getFallbackPresetForTemplate } from "@/lib/landmark-
 import { renderLandmarkPreset } from "@/lib/landmark-renderer";
 import {
   buildCinematicCameraPose,
+  buildCinematicRouteRail,
   resolveCinematicScenePreset,
   type ResolvedCinematicScenePreset,
 } from "@/lib/cinematic-scene-preset";
@@ -452,6 +453,7 @@ function createCinematicPresetLayer(
     disposables.push(geometry, material);
   });
 
+  group.add(createDaliRouteRail(scene, palette, disposables));
   group.add(createDaliCourtyardCluster(scene, palette, disposables));
   group.add(createFocusBeacon(scene, palette, disposables));
 
@@ -505,6 +507,65 @@ function createMountainBandMesh(
   mesh.renderOrder = -2;
   disposables.push(geometry, material);
   return mesh;
+}
+
+function createDaliRouteRail(
+  scene: ResolvedCinematicScenePreset,
+  palette: SkylinePalette,
+  disposables: Array<{ dispose: () => void }>,
+) {
+  const rail = buildCinematicRouteRail(scene.preset, scene.focus.day);
+  const group = new Group();
+  group.name = "dali-day-route-rail";
+
+  const routePoints = rail.points.map((point) => new Vector3(point.x, 0.13, point.z));
+  const routeCurve = new CatmullRomCurve3(routePoints);
+  const routeGeometry = new BufferGeometry().setFromPoints(routeCurve.getPoints(72));
+  const routeMaterial = new LineBasicMaterial({
+    color: new Color(palette.light),
+    transparent: true,
+    opacity: 0.24,
+  });
+  const routeLine = new Line(routeGeometry, routeMaterial);
+  routeLine.name = "dali-day-route-line";
+  group.add(routeLine);
+  disposables.push(routeGeometry, routeMaterial);
+
+  const activeRoutePoints = routePoints.slice(0, rail.activeIndex + 1);
+  if (activeRoutePoints.length > 1) {
+    const activeCurve = new CatmullRomCurve3(activeRoutePoints);
+    const activeGeometry = new BufferGeometry().setFromPoints(activeCurve.getPoints(36));
+    const activeMaterial = new LineBasicMaterial({
+      color: new Color("#fff5cf"),
+      transparent: true,
+      opacity: 0.58,
+    });
+    const activeLine = new Line(activeGeometry, activeMaterial);
+    activeLine.name = "dali-active-route-line";
+    group.add(activeLine);
+    disposables.push(activeGeometry, activeMaterial);
+  }
+
+  rail.points.forEach((point) => {
+    const anchorGeometry = new CircleGeometry(point.isActive ? 0.13 : 0.09, 32);
+    const anchorMaterial = new MeshBasicMaterial({
+      color: new Color(point.isActive ? palette.light : palette.glass),
+      transparent: true,
+      opacity: point.isActive ? 0.58 : 0.28,
+      depthWrite: false,
+      blending: AdditiveBlending,
+      side: DoubleSide,
+    });
+    const anchor = new Mesh(anchorGeometry, anchorMaterial);
+    anchor.name = `dali-route-anchor-d${point.day}`;
+    anchor.rotation.x = -Math.PI / 2;
+    anchor.position.set(point.x, 0.145, point.z);
+    anchor.renderOrder = 8;
+    group.add(anchor);
+    disposables.push(anchorGeometry, anchorMaterial);
+  });
+
+  return group;
 }
 
 function createDaliCourtyardCluster(
