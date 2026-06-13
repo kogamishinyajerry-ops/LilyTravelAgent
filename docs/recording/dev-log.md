@@ -696,3 +696,14 @@ Files shown: components/dream-roadbook.tsx, components/dream-roadbook.test.tsx, 
 Command/result: npm test -- components/dream-roadbook.test.tsx && npm run lint && npm test && npm run build
 Voiceover note: "我在 Dream 这边也加了 Studio Bridge。视觉预览讲完后，可以一键回到同一个 demo 的录屏台继续拆解。"
 Usable for: Dream bridge clip, product-shot to workflow handoff, Vibe Coding recording circuit polish, continued goal run round 44
+
+## Phase BF: v0.8.47 — Studio Dream Demo Script
+
+Date: 2026-06-13
+Clip title: Phase BF: v0.8.47 — Studio Dream Demo Script
+What changed: Added `docs/recording/studio-dream-demo-script.md`, a shot-by-shot recording script for the verified Studio ↔ Dream coastal demo flow.
+Why this matters: The two-way product flow is now also a content asset. The creator can record the workflow without reconstructing the sequence from memory or git history.
+Files shown: docs/recording/studio-dream-demo-script.md, README.md, docs/recording/dev-log.md
+Command/result: npm run lint && npm test && npm run build
+Voiceover note: "我把 Studio 到 Dream 再回 Studio 的流程写成脚本。之后录屏可以直接照这个 shot list 走。"
+Usable for: demo-script clip, recording preparation, Vibe Coding content production workflow, continued goal run round 45
