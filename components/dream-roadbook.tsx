@@ -1743,6 +1743,24 @@ export function DreamRoadbook({ initialDemo = "dali" }: DreamRoadbookProps = {})
                 <strong>{sceneInspector.parallaxWeight.toFixed(2)}x</strong>
               </span>
             </div>
+            <div className="dream-composition-grid" aria-label="Cinematic 构图信息">
+              <span>
+                <small>Lens</small>
+                <strong>{sceneInspector.composition.lensLabel}</strong>
+              </span>
+              <span>
+                <small>Depth</small>
+                <strong>{sceneInspector.composition.depthLabel}</strong>
+              </span>
+              <span>
+                <small>Layer</small>
+                <strong>{sceneInspector.composition.layerLabel}</strong>
+              </span>
+              <span>
+                <small>Motion</small>
+                <strong>{sceneInspector.composition.motionLabel}</strong>
+              </span>
+            </div>
             <p>{sceneInspector.visualCue}</p>
             {sceneTimeline.status === "active" ? (
               <div className="dream-scene-timeline" aria-label="D1-D4 视觉导演轨道">

@@ -145,6 +145,25 @@ export type CinematicSceneInspector = {
   cameraFov: number;
   cameraX: number;
   parallaxWeight: number;
+  composition: CinematicCompositionProfile;
+};
+
+export type CinematicCompositionProfile = {
+  id:
+    | "old-town-arrival-frame"
+    | "erhai-water-depth"
+    | "xizhou-courtyard-focus"
+    | "return-closing-glow"
+    | "coast-lighthouse-frame"
+    | "bay-water-depth"
+    | "harbor-skyline-frame"
+    | "coast-sunset-close"
+    | "generic-layered-preview";
+  lensLabel: string;
+  depthLabel: string;
+  layerLabel: string;
+  motionLabel: string;
+  proofLabel: string;
 };
 
 export type CinematicSceneTimelineItem = {
@@ -655,9 +674,111 @@ export function buildCinematicMotionProfile(focus?: CinematicSceneFocus | null):
   };
 }
 
+export function buildCinematicCompositionProfile(
+  focus?: CinematicSceneFocus | null,
+): CinematicCompositionProfile {
+  if (!focus) {
+    return {
+      id: "generic-layered-preview",
+      lensLabel: "wide establishing",
+      depthLabel: "3-layer depth",
+      layerLabel: "terrain / skyline / asset",
+      motionLabel: "slow drift",
+      proofLabel: "fallback stack",
+    };
+  }
+
+  if (focus.anchorKind === "erhai") {
+    return {
+      id: "erhai-water-depth",
+      lensLabel: "wide water lens",
+      depthLabel: "mountain-water-town",
+      layerLabel: "Cangshan / Erhai / sail",
+      motionLabel: "water glide",
+      proofLabel: "D2 water hero",
+    };
+  }
+
+  if (focus.anchorKind === "bay") {
+    return {
+      id: "bay-water-depth",
+      lensLabel: "wide bay lens",
+      depthLabel: "island-water-harbor",
+      layerLabel: "island / bay / sail",
+      motionLabel: "glass-water current",
+      proofLabel: "D2 bay hero",
+    };
+  }
+
+  if (focus.anchorKind === "village") {
+    return {
+      id: "xizhou-courtyard-focus",
+      lensLabel: "quiet focus lens",
+      depthLabel: "courtyard foreground",
+      layerLabel: "Cangshan / village / arch",
+      motionLabel: "still-air breath",
+      proofLabel: "D3 village detail",
+    };
+  }
+
+  if (focus.anchorKind === "harbor") {
+    return {
+      id: "harbor-skyline-frame",
+      lensLabel: "street skyline lens",
+      depthLabel: "pier-city-depth",
+      layerLabel: "water / arcade / skyline",
+      motionLabel: "harbor drift",
+      proofLabel: "D3 harbor skyline",
+    };
+  }
+
+  if (focus.anchorKind === "return") {
+    return {
+      id: "return-closing-glow",
+      lensLabel: "warm close lens",
+      depthLabel: "low foreground glow",
+      layerLabel: "route / cafe / amber haze",
+      motionLabel: "closing pulse",
+      proofLabel: "D4 return beat",
+    };
+  }
+
+  if (focus.anchorKind === "coast-return") {
+    return {
+      id: "coast-sunset-close",
+      lensLabel: "sunset close lens",
+      depthLabel: "deck-sun-water",
+      layerLabel: "deck / rose haze / glint",
+      motionLabel: "closing glow",
+      proofLabel: "D4 sunset beat",
+    };
+  }
+
+  if (focus.anchorKind === "coast-arrival") {
+    return {
+      id: "coast-lighthouse-frame",
+      lensLabel: "arrival lighthouse lens",
+      depthLabel: "beach-light-horizon",
+      layerLabel: "sand / lighthouse / island",
+      motionLabel: "coastal breeze",
+      proofLabel: "D1 lighthouse beat",
+    };
+  }
+
+  return {
+    id: "old-town-arrival-frame",
+    lensLabel: "arrival gate lens",
+    depthLabel: "gate-street-mountain",
+    layerLabel: "old town / route / Cangshan",
+    motionLabel: "slow breath",
+    proofLabel: "D1 old-town beat",
+  };
+}
+
 export function buildCinematicSceneInspector(roadbook: Roadbook, activeDay: number): CinematicSceneInspector {
   const resolved = resolveCinematicScenePreset(roadbook, activeDay);
   const pose = buildCinematicCameraPose(resolved?.focus);
+  const composition = buildCinematicCompositionProfile(resolved?.focus);
 
   if (!resolved) {
     return {
@@ -672,6 +793,7 @@ export function buildCinematicSceneInspector(roadbook: Roadbook, activeDay: numb
       cameraFov: pose.fov,
       cameraX: roundCameraValue(pose.camera[0]),
       parallaxWeight: pose.parallaxWeight,
+      composition,
     };
   }
 
@@ -694,6 +816,7 @@ export function buildCinematicSceneInspector(roadbook: Roadbook, activeDay: numb
     cameraFov: pose.fov,
     cameraX: roundCameraValue(pose.camera[0]),
     parallaxWeight: pose.parallaxWeight,
+    composition,
   };
 }
 

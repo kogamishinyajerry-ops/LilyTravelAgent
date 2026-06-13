@@ -154,6 +154,17 @@ describe("DreamRoadbook a11y polish", () => {
     expect(d3Button.getAttribute("aria-pressed")).toBe("true");
   });
 
+  it("shows the cinematic composition profile in the scene inspector", () => {
+    render(<DreamRoadbook />);
+
+    const composition = screen.getByLabelText("Cinematic 构图信息");
+
+    expect(within(composition).getByText("arrival gate lens")).toBeTruthy();
+    expect(within(composition).getByText("gate-street-mountain")).toBeTruthy();
+    expect(within(composition).getByText("old town / route / Cangshan")).toBeTruthy();
+    expect(within(composition).getByText("slow breath")).toBeTruthy();
+  });
+
   it("renders the AI landmark empty state with a 'click to generate' action when no preset is present", () => {
     render(<DreamRoadbook />);
     const empty = document.querySelector(

@@ -4,6 +4,7 @@ import type { Roadbook } from "./roadbook-types";
 import {
   buildCinematicAtmosphereProfile,
   buildCinematicCameraPose,
+  buildCinematicCompositionProfile,
   buildCinematicLandmarkSilhouettes,
   buildCinematicMotionProfile,
   buildCinematicRouteRail,
@@ -201,6 +202,11 @@ describe("buildCinematicSceneInspector", () => {
     expect(inspector.shotLabel).toBe("D3 · 喜洲村落");
     expect(inspector.routeProgress).toBe("D1-D2-D3");
     expect(inspector.cameraX).toBeLessThan(0.55);
+    expect(inspector.composition).toMatchObject({
+      id: "xizhou-courtyard-focus",
+      lensLabel: "quiet focus lens",
+      proofLabel: "D3 village detail",
+    });
   });
 
   it("returns a transparent fallback inspector for unsupported destinations", () => {
@@ -215,6 +221,10 @@ describe("buildCinematicSceneInspector", () => {
       routeProgress: "Default path",
       routePointCount: 0,
       cameraFov: 38,
+    });
+    expect(inspector.composition).toMatchObject({
+      id: "generic-layered-preview",
+      layerLabel: "terrain / skyline / asset",
     });
   });
 
@@ -231,6 +241,33 @@ describe("buildCinematicSceneInspector", () => {
       routeProgress: "D1-D2-D3",
       routePointCount: 4,
     });
+    expect(inspector.composition).toMatchObject({
+      id: "harbor-skyline-frame",
+      proofLabel: "D3 harbor skyline",
+    });
+  });
+});
+
+describe("buildCinematicCompositionProfile", () => {
+  it("turns the Dali water day into a layered water-depth shot", () => {
+    const profile = buildCinematicCompositionProfile(getCinematicDayFocus(DALI_CINEMATIC_SCENE_PRESET, 2));
+
+    expect(profile).toEqual({
+      id: "erhai-water-depth",
+      lensLabel: "wide water lens",
+      depthLabel: "mountain-water-town",
+      layerLabel: "Cangshan / Erhai / sail",
+      motionLabel: "water glide",
+      proofLabel: "D2 water hero",
+    });
+  });
+
+  it("turns the coastal harbor day into a skyline proof shot", () => {
+    const profile = buildCinematicCompositionProfile(getCinematicDayFocus(COASTAL_CINEMATIC_SCENE_PRESET, 3));
+
+    expect(profile.id).toBe("harbor-skyline-frame");
+    expect(profile.lensLabel).toBe("street skyline lens");
+    expect(profile.layerLabel).toBe("water / arcade / skyline");
   });
 });
 
