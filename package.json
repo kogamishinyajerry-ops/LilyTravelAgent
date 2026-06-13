@@ -12,6 +12,7 @@
     "test:coverage": "vitest run --coverage",
     "check:dream-visuals": "node scripts/check-dream-visuals.mjs",
     "check:studio-visuals": "node scripts/check-studio-visuals.mjs",
+    "check:studio-dream-handoff": "node scripts/check-studio-dream-handoff.mjs",
     "check:recording-suite": "node scripts/check-recording-suite.mjs",
     "index:recording-assets": "node scripts/index-recording-assets.mjs",
     "e2e": "playwright test",

@@ -707,3 +707,14 @@ Files shown: docs/recording/studio-dream-demo-script.md, README.md, docs/recordi
 Command/result: npm run lint && npm test && npm run build
 Voiceover note: "我把 Studio 到 Dream 再回 Studio 的流程写成脚本。之后录屏可以直接照这个 shot list 走。"
 Usable for: demo-script clip, recording preparation, Vibe Coding content production workflow, continued goal run round 45
+
+## Phase BG: v0.8.48 — Studio Dream Handoff QA Script
+
+Date: 2026-06-13
+Clip title: Phase BG: v0.8.48 — Studio Dream Handoff QA Script
+What changed: Added `scripts/check-studio-dream-handoff.mjs` and `npm run check:studio-dream-handoff`. The script verifies Dali and coastal round trips between `/studio?demo=...` and `/dream?demo=...`, then writes screenshots, `summary.json`, and `clip-notes.md`.
+Why this matters: The two-way demo flow is now mechanically verifiable, not only manually checked. Future Studio or Dream UI changes can prove the bridge still works before recording.
+Files shown: scripts/check-studio-dream-handoff.mjs, package.json, README.md, docs/recording/studio-dream-demo-script.md, docs/recording/dev-log.md
+Command/result: npm run check:studio-dream-handoff && npm run lint && npm test && npm run build
+Voiceover note: "我把双向演示路径做成自动检查脚本。以后改 UI 之前先跑它，就知道 Studio 和 Dream 的桥还通不通。"
+Usable for: QA-script clip, workflow verification, Vibe Coding evidence loop, continued goal run round 46

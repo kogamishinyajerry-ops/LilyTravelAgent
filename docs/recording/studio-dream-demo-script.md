@@ -32,6 +32,7 @@ This script records the verified Studio ↔ Dream handoff flow. It is designed f
 ## Verification
 
 - `npm test -- components/studio-mode.test.tsx components/dream-roadbook.test.tsx`
+- `npm run check:studio-dream-handoff`
 - `npm run lint`
 - `npm test`
 - `npm run build`
