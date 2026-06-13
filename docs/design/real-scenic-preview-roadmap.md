@@ -870,6 +870,19 @@ Lets the UI/API contract stabilize before investing in real data. Recording can 
 
 Replace `createDefaultTerrainSource` / `createDefaultBuildingsSource` with concrete implementations; pass them as props to `<RealSkylineScene>`.
 
+## Phase Director Lens QA (2026-06-14)
+
+### What was added
+
+- `/dream` exposes five Director Lens modes: Auto, Wide Water, Skyline, Atlas, and Detail.
+- The selected lens is passed through the two-stage generation request, dream preview prompt contract, preview asset cache key, and image prompt.
+- `Agent Visual Contract`, `Proof Stack`, and the asset panel now show the active Director Lens so the recording surface can explain the visual pipeline directly.
+- `npm run check:dream-visuals` accepts `DREAM_LENS=...`, clicks the selected lens, verifies the Director proof row, and writes the selected lens into `summary.json`, `index.html`, and `clip-notes.md`.
+
+### Why it matters
+
+This turns camera direction into a product-level control, not a hidden visual tweak. A user can generate the same destination roadbook with a different cinematic direction, while the creator can record evidence that the prompt, scene, asset cache, and QA pack all stayed aligned.
+
 ## Next Realism Layers
 
 1. **Real terrain** — see `lib/terrain-source.ts` for the interface. Implement a `MapboxTerrainSource` / `MapTilerTerrainSource` and pass it as the `terrainSource` prop.
