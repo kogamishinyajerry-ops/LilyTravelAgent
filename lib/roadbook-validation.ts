@@ -21,6 +21,12 @@ export function formatZodIssues(error: z.ZodError): FormattedZodIssue[] {
   }));
 }
 
+const visualRenderStrategySchema = z.object({
+  lens: z.string().min(1).max(80),
+  surface: z.string().min(1).max(100),
+  motion: z.string().min(1).max(80),
+});
+
 export const travelBriefSchema = z.object({
   destination: z.string().min(1).max(80),
   city: z.string().min(1).max(40),
@@ -33,6 +39,9 @@ export const travelBriefSchema = z.object({
   mustAvoid: z.string().max(240),
   specialRequests: z.string().max(320),
   tone: z.string().min(1).max(120),
+  visualTemplate: z.string().min(1).max(40).optional(),
+  visualTemplateLabel: z.string().min(1).max(40).optional(),
+  renderStrategy: visualRenderStrategySchema.optional(),
 });
 
 const itineraryStopSchema = z.object({

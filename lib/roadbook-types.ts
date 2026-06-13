@@ -14,8 +14,17 @@ export type TravelBrief = {
 
 export type GenerationMode = "speed" | "quality";
 
+export type VisualRenderStrategy = {
+  lens: string;
+  surface: string;
+  motion: string;
+};
+
 export type GenerateRoadbookRequest = TravelBrief & {
   generationMode?: GenerationMode;
+  visualTemplate?: string;
+  visualTemplateLabel?: string;
+  renderStrategy?: VisualRenderStrategy;
 };
 
 export type ItineraryStop = {

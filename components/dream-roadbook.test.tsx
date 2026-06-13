@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 
 // Mocks must be set up before importing the component under test.
 vi.mock("next/dynamic", () => ({
@@ -203,6 +203,39 @@ describe("DreamRoadbook a11y polish", () => {
     expect(strategy.textContent).toContain("wide waterline");
     expect(strategy.textContent).toContain("lake / glint / island");
     expect(strategy.textContent).toContain("water glide");
+  });
+
+  it("sends the active template render strategy to the two-stage generation API", async () => {
+    const fetchMock = vi.fn(async () => ({
+      ok: false,
+      status: 503,
+      json: async () => ({
+        ok: false,
+        code: "missing_minimax_key",
+        message: "missing key",
+      }),
+    })) as unknown as typeof fetch;
+    vi.stubGlobal("fetch", fetchMock);
+
+    render(<DreamRoadbook />);
+    fireEvent.click(screen.getByRole("button", { name: "生成梦境路书" }));
+
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenCalledWith(
+        "/api/generate-dream-preview",
+        expect.objectContaining({ method: "POST" }),
+      );
+    });
+    const [, init] = (fetchMock as unknown as { mock: { calls: Array<[string, RequestInit]> } }).mock.calls[0];
+    const body = JSON.parse(String(init.body));
+
+    expect(body.visualTemplate).toBe("monument");
+    expect(body.visualTemplateLabel).toBe("纪念碑");
+    expect(body.renderStrategy).toEqual({
+      lens: "isometric monument",
+      surface: "stone / stairs / void",
+      motion: "slow parallax",
+    });
   });
 
   it("renders the AI landmark empty state with a 'click to generate' action when no preset is present", () => {

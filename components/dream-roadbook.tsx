@@ -693,6 +693,9 @@ export function DreamRoadbook({ initialDemo = "dali" }: DreamRoadbookProps = {})
       tone: `${brief.tone}；${activeTemplate.label}模板；文字极简；强画面感。`,
       specialRequests: `${brief.specialRequests}。输出适合极简动态网页：每天只保留最强场景、少文字、强画面感。视觉方向：${activeTemplate.generationHint}`,
       generationMode,
+      visualTemplate: activeTemplate.id,
+      visualTemplateLabel: activeTemplate.label,
+      renderStrategy: activeTemplate.renderStrategy,
     };
   }
 

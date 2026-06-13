@@ -11,6 +11,7 @@ import { formatZodIssues, roadbookSchema, travelBriefSchema } from "@/lib/roadbo
 export const runtime = "nodejs";
 
 function buildPrompt(brief: ReturnType<typeof travelBriefSchema.parse>) {
+  const visualStrategy = formatVisualStrategy(brief);
   return `你是一个专门制作漂亮旅行路书的 AI Agent。请根据用户旅行需求生成一本中文网页路书。
 
 要求：
@@ -26,6 +27,8 @@ function buildPrompt(brief: ReturnType<typeof travelBriefSchema.parse>) {
 - 避免：${brief.mustAvoid}
 - 特殊要求：${brief.specialRequests}
 - 语气：${brief.tone}
+- 视觉模板：${brief.visualTemplateLabel || brief.visualTemplate || "未指定"}
+- 渲染策略：${visualStrategy}
 
 JSON 结构必须完全使用这些字段：
 {
@@ -80,8 +83,19 @@ JSON 结构必须完全使用这些字段：
 内容约束：
 - days 数量必须等于 ${brief.days}。
 - 每天 3-5 个 stops，地点尽量真实且便于高德定位。
+- 每天的 mood、routeSummary、photoTips 要呼应视觉模板和渲染策略。
 - 不要编造已核验事实，不要承诺营业时间/票价/预约状态一定正确。
 - 风格要像高级旅行杂志，但信息要能真的帮助出行。`;
+}
+
+function formatVisualStrategy(brief: ReturnType<typeof travelBriefSchema.parse>) {
+  const strategy = brief.renderStrategy;
+
+  if (!strategy) {
+    return "未指定，使用通用 cinematic 旅行预览。";
+  }
+
+  return `lens=${strategy.lens}; surface=${strategy.surface}; motion=${strategy.motion}`;
 }
 
 /**

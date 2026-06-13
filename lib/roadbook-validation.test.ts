@@ -36,6 +36,26 @@ describe("travelBriefSchema", () => {
       const result = travelBriefSchema.safeParse(input);
       expect(result.success).toBe(true);
     });
+
+    it("keeps optional visual template strategy fields for dream generation prompts", () => {
+      const result = travelBriefSchema.safeParse({
+        ...validTravelBrief,
+        visualTemplate: "starlake",
+        visualTemplateLabel: "星湖",
+        renderStrategy: {
+          lens: "wide waterline",
+          surface: "lake / glint / island",
+          motion: "water glide",
+        },
+      });
+
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.visualTemplate).toBe("starlake");
+        expect(result.data.visualTemplateLabel).toBe("星湖");
+        expect(result.data.renderStrategy?.surface).toBe("lake / glint / island");
+      }
+    });
   });
 
   describe("constraint: destination", () => {
@@ -148,6 +168,21 @@ describe("travelBriefSchema", () => {
         expect(result.error.issues[0]).toHaveProperty("path");
         expect(result.error.issues[0]).toHaveProperty("message");
       }
+    });
+  });
+
+  describe("constraint: renderStrategy", () => {
+    it("fails when an optional render strategy field is too long", () => {
+      const result = travelBriefSchema.safeParse({
+        ...validTravelBrief,
+        renderStrategy: {
+          lens: "a".repeat(81),
+          surface: "lake",
+          motion: "glide",
+        },
+      });
+
+      expect(result.success).toBe(false);
     });
   });
 });
