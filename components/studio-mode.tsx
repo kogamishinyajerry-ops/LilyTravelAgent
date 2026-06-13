@@ -240,6 +240,7 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
 
   const locatedCount = useMemo(() => points.filter((point) => point.status === "ok").length, [points]);
   const topStops = roadbook.days.flatMap((day) => day.stops.slice(0, 2)).slice(0, 8);
+  const dreamHandoffHref = demoRoadbookId ? `/dream?demo=${demoRoadbookId}` : "/dream";
 
   const loadRecordingAssets = useCallback(
     async ({ markRefreshing = true, isActive = () => true }: { markRefreshing?: boolean; isActive?: () => boolean } = {}) => {
@@ -386,7 +387,7 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
               <ArrowLeft size={16} />
               返回工具页
             </Link>
-            <Link href={demoRoadbookId ? `/dream?demo=${demoRoadbookId}` : "/dream"} className="ghost-link">
+            <Link href={dreamHandoffHref} className="ghost-link">
               <Sparkles size={16} />
               梦境路书
             </Link>
@@ -515,6 +516,16 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
             <div className="studio-panel-heading">
               <p className="eyebrow">Creator Track</p>
               <h2>边开发边讲清楚</h2>
+            </div>
+
+            <div className="studio-demo-bridge" aria-label="Demo Bridge">
+              <span>Demo Bridge</span>
+              <strong>{roadbook.destination} → Dream</strong>
+              <p>{demoRoadbookId ? "当前本地演示会带入同款梦境预览。" : "真实生成后可进入梦境预览继续录制。"}</p>
+              <Link href={dreamHandoffHref}>
+                打开同款梦境预览
+                <ExternalLink size={13} />
+              </Link>
             </div>
 
             {scriptMode ? (

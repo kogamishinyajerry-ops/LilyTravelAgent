@@ -1376,6 +1376,47 @@ textarea {
   line-height: 1.35;
 }
 
+.studio-demo-bridge {
+  display: grid;
+  gap: 6px;
+  border: 1px solid rgba(79, 143, 122, 0.2);
+  border-radius: 8px;
+  padding: 10px;
+  background: linear-gradient(135deg, rgba(79, 143, 122, 0.12), rgba(255, 255, 255, 0.78));
+}
+
+.studio-demo-bridge span {
+  color: var(--sage);
+  font-size: 0.7rem;
+  font-weight: 950;
+}
+
+.studio-demo-bridge strong {
+  color: var(--moss);
+  font-size: 0.94rem;
+}
+
+.studio-demo-bridge p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.76rem;
+  line-height: 1.35;
+}
+
+.studio-demo-bridge a {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  justify-self: start;
+  border-radius: 999px;
+  padding: 5px 9px;
+  color: #fff;
+  font-size: 0.76rem;
+  font-weight: 950;
+  text-decoration: none;
+  background: var(--moss);
+}
+
 .studio-series-cues {
   display: flex;
   flex-wrap: wrap;

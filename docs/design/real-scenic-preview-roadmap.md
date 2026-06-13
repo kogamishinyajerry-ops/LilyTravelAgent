@@ -711,6 +711,22 @@ The Studio and Dream surfaces now behave like one recording circuit. A creator c
 
 > 我把反向也补上了。从 Dream 回 Studio，也会保留大理或海岸。这样录制时两个页面可以来回切，路线不会丢。
 
+## Phase BD: Studio Demo Bridge Card (2026-06-13)
+
+### What changed
+
+- Added a compact Demo Bridge card to `/studio` Creator Track.
+- The card shows the active route, explains the handoff, and links to the matching `/dream?demo=...` view.
+- The card updates when the local demo switches between Dali and coast.
+
+### Why this matters
+
+The cross-page handoff is now visible as a product concept instead of only existing as a link target. It gives the creator a concrete UI object to point at while explaining the Studio-to-Dream workflow.
+
+### Recording angle
+
+> 我把两个页面之间的交接做成了 Demo Bridge。它会告诉观众当前是哪个 demo，并且一键打开同款梦境预览。
+
 ## Phase D: real data sources (2026-06-07)
 
 Replaced the Phase C procedural stubs with real implementations:

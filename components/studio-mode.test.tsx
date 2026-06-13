@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 
 vi.mock("next/link", () => ({
   default: ({ children, href, ...rest }: { children: React.ReactNode; href: string }) => (
@@ -92,6 +92,8 @@ describe("StudioMode demo roadbooks", () => {
     expect(screen.getAllByText("Dream coastal visual pack")[0]).toBeTruthy();
     expect(screen.getByRole("button", { name: "复制命令" })).toBeTruthy();
     expect(screen.getByRole("link", { name: /梦境路书/ }).getAttribute("href")).toBe("/dream?demo=dali");
+    expect(screen.getByLabelText("Demo Bridge").textContent).toContain("云南大理 → Dream");
+    expect(within(screen.getByLabelText("Demo Bridge")).getByRole("link", { name: /打开同款梦境预览/ }).getAttribute("href")).toBe("/dream?demo=dali");
     const workflow = screen.getByLabelText("录屏素材流程");
     expect(workflow).toBeTruthy();
     expect(workflow.textContent).toContain("复制命令");
@@ -115,6 +117,8 @@ describe("StudioMode demo roadbooks", () => {
     expect(screen.getByDisplayValue("三亚海岛")).toBeTruthy();
     expect(screen.getByDisplayValue("三亚")).toBeTruthy();
     expect(screen.getByRole("link", { name: /梦境路书/ }).getAttribute("href")).toBe("/dream?demo=coast");
+    expect(screen.getByLabelText("Demo Bridge").textContent).toContain("三亚海岛 → Dream");
+    expect(within(screen.getByLabelText("Demo Bridge")).getByRole("link", { name: /打开同款梦境预览/ }).getAttribute("href")).toBe("/dream?demo=coast");
     expect(await screen.findByText("15 个素材包")).toBeTruthy();
   });
 
