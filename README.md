@@ -115,13 +115,14 @@ npm test
 npm run build
 npm run check:dream-visuals
 DREAM_DEMO=coast npm run check:dream-visuals
+DREAM_LENS=low-skyline npm run check:dream-visuals
 npm run check:studio-visuals
 npm run check:studio-dream-handoff
 npm run index:recording-assets
 npm run check:recording-suite
 ```
 
-`npm run check:dream-visuals` expects the local dev server to be running at `http://localhost:3000/dream` unless `DREAM_URL` is set. It writes D1-D4 screenshots, `summary.json`, `index.html`, and `clip-notes.md` under `recordings/visual-checks/`, which is ignored by git and intended for recording/product review. The QA checks WebGL pixels, micro-motion, cinematic matte mounting, Scene Inspector text, Composition profile, Proof Stack readiness, and the D1-D4 director timeline. Set `DREAM_DEMO=coast` to make the script click the local coastal sample before running the same checks.
+`npm run check:dream-visuals` expects the local dev server to be running at `http://localhost:3000/dream` unless `DREAM_URL` is set. It writes D1-D4 screenshots, `summary.json`, `index.html`, and `clip-notes.md` under `recordings/visual-checks/`, which is ignored by git and intended for recording/product review. The QA checks WebGL pixels, micro-motion, cinematic matte mounting, Scene Inspector text, Composition profile, Proof Stack readiness, the active Director Lens, and the D1-D4 director timeline. Set `DREAM_DEMO=coast` to make the script click the local coastal sample before running the same checks. Set `DREAM_LENS=low-skyline` or another Director Lens id to record a specific camera direction in the gallery and clip notes.
 
 `npm run check:studio-visuals` expects `http://localhost:3000/studio` unless `STUDIO_URL` is set. It captures the Dali and coastal 16:9 recording layouts and writes `summary.json`, `index.html`, and `clip-notes.md` under `recordings/studio-checks/`.
 
