@@ -30,7 +30,7 @@
 - `npm run check:studio-visuals` 会自动截取 `/studio` 的大理/海岸 16:9 演示画面，并输出 studio 录屏 notes。
 - `npm run index:recording-assets` 会把 dream/studio 的本地 QA 输出汇总成 `recordings/index.html` 和 `recordings/clip-index.md`。
 - `npm run check:recording-suite` 会一键串起大理 `/dream`、海岸 `/dream`、`/studio` 和素材索引，作为每轮打磨后的本地录屏验收流程。
-- `/studio` 右侧会读取 `/api/recording-assets`，显示本地素材包数量、最新 QA 时间，并通过 `/api/recording-assets/index` 打开本地总索引。
+- `/studio` 右侧会读取 `/api/recording-assets`，显示本地素材包数量、最新 QA 时间，支持手动刷新，并通过 `/api/recording-assets/index` 打开本地总索引。
 - 这版是“预览级建模”，不是测绘级真实地形或真实建筑模型。
 
 ## Why This Step Exists
@@ -406,6 +406,23 @@ The recording pipeline now appears inside the creator surface. The user can reco
 ### Recording angle
 
 > 我不想让素材管理藏在文件夹里，所以把它接进 `/studio`。现在录屏台会直接显示已有多少个 QA 素材包、最近一次是什么，并能一键打开总索引。
+
+## Phase AI: Studio Recording Asset Refresh (2026-06-13)
+
+### What changed
+
+- `/studio` recording asset panel now has a manual refresh button.
+- The panel keeps the current asset summary visible while refresh is running.
+- The panel shows the latest local read time so a recording can demonstrate when the UI re-synced with the local QA archive.
+- `components/studio-mode.test.tsx` verifies that clicking refresh reads `/api/recording-assets` again and updates the displayed pack count.
+
+### Why this matters
+
+The creator workflow now has a clear on-screen loop: run the recording suite in the terminal, return to Studio, click refresh, and show the new local asset count without reloading the page.
+
+### Recording angle
+
+> 现在 Studio 里不是静态显示素材数量，而是可以点刷新。录屏时我可以先跑一条 QA suite，再回到页面点一下，观众能看到本地素材库状态更新。
 
 ## Phase D: real data sources (2026-06-07)
 

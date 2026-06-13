@@ -443,3 +443,14 @@ Files shown: components/studio-mode.tsx, lib/recording-assets.ts, app/api/record
 Command/result: npm test -- lib/recording-assets.test.ts components/studio-mode.test.tsx && npm run lint && npm test && npm run build
 Voiceover note: "我把素材管理入口接进 `/studio`。现在录屏台能直接显示本地已经有多少个 QA 素材包、最近一次生成是什么，并且能一键打开总索引。"
 Usable for: asset-panel product clip, QA-to-content UI workflow, Vibe Coding process visibility, continued goal run round 21
+
+## Phase AI: v0.8.24 — Studio Recording Asset Refresh
+
+Date: 2026-06-13
+Clip title: Phase AI: v0.8.24 — Studio Recording Asset Refresh
+What changed: Added a refresh control to the `/studio` recording asset panel. The panel keeps the current asset summary visible while refreshing, shows the latest local read time, and updates pack count/latest pack after reading `/api/recording-assets` again.
+Why this matters: The recording workflow now has a visible loop: run the QA suite, return to Studio, click refresh, and show that the local asset archive updated without a page reload.
+Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, app/globals.css, README.md, docs/design/real-scenic-preview-roadmap.md, docs/recording/dev-log.md
+Command/result: npm test -- components/studio-mode.test.tsx && npm run lint && npm test && npm run build
+Voiceover note: "我给素材面板加了刷新。以后录屏时，我可以跑完 recording suite，回到 `/studio` 点一下刷新，素材包数量和最新记录会直接更新。"
+Usable for: refresh-loop workflow clip, local asset archive UI lesson, Vibe Coding visible feedback loop, continued goal run round 22

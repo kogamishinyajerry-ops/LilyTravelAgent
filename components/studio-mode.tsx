@@ -12,11 +12,12 @@ import {
   Mic2,
   MonitorPlay,
   Route,
+  RotateCcw,
   Sparkles,
   Video,
 } from "lucide-react";
 import Link from "next/link";
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { defaultBrief } from "@/lib/default-brief";
 import { coastalSampleRoadbook, sampleRoadbook } from "@/lib/sample-roadbook";
 import type { GenerateRoadbookResponse, GeocodePlace, GeocodePlacesResponse, GeocodePoint, Roadbook, TravelBrief } from "@/lib/roadbook-types";
@@ -129,21 +130,25 @@ export function StudioMode() {
   const [error, setError] = useState("");
   const [model, setModel] = useState(localDemoModelLabel);
   const [recordingAssets, setRecordingAssets] = useState<RecordingAssetsState>({ status: "loading" });
+  const [recordingAssetsReadAt, setRecordingAssetsReadAt] = useState("");
+  const [recordingAssetsRefreshing, setRecordingAssetsRefreshing] = useState(false);
 
   const locatedCount = useMemo(() => points.filter((point) => point.status === "ok").length, [points]);
   const topStops = roadbook.days.flatMap((day) => day.stops.slice(0, 2)).slice(0, 8);
 
-  useEffect(() => {
-    let active = true;
+  const loadRecordingAssets = useCallback(
+    async ({ markRefreshing = true, isActive = () => true }: { markRefreshing?: boolean; isActive?: () => boolean } = {}) => {
+      if (markRefreshing) {
+        setRecordingAssetsRefreshing(true);
+      }
 
-    async function loadRecordingAssets() {
       try {
         const response = await fetch("/api/recording-assets", { cache: "no-store" });
         const data = (await response.json()) as RecordingAssetsApiResponse;
         if (!response.ok || !data.ok) {
           throw new Error(data.message || "录屏素材状态读取失败。");
         }
-        if (!active) return;
+        if (!isActive()) return;
         setRecordingAssets({
           status: "ready",
           packCount: data.packCount || 0,
@@ -151,20 +156,29 @@ export function StudioMode() {
           indexUrl: data.indexUrl || "",
           latestPack: data.latestPack || null,
         });
+        setRecordingAssetsReadAt(new Date().toISOString());
       } catch (caught) {
-        if (!active) return;
+        if (!isActive()) return;
         setRecordingAssets({
           status: "error",
           message: caught instanceof Error ? caught.message : "录屏素材状态读取失败。",
         });
+      } finally {
+        if (isActive()) {
+          setRecordingAssetsRefreshing(false);
+        }
       }
-    }
+    },
+    [],
+  );
 
-    loadRecordingAssets();
+  useEffect(() => {
+    let active = true;
+    Promise.resolve().then(() => loadRecordingAssets({ markRefreshing: false, isActive: () => active }));
     return () => {
       active = false;
     };
-  }, []);
+  }, [loadRecordingAssets]);
 
   function updateBrief<K extends keyof TravelBrief>(key: K, value: TravelBrief[K]) {
     setBrief((current) => ({ ...current, [key]: value }));
@@ -396,14 +410,21 @@ export function StudioMode() {
                       ? `最新 ${formatRecordingAssetTime(recordingAssets.latestPack.createdAt)} · ${recordingAssets.latestPack.title}`
                       : "还没有本地 QA 素材。"}
                   </p>
-                  {recordingAssets.indexAvailable && recordingAssets.indexUrl ? (
-                    <a href={recordingAssets.indexUrl} target="_blank" rel="noreferrer">
-                      打开总索引
-                      <ExternalLink size={14} />
-                    </a>
-                  ) : (
-                    <span>先运行 npm run check:recording-suite</span>
-                  )}
+                  {recordingAssetsReadAt ? <span>读取 {formatRecordingAssetTime(recordingAssetsReadAt)}</span> : null}
+                  <div className="studio-recording-actions">
+                    <button type="button" onClick={() => loadRecordingAssets()} disabled={recordingAssetsRefreshing}>
+                      <RotateCcw size={14} className={recordingAssetsRefreshing ? "spin" : ""} />
+                      {recordingAssetsRefreshing ? "刷新中" : "刷新"}
+                    </button>
+                    {recordingAssets.indexAvailable && recordingAssets.indexUrl ? (
+                      <a href={recordingAssets.indexUrl} target="_blank" rel="noreferrer">
+                        打开总索引
+                        <ExternalLink size={14} />
+                      </a>
+                    ) : (
+                      <span>先运行 npm run check:recording-suite</span>
+                    )}
+                  </div>
                 </>
               ) : null}
             </div>
