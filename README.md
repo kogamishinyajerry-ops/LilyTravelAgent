@@ -150,6 +150,7 @@ npm run check:recording-suite
 - `docs/recording/bridge-qa-evidence-script.md` gives a short Bridge QA proof clip script.
 - `docs/recording/cinematic-visual-contract-script.md` gives a short `/dream` visual-contract recording script for template strategy, Scene Inspector, Proof Stack, and asset state.
 - `docs/recording/director-lens-demo-script.md` gives a short `/dream` script for explaining the camera direction selector, Proof Stack, and asset-cache handoff.
+- `docs/recording/director-lens-shot-matrix.md` maps every Director Lens mode to a recording move and QA command.
 - `docs/recording/content-system.md` defines the account content pillars.
 - `docs/recording/vibe-coding-learning-journal.md` captures the learning narrative for voiceover.
 
