@@ -5,6 +5,10 @@ import { chromium } from "playwright";
 
 const targetUrl = process.env.DREAM_URL || "http://localhost:3000/dream";
 const demoRoadbook = process.env.DREAM_DEMO || "dali";
+const expectedTimelineLabels = {
+  dali: ["古城南门", "洱海西线", "喜洲村落", "古城收尾"],
+  coast: ["海岸灯塔", "蓝色海湾", "港口街区", "日落观景台"],
+};
 const runStamp = new Date().toISOString().replace(/[:.]/g, "-");
 const outDir = process.env.DREAM_VISUAL_OUT_DIR || path.join("recordings", "visual-checks", runStamp);
 const systemChromePath = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
@@ -57,6 +61,17 @@ async function readCanvasStats(page) {
   });
 }
 
+async function readDirectorTimeline(page) {
+  return page.locator(".dream-scene-timeline button").evaluateAll((buttons) =>
+    buttons.map((button) => ({
+      day: Number(button.querySelector("small")?.textContent?.replace(/\D/g, "") || "0"),
+      label: button.querySelector("strong")?.textContent?.trim() || "",
+      cue: button.querySelector("em")?.textContent?.trim() || "",
+      active: button.getAttribute("aria-pressed") === "true",
+    })),
+  );
+}
+
 async function main() {
   await mkdir(outDir, { recursive: true });
 
@@ -88,11 +103,20 @@ async function main() {
     await page.waitForTimeout(700);
 
     const inspectorText = await page.locator(".dream-scene-inspector").innerText();
+    const timeline = await readDirectorTimeline(page);
     const canvasStats = await readCanvasStats(page);
     const screenshotPath = path.join(outDir, `dream-${demoRoadbook}-d${day}.png`);
     await page.screenshot({ path: screenshotPath, fullPage: false });
 
     assert(inspectorText.includes(`D${day}`), `Scene Inspector did not mention D${day}.`);
+    assert(timeline.length === 4, `Director timeline should have 4 items for D${day}; got ${timeline.length}.`);
+    const activeTimelineItem = timeline.find((item) => item.active);
+    assert(activeTimelineItem?.day === day, `Director timeline active item should be D${day}.`);
+    const expectedLabels = expectedTimelineLabels[demoRoadbook] || expectedTimelineLabels.dali;
+    assert(
+      timeline.map((item) => item.label).join("|") === expectedLabels.join("|"),
+      `Director timeline labels did not match ${demoRoadbook}: ${timeline.map((item) => item.label).join(" / ")}`,
+    );
     if (demoRoadbook === "coast") {
       assert(inspectorText.includes("海岸海岛"), `Coastal Scene Inspector did not activate for D${day}.`);
     }
@@ -102,6 +126,7 @@ async function main() {
     days.push({
       day,
       inspectorText,
+      timeline,
       canvasStats,
       screenshotPath,
     });
@@ -152,6 +177,16 @@ function buildHtmlReport(summary) {
   const dayCards = summary.days
     .map((day) => {
       const shotLine = day.inspectorText.split("\n").find((line) => /^D\d/.test(line)) || `D${day.day}`;
+      const timelineItems = day.timeline
+        .map(
+          (item) => `
+            <li class="${item.active ? "active" : ""}">
+              <span>D${item.day}</span>
+              <strong>${escapeHtml(item.label)}</strong>
+              <small>${escapeHtml(item.cue)}</small>
+            </li>`,
+        )
+        .join("");
       return `
         <article class="day-card">
           <img src="${escapeHtml(path.basename(day.screenshotPath))}" alt="D${day.day} /dream screenshot" />
@@ -159,6 +194,7 @@ function buildHtmlReport(summary) {
             <p class="eyebrow">D${day.day} Visual Check</p>
             <h2>${escapeHtml(shotLine)}</h2>
             <pre>${escapeHtml(day.inspectorText)}</pre>
+            <ul class="timeline">${timelineItems}</ul>
             <dl>
               <div><dt>lit</dt><dd>${day.canvasStats.lit}</dd></div>
               <div><dt>varied</dt><dd>${day.canvasStats.varied}</dd></div>
@@ -279,6 +315,45 @@ function buildHtmlReport(summary) {
         font-size: 0.78rem;
         line-height: 1.45;
         white-space: pre-wrap;
+      }
+
+      .timeline {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+        margin: 0 0 12px;
+        padding: 0;
+        list-style: none;
+      }
+
+      .timeline li {
+        display: grid;
+        gap: 2px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 8px;
+        background: rgba(255, 255, 255, 0.58);
+      }
+
+      .timeline li.active {
+        color: #fff;
+        background: linear-gradient(135deg, #4b8589, #cc8a5f);
+      }
+
+      .timeline span,
+      .timeline strong,
+      .timeline small {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .timeline span,
+      .timeline small {
+        color: inherit;
+        font-size: 0.72rem;
+        font-weight: 900;
+        opacity: 0.76;
       }
 
       dl {

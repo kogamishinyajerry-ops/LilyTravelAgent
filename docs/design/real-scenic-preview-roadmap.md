@@ -25,6 +25,7 @@
 - `/dream` 控制栏提供大理/海岸本地演示路书切换，录屏和视觉 QA 不需要每次等待 MiniMax 真实生成。
 - `/studio` 录屏台也支持大理/海岸本地演示切换，16:9 讲解画面的输入区、预览区和状态条会同步切换。
 - `/dream` Scene Inspector 会显示 D1-D4 cinematic director timeline，直接展示每一天对应的视觉 cue 和当前高亮镜头。
+- `npm run check:dream-visuals` 会把 Director Timeline 纳入自动检查和 HTML gallery，默认大理和 `DREAM_DEMO=coast` 都可验证。
 - 这版是“预览级建模”，不是测绘级真实地形或真实建筑模型。
 
 ## Why This Step Exists
@@ -299,6 +300,23 @@ Scene Inspector already showed the current shot, but the user still had to click
 ### Recording angle
 
 > 我把 Scene Inspector 从“当前镜头信息”升级成一条 D1-D4 导演轨道。现在你能直接看到 Agent 对每一天的视觉安排：灯塔、海湾、港口、日落观景台。录屏时这就是解释 Agent 工作流的证据。
+
+## Phase AC: Director Timeline Visual QA (2026-06-13)
+
+### What changed
+
+- `scripts/check-dream-visuals.mjs` now extracts `.dream-scene-timeline` directly from the page.
+- The script asserts that the timeline has four items, the active item matches the selected day, and the expected preset labels are present for both default Dali and `DREAM_DEMO=coast`.
+- `summary.json` now stores the timeline payload for each day.
+- The generated `index.html` visual QA gallery renders the timeline cards under each screenshot.
+
+### Why this matters
+
+The visual QA command already checked whether the WebGL scene was alive. This phase also checks whether the Agent's visible director layer is alive. Future visual changes now have a repeatable way to catch missing or broken D1-D4 scene planning UI, not just blank canvases.
+
+### Recording angle
+
+> 我把自动视觉 QA 从“画面亮不亮”升级到“Agent 的导演轨道有没有正确出现”。现在 summary 和 gallery 会记录 D1-D4 的视觉 cue，海岸样例也会检查灯塔、海湾、港口和日落观景台。
 
 ## Phase D: real data sources (2026-06-07)
 

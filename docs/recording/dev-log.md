@@ -377,3 +377,14 @@ Files shown: lib/cinematic-scene-preset.ts, lib/cinematic-scene-preset.test.ts, 
 Command/result: npm test -- lib/cinematic-scene-preset.test.ts components/dream-roadbook.test.tsx && npm run lint && DREAM_DEMO=coast npm run check:dream-visuals && npm test && npm run build
 Voiceover note: "我把 Scene Inspector 从当前镜头信息升级成一条 D1-D4 导演轨道。现在你能直接看到 Agent 对每一天的视觉安排：灯塔、海湾、港口、日落观景台。"
 Usable for: Agent director-timeline clip, visible planning layer explanation, Vibe Coding helper-to-UI workflow, continued goal run round 15
+
+## Phase AC: v0.8.18 — Director Timeline Visual QA
+
+Date: 2026-06-13
+Clip title: Phase AC: v0.8.18 — Director Timeline Visual QA
+What changed: Upgraded `scripts/check-dream-visuals.mjs` so visual QA now validates the Scene Inspector director timeline. The script extracts `.dream-scene-timeline`, asserts four D1-D4 items, checks active-day state, verifies expected preset labels for Dali and `DREAM_DEMO=coast`, stores timeline payloads in `summary.json`, and renders timeline cards in the local HTML gallery.
+Why this matters: The visual QA no longer only proves the canvas is nonblank. It also proves the Agent's visible day-by-day director layer is present and correct, which protects the recording surface and product explanation layer during future visual polish.
+Files shown: scripts/check-dream-visuals.mjs, README.md, docs/design/real-scenic-preview-roadmap.md, docs/recording/dev-log.md
+Command/result: npm run check:dream-visuals && DREAM_DEMO=coast npm run check:dream-visuals && npm run lint && npm test && npm run build
+Voiceover note: "我把自动视觉 QA 从画面亮不亮，升级到 Agent 的导演轨道有没有正确出现。现在 summary 和 gallery 会记录每一天的视觉 cue。"
+Usable for: evidence-based visual QA clip, Agent planning verification lesson, recording-gallery workflow, continued goal run round 16
