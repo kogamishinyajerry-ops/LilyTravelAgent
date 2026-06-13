@@ -520,6 +520,21 @@ The creator can now see the structure of the local asset archive at a glance: ho
 
 > 我在素材面板里加了 Dream / Studio 数量统计。它不只是告诉我总共有多少素材，还能让我一眼判断产品画面和讲解画面的比例。
 
+## Phase AP: Recording Index Type Counts (2026-06-13)
+
+### What changed
+
+- `/api/recording-assets/index` now shows total, Dream, and Studio pack counts in its header.
+- The full local index now matches the compact `/studio` panel metrics.
+
+### Why this matters
+
+The user can open the full recording archive and still see the same high-level content mix: product footage versus walkthrough footage.
+
+### Recording angle
+
+> 我把总索引页也补上了 Dream / Studio 统计。现在从 Studio 点进去，完整索引和小面板表达的是同一套素材结构。
+
 ## Phase D: real data sources (2026-06-07)
 
 Replaced the Phase C procedural stubs with real implementations:

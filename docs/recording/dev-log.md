@@ -520,3 +520,14 @@ Files shown: lib/recording-assets.ts, lib/recording-assets.test.ts, components/s
 Command/result: npm test -- lib/recording-assets.test.ts components/studio-mode.test.tsx && npm run lint && npm test && npm run build
 Voiceover note: "我给素材库加了 Dream / Studio 数量统计。现在不只是知道有多少素材，还能看出产品画面和讲解画面的比例。"
 Usable for: recording archive metrics clip, content operations dashboard polish, Vibe Coding visible progress metrics, continued goal run round 28
+
+## Phase AP: v0.8.31 — Recording Index Type Counts
+
+Date: 2026-06-13
+Clip title: Phase AP: v0.8.31 — Recording Index Type Counts
+What changed: Added total, Dream, and Studio pack counts to the `/api/recording-assets/index` header.
+Why this matters: The full recording index now matches the compact `/studio` panel metrics, so the asset archive keeps one consistent mental model.
+Files shown: app/api/recording-assets/index/route.ts, README.md, docs/design/real-scenic-preview-roadmap.md, docs/recording/dev-log.md
+Command/result: npm run lint && npm test && npm run build
+Voiceover note: "我把总索引页也补上 Dream / Studio 数量统计。点开完整素材库后，看到的还是和 Studio 小面板一致的结构。"
+Usable for: recording index metrics clip, information consistency polish, Vibe Coding asset archive UX, continued goal run round 29

@@ -18,7 +18,7 @@ export async function GET() {
   }
 
   const packs = await listRecordingAssetPacks(recordingsRoot);
-  return new NextResponse(buildRecordingIndexHtml(packs), {
+  return new NextResponse(buildRecordingIndexHtml(packs, summary.countsByType), {
     headers: {
       "Content-Type": "text/html; charset=utf-8",
       "Cache-Control": "no-store",
@@ -26,7 +26,10 @@ export async function GET() {
   });
 }
 
-function buildRecordingIndexHtml(packs: Awaited<ReturnType<typeof listRecordingAssetPacks>>) {
+function buildRecordingIndexHtml(
+  packs: Awaited<ReturnType<typeof listRecordingAssetPacks>>,
+  countsByType: { dream: number; studio: number },
+) {
   const cards = packs.length
     ? packs
         .map(
@@ -57,6 +60,8 @@ function buildRecordingIndexHtml(packs: Awaited<ReturnType<typeof listRecordingA
       h1, h2, p { margin: 0; }
       header { display: flex; align-items: end; justify-content: space-between; gap: 18px; margin-bottom: 18px; }
       h1 { font-size: clamp(2rem, 4vw, 3.6rem); line-height: 0.95; }
+      .counts { display: flex; flex-wrap: wrap; justify-content: end; gap: 8px; }
+      .counts span { border: 1px solid rgba(47, 64, 56, 0.14); border-radius: 999px; padding: 7px 10px; color: #284f42; font-size: 0.82rem; font-weight: 900; background: rgba(255,255,255,0.62); }
       .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
       article { display: grid; gap: 9px; border: 1px solid rgba(47, 64, 56, 0.13); border-radius: 8px; padding: 16px; background: rgba(255, 255, 255, 0.72); box-shadow: 0 18px 42px rgba(40, 52, 47, 0.1); }
       article.studio { border-left: 5px solid #d66b3d; }
@@ -80,7 +85,11 @@ function buildRecordingIndexHtml(packs: Awaited<ReturnType<typeof listRecordingA
           <p>LilyTravelAgent</p>
           <h1>Recording Assets</h1>
         </div>
-        <p>${packs.length} packs</p>
+        <div class="counts">
+          <span>${packs.length} packs</span>
+          <span>Dream ${countsByType.dream}</span>
+          <span>Studio ${countsByType.studio}</span>
+        </div>
       </header>
       <section class="grid">${cards}</section>
     </main>
