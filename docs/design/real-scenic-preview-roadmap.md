@@ -23,6 +23,7 @@
 - 大理已接入第一版目的地专属 cinematic scene preset：苍山分层剪影、洱海岸线、白族院落体块和 D1-D4 当天焦点光标都来自 `lib/cinematic-scene-preset.ts`，不再完全依赖通用几何场景。
 - 海岸/海岛 preset 已从数据层进入 Three.js 渲染层：D1-D4 可以出现灯塔、海湾帆影、港口拱廊、日落观景台、沙洲和水面高光。
 - `/dream` 控制栏提供大理/海岸本地演示路书切换，录屏和视觉 QA 不需要每次等待 MiniMax 真实生成。
+- `/studio` 录屏台也支持大理/海岸本地演示切换，16:9 讲解画面的输入区、预览区和状态条会同步切换。
 - 这版是“预览级建模”，不是测绘级真实地形或真实建筑模型。
 
 ## Why This Step Exists
@@ -263,6 +264,23 @@ The visual product needs repeatable demo material. Waiting for a real MiniMax ge
 ### Recording angle
 
 > 我现在给 `/dream` 加了一个本地演示切换：不用重新调用 MiniMax，也可以从大理切到海岸样例。这样录屏时我能稳定展示多目的地 preset catalog，同时自动视觉 QA 也能检查海岸这条路径有没有坏。
+
+## Phase AA: Studio Multi-Destination Demo Switch (2026-06-13)
+
+### What changed
+
+- `/studio` now reuses the local Dali and coastal sample roadbooks.
+- The 16:9 input panel, roadbook preview, top status pill, and model label update when switching demo destinations.
+- The real "现场生成" flow remains unchanged and clears demo highlighting once a live roadbook is generated.
+- `components/studio-mode.test.tsx` covers default Dali state and coastal demo switching.
+
+### Why this matters
+
+`/dream` is the product experience; `/studio` is the creator-facing recording layout. Both need stable multi-destination material. This phase lets the user record the same story in a clean 16:9 workbench: "I can switch from Dali to a coastal route locally, show how the Agent output changes, then still run live generation when needed."
+
+### Recording angle
+
+> `/dream` 是给用户看的动态路书，`/studio` 是我录开发过程和 Agent 工作流的画面。现在录屏台也能一键从大理切到海岸，输入区、预览区和状态条同步变化，所以我不用每次等真实生成，也能稳定讲多目的地 preset catalog。
 
 ## Phase D: real data sources (2026-06-07)
 

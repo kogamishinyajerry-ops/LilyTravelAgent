@@ -355,3 +355,14 @@ Files shown: lib/sample-roadbook.ts, components/dream-roadbook.tsx, app/globals.
 Command/result: npm test -- components/dream-roadbook.test.tsx lib/cinematic-scene-preset.test.ts && npm run lint && npm run check:dream-visuals && DREAM_DEMO=coast npm run check:dream-visuals && npm test && npm run build
 Voiceover note: "我给 `/dream` 加了一个本地演示切换：不用重新调用 MiniMax，也可以从大理切到海岸样例。这样录屏时能稳定展示 preset catalog，自动视觉 QA 也能检查海岸这条路径。"
 Usable for: recording-fixture workflow clip, visual-QA multi-destination clip, Vibe Coding demo-state discipline lesson, continued goal run round 13
+
+## Phase AA: v0.8.16 — Studio Multi-Destination Demo Switch
+
+Date: 2026-06-13
+Clip title: Phase AA: v0.8.16 — Studio Multi-Destination Demo Switch
+What changed: Added the same Dali/coastal local demo switching pattern to `/studio`. `components/studio-mode.tsx` now switches the 16:9 input panel, roadbook preview, top destination status, and local model label between Dali and coastal sample routes without calling any API. Live "现场生成" still clears demo highlighting and uses the existing generation/geocode flow. `components/studio-mode.test.tsx` covers the default Dali state and coastal switch.
+Why this matters: `/dream` is the product surface, but `/studio` is the creator workflow surface. The user can now record a clean 16:9 chapter showing multi-destination behavior without waiting for a real generation, then switch back to live generation when needed.
+Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, app/globals.css, README.md, docs/design/real-scenic-preview-roadmap.md, docs/recording/dev-log.md
+Command/result: npm test -- components/studio-mode.test.tsx && npm run lint && npm test && npm run build
+Voiceover note: "`/dream` 是给用户看的动态路书，`/studio` 是我录开发过程和 Agent 工作流的画面。现在录屏台也能一键从大理切到海岸，输入区、预览区和状态条同步变化。"
+Usable for: studio-recording workflow clip, content-production infrastructure clip, Vibe Coding demo-state reuse lesson, continued goal run round 14

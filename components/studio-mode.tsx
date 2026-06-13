@@ -16,11 +16,46 @@ import {
 import Link from "next/link";
 import { FormEvent, useMemo, useState } from "react";
 import { defaultBrief } from "@/lib/default-brief";
-import { sampleRoadbook } from "@/lib/sample-roadbook";
+import { coastalSampleRoadbook, sampleRoadbook } from "@/lib/sample-roadbook";
 import type { GenerateRoadbookResponse, GeocodePlace, GeocodePlacesResponse, GeocodePoint, Roadbook, TravelBrief } from "@/lib/roadbook-types";
 import { clipBlueprints, creatorMilestones, vibeCodingLessons } from "@/lib/vibe-coding-content";
 
 type StudioStage = "demo" | "generating" | "geocoding" | "ready" | "error";
+type StudioDemoRoadbookId = "dali" | "coast";
+
+const studioCoastalBrief: TravelBrief = {
+  ...defaultBrief,
+  destination: "三亚海岛",
+  city: "三亚",
+  interests: ["海岸灯塔", "蓝色海湾", "港口", "日落", "咖啡"],
+  specialRequests: "文字极简，适合 16:9 录屏，重点展示海岸 preset 的灯塔、海湾、港口和日落。",
+  tone: "极简、梦境、海岸电影感、动态网页",
+};
+
+const studioDemoRoadbooks: Array<{
+  id: StudioDemoRoadbookId;
+  label: string;
+  note: string;
+  roadbook: Roadbook;
+  brief: TravelBrief;
+}> = [
+  {
+    id: "dali",
+    label: "大理",
+    note: "苍山洱海",
+    roadbook: sampleRoadbook,
+    brief: defaultBrief,
+  },
+  {
+    id: "coast",
+    label: "海岸",
+    note: "灯塔海湾",
+    roadbook: coastalSampleRoadbook,
+    brief: studioCoastalBrief,
+  },
+];
+
+const localDemoModelLabel = "Local Demo";
 
 function buildPlaces(roadbook: Roadbook): GeocodePlace[] {
   return roadbook.days.flatMap((day) =>
@@ -44,11 +79,12 @@ function studioStageText(stage: StudioStage) {
 
 export function StudioMode() {
   const [brief, setBrief] = useState<TravelBrief>(defaultBrief);
+  const [demoRoadbookId, setDemoRoadbookId] = useState<StudioDemoRoadbookId | null>("dali");
   const [roadbook, setRoadbook] = useState<Roadbook>(sampleRoadbook);
   const [points, setPoints] = useState<GeocodePoint[]>([]);
   const [stage, setStage] = useState<StudioStage>("demo");
   const [error, setError] = useState("");
-  const [model, setModel] = useState(process.env.NEXT_PUBLIC_AGENT_MODEL_LABEL || "MiniMax-M3");
+  const [model, setModel] = useState(localDemoModelLabel);
 
   const locatedCount = useMemo(() => points.filter((point) => point.status === "ok").length, [points]);
   const topStops = roadbook.days.flatMap((day) => day.stops.slice(0, 2)).slice(0, 8);
@@ -77,6 +113,7 @@ export function StudioMode() {
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setStage("generating");
+    setDemoRoadbookId(null);
     setError("");
     setPoints([]);
 
@@ -101,10 +138,14 @@ export function StudioMode() {
     }
   }
 
-  function resetDemo() {
-    setRoadbook(sampleRoadbook);
+  function resetDemo(nextDemoRoadbookId: StudioDemoRoadbookId = "dali") {
+    const nextDemo = studioDemoRoadbooks.find((option) => option.id === nextDemoRoadbookId) || studioDemoRoadbooks[0];
+    setDemoRoadbookId(nextDemo.id);
+    setBrief(nextDemo.brief);
+    setRoadbook(nextDemo.roadbook);
     setPoints([]);
     setError("");
+    setModel(localDemoModelLabel);
     setStage("demo");
   }
 
@@ -122,6 +163,7 @@ export function StudioMode() {
             </div>
           </div>
           <div className="studio-top-actions">
+            <span>{demoRoadbookId ? `${roadbook.destination} 本地演示` : roadbook.destination}</span>
             <span>{studioStageText(stage)}</span>
             <Link href="/" className="ghost-link">
               <ArrowLeft size={16} />
@@ -173,9 +215,20 @@ export function StudioMode() {
                 {stage === "generating" || stage === "geocoding" ? <Loader2 className="spin" size={18} /> : <Sparkles size={18} />}
                 现场生成
               </button>
-              <button className="secondary-action" type="button" onClick={resetDemo}>
-                使用示例路书
-              </button>
+              <div className="studio-demo-switch" aria-label="本地演示路书">
+                {studioDemoRoadbooks.map((option) => (
+                  <button
+                    key={option.id}
+                    type="button"
+                    className={demoRoadbookId === option.id ? "active" : ""}
+                    onClick={() => resetDemo(option.id)}
+                    aria-pressed={demoRoadbookId === option.id}
+                  >
+                    <strong>{option.label}</strong>
+                    <small>{option.note}</small>
+                  </button>
+                ))}
+              </div>
             </form>
 
             {error ? (

@@ -1068,6 +1068,51 @@ textarea {
   gap: 8px;
 }
 
+.studio-demo-switch {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  border: 1px solid rgba(56, 78, 70, 0.12);
+  border-radius: 8px;
+  padding: 4px;
+  background: rgba(234, 239, 232, 0.88);
+}
+
+.studio-demo-switch button {
+  display: grid;
+  gap: 2px;
+  min-height: 42px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  padding: 8px 10px;
+  color: var(--ink);
+  text-align: center;
+  background: rgba(255, 255, 255, 0.62);
+}
+
+.studio-demo-switch button.active {
+  color: #fff;
+  border-color: transparent;
+  background: linear-gradient(135deg, #284f42, #bf8055);
+  box-shadow: 0 10px 22px rgba(58, 70, 78, 0.18);
+}
+
+.studio-demo-switch strong,
+.studio-demo-switch small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.studio-demo-switch strong {
+  font-size: 0.86rem;
+}
+
+.studio-demo-switch small {
+  font-size: 0.72rem;
+  opacity: 0.78;
+}
+
 .secondary-action {
   min-height: 42px;
   border: 1px solid var(--line);

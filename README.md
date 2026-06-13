@@ -14,7 +14,7 @@ An AI travel-roadbook prototype for generating cinematic, recording-ready trip g
 - Uses a two-stage Agent flow: fast preview first, then fuller travel details in the background.
 - Turns uploaded or sample landscape photos into MiniMax-M3 render blueprints for cinematic destination previews.
 - Caches generated preview assets locally, keeps history versions, and lets you mark a final cover.
-- Includes `/studio`, recording docs, and a one-click sample-photo library for Vibe Coding content creation.
+- Includes `/studio`, recording docs, local Dali/coastal demo switches, and a one-click sample-photo library for Vibe Coding content creation.
 
 ## Demo Routes
 
@@ -70,6 +70,8 @@ npm run dev
 Open `http://localhost:3000`.
 
 Use `http://localhost:3000/studio` for the 16:9 recording mode.
+
+`/studio` has local Dali/coastal demo switches for recording the same product story without waiting for live generation: the input panel, roadbook preview, and top status all update together while the real "现场生成" path remains available.
 
 Use `http://localhost:3000/dream` for the generative dream-roadbook prototype with minimal text, Three.js terrain, and an optional MiniMax cinematic preview image layer. The default renderer uses ACES filmic tone mapping, soft shadows, animated water, atmospheric haze, and a composited AI-image backdrop so the fallback view still feels cinematic when image generation is unavailable.
 
