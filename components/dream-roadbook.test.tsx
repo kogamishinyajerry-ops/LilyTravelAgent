@@ -252,6 +252,11 @@ describe("DreamRoadbook a11y polish", () => {
       surface: "stone / stairs / void",
       motion: "slow parallax",
     });
+    expect(body.directorLens).toBe("auto");
+    expect(body.directorLensLabel).toBe("Auto Director");
+    expect(body.directorLensPrompt).toBe(
+      "Auto Director: follow the active day and destination preset; camera=scene preset default",
+    );
   });
 
   it("shows a compact agent visual contract for recording the workflow", () => {

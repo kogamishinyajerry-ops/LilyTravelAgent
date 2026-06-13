@@ -11,7 +11,12 @@ import {
   type DreamMood,
   type DreamTemplate,
 } from "@/lib/dream-design-skill";
-import { directorLenses, type DirectorLensId } from "@/lib/director-lens";
+import {
+  directorLenses,
+  formatDirectorLensPrompt,
+  resolveDirectorLens,
+  type DirectorLensId,
+} from "@/lib/director-lens";
 import { buildCinematicSceneInspector, buildCinematicSceneTimeline } from "@/lib/cinematic-scene-preset";
 import { defaultBrief } from "@/lib/default-brief";
 import type { LandmarkPreset } from "@/lib/landmark-preset";
@@ -228,6 +233,7 @@ export function DreamRoadbook({ initialDemo = "dali" }: DreamRoadbookProps = {})
   const activePlan = roadbook.days.find((day) => day.day === activeDay) || roadbook.days[0];
   const activeStop = design.routeStops.find((stop) => stop.day === activePlan?.day) || design.routeStops[0];
   const activeTemplate = dreamTemplates.find((item) => item.id === template) || dreamTemplates[0];
+  const activeDirectorLens = useMemo(() => resolveDirectorLens(directorLens), [directorLens]);
   const sceneInspector = useMemo(
     () => buildCinematicSceneInspector(roadbook, activeDay, directorLens),
     [activeDay, directorLens, roadbook],
@@ -702,6 +708,9 @@ export function DreamRoadbook({ initialDemo = "dali" }: DreamRoadbookProps = {})
       visualTemplate: activeTemplate.id,
       visualTemplateLabel: activeTemplate.label,
       renderStrategy: activeTemplate.renderStrategy,
+      directorLens: activeDirectorLens.id,
+      directorLensLabel: activeDirectorLens.label,
+      directorLensPrompt: formatDirectorLensPrompt(activeDirectorLens),
     };
   }
 

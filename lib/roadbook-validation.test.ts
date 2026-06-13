@@ -47,6 +47,9 @@ describe("travelBriefSchema", () => {
           surface: "lake / glint / island",
           motion: "water glide",
         },
+        directorLens: "wide-water",
+        directorLensLabel: "Wide Water",
+        directorLensPrompt: "Wide Water: wide waterline; camera=horizon",
       });
 
       expect(result.success).toBe(true);
@@ -54,6 +57,9 @@ describe("travelBriefSchema", () => {
         expect(result.data.visualTemplate).toBe("starlake");
         expect(result.data.visualTemplateLabel).toBe("星湖");
         expect(result.data.renderStrategy?.surface).toBe("lake / glint / island");
+        expect(result.data.directorLens).toBe("wide-water");
+        expect(result.data.directorLensLabel).toBe("Wide Water");
+        expect(result.data.directorLensPrompt).toContain("camera=horizon");
       }
     });
   });

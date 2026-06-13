@@ -25,6 +25,9 @@ export type GenerateRoadbookRequest = TravelBrief & {
   visualTemplate?: string;
   visualTemplateLabel?: string;
   renderStrategy?: VisualRenderStrategy;
+  directorLens?: string;
+  directorLensLabel?: string;
+  directorLensPrompt?: string;
 };
 
 export type ItineraryStop = {

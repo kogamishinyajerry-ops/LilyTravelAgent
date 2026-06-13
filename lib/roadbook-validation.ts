@@ -42,6 +42,9 @@ export const travelBriefSchema = z.object({
   visualTemplate: z.string().min(1).max(40).optional(),
   visualTemplateLabel: z.string().min(1).max(40).optional(),
   renderStrategy: visualRenderStrategySchema.optional(),
+  directorLens: z.string().min(1).max(40).optional(),
+  directorLensLabel: z.string().min(1).max(60).optional(),
+  directorLensPrompt: z.string().min(1).max(220).optional(),
 });
 
 const itineraryStopSchema = z.object({
