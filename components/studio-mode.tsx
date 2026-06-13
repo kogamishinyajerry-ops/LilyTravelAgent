@@ -439,6 +439,12 @@ export function StudioMode() {
                       ))}
                     </div>
                   ) : null}
+                  {!recordingAssets.indexAvailable ? (
+                    <div className="studio-recording-command">
+                      <span>生成本地素材索引</span>
+                      <code>npm run check:recording-suite</code>
+                    </div>
+                  ) : null}
                   <div className="studio-recording-actions">
                     <button type="button" onClick={() => loadRecordingAssets()} disabled={recordingAssetsRefreshing}>
                       <RotateCcw size={14} className={recordingAssetsRefreshing ? "spin" : ""} />
@@ -450,7 +456,7 @@ export function StudioMode() {
                         <ExternalLink size={14} />
                       </a>
                     ) : (
-                      <span>先运行 npm run check:recording-suite</span>
+                      <span>等待索引</span>
                     )}
                   </div>
                 </>

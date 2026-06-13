@@ -488,6 +488,22 @@ The Studio panel and the opened index page now speak the same language. A creato
 
 > 我把 Studio 面板和总索引页的标签统一了。这样从录屏台点进总索引，看到的还是同一套 Dream QA / Studio QA 和“产品画面 / 讲解画面”逻辑。
 
+## Phase AN: Recording Index Missing-State Guidance (2026-06-13)
+
+### What changed
+
+- When `/studio` cannot find a local recording index, the recording asset panel shows `npm run check:recording-suite`.
+- Refresh remains available so the user can run the command, return to Studio, and re-read the local asset state.
+- Tests cover the missing-index state and confirm the index link is hidden until the index exists.
+
+### Why this matters
+
+The recording workbench now has a graceful first-run state. A creator starting on a clean machine can see the exact command to generate the local QA archive without reading docs or terminal history.
+
+### Recording angle
+
+> 我把空状态也做成了录屏友好的流程：没有素材索引时，页面直接告诉我跑 `npm run check:recording-suite`。跑完回来点刷新，就进入正常素材时间线。
+
 ## Phase D: real data sources (2026-06-07)
 
 Replaced the Phase C procedural stubs with real implementations:

@@ -498,3 +498,14 @@ Files shown: lib/recording-assets.ts, lib/recording-assets.test.ts, components/s
 Command/result: npm test -- lib/recording-assets.test.ts components/studio-mode.test.tsx && npm run lint && npm test && npm run build
 Voiceover note: "我把 Studio 面板和总索引页的素材标签统一了。现在点进总索引，还是同一套 Dream QA / Studio QA 和产品画面 / 讲解画面逻辑。"
 Usable for: local asset index polish clip, consistent information design lesson, Vibe Coding product coherence, continued goal run round 26
+
+## Phase AN: v0.8.29 — Recording Index Missing-State Guidance
+
+Date: 2026-06-13
+Clip title: Phase AN: v0.8.29 — Recording Index Missing-State Guidance
+What changed: Improved `/studio` recording asset empty state. If the local recording index is missing, the panel shows the exact command `npm run check:recording-suite`, hides the index link, and keeps refresh available.
+Why this matters: Clean first-run and cache-cleared states are now explainable on screen. The creator does not need to remember the command while recording.
+Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, app/globals.css, README.md, docs/design/real-scenic-preview-roadmap.md, docs/recording/dev-log.md
+Command/result: npm test -- components/studio-mode.test.tsx && npm run lint && npm test && npm run build
+Voiceover note: "我把空状态也做好了：没有本地素材索引时，Studio 直接告诉我跑哪条命令。跑完 recording suite，回来点刷新，就能看到素材包列表。"
+Usable for: first-run workflow clip, local QA command guidance, Vibe Coding clean-state resilience, continued goal run round 27

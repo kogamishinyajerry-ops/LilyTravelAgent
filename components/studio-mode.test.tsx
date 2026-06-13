@@ -12,35 +12,39 @@ vi.mock("next/link", () => ({
 
 import { StudioMode } from "./studio-mode";
 
-function recordingAssetsResponse(packCount: number, title = "Studio 16:9 demo pack") {
+function recordingAssetsResponse(packCount: number, title = "Studio 16:9 demo pack", indexAvailable = true) {
   return {
     ok: true,
     packCount,
-    indexAvailable: true,
-    indexUrl: "/api/recording-assets/index",
-    recentPacks: [
-      {
-        type: "studio",
-        id: "latest",
-        title,
-        createdAt: "2026-06-13T05:46:30.958Z",
-        label: "/studio recording QA",
-        detail: "云南大理 / 三亚海岛",
-      },
-      {
-        type: "dream",
-        id: "dream-coast",
-        title: "Dream coastal visual pack",
-        createdAt: "2026-06-13T05:46:20.615Z",
-        label: "/dream visual QA",
-        detail: "coast · 4 day screenshots · motion verified",
-      },
-    ],
-    latestPack: {
-      title,
-      createdAt: "2026-06-13T05:46:30.958Z",
-      label: "/studio recording QA",
-    },
+    indexAvailable,
+    indexUrl: indexAvailable ? "/api/recording-assets/index" : "",
+    recentPacks: packCount
+      ? [
+          {
+            type: "studio",
+            id: "latest",
+            title,
+            createdAt: "2026-06-13T05:46:30.958Z",
+            label: "/studio recording QA",
+            detail: "云南大理 / 三亚海岛",
+          },
+          {
+            type: "dream",
+            id: "dream-coast",
+            title: "Dream coastal visual pack",
+            createdAt: "2026-06-13T05:46:20.615Z",
+            label: "/dream visual QA",
+            detail: "coast · 4 day screenshots · motion verified",
+          },
+        ]
+      : [],
+    latestPack: packCount
+      ? {
+          title,
+          createdAt: "2026-06-13T05:46:30.958Z",
+          label: "/studio recording QA",
+        }
+      : null,
   };
 }
 
@@ -114,5 +118,24 @@ describe("StudioMode demo roadbooks", () => {
     expect(screen.getAllByText("Dream coastal visual pack").length).toBeGreaterThan(0);
     expect(screen.getByText("云南大理 / 三亚海岛")).toBeTruthy();
     expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+
+  it("shows the exact recording suite command when the local index is missing", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => ({
+        ok: true,
+        status: 200,
+        json: async () => recordingAssetsResponse(0, "Studio 16:9 demo pack", false),
+      })) as unknown as typeof fetch,
+    );
+
+    render(<StudioMode />);
+
+    expect(await screen.findByText("0 个素材包")).toBeTruthy();
+    expect(screen.getByText("生成本地素材索引")).toBeTruthy();
+    expect(screen.getByText("npm run check:recording-suite")).toBeTruthy();
+    expect(screen.getByRole("button", { name: "刷新" })).toBeTruthy();
+    expect(screen.queryByRole("link", { name: /打开总索引/ })).toBeNull();
   });
 });

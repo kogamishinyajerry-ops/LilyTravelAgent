@@ -1406,6 +1406,25 @@ textarea {
   background: rgba(214, 107, 61, 0.13);
 }
 
+.studio-recording-command {
+  display: grid;
+  gap: 5px;
+  border: 1px dashed rgba(38, 59, 49, 0.24);
+  border-radius: 8px;
+  padding: 9px;
+  background: rgba(255, 255, 255, 0.64);
+}
+
+.studio-recording-command code {
+  overflow: auto;
+  border-radius: 8px;
+  padding: 6px 8px;
+  color: var(--moss);
+  font-size: 0.76rem;
+  font-weight: 900;
+  background: rgba(79, 143, 122, 0.12);
+}
+
 .studio-mini-card.accent {
   border-color: rgba(214, 107, 61, 0.24);
   background: rgba(214, 107, 61, 0.09);
