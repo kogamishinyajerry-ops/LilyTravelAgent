@@ -1403,6 +1403,43 @@ textarea {
   background: rgba(79, 143, 122, 0.14);
 }
 
+.studio-recording-workflow {
+  display: grid;
+  gap: 5px;
+  border-top: 1px solid rgba(38, 59, 49, 0.12);
+  padding-top: 7px;
+}
+
+.studio-recording-workflow div {
+  display: grid;
+  grid-template-columns: 22px 1fr;
+  column-gap: 7px;
+  row-gap: 1px;
+  align-items: center;
+}
+
+.studio-recording-workflow span {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 7px;
+  color: #fff;
+  font-size: 0.68rem;
+  background: var(--moss);
+}
+
+.studio-recording-workflow strong {
+  color: var(--moss);
+  font-size: 0.78rem;
+}
+
+.studio-recording-workflow p {
+  grid-column: 2;
+  font-size: 0.72rem;
+  line-height: 1.25;
+}
+
 .studio-recording-assets a {
   color: #fff;
   text-decoration: none;

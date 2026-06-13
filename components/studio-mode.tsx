@@ -103,6 +103,28 @@ const studioDemoRoadbooks: Array<{
 
 const localDemoModelLabel = "Local Demo";
 const recordingSuiteCommand = "npm run check:recording-suite";
+const recordingWorkflowSteps = [
+  {
+    step: "1",
+    title: "复制命令",
+    cue: "从 Studio 带走本地 QA 指令。",
+  },
+  {
+    step: "2",
+    title: "运行 QA",
+    cue: "生成 Dream / Studio 截图与 notes。",
+  },
+  {
+    step: "3",
+    title: "刷新素材",
+    cue: "回到面板读取最新素材包。",
+  },
+  {
+    step: "4",
+    title: "打开索引",
+    cue: "进入完整素材库挑选剪辑素材。",
+  },
+];
 const studioScriptSteps = [
   {
     step: "01",
@@ -524,6 +546,15 @@ export function StudioMode() {
                   </div>
                   {recordingCommandCopyState === "copied" ? <span className="studio-recording-copy-status">录屏套件命令已复制</span> : null}
                   {recordingCommandCopyState === "error" ? <span className="studio-recording-copy-status">浏览器不允许自动复制，可手动复制上方命令</span> : null}
+                  <div className="studio-recording-workflow" aria-label="录屏素材流程">
+                    {recordingWorkflowSteps.map((item) => (
+                      <div key={item.step}>
+                        <span>{item.step}</span>
+                        <strong>{item.title}</strong>
+                        <p>{item.cue}</p>
+                      </div>
+                    ))}
+                  </div>
                 </>
               ) : null}
             </div>

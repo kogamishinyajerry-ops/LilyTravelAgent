@@ -564,3 +564,14 @@ Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, app/gl
 Command/result: npm test -- components/studio-mode.test.tsx && npm run lint && npm test && npm run build
 Voiceover note: "我把 recording suite 命令做成 Studio 面板里的复制按钮。录屏时不需要背命令，直接点复制、跑 QA、回来刷新，素材管线就能讲完整。"
 Usable for: command-copy workflow clip, local QA loop explanation, Vibe Coding production pipeline, continued goal run round 32
+
+## Phase AT: v0.8.35 — Studio Recording Workflow Rail
+
+Date: 2026-06-13
+Clip title: Phase AT: v0.8.35 — Studio Recording Workflow Rail
+What changed: Added a compact `录屏素材流程` rail to `/studio` with four visible steps: `复制命令`, `运行 QA`, `刷新素材`, and `打开索引`.
+Why this matters: The recording asset panel now explains the full local QA-to-content loop instead of showing disconnected controls. This makes it easier to record a clear Vibe Coding workflow walkthrough.
+Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, app/globals.css, README.md, docs/design/real-scenic-preview-roadmap.md, docs/recording/dev-log.md
+Command/result: npm test -- components/studio-mode.test.tsx && npm run lint && npm test && npm run build
+Voiceover note: "我把素材工作流做成四步：复制命令、运行 QA、刷新素材、打开索引。这样录屏时右侧面板自己就能讲清楚下一步。"
+Usable for: workflow-rail clip, recording asset pipeline explanation, Vibe Coding visible process, continued goal run round 33

@@ -128,7 +128,7 @@ npm run check:recording-suite
 
 `npm run check:recording-suite` expects the local dev server to be running at `http://localhost:3000`. It runs the Dali `/dream` visual QA, coastal `/dream` visual QA, `/studio` visual QA, and recording asset index in sequence. Set `RECORDING_SUITE_BASE_URL`, `DREAM_URL`, or `STUDIO_URL` to target another local server.
 
-`/studio` reads `/api/recording-assets` and shows the current local recording asset count, Dream/Studio counts, latest QA pack, recent QA packs with Dream/Studio badges and usage hints, a copyable recording-suite command, a refresh control, and an "打开总索引" link. The link opens `/api/recording-assets/index`, a local HTML overview with the same pack type, usage labels, and Dream/Studio counts. If the local index is missing, `/studio` shows the exact command: `npm run check:recording-suite`.
+`/studio` reads `/api/recording-assets` and shows the current local recording asset count, Dream/Studio counts, latest QA pack, recent QA packs with Dream/Studio badges and usage hints, a copyable recording-suite command, a compact copy/run/refresh/index workflow rail, a refresh control, and an "打开总索引" link. The link opens `/api/recording-assets/index`, a local HTML overview with the same pack type, usage labels, and Dream/Studio counts. If the local index is missing, `/studio` shows the exact command: `npm run check:recording-suite`.
 
 `/studio` also has a `脚本模式` toggle that adds a compact three-step creator talking track for 16:9 walkthrough recording.
 

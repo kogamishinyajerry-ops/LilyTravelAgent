@@ -84,6 +84,12 @@ describe("StudioMode demo roadbooks", () => {
     expect(screen.getByText("产品画面")).toBeTruthy();
     expect(screen.getAllByText("Dream coastal visual pack")[0]).toBeTruthy();
     expect(screen.getByRole("button", { name: "复制命令" })).toBeTruthy();
+    const workflow = screen.getByLabelText("录屏素材流程");
+    expect(workflow).toBeTruthy();
+    expect(workflow.textContent).toContain("复制命令");
+    expect(workflow.textContent).toContain("运行 QA");
+    expect(workflow.textContent).toContain("刷新素材");
+    expect(workflow.textContent).toContain("打开索引");
     expect(screen.getByRole("link", { name: /打开总索引/ }).getAttribute("href")).toBe("/api/recording-assets/index");
     expect(screen.queryByLabelText("录屏讲解轨道")).toBeNull();
   });

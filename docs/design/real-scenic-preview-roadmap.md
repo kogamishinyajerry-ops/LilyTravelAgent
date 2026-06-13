@@ -567,6 +567,22 @@ The recording-suite workflow can now be demonstrated from the product surface: c
 
 > 我把 recording suite 命令也放进 Studio 面板。录屏时可以直接点复制，去终端跑 QA，再回来刷新素材库，整个 Agent 工作流就能连成一条线。
 
+## Phase AT: Studio Recording Workflow Rail (2026-06-13)
+
+### What changed
+
+- Added a compact "录屏素材流程" rail to the `/studio` recording asset panel.
+- The rail lists the creator loop as four visible steps: 复制命令, 运行 QA, 刷新素材, 打开索引.
+- The workflow sits inside the existing asset panel so it supports recording without creating a new route or modal.
+
+### Why this matters
+
+The asset pipeline now reads as a sequence instead of isolated controls. It helps a viewer understand how a Vibe Coding session becomes reusable footage: run checks, capture screens, refresh the product surface, and open the generated archive.
+
+### Recording angle
+
+> 我把素材管线变成了四步小轨道：复制命令、运行 QA、刷新素材、打开索引。这样观众不用看我解释太久，一眼就知道这套 Agent 工作流在干什么。
+
 ## Phase D: real data sources (2026-06-07)
 
 Replaced the Phase C procedural stubs with real implementations:
