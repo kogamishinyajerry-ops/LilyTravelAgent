@@ -4,6 +4,7 @@ import path from "node:path";
 import { chromium } from "playwright";
 
 const targetUrl = process.env.DREAM_URL || "http://localhost:3000/dream";
+const demoRoadbook = process.env.DREAM_DEMO || "dali";
 const runStamp = new Date().toISOString().replace(/[:.]/g, "-");
 const outDir = process.env.DREAM_VISUAL_OUT_DIR || path.join("recordings", "visual-checks", runStamp);
 const systemChromePath = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
@@ -76,6 +77,11 @@ async function main() {
   await page.waitForSelector("canvas", { timeout: 30_000 });
   await page.waitForSelector(".dream-scene-inspector", { timeout: 30_000 });
 
+  if (demoRoadbook === "coast") {
+    await page.getByRole("button", { name: /海岸/ }).first().click();
+    await page.waitForTimeout(800);
+  }
+
   const days = [];
   for (const day of [1, 2, 3, 4]) {
     await page.getByRole("button", { name: new RegExp(`D${day}`) }).first().click();
@@ -83,10 +89,13 @@ async function main() {
 
     const inspectorText = await page.locator(".dream-scene-inspector").innerText();
     const canvasStats = await readCanvasStats(page);
-    const screenshotPath = path.join(outDir, `dream-d${day}.png`);
+    const screenshotPath = path.join(outDir, `dream-${demoRoadbook}-d${day}.png`);
     await page.screenshot({ path: screenshotPath, fullPage: false });
 
     assert(inspectorText.includes(`D${day}`), `Scene Inspector did not mention D${day}.`);
+    if (demoRoadbook === "coast") {
+      assert(inspectorText.includes("海岸海岛"), `Coastal Scene Inspector did not activate for D${day}.`);
+    }
     assert(canvasStats.width > 0 && canvasStats.height > 0, `D${day} canvas has invalid dimensions.`);
     assert(canvasStats.lit > 0, `D${day} canvas appears blank.`);
 
@@ -110,6 +119,7 @@ async function main() {
 
   const summary = {
     targetUrl,
+    demoRoadbook,
     createdAt: new Date().toISOString(),
     viewport: { width: 1280, height: 800 },
     outDir,
@@ -330,6 +340,7 @@ function buildHtmlReport(summary) {
           <h1>/dream D1-D4 Review</h1>
         </div>
         <p class="meta">
+          demo: ${escapeHtml(summary.demoRoadbook)}<br />
           ${escapeHtml(summary.createdAt)}<br />
           ${escapeHtml(summary.targetUrl)}
         </p>

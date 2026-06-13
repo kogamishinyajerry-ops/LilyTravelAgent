@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 
 // Mocks must be set up before importing the component under test.
 vi.mock("next/dynamic", () => ({
@@ -99,6 +99,20 @@ describe("DreamRoadbook a11y polish", () => {
     expect(region.getAttribute("role")).toBe("status");
     expect(region.getAttribute("aria-live")).toBe("polite");
     expect(region.getAttribute("aria-atomic")).toBe("true");
+  });
+
+  it("switches the local demo roadbook to the coastal cinematic preset", () => {
+    render(<DreamRoadbook />);
+
+    const coastButton = document.querySelector<HTMLButtonElement>(
+      ".dream-demo-roadbooks button:not(.active)",
+    );
+    expect(coastButton).toBeTruthy();
+    fireEvent.click(coastButton!);
+
+    expect(screen.getByDisplayValue("三亚海岛")).toBeTruthy();
+    expect(screen.getByText("海岸海岛")).toBeTruthy();
+    expect(screen.getByText("海湾 / 灯塔 / 港口天际线")).toBeTruthy();
   });
 
   it("renders the AI landmark empty state with a 'click to generate' action when no preset is present", () => {

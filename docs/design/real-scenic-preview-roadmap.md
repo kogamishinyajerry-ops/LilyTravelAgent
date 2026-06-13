@@ -22,6 +22,7 @@
   - 城市目的地：保留 City Skyline 体块能力
 - 大理已接入第一版目的地专属 cinematic scene preset：苍山分层剪影、洱海岸线、白族院落体块和 D1-D4 当天焦点光标都来自 `lib/cinematic-scene-preset.ts`，不再完全依赖通用几何场景。
 - 海岸/海岛 preset 已从数据层进入 Three.js 渲染层：D1-D4 可以出现灯塔、海湾帆影、港口拱廊、日落观景台、沙洲和水面高光。
+- `/dream` 控制栏提供大理/海岸本地演示路书切换，录屏和视觉 QA 不需要每次等待 MiniMax 真实生成。
 - 这版是“预览级建模”，不是测绘级真实地形或真实建筑模型。
 
 ## Why This Step Exists
@@ -244,6 +245,24 @@ Phase X proved the data catalog; this phase proves the catalog can drive visible
 ### Recording angle
 
 > 上一轮我把海岸路线做成数据 preset，这一轮把它真正接进 Three.js。D1 是灯塔，D2 是海湾帆影，D3 是港口拱廊，D4 是日落观景台。这样用户不是只看到文字换了，而是能看到目的地视觉语汇也跟着变。
+
+## Phase Z: Local Demo Roadbook Switch (2026-06-13)
+
+### What changed
+
+- Added `coastalSampleRoadbook` beside the default Dali sample roadbook.
+- `/dream` now exposes a local demo switch for Dali and coastal roadbooks in the control panel.
+- Switching demo roadbooks resets transient generation, map, asset, scenic, and landmark state so one sample does not leak into another.
+- `scripts/check-dream-visuals.mjs` now supports `DREAM_DEMO=coast`, clicks the coastal demo route, and asserts that Scene Inspector activates the coastal preset before writing the screenshot gallery.
+- `components/dream-roadbook.test.tsx` covers the coastal demo switch and Inspector output.
+
+### Why this matters
+
+The visual product needs repeatable demo material. Waiting for a real MiniMax generation every time makes screen recording and visual regression checks inconsistent. This phase keeps the real generation flow intact while adding a local fixture path that can reliably show the multi-destination preset catalog.
+
+### Recording angle
+
+> 我现在给 `/dream` 加了一个本地演示切换：不用重新调用 MiniMax，也可以从大理切到海岸样例。这样录屏时我能稳定展示多目的地 preset catalog，同时自动视觉 QA 也能检查海岸这条路径有没有坏。
 
 ## Phase D: real data sources (2026-06-07)
 

@@ -41,7 +41,7 @@ import type {
   ScenicRenderDesign,
   TravelBrief,
 } from "@/lib/roadbook-types";
-import { sampleRoadbook } from "@/lib/sample-roadbook";
+import { coastalSampleRoadbook, sampleRoadbook } from "@/lib/sample-roadbook";
 import { DreamMiniMap } from "@/components/dream-mini-map";
 import { DreamSkylineScene } from "@/components/dream-skyline-scene";
 import { ErrorStateBanner } from "@/components/error-ux";
@@ -80,6 +80,47 @@ const dreamBriefDefaults: TravelBrief = {
   ...defaultBrief,
   tone: "极简、梦境、生成式网页、像游戏关卡地图一样有高级感",
 };
+
+type DemoRoadbookId = "dali" | "coast";
+
+const coastalDreamBriefDefaults: TravelBrief = {
+  ...defaultBrief,
+  destination: "三亚海岛",
+  city: "三亚",
+  travelMonth: "秋季",
+  interests: ["海岸灯塔", "蓝色海湾", "港口", "日落", "咖啡"],
+  specialRequests: "文字极简，画面像海岸预告片，重点展示灯塔、海湾、港口和日落。",
+  tone: "极简、梦境、生成式网页、海岸电影感、像游戏关卡地图一样高级",
+};
+
+const demoRoadbookOptions: Array<{
+  id: DemoRoadbookId;
+  label: string;
+  note: string;
+  roadbook: Roadbook;
+  brief: TravelBrief;
+  mood: DreamMood;
+  template: DreamTemplate;
+}> = [
+  {
+    id: "dali",
+    label: "大理",
+    note: "苍山洱海",
+    roadbook: sampleRoadbook,
+    brief: dreamBriefDefaults,
+    mood: "cloud",
+    template: "monument",
+  },
+  {
+    id: "coast",
+    label: "海岸",
+    note: "灯塔海湾",
+    roadbook: coastalSampleRoadbook,
+    brief: coastalDreamBriefDefaults,
+    mood: "dusk",
+    template: "starlake",
+  },
+];
 
 const generationModes: Array<{ id: GenerationMode; label: string; note: string }> = [
   { id: "speed", label: "快速", note: "补细节也快" },
@@ -128,6 +169,7 @@ export function DreamRoadbook() {
   type RecordingStatus = "idle" | "recording" | "stopped" | "finished";
   const [recordingStatus, setRecordingStatus] = useState<RecordingStatus>("idle");
   const [countdownMs, setCountdownMs] = useState(recordingConfig.stepIntervalMs ?? 4000);
+  const [demoRoadbookId, setDemoRoadbookId] = useState<DemoRoadbookId | null>("dali");
   const [roadbook, setRoadbook] = useState<Roadbook>(sampleRoadbook);
   const [brief, setBrief] = useState<TravelBrief>(dreamBriefDefaults);
   const [interestsInput, setInterestsInput] = useState(dreamBriefDefaults.interests.join("、"));
@@ -850,6 +892,7 @@ export function DreamRoadbook() {
       }
 
       setRoadbook(fullResult.roadbook);
+      setDemoRoadbookId(null);
       setActiveDay(fullResult.roadbook.days[0]?.day || 1);
       setLastModel(fullResult.model);
       setError("");
@@ -1099,6 +1142,7 @@ export function DreamRoadbook() {
       }
 
       setRoadbook(previewResult.roadbook);
+      setDemoRoadbookId(null);
       setActiveDay(previewResult.roadbook.days[0]?.day || 1);
       setLastModel(previewResult.model);
       setStage("refining");
@@ -1114,14 +1158,17 @@ export function DreamRoadbook() {
     }
   }
 
-  function resetDemo() {
+  function resetDemo(nextDemoRoadbookId: DemoRoadbookId = "dali") {
+    const nextDemo = demoRoadbookOptions.find((option) => option.id === nextDemoRoadbookId) || demoRoadbookOptions[0];
     runIdRef.current += 1;
     setTrackDemoStep(null);
-    setRoadbook(sampleRoadbook);
-    setBrief(dreamBriefDefaults);
-    setInterestsInput(dreamBriefDefaults.interests.join("、"));
+    setDemoRoadbookId(nextDemo.id);
+    setRoadbook(nextDemo.roadbook);
+    setBrief(nextDemo.brief);
+    setInterestsInput(nextDemo.brief.interests.join("、"));
     setActiveDay(1);
-    setTemplate("monument");
+    setMood(nextDemo.mood);
+    setTemplate(nextDemo.template);
     setGenerationMode("speed");
     setLastModel("");
     setPreviewAsset(null);
@@ -1303,10 +1350,23 @@ export function DreamRoadbook() {
               {stage === "generating" ? "先生成预览" : stage === "refining" ? "补充细节中" : "生成梦境路书"}
             </button>
 
-            <button className="dream-reset-action" type="button" onClick={resetDemo}>
-              <RotateCcw size={15} />
-              默认大理
-            </button>
+            <div className="dream-demo-roadbooks" aria-label="本地演示路书">
+              {demoRoadbookOptions.map((option) => (
+                <button
+                  key={option.id}
+                  type="button"
+                  className={demoRoadbookId === option.id ? "active" : ""}
+                  onClick={() => resetDemo(option.id)}
+                  aria-pressed={demoRoadbookId === option.id}
+                >
+                  <RotateCcw size={14} aria-hidden="true" />
+                  <span>
+                    <strong>{option.label}</strong>
+                    <small>{option.note}</small>
+                  </span>
+                </button>
+              ))}
+            </div>
           </form>
 
           <div className={`dream-status ${stage === "error" ? "error" : ""}`}>

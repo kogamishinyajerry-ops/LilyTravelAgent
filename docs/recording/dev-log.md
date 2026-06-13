@@ -344,3 +344,14 @@ Files shown: components/dream-skyline-scene.tsx, README.md, docs/design/real-sce
 Command/result: npm run lint && npm test -- lib/cinematic-scene-preset.test.ts && npm test && npm run build && npm run check:dream-visuals
 Voiceover note: "上一轮我把海岸路线做成数据 preset，这一轮把它真正接进 Three.js。D1 是灯塔，D2 是海湾帆影，D3 是港口拱廊，D4 是日落观景台。这样用户不是只看到文字换了，而是目的地视觉语汇也跟着变。"
 Usable for: preset-data-to-render clip, coastal destination visual language lesson, Vibe Coding small-renderer-extension workflow, continued goal run round 12
+
+## Phase Z: v0.8.15 — Local Demo Roadbook Switch
+
+Date: 2026-06-13
+Clip title: Phase Z: v0.8.15 — Local Demo Roadbook Switch
+What changed: Added a recording-friendly demo switch to `/dream`. `lib/sample-roadbook.ts` now exports `coastalSampleRoadbook`, and `components/dream-roadbook.tsx` lets the user switch between Dali and coastal sample routes without calling MiniMax. The switch resets transient map, asset, scenic, and landmark state to keep the demo clean. `scripts/check-dream-visuals.mjs` now accepts `DREAM_DEMO=coast`, clicks the coastal demo, and verifies Scene Inspector before capturing D1-D4 screenshots. `components/dream-roadbook.test.tsx` covers the coastal switch.
+Why this matters: Multi-destination visuals need stable demo material. This lets recording and visual QA show the coastal preset on demand without waiting for real generation, while the normal two-stage Agent generation flow stays unchanged.
+Files shown: lib/sample-roadbook.ts, components/dream-roadbook.tsx, app/globals.css, scripts/check-dream-visuals.mjs, components/dream-roadbook.test.tsx, README.md, docs/design/real-scenic-preview-roadmap.md, docs/recording/dev-log.md
+Command/result: npm test -- components/dream-roadbook.test.tsx lib/cinematic-scene-preset.test.ts && npm run lint && npm run check:dream-visuals && DREAM_DEMO=coast npm run check:dream-visuals && npm test && npm run build
+Voiceover note: "我给 `/dream` 加了一个本地演示切换：不用重新调用 MiniMax，也可以从大理切到海岸样例。这样录屏时能稳定展示 preset catalog，自动视觉 QA 也能检查海岸这条路径。"
+Usable for: recording-fixture workflow clip, visual-QA multi-destination clip, Vibe Coding demo-state discipline lesson, continued goal run round 13

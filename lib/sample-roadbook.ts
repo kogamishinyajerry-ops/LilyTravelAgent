@@ -190,3 +190,71 @@ export const sampleRoadbook: Roadbook = {
   reminders: ["核验开放时间和预约要求", "环海注意防晒和风", "返程日保留机动时间", "不要把 AI 生成内容当成已核验事实"],
   disclaimer: "AI 生成的旅行建议仅用于规划参考。出发前请核验营业时间、票价、预约、交通、天气与安全信息。",
 };
+
+export const coastalSampleRoadbook: Roadbook = {
+  ...sampleRoadbook,
+  title: "三亚海岸 4 天梦境路书",
+  subtitle: "把灯塔、海湾、港口和日落栈道串成一条极简海岸线。",
+  destination: "三亚海岛",
+  travelerLabel: "2 位海边慢旅行者",
+  concept: "用很少文字保留路线骨架，让画面先把目的地氛围讲出来。",
+  bestFor: ["喜欢海边日落", "想录动态路书", "希望路线轻松", "想看海岸视觉预览"],
+  highlights: ["海岸灯塔", "蓝色海湾", "港口街区", "日落观景台", "海边咖啡"],
+  summary: {
+    routeTheme: "灯塔 + 海湾 + 港口 + 日落",
+    transportPlan: "海岸线打车/租车串联，步行留给沙滩和码头",
+    stayArea: "海湾或港口街区附近",
+    rhythm: "上午轻量出发，下午靠近水面，傍晚固定留给日落",
+  },
+  days: sampleRoadbook.days.map((day, index) => {
+    const areas = ["海岸灯塔", "蓝色海湾", "港口街区", "日落观景台"];
+    const titles = ["抵达海边，看见第一座灯塔", "把一天交给蓝色海湾", "港口街区和城市天际线", "日落栈道，慢慢收尾"];
+    const moods = ["海风、白沙、抵达感", "浅海、帆影、透明水面", "码头、拱廊、城市线", "玫瑰色日落、返程前留白"];
+    const stopNames = [
+      ["海岸灯塔", "白沙海滩", "海边咖啡"],
+      ["蓝色海湾", "帆船码头", "浅海栈道"],
+      ["港口街区", "码头拱廊", "城市观景台"],
+      ["日落观景台", "木栈道", "海边轻餐"],
+    ];
+    const foods = [
+      ["椰子水", "海边咖啡", "清爽小食"],
+      ["海鲜粉", "冰咖啡", "热带水果"],
+      ["港口简餐", "本地甜品", "海风酒吧"],
+      ["日落轻食", "椰子冻", "返程前咖啡"],
+    ];
+    const photoTips = [
+      ["灯塔剪影", "白沙脚印", "第一眼海平线"],
+      ["帆影和水面", "浅海蓝色渐变", "栈道背影"],
+      ["码头线条", "港口拱廊", "城市天际线"],
+      ["日落反光", "木栈道长影", "返程前合照"],
+    ];
+
+    return {
+      ...day,
+      title: titles[index] || day.title,
+      area: areas[index] || "海岸线",
+      mood: moods[index] || "海风、日落、慢旅行",
+      routeSummary: "沿海岸线移动，串联海湾、沙滩、港口和日落观景点。",
+      commuteNote: "海岸线建议打车或短租车，临海步行路段注意防晒和补水。",
+      budgetNote: "把预算留给海边交通、咖啡和一顿质量稳定的海鲜。",
+      stops: day.stops.map((stop, stopIndex) => ({
+        ...stop,
+        id: `coast-d${day.day}-${stopIndex + 1}`,
+        name: stopNames[index]?.[stopIndex] || "海边停留点",
+        addressHint: "三亚海边",
+        why: "作为当天海岸镜头的关键停留点，适合慢慢看景和拍动态路书素材。",
+        tip: "出发前核验天气、潮汐、交通和现场开放状态。",
+      })),
+      food: foods[index] || ["海边咖啡", "热带水果", "轻食"],
+      photoTips: photoTips[index] || ["海岸线", "日落", "水面高光"],
+    };
+  }),
+  budget: [
+    { label: "住宿", amount: "1600-3000 元", note: "海湾或港口附近舒适型住宿，按 3 晚估算。" },
+    { label: "餐饮", amount: "1000-1800 元", note: "含海边咖啡、简餐和一顿海鲜。" },
+    { label: "交通", amount: "700-1500 元", note: "含机场接送、打车或短租车。" },
+    { label: "体验", amount: "300-900 元", note: "帆船、观景台或临时体验按需加入。" },
+  ],
+  packing: ["防晒霜", "墨镜", "拖鞋", "轻薄外套", "防水袋", "充电宝"],
+  reminders: ["核验天气和潮汐", "海边注意防晒和补水", "日落点提前到达", "不要把 AI 生成内容当成已核验事实"],
+};
