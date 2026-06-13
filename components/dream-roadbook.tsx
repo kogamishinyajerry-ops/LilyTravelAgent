@@ -11,6 +11,7 @@ import {
   type DreamMood,
   type DreamTemplate,
 } from "@/lib/dream-design-skill";
+import { directorLenses, type DirectorLensId } from "@/lib/director-lens";
 import { buildCinematicSceneInspector, buildCinematicSceneTimeline } from "@/lib/cinematic-scene-preset";
 import { defaultBrief } from "@/lib/default-brief";
 import type { LandmarkPreset } from "@/lib/landmark-preset";
@@ -189,6 +190,7 @@ export function DreamRoadbook({ initialDemo = "dali" }: DreamRoadbookProps = {})
   const [activeDay, setActiveDay] = useState(1);
   const [mood, setMood] = useState<DreamMood>(initialDemoOption.mood);
   const [template, setTemplate] = useState<DreamTemplate>(initialDemoOption.template);
+  const [directorLens, setDirectorLens] = useState<DirectorLensId>("auto");
   const [generationMode, setGenerationMode] = useState<GenerationMode>("speed");
   const [lastModel, setLastModel] = useState("");
   const [points, setPoints] = useState<GeocodePoint[]>([]);
@@ -226,7 +228,10 @@ export function DreamRoadbook({ initialDemo = "dali" }: DreamRoadbookProps = {})
   const activePlan = roadbook.days.find((day) => day.day === activeDay) || roadbook.days[0];
   const activeStop = design.routeStops.find((stop) => stop.day === activePlan?.day) || design.routeStops[0];
   const activeTemplate = dreamTemplates.find((item) => item.id === template) || dreamTemplates[0];
-  const sceneInspector = useMemo(() => buildCinematicSceneInspector(roadbook, activeDay), [activeDay, roadbook]);
+  const sceneInspector = useMemo(
+    () => buildCinematicSceneInspector(roadbook, activeDay, directorLens),
+    [activeDay, directorLens, roadbook],
+  );
   const sceneTimeline = useMemo(() => buildCinematicSceneTimeline(roadbook, activeDay), [activeDay, roadbook]);
   const studioHandoffHref = demoRoadbookId ? `/studio?demo=${demoRoadbookId}` : "/studio";
   // Lazily build the real terrain/buildings sources only when the toggle is on,
@@ -1465,6 +1470,24 @@ export function DreamRoadbook({ initialDemo = "dali" }: DreamRoadbookProps = {})
                 <strong>{activeTemplate.renderStrategy.motion}</strong>
               </span>
             </div>
+            <div className="dream-director-lens" aria-label="Director Lens">
+              {directorLenses.map((lens) => {
+                const isActive = directorLens === lens.id;
+                return (
+                  <button
+                    key={lens.id}
+                    type="button"
+                    className={isActive ? "active" : ""}
+                    onClick={() => setDirectorLens(lens.id)}
+                    aria-pressed={isActive}
+                    title={`${lens.label} · ${lens.cameraCue}`}
+                  >
+                    <small>{lens.shortLabel}</small>
+                    <strong>{lens.proofLabel}</strong>
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
           <div className="dream-agent-visual-contract" aria-label="Agent Visual Contract">
@@ -1820,6 +1843,10 @@ export function DreamRoadbook({ initialDemo = "dali" }: DreamRoadbookProps = {})
               <span>
                 <small>Parallax</small>
                 <strong>{sceneInspector.parallaxWeight.toFixed(2)}x</strong>
+              </span>
+              <span>
+                <small>Director</small>
+                <strong>{sceneInspector.directorLens.proofLabel}</strong>
               </span>
             </div>
             <div className="dream-composition-grid" aria-label="Cinematic 构图信息">

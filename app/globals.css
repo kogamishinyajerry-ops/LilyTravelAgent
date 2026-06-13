@@ -2512,6 +2512,50 @@ textarea {
   white-space: nowrap;
 }
 
+.dream-director-lens {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.dream-director-lens button {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+  border: 1px solid rgba(255, 255, 255, 0.46);
+  border-radius: 8px;
+  padding: 7px 6px;
+  color: rgba(39, 49, 59, 0.76);
+  text-align: left;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.dream-director-lens button.active {
+  color: #fff;
+  border-color: transparent;
+  background: linear-gradient(135deg, rgba(74, 122, 132, 0.9), rgba(201, 149, 61, 0.9));
+  box-shadow: 0 10px 22px rgba(65, 75, 91, 0.14);
+}
+
+.dream-director-lens small,
+.dream-director-lens strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dream-director-lens small {
+  font-size: 0.62rem;
+  font-weight: 950;
+  opacity: 0.82;
+}
+
+.dream-director-lens strong {
+  font-size: 0.62rem;
+  font-weight: 900;
+  opacity: 0.74;
+}
+
 .dream-agent-visual-contract {
   display: grid;
   gap: 8px;

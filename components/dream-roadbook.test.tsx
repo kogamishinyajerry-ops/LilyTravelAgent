@@ -191,6 +191,22 @@ describe("DreamRoadbook a11y polish", () => {
     expect(strategy.textContent).toContain("slow parallax");
   });
 
+  it("lets the user switch Director Lens modes and updates the scene inspector", () => {
+    render(<DreamRoadbook />);
+
+    const lensGroup = screen.getByLabelText("Director Lens");
+    const autoButton = within(lensGroup).getByRole("button", { name: /Auto.*auto day lens/ });
+    const skylineButton = within(lensGroup).getByRole("button", { name: /Skyline.*low-skyline lens/ });
+
+    expect(autoButton.getAttribute("aria-pressed")).toBe("true");
+    expect(screen.getAllByText("auto day lens").length).toBeGreaterThanOrEqual(2);
+
+    fireEvent.click(skylineButton);
+
+    expect(skylineButton.getAttribute("aria-pressed")).toBe("true");
+    expect(screen.getAllByText("low-skyline lens").length).toBeGreaterThanOrEqual(2);
+  });
+
   it("updates the template rendering strategy when switching demo roadbooks", () => {
     render(<DreamRoadbook />);
 
