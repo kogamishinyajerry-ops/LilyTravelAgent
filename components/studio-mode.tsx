@@ -147,6 +147,11 @@ const studioShotCue = {
   primary: "输入区 → 路书预览 → 素材资产",
   note: "讲：这不是只生成攻略，而是在沉淀可复用的 Agent 素材流水线。",
 };
+const studioSeriesChapters = [
+  "录屏台成型",
+  "素材管线可视化",
+  "Agent 产品化",
+];
 
 function buildPlaces(roadbook: Roadbook): GeocodePlace[] {
   return roadbook.days.flatMap((day) =>
@@ -514,6 +519,11 @@ export function StudioMode() {
                   <span>{studioShotCue.title}</span>
                   <strong>{studioShotCue.primary}</strong>
                   <p>{studioShotCue.note}</p>
+                </div>
+                <div className="studio-series-cues" aria-label="系列章节提示">
+                  {studioSeriesChapters.map((chapter, index) => (
+                    <span key={chapter}>{String(index + 1).padStart(2, "0")} · {chapter}</span>
+                  ))}
                 </div>
               </>
             ) : null}

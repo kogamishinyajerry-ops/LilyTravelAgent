@@ -630,3 +630,14 @@ Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, app/gl
 Command/result: npm test -- components/studio-mode.test.tsx && npm run lint && npm test && npm run build
 Voiceover note: "我把素材用途做成剪辑标签：产品画面和讲解画面。这样后面素材越来越多，也能马上知道哪些适合放产品展示，哪些适合讲开发过程。"
 Usable for: edit-tags clip, content operations polish, recording archive editing workflow, continued goal run round 38
+
+## Phase AZ: v0.8.41 — Studio Series Chapter Cues
+
+Date: 2026-06-13
+Clip title: Phase AZ: v0.8.41 — Studio Series Chapter Cues
+What changed: Added script-mode-only `系列章节提示` chips to `/studio`: `录屏台成型`, `素材管线可视化`, and `Agent 产品化`.
+Why this matters: The product now helps package the development process into content chapters, supporting the travel + AI account workflow instead of only the roadbook generation workflow.
+Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, app/globals.css, README.md, docs/design/real-scenic-preview-roadmap.md, docs/recording/dev-log.md
+Command/result: npm test -- components/studio-mode.test.tsx && npm run lint && npm test && npm run build
+Voiceover note: "我把这轮开发直接拆成三个短视频章节：录屏台、素材管线、Agent 产品化。产品界面本身开始反向服务内容生产。"
+Usable for: series-chapter clip, creator workflow planning, Vibe Coding content packaging, continued goal run round 39

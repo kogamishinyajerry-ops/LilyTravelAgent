@@ -1376,6 +1376,22 @@ textarea {
   line-height: 1.35;
 }
 
+.studio-series-cues {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.studio-series-cues span {
+  border: 1px solid rgba(38, 59, 49, 0.12);
+  border-radius: 999px;
+  padding: 5px 8px;
+  color: var(--moss);
+  font-size: 0.7rem;
+  font-weight: 950;
+  background: rgba(255, 255, 255, 0.68);
+}
+
 .studio-recording-assets {
   display: grid;
   gap: 8px;

@@ -663,6 +663,22 @@ The panel now helps with editing decisions, not only QA status. A creator can se
 
 > 我把素材用途也做成标签：Dream 是产品画面，Studio 是讲解画面。这样素材库一多，剪辑时不用重新判断每个文件该放在哪一类。
 
+## Phase AZ: Studio Series Chapter Cues (2026-06-13)
+
+### What changed
+
+- Added script-mode-only "系列章节提示" chips in `/studio`.
+- The chips turn the current build into three recordable topics: 录屏台成型, 素材管线可视化, and Agent 产品化.
+- The chips stay hidden in default Studio mode.
+
+### Why this matters
+
+The product now helps the creator package the development process into content. It supports the user's goal of recording Vibe Coding progress and turning it into a reusable travel + AI account series.
+
+### Recording angle
+
+> 我把这段开发过程拆成三个章节：录屏台成型、素材管线可视化、Agent 产品化。这样产品界面本身就能帮我规划内容系列。
+
 ## Phase D: real data sources (2026-06-07)
 
 Replaced the Phase C procedural stubs with real implementations:
