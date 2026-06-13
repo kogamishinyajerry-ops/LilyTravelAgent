@@ -140,10 +140,30 @@ describe("dream-design-skill", () => {
         expect(template).toHaveProperty("label");
         expect(template).toHaveProperty("note");
         expect(template).toHaveProperty("generationHint");
+        expect(template).toHaveProperty("renderStrategy");
         expect(typeof template.id).toBe("string");
         expect(typeof template.label).toBe("string");
         expect(typeof template.note).toBe("string");
         expect(typeof template.generationHint).toBe("string");
+        expect(typeof template.renderStrategy.lens).toBe("string");
+        expect(typeof template.renderStrategy.surface).toBe("string");
+        expect(typeof template.renderStrategy.motion).toBe("string");
+      });
+    });
+
+    it("binds each visual template to a cinematic rendering strategy", () => {
+      const monument = dreamTemplates.find((template) => template.id === "monument");
+      const starlake = dreamTemplates.find((template) => template.id === "starlake");
+
+      expect(monument?.renderStrategy).toEqual({
+        lens: "isometric monument",
+        surface: "stone / stairs / void",
+        motion: "slow parallax",
+      });
+      expect(starlake?.renderStrategy).toEqual({
+        lens: "wide waterline",
+        surface: "lake / glint / island",
+        motion: "water glide",
       });
     });
   });

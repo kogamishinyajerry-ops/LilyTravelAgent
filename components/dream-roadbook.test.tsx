@@ -181,6 +181,30 @@ describe("DreamRoadbook a11y polish", () => {
     expect(stack.textContent).toContain("compact route pending");
   });
 
+  it("shows the active template rendering strategy", () => {
+    render(<DreamRoadbook />);
+
+    const strategy = screen.getByLabelText("当前模板渲染策略");
+
+    expect(strategy.textContent).toContain("isometric monument");
+    expect(strategy.textContent).toContain("stone / stairs / void");
+    expect(strategy.textContent).toContain("slow parallax");
+  });
+
+  it("updates the template rendering strategy when switching demo roadbooks", () => {
+    render(<DreamRoadbook />);
+
+    const coastButton = document.querySelector<HTMLButtonElement>(
+      ".dream-demo-roadbooks button:not(.active)",
+    );
+    fireEvent.click(coastButton!);
+
+    const strategy = screen.getByLabelText("当前模板渲染策略");
+    expect(strategy.textContent).toContain("wide waterline");
+    expect(strategy.textContent).toContain("lake / glint / island");
+    expect(strategy.textContent).toContain("water glide");
+  });
+
   it("renders the AI landmark empty state with a 'click to generate' action when no preset is present", () => {
     render(<DreamRoadbook />);
     const empty = document.querySelector(

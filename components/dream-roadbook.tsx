@@ -1447,6 +1447,20 @@ export function DreamRoadbook({ initialDemo = "dali" }: DreamRoadbookProps = {})
               activeId={template}
               onSelect={setTemplate}
             />
+            <div className="dream-template-render-strategy" aria-label="当前模板渲染策略">
+              <span>
+                <small>Lens</small>
+                <strong>{activeTemplate.renderStrategy.lens}</strong>
+              </span>
+              <span>
+                <small>Surface</small>
+                <strong>{activeTemplate.renderStrategy.surface}</strong>
+              </span>
+              <span>
+                <small>Motion</small>
+                <strong>{activeTemplate.renderStrategy.motion}</strong>
+              </span>
+            </div>
           </div>
 
           <div className="dream-mood-switcher" aria-label="视觉气质">

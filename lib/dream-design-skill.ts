@@ -15,54 +15,99 @@ export const dreamTemplates: Array<{
   label: string;
   note: string;
   generationHint: string;
+  renderStrategy: {
+    lens: string;
+    surface: string;
+    motion: string;
+  };
 }> = [
   {
     id: "monument",
     label: "纪念碑",
     note: "错视建筑 / 关卡感",
     generationHint: "像纪念碑式梦境地图，每一天是一个安静的建筑关卡。",
+    renderStrategy: {
+      lens: "isometric monument",
+      surface: "stone / stairs / void",
+      motion: "slow parallax",
+    },
   },
   {
     id: "starlake",
     label: "星湖",
     note: "漂浮水面 / 光轨",
     generationHint: "像星湖上的漂浮路线，每一天要有水面、夜光、倒影或轻盈移动感。",
+    renderStrategy: {
+      lens: "wide waterline",
+      surface: "lake / glint / island",
+      motion: "water glide",
+    },
   },
   {
     id: "lantern",
     label: "灯火",
     note: "暖光 / 城市夜游",
     generationHint: "像傍晚灯火慢慢亮起的旅程，每一天要有温暖、街巷、停留感。",
+    renderStrategy: {
+      lens: "street glow",
+      surface: "lantern / alley / haze",
+      motion: "warm drift",
+    },
   },
   {
     id: "snowfield",
     label: "雪原",
     note: "留白 / 清冷神殿",
     generationHint: "像清冷雪原里的极简旅行地图，每一天要有留白、远景和安静的仪式感。",
+    renderStrategy: {
+      lens: "quiet negative space",
+      surface: "snow / shrine / sky",
+      motion: "still air",
+    },
   },
   {
     id: "neon-city",
     label: "霓虹都市",
     note: "夜晚都市 / 全息广告 / 赛博朋克",
     generationHint: "像赛博朋克霓虹都市夜晚旅行地图，每一天要有发光招牌、湿漉漉的街面、悬浮交通工具和蓝紫主调。",
+    renderStrategy: {
+      lens: "low city angle",
+      surface: "glass / rain / signage",
+      motion: "neon shimmer",
+    },
   },
   {
     id: "island",
     label: "漂浮岛屿",
     note: "天空浮岛 / 轻雾 / 孤独",
     generationHint: "像天空中的漂浮岛屿地图，每一天是一块独立的浮岛，岛与岛之间有薄雾、绳桥或飞行器连接。",
+    renderStrategy: {
+      lens: "aerial islands",
+      surface: "cloud / bridge / cliff",
+      motion: "floating mist",
+    },
   },
   {
     id: "shrine",
     label: "清冷神殿",
     note: "鸟居 / 石灯 / 神道",
     generationHint: "像清冷神殿里的神道旅行地图，每一天要有石灯笼、苔藓石阶、鸟居或风铃，节奏要慢。",
+    renderStrategy: {
+      lens: "centered ritual path",
+      surface: "stone / moss / gate",
+      motion: "soft bell sway",
+    },
   },
   {
     id: "desert",
     label: "大漠孤烟",
     note: "沙丘 / 绿洲 / 远山",
     generationHint: "像大漠孤烟的旅行地图，每一天要有沙丘纹理、远方驼影、绿洲椰枣和长长的影子。",
+    renderStrategy: {
+      lens: "long horizon",
+      surface: "dune / oasis / shadow",
+      motion: "heat drift",
+    },
   },
 ];
 
