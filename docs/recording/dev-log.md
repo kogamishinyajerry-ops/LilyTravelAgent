@@ -322,3 +322,14 @@ Files shown: scripts/check-dream-visuals.mjs, package.json, README.md, docs/desi
 Command/result: npm run check:dream-visuals && npm run lint && npm test && npm run build
 Voiceover note: "做视觉产品时，我不想每次都凭感觉说'变好看了'。这个命令会自动点 D1-D4、截图、检查 WebGL 像素和微动，还会写 summary.json 和 HTML gallery。这样每次 Vibe Coding 迭代都有证据可以复盘。"
 Usable for: visual-QA workflow clip, evidence-based design iteration lesson, recording prep workflow, 10-goal continuation round 9
+
+## Phase X: v0.8.13 — Coastal Scene Preset Data Layer
+
+Date: 2026-06-13
+Clip title: Phase X: v0.8.13 — Coastal Scene Preset Data Layer
+What changed: Added the second destination preset data layer. `lib/cinematic-scene-preset.ts` now exports `COASTAL_CINEMATIC_SCENE_PRESET`, covering lighthouse arrival, turquoise bay, harbor street, and sunset deck route beats. The scene preset id, focus anchor, landmark, atmosphere, and motion unions were generalized so the existing director helpers can resolve a non-Dali route without changing the roadbook schema. `lib/cinematic-scene-preset.test.ts` now verifies coastal preset matching, route progress, landmark mapping, atmosphere profiles, motion profiles, and Dali non-regression.
+Why this matters: Dali proved the first cinematic route preset; this proves the system can grow into a preset catalog. The next step can render coastal-specific geometry, but this round keeps the change safely at the data/helper layer so the renderer does not become a large rewrite.
+Files shown: lib/cinematic-scene-preset.ts, lib/cinematic-scene-preset.test.ts, README.md, docs/design/real-scenic-preview-roadmap.md, docs/recording/dev-log.md
+Command/result: npm test -- lib/cinematic-scene-preset.test.ts && npm run lint && npm run build
+Voiceover note: "这一轮我把大理的一次性 preset 扩成多目的地数据层。海岸/海岛路书也能解析出灯塔、海湾、港口、日落观景台四个镜头，并且有自己的地标、氛围和微动 profile。"
+Usable for: multi-destination preset catalog clip, data-layer scaling lesson, Vibe Coding small-safe-generalization workflow, continued goal run round 11

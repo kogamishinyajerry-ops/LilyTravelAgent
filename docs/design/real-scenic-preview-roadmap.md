@@ -210,6 +210,23 @@ The visual stack is now complex enough that "looks good on my screen" is not eno
 
 > 视觉产品不能只靠主观感觉。我加了一个本地视觉 QA 命令：自动打开 /dream，点 D1-D4，截图，检查 WebGL 像素，确认微动还在，然后写 summary.json 和一个 HTML gallery。以后每次打磨画面，都能留下可复盘的视觉证据。
 
+## Phase X: Coastal Scene Preset Data Layer (2026-06-13)
+
+### What changed
+
+- Added `COASTAL_CINEMATIC_SCENE_PRESET` to `lib/cinematic-scene-preset.ts`.
+- Generalized scene preset id, focus anchor, landmark, atmosphere, and motion unions so more destinations can share the same director helpers.
+- The new preset covers D1-D4 coastal beats: lighthouse arrival, turquoise bay, harbor street, and sunset deck.
+- `lib/cinematic-scene-preset.test.ts` verifies coastal preset resolution, route progress, landmark mapping, atmosphere profiles, motion profiles, and Dali non-regression.
+
+### Why this matters
+
+The Dali work proved the cinematic director model, but a product needs repeatability across destinations. This phase starts proving that the scene-preset layer can become a catalog rather than a one-off: new destinations can add route anchors and director metadata first, then later get custom render geometry.
+
+### Recording angle
+
+> 我没有马上把第二个目的地的 3D 全部做完，而是先把数据层扩成多目的地：海岸/海岛也有 D1-D4 的镜头、地标、氛围和微动。这样证明这个系统不是为大理写死的，而是能长成一个 preset catalog。
+
 ## Phase D: real data sources (2026-06-07)
 
 Replaced the Phase C procedural stubs with real implementations:

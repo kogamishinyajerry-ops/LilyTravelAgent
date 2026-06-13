@@ -8,6 +8,7 @@ import {
   buildCinematicMotionProfile,
   buildCinematicRouteRail,
   buildCinematicSceneInspector,
+  COASTAL_CINEMATIC_SCENE_PRESET,
   DALI_CINEMATIC_SCENE_PRESET,
   getCinematicDayFocus,
   resolveCinematicScenePreset,
@@ -40,6 +41,33 @@ const cityRoadbook: Roadbook = {
   })),
 };
 
+const coastalRoadbook: Roadbook = {
+  ...sampleRoadbook,
+  title: "三亚海岛 4 天梦境路书",
+  subtitle: "海湾、灯塔、港口和日落。",
+  destination: "三亚海岛",
+  concept: "海岛度假、海边骑行、港口街区和日落观景。",
+  highlights: ["海岸灯塔", "蓝色海湾", "港口码头", "日落栈道"],
+  summary: {
+    routeTheme: "海岸线 + 海湾 + 港口",
+    transportPlan: "租车 + 步行",
+    stayArea: "海边度假区",
+    rhythm: "轻松但有画面感",
+  },
+  days: sampleRoadbook.days.map((day, index) => ({
+    ...day,
+    title: ["灯塔抵达", "蓝色海湾", "港口街区", "日落返程"][index] || "海边日",
+    area: ["海岸灯塔", "蓝色海湾", "港口街区", "日落观景台"][index] || "海边",
+    mood: ["海风、白沙、抵达", "浅海、帆影、日落", "码头、拱廊、城市线", "落日、栈道、返程"][index] || "海边",
+    routeSummary: "沿海岸线移动，串联海湾、沙滩、港口和日落观景点。",
+    stops: day.stops.map((stop, stopIndex) => ({
+      ...stop,
+      name: ["海岸灯塔", "白沙海滩", "蓝色海湾", "帆船码头"][stopIndex] || "海边咖啡",
+      addressHint: "三亚海边",
+    })),
+  })),
+};
+
 describe("resolveCinematicScenePreset", () => {
   it("resolves the Dali preset for the default Dali sample roadbook", () => {
     const result = resolveCinematicScenePreset(sampleRoadbook, 1);
@@ -58,6 +86,15 @@ describe("resolveCinematicScenePreset", () => {
   it("does not resolve Dali assets for a non-Dali city roadbook", () => {
     expect(resolveCinematicScenePreset(cityRoadbook, 1)).toBeNull();
   });
+
+  it("resolves the coastal preset for a coast or island roadbook", () => {
+    const result = resolveCinematicScenePreset(coastalRoadbook, 2);
+
+    expect(result?.preset.id).toBe("coast-island-bay");
+    expect(result?.preset.heroLabel).toBe("海湾 / 灯塔 / 港口天际线");
+    expect(result?.focus.label).toBe("蓝色海湾");
+    expect(result?.focus.anchorKind).toBe("bay");
+  });
 });
 
 describe("getCinematicDayFocus", () => {
@@ -67,6 +104,14 @@ describe("getCinematicDayFocus", () => {
 
   it("keeps all Dali focus anchors inside the visible procedural scene bounds", () => {
     for (const focus of DALI_CINEMATIC_SCENE_PRESET.focusByDay) {
+      expect(Math.abs(focus.x)).toBeLessThanOrEqual(6);
+      expect(focus.z).toBeGreaterThanOrEqual(0.8);
+      expect(focus.z).toBeLessThanOrEqual(3.4);
+    }
+  });
+
+  it("keeps all coastal focus anchors inside the visible procedural scene bounds", () => {
+    for (const focus of COASTAL_CINEMATIC_SCENE_PRESET.focusByDay) {
       expect(Math.abs(focus.x)).toBeLessThanOrEqual(6);
       expect(focus.z).toBeGreaterThanOrEqual(0.8);
       expect(focus.z).toBeLessThanOrEqual(3.4);
@@ -171,6 +216,21 @@ describe("buildCinematicSceneInspector", () => {
       cameraFov: 38,
     });
   });
+
+  it("summarizes the active coastal scene preset for recording", () => {
+    const inspector = buildCinematicSceneInspector(coastalRoadbook, 3);
+
+    expect(inspector).toMatchObject({
+      status: "active",
+      presetId: "coast-island-bay",
+      destination: "海岸海岛",
+      heroLabel: "海湾 / 灯塔 / 港口天际线",
+      shotLabel: "D3 · 港口街区",
+      visualCue: "码头 / 拱廊 / 城市线",
+      routeProgress: "D1-D2-D3",
+      routePointCount: 4,
+    });
+  });
 });
 
 describe("buildCinematicLandmarkSilhouettes", () => {
@@ -201,6 +261,20 @@ describe("buildCinematicLandmarkSilhouettes", () => {
 
     expect(layer.activeMarker.day).toBe(1);
     expect(layer.activeMarker.kind).toBe("old-town-gate");
+  });
+
+  it("creates one recognizable coastal silhouette marker per day", () => {
+    const layer = buildCinematicLandmarkSilhouettes(COASTAL_CINEMATIC_SCENE_PRESET, 2);
+
+    expect(layer.markers.map((marker) => marker.day)).toEqual([1, 2, 3, 4]);
+    expect(layer.markers.map((marker) => marker.kind)).toEqual([
+      "coast-lighthouse",
+      "bay-sail",
+      "harbor-arcade",
+      "sunset-deck",
+    ]);
+    expect(layer.activeMarker.kind).toBe("bay-sail");
+    expect(layer.activeMarker.cue).toBe("浅海 / 帆影 / 玻璃水");
   });
 });
 
@@ -242,6 +316,22 @@ describe("buildCinematicAtmosphereProfile", () => {
     expect(profile.sunColor).toBe("#f4a56d");
     expect(profile.foregroundHazeOpacity).toBeGreaterThan(0.2);
   });
+
+  it("directs the coastal bay day toward turquoise water", () => {
+    const profile = buildCinematicAtmosphereProfile(getCinematicDayFocus(COASTAL_CINEMATIC_SCENE_PRESET, 2));
+
+    expect(profile.id).toBe("bay-turquoise");
+    expect(profile.waterColor).toBe("#62cbd4");
+    expect(profile.ribbonOpacityScale).toBeGreaterThan(1.3);
+  });
+
+  it("warms the coastal return day with a rose closing hour", () => {
+    const profile = buildCinematicAtmosphereProfile(getCinematicDayFocus(COASTAL_CINEMATIC_SCENE_PRESET, 4));
+
+    expect(profile.id).toBe("coast-return-rose");
+    expect(profile.sunColor).toBe("#f49b74");
+    expect(profile.foregroundHazeOpacity).toBeGreaterThan(0.2);
+  });
 });
 
 describe("buildCinematicMotionProfile", () => {
@@ -279,5 +369,15 @@ describe("buildCinematicMotionProfile", () => {
 
     expect(returnDay.id).toBe("return-glow");
     expect(returnDay.focusPulse).toBeGreaterThan(village.focusPulse);
+  });
+
+  it("makes the coastal bay day more fluid than the harbor day", () => {
+    const bay = buildCinematicMotionProfile(getCinematicDayFocus(COASTAL_CINEMATIC_SCENE_PRESET, 2));
+    const harbor = buildCinematicMotionProfile(getCinematicDayFocus(COASTAL_CINEMATIC_SCENE_PRESET, 3));
+
+    expect(bay.id).toBe("bay-current");
+    expect(harbor.id).toBe("harbor-drift");
+    expect(bay.waterSpeed).toBeGreaterThan(harbor.waterSpeed);
+    expect(bay.waterAmplitude).toBeGreaterThan(harbor.waterAmplitude);
   });
 });
