@@ -203,11 +203,13 @@ describe("DreamRoadbook a11y polish", () => {
     expect(autoButton.getAttribute("aria-pressed")).toBe("true");
     expect(skylineButton.getAttribute("data-lens-id")).toBe("low-skyline");
     expect(screen.getAllByText("auto day lens").length).toBeGreaterThanOrEqual(2);
+    expect(screen.getByLabelText("预览资产管理面板").textContent).toContain("auto day lens");
 
     fireEvent.click(skylineButton);
 
     expect(skylineButton.getAttribute("aria-pressed")).toBe("true");
     expect(screen.getAllByText("low-skyline lens").length).toBeGreaterThanOrEqual(2);
+    expect(screen.getByLabelText("预览资产管理面板").textContent).toContain("low-skyline lens");
   });
 
   it("updates the template rendering strategy when switching demo roadbooks", () => {

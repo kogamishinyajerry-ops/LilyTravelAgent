@@ -2136,6 +2136,10 @@ export function DreamRoadbook({ initialDemo = "dali" }: DreamRoadbookProps = {})
                 <dd>{previewAsset?.source === "minimax-image" ? "MiniMax image" : "Three.js fallback"}</dd>
               </div>
               <div>
+                <dt>Lens</dt>
+                <dd>{activeDirectorLens.proofLabel}</dd>
+              </div>
+              <div>
                 <dt>封面</dt>
                 <dd>{coverHistory ? formatAssetTime(coverHistory.createdAt) : "未选择"}</dd>
               </div>
