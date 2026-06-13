@@ -727,6 +727,22 @@ The cross-page handoff is now visible as a product concept instead of only exist
 
 > 我把两个页面之间的交接做成了 Demo Bridge。它会告诉观众当前是哪个 demo，并且一键打开同款梦境预览。
 
+## Phase BE: Dream Studio Bridge Card (2026-06-13)
+
+### What changed
+
+- Added a compact Studio Bridge card to the `/dream` control rail.
+- The card shows the active route and links back to the matching `/studio?demo=...` workbench.
+- It reuses the same handoff URL as the top navigation link.
+
+### Why this matters
+
+The cinematic preview now also explains where it sits in the creator workflow. It is clear that Dream is not an isolated visual page; it is the product-shot half of the same recording circuit.
+
+### Recording angle
+
+> Dream 这边也有 Studio Bridge 了。这样我从视觉预览讲完，可以一键回到同一个 demo 的录屏台继续拆解。
+
 ## Phase D: real data sources (2026-06-07)
 
 Replaced the Phase C procedural stubs with real implementations:

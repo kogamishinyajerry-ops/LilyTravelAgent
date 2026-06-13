@@ -228,6 +228,7 @@ export function DreamRoadbook({ initialDemo = "dali" }: DreamRoadbookProps = {})
   const activeTemplate = dreamTemplates.find((item) => item.id === template) || dreamTemplates[0];
   const sceneInspector = useMemo(() => buildCinematicSceneInspector(roadbook, activeDay), [activeDay, roadbook]);
   const sceneTimeline = useMemo(() => buildCinematicSceneTimeline(roadbook, activeDay), [activeDay, roadbook]);
+  const studioHandoffHref = demoRoadbookId ? `/studio?demo=${demoRoadbookId}` : "/studio";
   // Lazily build the real terrain/buildings sources only when the toggle is on,
   // so MAPBOX_TOKEN env lookups don't run at module-load time.
   const [realTerrainSources, setRealTerrainSources] = useState<
@@ -1243,7 +1244,7 @@ export function DreamRoadbook({ initialDemo = "dali" }: DreamRoadbookProps = {})
               <ArrowLeft size={16} />
               工具页
             </Link>
-            <Link href={demoRoadbookId ? `/studio?demo=${demoRoadbookId}` : "/studio"} aria-label="打开录屏台">
+            <Link href={studioHandoffHref} aria-label="打开录屏台">
               <Eye size={16} />
               录屏台
             </Link>
@@ -1382,6 +1383,16 @@ export function DreamRoadbook({ initialDemo = "dali" }: DreamRoadbookProps = {})
               ))}
             </div>
           </form>
+
+          <div className="dream-studio-bridge" aria-label="Studio Bridge">
+            <span>Studio Bridge</span>
+            <strong>{roadbook.destination} → Studio</strong>
+            <p>{demoRoadbookId ? "保留当前本地演示，回到同款录屏台。" : "真实生成后可回到录屏台继续拆解。"}</p>
+            <Link href={studioHandoffHref}>
+              返回同款录屏台
+              <Eye size={13} />
+            </Link>
+          </div>
 
           <div className={`dream-status ${stage === "error" ? "error" : ""}`}>
             {stage === "ready" && `完整细节已补齐${lastModel ? ` / ${lastModel}` : ""}`}

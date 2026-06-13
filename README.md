@@ -77,7 +77,7 @@ Use `http://localhost:3000/dream` for the generative dream-roadbook prototype wi
 
 For the default Dali roadbook, `/dream` also mounts a destination-specific cinematic scene preset from `lib/cinematic-scene-preset.ts`: layered Cangshan silhouettes, Erhai shoreline curves, Bai courtyard blocks, day-specific landmark silhouettes, day-directed atmosphere and motion, a focus marker, a world-space D1-D4 route rail, and a small day-director camera pose so D1-D4 change both the label and the framing. The same renderer now also supports a coastal island / bay preset with sea bands, sandbars, lighthouse arrival, turquoise bay sail, harbor arcade, and sunset-deck geometry. A compact Scene Inspector in the right rail exposes the active preset, shot cue, D1-D4 director timeline, route progress, and lens/parallax values for recording the Agent visual pipeline.
 
-Use the local demo roadbook switch in the `/dream` control panel to move between the Dali and coastal sample routes without calling MiniMax. This is intended for recording and visual QA; the normal "生成梦境路书" button still runs the two-stage Agent generation flow.
+Use the local demo roadbook switch in the `/dream` control panel to move between the Dali and coastal sample routes without calling MiniMax. This is intended for recording and visual QA; the normal "生成梦境路书" button still runs the two-stage Agent generation flow. `/dream` also shows a Studio Bridge card that returns to the matching `/studio?demo=...` recording workbench.
 
 Use `http://localhost:3000/share-preview` for the 16:9 post-cover recording card. `/dream` generates the query link automatically from the current roadbook and asset cache.
 

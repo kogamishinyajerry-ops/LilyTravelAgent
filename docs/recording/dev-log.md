@@ -685,3 +685,14 @@ Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, app/gl
 Command/result: npm test -- components/studio-mode.test.tsx && npm run lint && npm test && npm run build
 Voiceover note: "我把两个页面之间的交接做成 Demo Bridge。录屏时可以直接指着它讲：这里是工作台，点这里进入同款梦境预览。"
 Usable for: Demo Bridge clip, cross-page recording flow, Vibe Coding product concept polish, continued goal run round 43
+
+## Phase BE: v0.8.46 — Dream Studio Bridge Card
+
+Date: 2026-06-13
+Clip title: Phase BE: v0.8.46 — Dream Studio Bridge Card
+What changed: Added a compact `Studio Bridge` card to `/dream`, showing the active route and linking back to the matching `/studio?demo=...` recording workbench.
+Why this matters: The cinematic preview now explains its place in the creator workflow. Dream becomes the product-shot half of the same recording circuit instead of a disconnected visual page.
+Files shown: components/dream-roadbook.tsx, components/dream-roadbook.test.tsx, app/globals.css, README.md, docs/design/real-scenic-preview-roadmap.md, docs/recording/dev-log.md
+Command/result: npm test -- components/dream-roadbook.test.tsx && npm run lint && npm test && npm run build
+Voiceover note: "我在 Dream 这边也加了 Studio Bridge。视觉预览讲完后，可以一键回到同一个 demo 的录屏台继续拆解。"
+Usable for: Dream bridge clip, product-shot to workflow handoff, Vibe Coding recording circuit polish, continued goal run round 44
