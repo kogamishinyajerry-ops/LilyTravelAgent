@@ -652,3 +652,14 @@ Files shown: docs/recording/goal-31-40-recap.md, README.md, docs/recording/dev-l
 Command/result: npm run lint && npm test && npm run build
 Voiceover note: "我把这 10 轮连续推进整理成一份复盘文档。它不只是代码记录，也是一条可以剪成系列内容的开发路线。"
 Usable for: 10-goal recap clip, development-process summary, Vibe Coding series planning, continued goal run round 40
+
+## Phase BB: v0.8.43 — Studio To Dream Demo Handoff
+
+Date: 2026-06-13
+Clip title: Phase BB: v0.8.43 — Studio To Dream Demo Handoff
+What changed: `/studio` now sends the selected local demo into `/dream` through `?demo=dali` or `?demo=coast`; `/dream` initializes the matching roadbook, mood, and template from that query.
+Why this matters: The recording workbench can now hand off into the cinematic roadbook preview without reselecting the route. This makes the Studio-to-product demo sequence faster and cleaner for screen capture.
+Files shown: components/studio-mode.tsx, components/dream-roadbook.tsx, app/dream/page.tsx, components/studio-mode.test.tsx, components/dream-roadbook.test.tsx, README.md, docs/design/real-scenic-preview-roadmap.md, docs/recording/dev-log.md
+Command/result: npm test -- components/studio-mode.test.tsx components/dream-roadbook.test.tsx && npm run lint && npm test && npm run build
+Voiceover note: "我把录屏台和梦境路书接上了。现在选海岸再点梦境路书，打开的就是海岸版本，演示路径更顺。"
+Usable for: Studio-to-Dream handoff clip, demo-flow polish, Vibe Coding cross-surface workflow, continued goal run round 41

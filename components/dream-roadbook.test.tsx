@@ -115,6 +115,22 @@ describe("DreamRoadbook a11y polish", () => {
     expect(screen.getByText("海湾 / 灯塔 / 港口天际线")).toBeTruthy();
   });
 
+  it("can initialize directly into the coastal demo from the studio handoff", () => {
+    render(<DreamRoadbook initialDemo="coast" />);
+
+    expect(screen.getByDisplayValue("三亚海岛")).toBeTruthy();
+    expect(screen.getByText("海岸海岛")).toBeTruthy();
+    expect(screen.getByText("海湾 / 灯塔 / 港口天际线")).toBeTruthy();
+    expect(within(screen.getByLabelText("本地演示路书")).getByRole("button", { name: /海岸/ }).getAttribute("aria-pressed")).toBe("true");
+  });
+
+  it("falls back to the Dali demo for unknown studio handoff values", () => {
+    render(<DreamRoadbook initialDemo="unknown" />);
+
+    expect(screen.getByDisplayValue("云南大理")).toBeTruthy();
+    expect(within(screen.getByLabelText("本地演示路书")).getByRole("button", { name: /大理/ }).getAttribute("aria-pressed")).toBe("true");
+  });
+
   it("shows a clickable cinematic director timeline for the coastal demo", () => {
     render(<DreamRoadbook />);
 

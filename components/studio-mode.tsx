@@ -373,7 +373,7 @@ export function StudioMode() {
               <ArrowLeft size={16} />
               返回工具页
             </Link>
-            <Link href="/dream" className="ghost-link">
+            <Link href={demoRoadbookId ? `/dream?demo=${demoRoadbookId}` : "/dream"} className="ghost-link">
               <Sparkles size={16} />
               梦境路书
             </Link>

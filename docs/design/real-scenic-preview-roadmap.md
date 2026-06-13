@@ -679,6 +679,22 @@ The product now helps the creator package the development process into content. 
 
 > 我把这段开发过程拆成三个章节：录屏台成型、素材管线可视化、Agent 产品化。这样产品界面本身就能帮我规划内容系列。
 
+## Phase BB: Studio To Dream Demo Handoff (2026-06-13)
+
+### What changed
+
+- `/studio` now links to `/dream?demo=dali` or `/dream?demo=coast` based on the selected local demo route.
+- `/dream` accepts the demo query and initializes directly into the matching local roadbook, mood, and template.
+- Unknown demo values fall back to the Dali default.
+
+### Why this matters
+
+The recording workbench and cinematic roadbook preview are now connected as one demo flow. A creator can start in Studio, explain the Agent workflow, then jump directly into the matching `/dream` visual without reselecting the route.
+
+### Recording angle
+
+> 我把 Studio 和 Dream 接起来了。现在在录屏台选海岸，点梦境路书，打开的就是海岸预览，不用再手动切一遍。
+
 ## Phase D: real data sources (2026-06-07)
 
 Replaced the Phase C procedural stubs with real implementations:

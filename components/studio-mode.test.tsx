@@ -91,6 +91,7 @@ describe("StudioMode demo roadbooks", () => {
     expect(screen.getByLabelText("最新素材包摘要").textContent).toContain("/studio recording QA");
     expect(screen.getAllByText("Dream coastal visual pack")[0]).toBeTruthy();
     expect(screen.getByRole("button", { name: "复制命令" })).toBeTruthy();
+    expect(screen.getByRole("link", { name: /梦境路书/ }).getAttribute("href")).toBe("/dream?demo=dali");
     const workflow = screen.getByLabelText("录屏素材流程");
     expect(workflow).toBeTruthy();
     expect(workflow.textContent).toContain("复制命令");
@@ -113,6 +114,7 @@ describe("StudioMode demo roadbooks", () => {
     expect(screen.getByText("三亚海岸 4 天梦境路书")).toBeTruthy();
     expect(screen.getByDisplayValue("三亚海岛")).toBeTruthy();
     expect(screen.getByDisplayValue("三亚")).toBeTruthy();
+    expect(screen.getByRole("link", { name: /梦境路书/ }).getAttribute("href")).toBe("/dream?demo=coast");
     expect(await screen.findByText("15 个素材包")).toBeTruthy();
   });
 

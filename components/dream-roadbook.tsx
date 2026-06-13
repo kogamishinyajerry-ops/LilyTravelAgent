@@ -82,6 +82,9 @@ const dreamBriefDefaults: TravelBrief = {
 };
 
 type DemoRoadbookId = "dali" | "coast";
+type DreamRoadbookProps = {
+  initialDemo?: string;
+};
 
 const coastalDreamBriefDefaults: TravelBrief = {
   ...defaultBrief,
@@ -122,6 +125,15 @@ const demoRoadbookOptions: Array<{
   },
 ];
 
+function normalizeDemoRoadbookId(value?: string): DemoRoadbookId {
+  return value === "coast" ? "coast" : "dali";
+}
+
+function getDemoRoadbookOption(value?: string) {
+  const demoId = normalizeDemoRoadbookId(value);
+  return demoRoadbookOptions.find((option) => option.id === demoId) || demoRoadbookOptions[0];
+}
+
 const generationModes: Array<{ id: GenerationMode; label: string; note: string }> = [
   { id: "speed", label: "快速", note: "补细节也快" },
   { id: "quality", label: "高质量", note: "M3 补完整版" },
@@ -157,7 +169,8 @@ async function fetchPreviewAssetHistory(cacheKey: string) {
   return result.items;
 }
 
-export function DreamRoadbook() {
+export function DreamRoadbook({ initialDemo = "dali" }: DreamRoadbookProps = {}) {
+  const initialDemoOption = getDemoRoadbookOption(initialDemo);
   const runIdRef = useRef(0);
   const recordingControllerRef = useRef<RecordingController | null>(null);
   const recordingConfigRef = useRef<RecordingConfig>(defaultRecordingConfig);
@@ -169,13 +182,13 @@ export function DreamRoadbook() {
   type RecordingStatus = "idle" | "recording" | "stopped" | "finished";
   const [recordingStatus, setRecordingStatus] = useState<RecordingStatus>("idle");
   const [countdownMs, setCountdownMs] = useState(recordingConfig.stepIntervalMs ?? 4000);
-  const [demoRoadbookId, setDemoRoadbookId] = useState<DemoRoadbookId | null>("dali");
-  const [roadbook, setRoadbook] = useState<Roadbook>(sampleRoadbook);
-  const [brief, setBrief] = useState<TravelBrief>(dreamBriefDefaults);
-  const [interestsInput, setInterestsInput] = useState(dreamBriefDefaults.interests.join("、"));
+  const [demoRoadbookId, setDemoRoadbookId] = useState<DemoRoadbookId | null>(initialDemoOption.id);
+  const [roadbook, setRoadbook] = useState<Roadbook>(initialDemoOption.roadbook);
+  const [brief, setBrief] = useState<TravelBrief>(initialDemoOption.brief);
+  const [interestsInput, setInterestsInput] = useState(initialDemoOption.brief.interests.join("、"));
   const [activeDay, setActiveDay] = useState(1);
-  const [mood, setMood] = useState<DreamMood>("cloud");
-  const [template, setTemplate] = useState<DreamTemplate>("monument");
+  const [mood, setMood] = useState<DreamMood>(initialDemoOption.mood);
+  const [template, setTemplate] = useState<DreamTemplate>(initialDemoOption.template);
   const [generationMode, setGenerationMode] = useState<GenerationMode>("speed");
   const [lastModel, setLastModel] = useState("");
   const [points, setPoints] = useState<GeocodePoint[]>([]);
