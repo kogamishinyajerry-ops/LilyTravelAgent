@@ -148,6 +148,30 @@ describe("buildCinematicCameraPose", () => {
     expect(pose.camera[0]).toBeLessThan(0.55);
     expect(pose.lookAt[0]).toBeLessThan(0);
   });
+
+  it("applies the wide-water Director Lens without changing the original auto pose contract", () => {
+    const erhai = getCinematicDayFocus(DALI_CINEMATIC_SCENE_PRESET, 2);
+    const autoPose = buildCinematicCameraPose(erhai);
+    const lensPose = buildCinematicCameraPose(erhai, "wide-water");
+
+    expect(autoPose.fov).toBe(39);
+    expect(lensPose.fov).toBe(42);
+    expect(lensPose.camera[2]).toBeGreaterThan(autoPose.camera[2]);
+    expect(lensPose.lookAt[2]).toBeGreaterThan(autoPose.lookAt[2]);
+    expect(lensPose.parallaxWeight).toBeGreaterThan(autoPose.parallaxWeight);
+  });
+
+  it("applies low skyline and isometric Director Lens camera intents", () => {
+    const harbor = getCinematicDayFocus(COASTAL_CINEMATIC_SCENE_PRESET, 3);
+    const autoPose = buildCinematicCameraPose(harbor);
+    const lowSkyline = buildCinematicCameraPose(harbor, "low-skyline");
+    const isometric = buildCinematicCameraPose(harbor, "isometric-atlas");
+
+    expect(lowSkyline.camera[1]).toBeLessThan(autoPose.camera[1]);
+    expect(lowSkyline.lookAt[1]).toBeGreaterThan(autoPose.lookAt[1]);
+    expect(isometric.camera[1]).toBeGreaterThan(autoPose.camera[1]);
+    expect(isometric.fov).toBeLessThan(autoPose.fov);
+  });
 });
 
 describe("buildCinematicRouteRail", () => {

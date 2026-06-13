@@ -1,4 +1,5 @@
 import type { Roadbook } from "@/lib/roadbook-types";
+import { resolveDirectorLens, type DirectorLensId } from "@/lib/director-lens";
 
 export type CinematicSceneFocus = {
   day: number;
@@ -255,25 +256,54 @@ export function getCinematicDayFocus(
   );
 }
 
-export function buildCinematicCameraPose(focus?: CinematicSceneFocus | null): CinematicCameraPose {
+export function buildCinematicCameraPose(
+  focus?: CinematicSceneFocus | null,
+  directorLensId?: DirectorLensId | null,
+): CinematicCameraPose {
+  const lens = resolveDirectorLens(directorLensId);
   if (!focus) {
-    return {
+    return applyDirectorLensToPose({
       fov: 38,
       camera: [0.55, 5.2, 12.15],
       lookAt: [0, 1.08, 0],
       parallaxWeight: 1,
-    };
+    }, lens.id);
   }
 
   const xBias = clamp(focus.x * 0.09, -0.46, 0.46);
   const zBias = clamp((focus.z - 1.8) * 0.2, -0.18, 0.26);
   const focusDepth = focus.anchorKind === "erhai" ? 0.16 : focus.anchorKind === "village" ? 0.08 : 0;
 
-  return {
+  return applyDirectorLensToPose({
     fov: focus.anchorKind === "erhai" ? 39 : focus.anchorKind === "village" ? 37 : 38,
     camera: [0.55 + xBias, 5.15 + focusDepth, 12.08 - zBias],
     lookAt: [clamp(focus.x * 0.14, -0.62, 0.62), 1.08, clamp(focus.z * 0.16, 0.16, 0.54)],
     parallaxWeight: focus.anchorKind === "erhai" ? 1.24 : focus.anchorKind === "village" ? 1.12 : 1,
+  }, lens.id);
+}
+
+function applyDirectorLensToPose(
+  pose: CinematicCameraPose,
+  directorLensId: DirectorLensId,
+): CinematicCameraPose {
+  const lens = resolveDirectorLens(directorLensId);
+  if (lens.id === "auto") {
+    return pose;
+  }
+
+  return {
+    fov: clamp(pose.fov + lens.fovDelta, 30, 46),
+    camera: [
+      roundCameraValue(pose.camera[0] + lens.cameraOffset[0]),
+      roundCameraValue(pose.camera[1] + lens.cameraOffset[1]),
+      roundCameraValue(pose.camera[2] + lens.cameraOffset[2]),
+    ],
+    lookAt: [
+      roundCameraValue(pose.lookAt[0] + lens.lookAtOffset[0]),
+      roundCameraValue(pose.lookAt[1] + lens.lookAtOffset[1]),
+      roundCameraValue(pose.lookAt[2] + lens.lookAtOffset[2]),
+    ],
+    parallaxWeight: roundCameraValue(pose.parallaxWeight * lens.parallaxScale),
   };
 }
 
