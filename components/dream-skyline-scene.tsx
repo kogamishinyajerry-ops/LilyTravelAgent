@@ -329,6 +329,11 @@ export function DreamSkylineScene({
         className="dream-skyline-canvas"
         aria-label={`${cinematicScene?.preset.destination || profile.destination} 3D 天际线预览`}
       />
+      <div className="dream-skyline-cinematic-matte" aria-hidden="true">
+        <span className="dream-skyline-film-horizon" />
+        <span className="dream-skyline-focus-glow" />
+        <span className="dream-skyline-foreground-depth" />
+      </div>
       <div className="dream-skyline-glass" />
       <div className="dream-skyline-caption">
         <span>Terrain Preview</span>

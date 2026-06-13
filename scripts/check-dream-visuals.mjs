@@ -114,6 +114,7 @@ async function main() {
   await page.goto(targetUrl, { waitUntil: "networkidle" });
   await page.waitForSelector("canvas", { timeout: 30_000 });
   await page.waitForSelector(".dream-scene-inspector", { timeout: 30_000 });
+  await page.waitForSelector(".dream-skyline-cinematic-matte", { timeout: 30_000 });
 
   if (demoRoadbook === "coast") {
     await page.getByRole("button", { name: /海岸/ }).first().click();
