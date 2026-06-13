@@ -234,3 +234,14 @@ Files shown: lib/cinematic-scene-preset.ts, lib/cinematic-scene-preset.test.ts, 
 Command/result: npm test -- lib/cinematic-scene-preset.test.ts && npm run lint && npm run build && Playwright desktop/mobile canvas pixel checks
 Voiceover note: "上一轮我解决画质基线，这一轮开始解决像不像这个目的地。大理不再只是通用几何体了：我把苍山、洱海、白族院落和 D1-D4 当天焦点做成一个可测试的 scene preset。以后每个高频目的地都可以按这个方式扩展成自己的视觉资产。"
 Usable for: "generic renderer to destination asset layer" clip, Dali-specific product demo, Vibe Coding data-first visual system lesson, 10-goal continuation round 1
+
+## Phase P: v0.8.5 — Day-Director Camera
+
+Date: 2026-06-13
+Clip title: Phase P: v0.8.5 — Day-Director Camera
+What changed: Added a small cinematic camera-direction layer on top of the Dali scene preset. `lib/cinematic-scene-preset.ts` now exports `buildCinematicCameraPose()`, which converts the active D1-D4 focus anchor into camera position, look-at target, FOV, and parallax weight. `components/dream-skyline-scene.tsx` initializes the Three.js camera from that pose and adds a subtle animated look-at drift, so day switching changes framing in addition to labels and geometry focus. `lib/cinematic-scene-preset.test.ts` now covers default camera pose, Erhai's wider water-day shot, and Xizhou's left-biased courtyard framing.
+Why this matters: v0.8.4 made Dali visible as a specific place; v0.8.5 makes the roadbook feel directed. This is the first "shot grammar" layer: the Agent can eventually choose wide landscape, village close-up, old-town establishing shot, or skyline pan based on route content. It is intentionally pure-data and testable so future presets do not hardcode camera math directly inside the component.
+Files shown: lib/cinematic-scene-preset.ts, lib/cinematic-scene-preset.test.ts, components/dream-skyline-scene.tsx, README.md, docs/design/real-scenic-preview-roadmap.md, docs/recording/dev-log.md
+Command/result: npm test -- lib/cinematic-scene-preset.test.ts && npm run lint && npm run build && Playwright desktop/mobile canvas pixel checks
+Voiceover note: "现在我给大理 scene preset 加了一个导演层：D1 古城、D2 洱海、D3 喜洲，不只是按钮和文案变，camera position、lookAt、FOV 都会轻微变。动态路书不能只是地图，它要像一个目的地预告片。"
+Usable for: "day switching as shot direction" clip, D1-D4 camera comparison, Vibe Coding pure-helper-first lesson, 10-goal continuation round 2

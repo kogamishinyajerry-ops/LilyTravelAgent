@@ -73,6 +73,23 @@ The first high-quality rendering pass improved lighting and materials, but the s
 
 > 上一轮我把 Three.js 的画质基线拉起来；这一轮开始解决“像不像这个地方”。我先给大理做一个专属 scene preset：苍山在后面，洱海有岸线，古城和喜洲有白族院落体块，D1-D4 会切换当天焦点。这样每个目的地未来都可以有自己的视觉资产，而不是所有城市共用一套方块。
 
+## Phase P: Day-Director Camera (2026-06-13)
+
+### What changed
+
+- Added `buildCinematicCameraPose()` to `lib/cinematic-scene-preset.ts`.
+- The helper turns the active Dali focus anchor into a camera position, `lookAt`, FOV, and parallax weight.
+- `components/dream-skyline-scene.tsx` now initializes the Three.js camera from that pose and applies a subtle animated look-at drift, so D1-D4 change framing instead of only changing labels.
+- `lib/cinematic-scene-preset.test.ts` verifies the default pose, the wider Erhai water-day lens, and the left-biased Xizhou village framing.
+
+### Why this matters
+
+Static 3D scenes feel like thumbnails. A roadbook needs direction: every day should imply a different shot. This phase keeps the implementation small, but introduces a real director layer that can later support stronger shot grammar: wide establishing shots, village close-ups, sunset water shots, and city skyline pans.
+
+### Recording angle
+
+> 大理有了视觉资产之后，我继续加“导演层”：D1 古城、D2 洱海、D3 喜洲，不只是按钮文案变，镜头也会跟着当天焦点轻微换构图。这样路书开始像一个动态预告片，而不是静态地图。
+
 ## Phase D: real data sources (2026-06-07)
 
 Replaced the Phase C procedural stubs with real implementations:

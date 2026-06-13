@@ -38,6 +38,7 @@ import type { LandmarkPreset } from "@/lib/landmark-preset";
 import { getFallbackPreset, getFallbackPresetForTemplate } from "@/lib/landmark-preset-fallbacks";
 import { renderLandmarkPreset } from "@/lib/landmark-renderer";
 import {
+  buildCinematicCameraPose,
   resolveCinematicScenePreset,
   type ResolvedCinematicScenePreset,
 } from "@/lib/cinematic-scene-preset";
@@ -152,6 +153,10 @@ export function DreamSkylineScene({
     () => resolveCinematicScenePreset(roadbook, activeDay),
     [roadbook, activeDay],
   );
+  const cameraPose = useMemo(
+    () => buildCinematicCameraPose(cinematicScene?.focus),
+    [cinematicScene],
+  );
   const palette = palettes[mood];
   const assetSource = previewAsset?.imageDataUrl || previewAsset?.imageUrl;
 
@@ -168,9 +173,9 @@ export function DreamSkylineScene({
     const scene = new Scene();
     scene.fog = new Fog(new Color(palette.fog), 12, 26);
 
-    const camera = new PerspectiveCamera(38, 1, 0.1, 90);
-    camera.position.set(0.55, 5.2, 12.15);
-    camera.lookAt(0, 1.08, 0);
+    const camera = new PerspectiveCamera(cameraPose.fov, 1, 0.1, 90);
+    camera.position.set(...cameraPose.camera);
+    camera.lookAt(...cameraPose.lookAt);
 
     const renderer = new WebGLRenderer({
       canvas,
@@ -253,8 +258,13 @@ export function DreamSkylineScene({
     const start = performance.now();
     const animate = (now: number) => {
       const elapsed = (now - start) / 1000;
-      root.rotation.y = Math.sin(elapsed * 0.22) * 0.035;
+      root.rotation.y = Math.sin(elapsed * 0.22) * 0.035 * cameraPose.parallaxWeight;
       root.position.y = Math.sin(elapsed * 0.55) * 0.045;
+      camera.lookAt(
+        cameraPose.lookAt[0] + Math.sin(elapsed * 0.18) * 0.055 * cameraPose.parallaxWeight,
+        cameraPose.lookAt[1],
+        cameraPose.lookAt[2],
+      );
       if (water) {
         animateWater(water, elapsed);
       }
@@ -275,7 +285,7 @@ export function DreamSkylineScene({
       });
       disposables.forEach((item) => item.dispose());
     };
-  }, [activeDay, assetSource, cinematicScene, design.routeStops.length, mood, palette, profile, template, landmarkPreset]);
+  }, [activeDay, assetSource, cameraPose, cinematicScene, design.routeStops.length, mood, palette, profile, template, landmarkPreset]);
 
   return (
     <div ref={wrapRef} className={`dream-skyline-scene dream-skyline-${template}${

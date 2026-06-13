@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { sampleRoadbook } from "./sample-roadbook";
 import type { Roadbook } from "./roadbook-types";
 import {
+  buildCinematicCameraPose,
   DALI_CINEMATIC_SCENE_PRESET,
   getCinematicDayFocus,
   resolveCinematicScenePreset,
@@ -65,5 +66,34 @@ describe("getCinematicDayFocus", () => {
       expect(focus.z).toBeGreaterThanOrEqual(0.8);
       expect(focus.z).toBeLessThanOrEqual(3.4);
     }
+  });
+});
+
+describe("buildCinematicCameraPose", () => {
+  it("returns the stable default pose when no cinematic focus is available", () => {
+    expect(buildCinematicCameraPose()).toEqual({
+      fov: 38,
+      camera: [0.55, 5.2, 12.15],
+      lookAt: [0, 1.08, 0],
+      parallaxWeight: 1,
+    });
+  });
+
+  it("opens the lens slightly for the Erhai water day", () => {
+    const erhai = getCinematicDayFocus(DALI_CINEMATIC_SCENE_PRESET, 2);
+    const pose = buildCinematicCameraPose(erhai);
+
+    expect(pose.fov).toBe(39);
+    expect(pose.camera[0]).toBeGreaterThan(0.55);
+    expect(pose.parallaxWeight).toBeGreaterThan(1);
+  });
+
+  it("frames the Xizhou village day toward the left-side courtyard cluster", () => {
+    const village = getCinematicDayFocus(DALI_CINEMATIC_SCENE_PRESET, 3);
+    const pose = buildCinematicCameraPose(village);
+
+    expect(pose.fov).toBe(37);
+    expect(pose.camera[0]).toBeLessThan(0.55);
+    expect(pose.lookAt[0]).toBeLessThan(0);
   });
 });

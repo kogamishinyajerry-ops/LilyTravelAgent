@@ -37,6 +37,13 @@ export type ResolvedCinematicScenePreset = {
   focus: CinematicSceneFocus;
 };
 
+export type CinematicCameraPose = {
+  fov: number;
+  camera: [number, number, number];
+  lookAt: [number, number, number];
+  parallaxWeight: number;
+};
+
 export const DALI_CINEMATIC_SCENE_PRESET: CinematicScenePreset = {
   id: "dali-cangshan-erhai",
   destination: "云南大理",
@@ -89,6 +96,28 @@ export function getCinematicDayFocus(
   );
 }
 
+export function buildCinematicCameraPose(focus?: CinematicSceneFocus | null): CinematicCameraPose {
+  if (!focus) {
+    return {
+      fov: 38,
+      camera: [0.55, 5.2, 12.15],
+      lookAt: [0, 1.08, 0],
+      parallaxWeight: 1,
+    };
+  }
+
+  const xBias = clamp(focus.x * 0.09, -0.46, 0.46);
+  const zBias = clamp((focus.z - 1.8) * 0.2, -0.18, 0.26);
+  const focusDepth = focus.anchorKind === "erhai" ? 0.16 : focus.anchorKind === "village" ? 0.08 : 0;
+
+  return {
+    fov: focus.anchorKind === "erhai" ? 39 : focus.anchorKind === "village" ? 37 : 38,
+    camera: [0.55 + xBias, 5.15 + focusDepth, 12.08 - zBias],
+    lookAt: [clamp(focus.x * 0.14, -0.62, 0.62), 1.08, clamp(focus.z * 0.16, 0.16, 0.54)],
+    parallaxWeight: focus.anchorKind === "erhai" ? 1.24 : focus.anchorKind === "village" ? 1.12 : 1,
+  };
+}
+
 function matchesPreset(preset: CinematicScenePreset, searchText: string) {
   const matchCount = preset.matchers.reduce((count, matcher) => {
     return searchText.includes(matcher) ? count + 1 : count;
@@ -99,6 +128,10 @@ function matchesPreset(preset: CinematicScenePreset, searchText: string) {
   }
 
   return matchCount >= 2;
+}
+
+function clamp(value: number, min: number, max: number) {
+  return Math.min(Math.max(value, min), max);
 }
 
 function buildRoadbookSearchText(roadbook: Roadbook) {
