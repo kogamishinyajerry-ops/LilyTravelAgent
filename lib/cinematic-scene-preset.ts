@@ -147,6 +147,14 @@ export type CinematicSceneInspector = {
   cameraX: number;
   parallaxWeight: number;
   composition: CinematicCompositionProfile;
+  directorLens: CinematicDirectorLensInspector;
+};
+
+export type CinematicDirectorLensInspector = {
+  id: DirectorLensId;
+  label: string;
+  cameraCue: string;
+  proofLabel: string;
 };
 
 export type CinematicCompositionProfile = {
@@ -805,10 +813,16 @@ export function buildCinematicCompositionProfile(
   };
 }
 
-export function buildCinematicSceneInspector(roadbook: Roadbook, activeDay: number): CinematicSceneInspector {
+export function buildCinematicSceneInspector(
+  roadbook: Roadbook,
+  activeDay: number,
+  directorLensId?: DirectorLensId | null,
+): CinematicSceneInspector {
   const resolved = resolveCinematicScenePreset(roadbook, activeDay);
-  const pose = buildCinematicCameraPose(resolved?.focus);
+  const lens = resolveDirectorLens(directorLensId);
+  const pose = buildCinematicCameraPose(resolved?.focus, lens.id);
   const composition = buildCinematicCompositionProfile(resolved?.focus);
+  const directorLens = buildDirectorLensInspector(lens.id);
 
   if (!resolved) {
     return {
@@ -824,6 +838,7 @@ export function buildCinematicSceneInspector(roadbook: Roadbook, activeDay: numb
       cameraX: roundCameraValue(pose.camera[0]),
       parallaxWeight: pose.parallaxWeight,
       composition,
+      directorLens,
     };
   }
 
@@ -847,6 +862,17 @@ export function buildCinematicSceneInspector(roadbook: Roadbook, activeDay: numb
     cameraX: roundCameraValue(pose.camera[0]),
     parallaxWeight: pose.parallaxWeight,
     composition,
+    directorLens,
+  };
+}
+
+function buildDirectorLensInspector(directorLensId: DirectorLensId): CinematicDirectorLensInspector {
+  const lens = resolveDirectorLens(directorLensId);
+  return {
+    id: lens.id,
+    label: lens.label,
+    cameraCue: lens.cameraCue,
+    proofLabel: lens.proofLabel,
   };
 }
 

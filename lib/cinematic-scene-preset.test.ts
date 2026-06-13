@@ -218,6 +218,11 @@ describe("buildCinematicSceneInspector", () => {
       cameraFov: 39,
     });
     expect(inspector.parallaxWeight).toBeGreaterThan(1);
+    expect(inspector.directorLens).toMatchObject({
+      id: "auto",
+      label: "Auto Director",
+      proofLabel: "auto day lens",
+    });
   });
 
   it("advances route progress through the selected Dali day", () => {
@@ -269,6 +274,18 @@ describe("buildCinematicSceneInspector", () => {
       id: "harbor-skyline-frame",
       proofLabel: "D3 harbor skyline",
     });
+  });
+
+  it("summarizes a selected Director Lens for recording", () => {
+    const inspector = buildCinematicSceneInspector(coastalRoadbook, 3, "low-skyline");
+
+    expect(inspector.directorLens).toMatchObject({
+      id: "low-skyline",
+      label: "Low Skyline",
+      proofLabel: "low-skyline lens",
+    });
+    expect(inspector.cameraFov).toBe(39);
+    expect(inspector.parallaxWeight).toBeGreaterThan(1);
   });
 });
 
