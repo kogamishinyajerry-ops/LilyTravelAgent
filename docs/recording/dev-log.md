@@ -399,3 +399,14 @@ Files shown: scripts/check-dream-visuals.mjs, README.md, docs/design/real-scenic
 Command/result: npm run check:dream-visuals && DREAM_DEMO=coast npm run check:dream-visuals && npm run lint && npm test && npm run build
 Voiceover note: "我把自动 QA 输出直接变成素材包：截图、HTML gallery、summary.json，再加一个 clip-notes.md。每次打磨产品，系统都会顺手整理这条视频该讲什么。"
 Usable for: recording-kit workflow clip, QA-to-content pipeline lesson, Vibe Coding evidence archive workflow, continued goal run round 17
+
+## Phase AE: v0.8.20 — Studio Visual QA Pack
+
+Date: 2026-06-13
+Clip title: Phase AE: v0.8.20 — Studio Visual QA Pack
+What changed: Added `scripts/check-studio-visuals.mjs` and `npm run check:studio-visuals`. The script opens `/studio`, captures Dali and coastal local demo states at 1280x720, verifies destination input, roadbook preview title, active demo switch, and top status text, then writes `summary.json`, `index.html`, and `clip-notes.md` under `recordings/studio-checks/`.
+Why this matters: `/studio` is the content-production workbench. This gives it the same repeatable evidence loop as `/dream`: screenshots, gallery, structured state, and recording notes.
+Files shown: scripts/check-studio-visuals.mjs, package.json, README.md, docs/design/real-scenic-preview-roadmap.md, docs/recording/dev-log.md
+Command/result: npm run check:studio-visuals && npm run lint && npm test && npm run build
+Voiceover note: "我现在不只检查用户看到的 `/dream`，也检查我录教程用的 `/studio`。脚本会自动截大理和海岸两张 16:9 画面，并生成 clip-notes.md。"
+Usable for: studio-QA workflow clip, recording workbench validation, Vibe Coding content-system lesson, continued goal run round 18

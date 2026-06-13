@@ -27,6 +27,7 @@
 - `/dream` Scene Inspector 会显示 D1-D4 cinematic director timeline，直接展示每一天对应的视觉 cue 和当前高亮镜头。
 - `npm run check:dream-visuals` 会把 Director Timeline 纳入自动检查和 HTML gallery，默认大理和 `DREAM_DEMO=coast` 都可验证。
 - 每次 `/dream` 视觉 QA 会额外生成 `clip-notes.md`，把截图、导演 cue、微动证据和短旁白整理成录屏素材提纲。
+- `npm run check:studio-visuals` 会自动截取 `/studio` 的大理/海岸 16:9 演示画面，并输出 studio 录屏 notes。
 - 这版是“预览级建模”，不是测绘级真实地形或真实建筑模型。
 
 ## Why This Step Exists
@@ -334,6 +335,23 @@ The project goal is not only to build a roadbook product; it is also to produce 
 ### Recording angle
 
 > 我把自动 QA 输出直接变成素材包：截图、HTML gallery、summary.json，再加一个 clip-notes.md。这样每次我打磨产品，系统都会顺手帮我整理这条视频该讲什么。
+
+## Phase AE: Studio Visual QA Pack (2026-06-13)
+
+### What changed
+
+- Added `scripts/check-studio-visuals.mjs`.
+- Added `npm run check:studio-visuals`.
+- The script opens `/studio`, captures Dali and coastal demo states at 1280x720, verifies input, preview title, active switch, and top status text.
+- It writes `summary.json`, `index.html`, and `clip-notes.md` under `recordings/studio-checks/`.
+
+### Why this matters
+
+The `/studio` page is the recording workbench. It needs the same repeatable evidence loop as `/dream`: screenshots, a review gallery, and notes. This lets the user review whether the 16:9 creator layout is still usable after changes, and it produces ready-to-edit content references.
+
+### Recording angle
+
+> 我现在不只检查用户看到的 `/dream`，也检查我自己录教程用的 `/studio`。脚本会自动截大理和海岸两张 16:9 画面，并生成 clip-notes.md，方便我复盘和剪视频。
 
 ## Phase D: real data sources (2026-06-07)
 
