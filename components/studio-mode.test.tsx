@@ -84,6 +84,7 @@ describe("StudioMode demo roadbooks", () => {
     expect(screen.getByText("产品画面")).toBeTruthy();
     expect(screen.getAllByText("Dream coastal visual pack")[0]).toBeTruthy();
     expect(screen.getByRole("link", { name: /打开总索引/ }).getAttribute("href")).toBe("/api/recording-assets/index");
+    expect(screen.queryByLabelText("录屏讲解轨道")).toBeNull();
   });
 
   it("switches the 16:9 recording view to the coastal demo roadbook", async () => {
@@ -143,5 +144,17 @@ describe("StudioMode demo roadbooks", () => {
     expect(screen.getByText("npm run check:recording-suite")).toBeTruthy();
     expect(screen.getByRole("button", { name: "刷新" })).toBeTruthy();
     expect(screen.queryByRole("link", { name: /打开总索引/ })).toBeNull();
+  });
+
+  it("toggles a compact recording script track for walkthrough capture", async () => {
+    render(<StudioMode />);
+
+    fireEvent.click(screen.getByRole("button", { name: /脚本模式/ }));
+
+    expect(await screen.findByLabelText("录屏讲解轨道")).toBeTruthy();
+    expect(screen.getByText("输入需求")).toBeTruthy();
+    expect(screen.getByText("生成路书")).toBeTruthy();
+    expect(screen.getByText("沉淀素材")).toBeTruthy();
+    expect(screen.getByRole("button", { name: /脚本模式/ }).getAttribute("aria-pressed")).toBe("true");
   });
 });

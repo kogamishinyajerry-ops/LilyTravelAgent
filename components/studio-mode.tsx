@@ -8,6 +8,7 @@ import {
   CheckCircle2,
   Code2,
   ExternalLink,
+  ListChecks,
   Loader2,
   Mic2,
   MonitorPlay,
@@ -100,6 +101,23 @@ const studioDemoRoadbooks: Array<{
 ];
 
 const localDemoModelLabel = "Local Demo";
+const studioScriptSteps = [
+  {
+    step: "01",
+    title: "输入需求",
+    cue: "目的地、天数、风格和成品要求先结构化。",
+  },
+  {
+    step: "02",
+    title: "生成路书",
+    cue: "MiniMax 输出路书，地图和梦境画面接管表达。",
+  },
+  {
+    step: "03",
+    title: "沉淀素材",
+    cue: "Recording suite 生成截图、notes 和本地索引。",
+  },
+];
 
 function buildPlaces(roadbook: Roadbook): GeocodePlace[] {
   return roadbook.days.flatMap((day) =>
@@ -146,6 +164,7 @@ export function StudioMode() {
   const [recordingAssets, setRecordingAssets] = useState<RecordingAssetsState>({ status: "loading" });
   const [recordingAssetsReadAt, setRecordingAssetsReadAt] = useState("");
   const [recordingAssetsRefreshing, setRecordingAssetsRefreshing] = useState(false);
+  const [scriptMode, setScriptMode] = useState(false);
 
   const locatedCount = useMemo(() => points.filter((point) => point.status === "ok").length, [points]);
   const topStops = roadbook.days.flatMap((day) => day.stops.slice(0, 2)).slice(0, 8);
@@ -272,6 +291,15 @@ export function StudioMode() {
           <div className="studio-top-actions">
             <span>{demoRoadbookId ? `${roadbook.destination} 本地演示` : roadbook.destination}</span>
             <span>{studioStageText(stage)}</span>
+            <button
+              type="button"
+              className={`studio-mode-toggle ${scriptMode ? "active" : ""}`}
+              aria-pressed={scriptMode}
+              onClick={() => setScriptMode((current) => !current)}
+            >
+              <ListChecks size={16} />
+              脚本模式
+            </button>
             <Link href="/" className="ghost-link">
               <ArrowLeft size={16} />
               返回工具页
@@ -406,6 +434,18 @@ export function StudioMode() {
               <p className="eyebrow">Creator Track</p>
               <h2>边开发边讲清楚</h2>
             </div>
+
+            {scriptMode ? (
+              <div className="studio-script-track" aria-label="录屏讲解轨道">
+                {studioScriptSteps.map((item) => (
+                  <div key={item.step}>
+                    <span>{item.step}</span>
+                    <strong>{item.title}</strong>
+                    <p>{item.cue}</p>
+                  </div>
+                ))}
+              </div>
+            ) : null}
 
             <div className="studio-recording-assets">
               <div className="section-kicker">

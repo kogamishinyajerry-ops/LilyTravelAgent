@@ -535,6 +535,22 @@ The user can open the full recording archive and still see the same high-level c
 
 > 我把总索引页也补上了 Dream / Studio 统计。现在从 Studio 点进去，完整索引和小面板表达的是同一套素材结构。
 
+## Phase AQ: Studio Recording Script Mode (2026-06-13)
+
+### What changed
+
+- Added a `脚本模式` toggle to `/studio`.
+- When enabled, Creator Track shows a compact three-step walkthrough: input, roadbook generation, and asset archival.
+- Tests cover the hidden-by-default state and the toggled script track.
+
+### Why this matters
+
+The recording surface now has an explicit presenter mode. The user can switch from product operation into a cleaner explanation track without leaving the 16:9 Studio page.
+
+### Recording angle
+
+> 我给 Studio 加了脚本模式。录屏时点一下，就能出现“输入需求、生成路书、沉淀素材”三步讲解轨道，帮助我稳定输出教程结构。
+
 ## Phase D: real data sources (2026-06-07)
 
 Replaced the Phase C procedural stubs with real implementations:

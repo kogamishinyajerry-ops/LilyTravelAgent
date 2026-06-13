@@ -542,3 +542,14 @@ Files shown: docs/recording/recording-asset-pipeline.md, README.md, docs/recordi
 Command/result: npm run lint && npm test && npm run build
 Voiceover note: "我把这套录屏素材管线单独写成文档：先跑 recording suite，再到 Studio 点刷新，再打开总索引。以后每一轮产品打磨都可以这样沉淀素材。"
 Usable for: workflow recap clip, creator operations guide, Vibe Coding documentation habit, continued goal run round 30
+
+## Phase AR: v0.8.33 — Studio Recording Script Mode
+
+Date: 2026-06-13
+Clip title: Phase AR: v0.8.33 — Studio Recording Script Mode
+What changed: Added a `脚本模式` toggle to `/studio`. When enabled, Creator Track shows a compact three-step walkthrough: input requirements, generate the roadbook, and archive recording assets.
+Why this matters: Studio now has a presenter mode for 16:9 capture. It keeps the creator focused on a repeatable explanation structure while preserving the existing input, roadbook, and asset panels.
+Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, app/globals.css, README.md, docs/design/real-scenic-preview-roadmap.md, docs/recording/dev-log.md
+Command/result: npm test -- components/studio-mode.test.tsx && npm run lint && npm test && npm run build
+Voiceover note: "我给 Studio 加了脚本模式。录屏时点一下，右侧会出现输入、路书、素材三步讲解轨道，帮我把 Vibe Coding 的过程讲得更稳定。"
+Usable for: studio-presenter-mode clip, tutorial-structure workflow, Vibe Coding walkthrough production, continued goal run round 31
