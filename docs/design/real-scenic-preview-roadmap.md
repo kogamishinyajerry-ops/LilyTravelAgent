@@ -28,6 +28,7 @@
 - `npm run check:dream-visuals` 会把 Director Timeline 纳入自动检查和 HTML gallery，默认大理和 `DREAM_DEMO=coast` 都可验证。
 - 每次 `/dream` 视觉 QA 会额外生成 `clip-notes.md`，把截图、导演 cue、微动证据和短旁白整理成录屏素材提纲。
 - `npm run check:studio-visuals` 会自动截取 `/studio` 的大理/海岸 16:9 演示画面，并输出 studio 录屏 notes。
+- `npm run index:recording-assets` 会把 dream/studio 的本地 QA 输出汇总成 `recordings/index.html` 和 `recordings/clip-index.md`。
 - 这版是“预览级建模”，不是测绘级真实地形或真实建筑模型。
 
 ## Why This Step Exists
@@ -352,6 +353,23 @@ The `/studio` page is the recording workbench. It needs the same repeatable evid
 ### Recording angle
 
 > 我现在不只检查用户看到的 `/dream`，也检查我自己录教程用的 `/studio`。脚本会自动截大理和海岸两张 16:9 画面，并生成 clip-notes.md，方便我复盘和剪视频。
+
+## Phase AF: Recording Asset Index (2026-06-13)
+
+### What changed
+
+- Added `scripts/index-recording-assets.mjs`.
+- Added `npm run index:recording-assets`.
+- The command scans `recordings/visual-checks` and `recordings/studio-checks` for QA packs with `summary.json`.
+- It writes `recordings/index.html` and `recordings/clip-index.md`, linking each pack's gallery, summary, and clip notes when available.
+
+### Why this matters
+
+Once the project starts generating QA packs every iteration, the user needs a way to find the latest useful material without browsing many timestamped folders. This index turns the local recordings directory into a lightweight content archive.
+
+### Recording angle
+
+> 我现在每次 QA 都会产出素材包，所以又加了一个总索引命令。跑完以后，本地 recordings 目录会有一个 index.html 和 clip-index.md，快速找到最近的 dream/studio 图集和旁白 notes。
 
 ## Phase D: real data sources (2026-06-07)
 

@@ -410,3 +410,14 @@ Files shown: scripts/check-studio-visuals.mjs, package.json, README.md, docs/des
 Command/result: npm run check:studio-visuals && npm run lint && npm test && npm run build
 Voiceover note: "我现在不只检查用户看到的 `/dream`，也检查我录教程用的 `/studio`。脚本会自动截大理和海岸两张 16:9 画面，并生成 clip-notes.md。"
 Usable for: studio-QA workflow clip, recording workbench validation, Vibe Coding content-system lesson, continued goal run round 18
+
+## Phase AF: v0.8.21 — Recording Asset Index
+
+Date: 2026-06-13
+Clip title: Phase AF: v0.8.21 — Recording Asset Index
+What changed: Added `scripts/index-recording-assets.mjs` and `npm run index:recording-assets`. The command scans local `recordings/visual-checks` and `recordings/studio-checks` QA packs, then writes `recordings/index.html` and `recordings/clip-index.md` with links to each pack's gallery, summary, and clip notes when available.
+Why this matters: The QA system now creates many useful timestamped folders. This index turns them into a lightweight local content archive so recent dream/studio evidence and recording notes are easy to find.
+Files shown: scripts/index-recording-assets.mjs, package.json, README.md, docs/design/real-scenic-preview-roadmap.md, docs/recording/dev-log.md
+Command/result: npm run index:recording-assets && npm run lint && npm test && npm run build
+Voiceover note: "我现在每次 QA 都会产出素材包，所以又加了一个总索引命令。跑完以后，本地 recordings 目录会有一个 index.html 和 clip-index.md，快速找到最近的 dream/studio 图集和旁白 notes。"
+Usable for: content archive workflow clip, QA-pack indexing lesson, Vibe Coding recording-material management, continued goal run round 19
