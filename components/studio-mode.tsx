@@ -522,6 +522,7 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
               <span>Demo Bridge</span>
               <strong>{roadbook.destination} → Dream</strong>
               <p>{demoRoadbookId ? "当前本地演示会带入同款梦境预览。" : "真实生成后可进入梦境预览继续录制。"}</p>
+              <small className="studio-demo-bridge-badge">Recording suite 已覆盖</small>
               <Link href={dreamHandoffHref}>
                 打开同款梦境预览
                 <ExternalLink size={13} />

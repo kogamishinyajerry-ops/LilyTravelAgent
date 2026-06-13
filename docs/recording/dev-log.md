@@ -729,3 +729,14 @@ Files shown: scripts/check-recording-suite.mjs, README.md, docs/recording/dev-lo
 Command/result: npm run check:recording-suite && npm run lint && npm test && npm run build
 Voiceover note: "我把双向桥接检查接进总 recording suite。以后录屏前跑一条命令，就能同时检查 Dream、Studio、页面跳转和素材索引。"
 Usable for: recording-suite clip, automated QA workflow, Vibe Coding verification rail, continued goal run round 47
+
+## Phase BI: v0.8.50 — Studio Bridge Suite Badge
+
+Date: 2026-06-13
+Clip title: Phase BI: v0.8.50 — Studio Bridge Suite Badge
+What changed: Added a `Recording suite 已覆盖` badge to the `/studio` Demo Bridge card and covered it in the Studio component test.
+Why this matters: The recording workbench now shows the QA rail directly in the shot. The creator can explain that this bridge is not just a link; it is part of the automated recording-suite workflow.
+Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, app/globals.css, README.md, docs/recording/dev-log.md
+Command/result: npm test -- components/studio-mode.test.tsx && npm run lint && npm test && npm run build
+Voiceover note: "我把总套件覆盖状态做进 Studio 的 Demo Bridge。画面里直接能看到，这条跳转已经纳入自动验收。"
+Usable for: Studio bridge badge clip, QA visibility, Vibe Coding product polish, continued goal run round 48

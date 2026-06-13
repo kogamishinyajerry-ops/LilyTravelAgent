@@ -1403,6 +1403,18 @@ textarea {
   line-height: 1.35;
 }
 
+.studio-demo-bridge-badge {
+  justify-self: start;
+  border: 1px solid rgba(79, 143, 122, 0.2);
+  border-radius: 999px;
+  padding: 4px 8px;
+  color: var(--moss);
+  font-size: 0.68rem;
+  font-weight: 950;
+  letter-spacing: 0;
+  background: rgba(255, 255, 255, 0.74);
+}
+
 .studio-demo-bridge a {
   display: inline-flex;
   align-items: center;

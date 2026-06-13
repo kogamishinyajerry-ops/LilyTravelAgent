@@ -93,6 +93,7 @@ describe("StudioMode demo roadbooks", () => {
     expect(screen.getByRole("button", { name: "复制命令" })).toBeTruthy();
     expect(screen.getByRole("link", { name: /梦境路书/ }).getAttribute("href")).toBe("/dream?demo=dali");
     expect(screen.getByLabelText("Demo Bridge").textContent).toContain("云南大理 → Dream");
+    expect(screen.getByLabelText("Demo Bridge").textContent).toContain("Recording suite 已覆盖");
     expect(within(screen.getByLabelText("Demo Bridge")).getByRole("link", { name: /打开同款梦境预览/ }).getAttribute("href")).toBe("/dream?demo=dali");
     const workflow = screen.getByLabelText("录屏素材流程");
     expect(workflow).toBeTruthy();
