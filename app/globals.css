@@ -5604,7 +5604,8 @@ textarea {
 }
 
 .dream-recording-template-chip,
-.dream-recording-mood-chip {
+.dream-recording-mood-chip,
+.dream-recording-lens-chip {
   display: inline-flex;
   align-items: center;
   border: 1px solid rgba(255, 255, 255, 0.6);
@@ -5629,6 +5630,11 @@ textarea {
   box-shadow: 0 4px 12px rgba(91, 127, 163, 0.32);
 }
 
+.dream-recording-lens-chip {
+  color: rgba(42, 56, 60, 0.88);
+  background: rgba(227, 238, 232, 0.78);
+}
+
 .dream-recording-pair-sep {
   color: var(--dream-soft);
   font-size: 0.86rem;
@@ -5636,7 +5642,8 @@ textarea {
 }
 
 .dream-recording-progress.flash .dream-recording-template-chip,
-.dream-recording-progress.flash .dream-recording-mood-chip {
+.dream-recording-progress.flash .dream-recording-mood-chip,
+.dream-recording-progress.flash .dream-recording-lens-chip {
   transform: scale(1.04);
   background: rgba(255, 255, 255, 0.86);
 }

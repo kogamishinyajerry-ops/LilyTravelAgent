@@ -1624,6 +1624,12 @@ export function DreamRoadbook({ initialDemo = "dali" }: DreamRoadbookProps = {})
                   <span className="dream-recording-mood-chip" data-mood={mood}>
                     {dreamMoods.find((item) => item.id === mood)?.label || mood}
                   </span>
+                  <span className="dream-recording-pair-sep" aria-hidden="true">
+                    ·
+                  </span>
+                  <span className="dream-recording-lens-chip" data-lens={activeDirectorLens.id}>
+                    {activeDirectorLens.shortLabel}
+                  </span>
                 </div>
               </div>
 

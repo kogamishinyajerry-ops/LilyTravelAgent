@@ -99,6 +99,7 @@ describe("DreamRoadbook a11y polish", () => {
     expect(region.getAttribute("role")).toBe("status");
     expect(region.getAttribute("aria-live")).toBe("polite");
     expect(region.getAttribute("aria-atomic")).toBe("true");
+    expect(region.textContent).toContain("Auto");
   });
 
   it("switches the local demo roadbook to the coastal cinematic preset", () => {
