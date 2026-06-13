@@ -30,7 +30,7 @@
 - `npm run check:studio-visuals` 会自动截取 `/studio` 的大理/海岸 16:9 演示画面，并输出 studio 录屏 notes。
 - `npm run index:recording-assets` 会把 dream/studio 的本地 QA 输出汇总成 `recordings/index.html` 和 `recordings/clip-index.md`。
 - `npm run check:recording-suite` 会一键串起大理 `/dream`、海岸 `/dream`、`/studio` 和素材索引，作为每轮打磨后的本地录屏验收流程。
-- `/studio` 右侧会读取 `/api/recording-assets`，显示本地素材包数量、最新 QA 时间，支持手动刷新，并通过 `/api/recording-assets/index` 打开本地总索引。
+- `/studio` 右侧会读取 `/api/recording-assets`，显示本地素材包数量、最新 QA 时间、最近 3 个 QA 包，支持手动刷新，并通过 `/api/recording-assets/index` 打开本地总索引。
 - 这版是“预览级建模”，不是测绘级真实地形或真实建筑模型。
 
 ## Why This Step Exists
@@ -423,6 +423,22 @@ The creator workflow now has a clear on-screen loop: run the recording suite in 
 ### Recording angle
 
 > 现在 Studio 里不是静态显示素材数量，而是可以点刷新。录屏时我可以先跑一条 QA suite，再回到页面点一下，观众能看到本地素材库状态更新。
+
+## Phase AJ: Studio Recent Recording Packs (2026-06-13)
+
+### What changed
+
+- `readRecordingAssetsSummary()` now includes `recentPacks`, capped at the three newest QA packs.
+- `/studio` renders the recent packs as a compact local asset timeline inside the recording asset panel.
+- Tests cover helper ordering and the Studio recent-pack display.
+
+### Why this matters
+
+The panel no longer only shows a count. It shows the latest sequence of QA outputs, making the content-production evidence loop visible without opening the terminal or local folders.
+
+### Recording angle
+
+> 我把素材面板从一个数字升级成最近 3 条素材时间线。这样录屏时，观众能看到每次 QA 都留下了具体产物，而不是只有一个抽象的数量。
 
 ## Phase D: real data sources (2026-06-07)
 

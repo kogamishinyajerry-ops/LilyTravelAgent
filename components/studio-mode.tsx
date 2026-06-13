@@ -32,6 +32,7 @@ type RecordingAssetsState =
       packCount: number;
       indexAvailable: boolean;
       indexUrl: string;
+      recentPacks: RecordingAssetSummaryPack[];
       latestPack: {
         title: string;
         createdAt: string;
@@ -40,11 +41,20 @@ type RecordingAssetsState =
     }
   | { status: "error"; message: string };
 
+type RecordingAssetSummaryPack = {
+  id: string;
+  title: string;
+  createdAt: string;
+  label: string;
+  detail: string;
+};
+
 type RecordingAssetsApiResponse = {
   ok?: boolean;
   packCount?: number;
   indexAvailable?: boolean;
   indexUrl?: string;
+  recentPacks?: RecordingAssetSummaryPack[];
   latestPack?: {
     title: string;
     createdAt: string;
@@ -154,6 +164,7 @@ export function StudioMode() {
           packCount: data.packCount || 0,
           indexAvailable: Boolean(data.indexAvailable),
           indexUrl: data.indexUrl || "",
+          recentPacks: data.recentPacks || [],
           latestPack: data.latestPack || null,
         });
         setRecordingAssetsReadAt(new Date().toISOString());
@@ -411,6 +422,17 @@ export function StudioMode() {
                       : "还没有本地 QA 素材。"}
                   </p>
                   {recordingAssetsReadAt ? <span>读取 {formatRecordingAssetTime(recordingAssetsReadAt)}</span> : null}
+                  {recordingAssets.recentPacks.length ? (
+                    <div className="studio-recording-recent" aria-label="最近素材包">
+                      {recordingAssets.recentPacks.map((pack) => (
+                        <div key={`${pack.label}-${pack.id}`}>
+                          <small>{formatRecordingAssetTime(pack.createdAt)}</small>
+                          <strong>{pack.title}</strong>
+                          <span>{pack.detail}</span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : null}
                   <div className="studio-recording-actions">
                     <button type="button" onClick={() => loadRecordingAssets()} disabled={recordingAssetsRefreshing}>
                       <RotateCcw size={14} className={recordingAssetsRefreshing ? "spin" : ""} />

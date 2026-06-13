@@ -18,6 +18,22 @@ function recordingAssetsResponse(packCount: number, title = "Studio 16:9 demo pa
     packCount,
     indexAvailable: true,
     indexUrl: "/api/recording-assets/index",
+    recentPacks: [
+      {
+        id: "latest",
+        title,
+        createdAt: "2026-06-13T05:46:30.958Z",
+        label: "/studio recording QA",
+        detail: "云南大理 / 三亚海岛",
+      },
+      {
+        id: "dream-coast",
+        title: "Dream coastal visual pack",
+        createdAt: "2026-06-13T05:46:20.615Z",
+        label: "/dream visual QA",
+        detail: "coast · 4 day screenshots · motion verified",
+      },
+    ],
     latestPack: {
       title,
       createdAt: "2026-06-13T05:46:30.958Z",
@@ -51,6 +67,8 @@ describe("StudioMode demo roadbooks", () => {
     expect(screen.getByText("大理 4 天松弛路书")).toBeTruthy();
     expect(screen.getByDisplayValue("云南大理")).toBeTruthy();
     expect(await screen.findByText("15 个素材包")).toBeTruthy();
+    expect(screen.getByLabelText("最近素材包")).toBeTruthy();
+    expect(screen.getAllByText("Dream coastal visual pack")[0]).toBeTruthy();
     expect(screen.getByRole("link", { name: /打开总索引/ }).getAttribute("href")).toBe("/api/recording-assets/index");
   });
 
@@ -87,7 +105,8 @@ describe("StudioMode demo roadbooks", () => {
     fireEvent.click(screen.getByRole("button", { name: "刷新" }));
 
     expect(await screen.findByText("16 个素材包")).toBeTruthy();
-    expect(screen.getByText(/Dream coastal visual pack/)).toBeTruthy();
+    expect(screen.getAllByText("Dream coastal visual pack").length).toBeGreaterThan(0);
+    expect(screen.getByText("云南大理 / 三亚海岛")).toBeTruthy();
     expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 });

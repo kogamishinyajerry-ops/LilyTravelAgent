@@ -81,4 +81,32 @@ describe("recording assets", () => {
     expect(summary.indexAvailable).toBe(true);
     expect(summary.clipIndexAvailable).toBe(true);
   });
+
+  it("includes only the three most recent packs in the summary", async () => {
+    await writeSummary("visual-checks/pack-1", {
+      createdAt: "2026-06-13T01:00:00.000Z",
+      demoRoadbook: "dali",
+      days: [],
+      motion: { changed: false },
+    });
+    await writeSummary("visual-checks/pack-2", {
+      createdAt: "2026-06-13T02:00:00.000Z",
+      demoRoadbook: "coast",
+      days: [],
+      motion: { changed: false },
+    });
+    await writeSummary("studio-checks/pack-3", {
+      createdAt: "2026-06-13T03:00:00.000Z",
+      captures: [],
+    });
+    await writeSummary("studio-checks/pack-4", {
+      createdAt: "2026-06-13T04:00:00.000Z",
+      captures: [],
+    });
+
+    const summary = await readRecordingAssetsSummary(tempRoot);
+
+    expect(summary.packCount).toBe(4);
+    expect(summary.recentPacks.map((pack) => pack.id)).toEqual(["pack-4", "pack-3", "pack-2"]);
+  });
 });

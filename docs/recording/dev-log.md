@@ -454,3 +454,14 @@ Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, app/gl
 Command/result: npm test -- components/studio-mode.test.tsx && npm run lint && npm test && npm run build
 Voiceover note: "我给素材面板加了刷新。以后录屏时，我可以跑完 recording suite，回到 `/studio` 点一下刷新，素材包数量和最新记录会直接更新。"
 Usable for: refresh-loop workflow clip, local asset archive UI lesson, Vibe Coding visible feedback loop, continued goal run round 22
+
+## Phase AJ: v0.8.25 — Studio Recent Recording Packs
+
+Date: 2026-06-13
+Clip title: Phase AJ: v0.8.25 — Studio Recent Recording Packs
+What changed: Extended the recording asset summary with `recentPacks` and rendered the three newest QA packs as a compact timeline inside `/studio` Creator Track. The list shows created time, pack title, and detail for each recent asset pack.
+Why this matters: The asset panel now shows actual production history instead of only a count. This makes the recording-material pipeline easier to explain on screen.
+Files shown: lib/recording-assets.ts, lib/recording-assets.test.ts, components/studio-mode.tsx, components/studio-mode.test.tsx, app/globals.css, README.md, docs/design/real-scenic-preview-roadmap.md, docs/recording/dev-log.md
+Command/result: npm test -- lib/recording-assets.test.ts components/studio-mode.test.tsx && npm run lint && npm test && npm run build
+Voiceover note: "我把素材面板从一个数字升级成最近 3 条素材时间线。每次 QA 产出的 dream、studio 包都会留在这里，录屏时能直接讲清楚素材是怎么积累出来的。"
+Usable for: recording-asset timeline clip, QA evidence history explanation, Vibe Coding process archive, continued goal run round 23

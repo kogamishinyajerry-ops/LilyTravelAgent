@@ -18,6 +18,7 @@ export type RecordingAssetsSummary = {
   recordingsRoot: string;
   packCount: number;
   latestPack: RecordingAssetPack | null;
+  recentPacks: RecordingAssetPack[];
   indexAvailable: boolean;
   indexPath: string;
   clipIndexAvailable: boolean;
@@ -39,6 +40,7 @@ export async function readRecordingAssetsSummary(recordingsRoot = process.env.RE
     recordingsRoot,
     packCount: packs.length,
     latestPack,
+    recentPacks: packs.slice(0, 3),
     indexAvailable: existsSync(indexPath),
     indexPath,
     clipIndexAvailable: existsSync(clipIndexPath),
