@@ -1501,6 +1501,36 @@ textarea {
   background: rgba(255, 255, 255, 0.62);
 }
 
+.studio-recording-latest {
+  display: grid;
+  gap: 3px;
+  border: 1px solid rgba(38, 59, 49, 0.12);
+  border-radius: 8px;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.62);
+}
+
+.studio-recording-latest small {
+  color: var(--sage);
+  font-size: 0.68rem;
+  font-weight: 950;
+}
+
+.studio-recording-assets .studio-recording-latest strong {
+  overflow: hidden;
+  color: var(--moss);
+  font-size: 0.86rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.studio-recording-assets .studio-recording-latest span {
+  overflow: hidden;
+  font-size: 0.72rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .studio-recording-recent {
   display: grid;
   gap: 6px;

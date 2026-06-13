@@ -615,6 +615,22 @@ The recording state is now visible in the first glance of the 16:9 frame. A crea
 
 > 我把脚本模式的状态也放到了顶栏。观众刚看到画面就知道现在是讲解轨道打开的版本，不需要我再额外解释。
 
+## Phase AW: Studio Latest Recording Asset Card (2026-06-13)
+
+### What changed
+
+- Upgraded the latest recording asset line in `/studio` into a compact summary card.
+- The card separates latest time, pack title, and pack label instead of combining them into one sentence.
+- Empty state now reads "暂无最新素材" with a direct prompt to run the recording suite.
+
+### Why this matters
+
+The recording panel now feels more like a product surface and less like a log viewer. The latest captured material is easier to point at during a video walkthrough.
+
+### Recording angle
+
+> 我把“最新素材”做成摘要卡。现在最新生成的素材包、时间和标签能分开看，录屏时可以直接指着这张小卡讲素材管线。
+
 ## Phase D: real data sources (2026-06-07)
 
 Replaced the Phase C procedural stubs with real implementations:

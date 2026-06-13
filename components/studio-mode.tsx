@@ -533,11 +533,21 @@ export function StudioMode() {
                     <span>Dream {recordingAssets.countsByType.dream}</span>
                     <span>Studio {recordingAssets.countsByType.studio}</span>
                   </div>
-                  <p>
-                    {recordingAssets.latestPack
-                      ? `最新 ${formatRecordingAssetTime(recordingAssets.latestPack.createdAt)} · ${recordingAssets.latestPack.title}`
-                      : "还没有本地 QA 素材。"}
-                  </p>
+                  <div className="studio-recording-latest" aria-label="最新素材包摘要">
+                    {recordingAssets.latestPack ? (
+                      <>
+                        <small>最新素材 · {formatRecordingAssetTime(recordingAssets.latestPack.createdAt)}</small>
+                        <strong>{recordingAssets.latestPack.title}</strong>
+                        <span>{recordingAssets.latestPack.label}</span>
+                      </>
+                    ) : (
+                      <>
+                        <small>最新素材</small>
+                        <strong>暂无最新素材</strong>
+                        <span>先运行 recording suite 生成第一批素材。</span>
+                      </>
+                    )}
+                  </div>
                   {recordingAssetsReadAt ? <span>读取 {formatRecordingAssetTime(recordingAssetsReadAt)}</span> : null}
                   {recordingAssets.recentPacks.length ? (
                     <div className="studio-recording-recent" aria-label="最近素材包">

@@ -84,6 +84,9 @@ describe("StudioMode demo roadbooks", () => {
     expect(screen.getByText("Dream QA")).toBeTruthy();
     expect(screen.getByText("讲解画面")).toBeTruthy();
     expect(screen.getByText("产品画面")).toBeTruthy();
+    expect(screen.getByLabelText("最新素材包摘要").textContent).toContain("最新素材");
+    expect(screen.getByLabelText("最新素材包摘要").textContent).toContain("Studio 16:9 demo pack");
+    expect(screen.getByLabelText("最新素材包摘要").textContent).toContain("/studio recording QA");
     expect(screen.getAllByText("Dream coastal visual pack")[0]).toBeTruthy();
     expect(screen.getByRole("button", { name: "复制命令" })).toBeTruthy();
     const workflow = screen.getByLabelText("录屏素材流程");
@@ -150,6 +153,8 @@ describe("StudioMode demo roadbooks", () => {
     expect(await screen.findByText("0 个素材包")).toBeTruthy();
     expect(screen.getByLabelText("录屏素材状态").textContent).toContain("等待生成索引");
     expect(screen.getByLabelText("录屏素材状态").textContent).toContain("先跑 recording suite");
+    expect(screen.getByLabelText("最新素材包摘要").textContent).toContain("暂无最新素材");
+    expect(screen.getByLabelText("最新素材包摘要").textContent).toContain("先运行 recording suite");
     expect(screen.getByText("Dream 0")).toBeTruthy();
     expect(screen.getByText("Studio 0")).toBeTruthy();
     expect(screen.getByText("生成本地素材索引")).toBeTruthy();

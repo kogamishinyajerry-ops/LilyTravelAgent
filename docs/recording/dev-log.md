@@ -597,3 +597,14 @@ Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, app/gl
 Command/result: npm test -- components/studio-mode.test.tsx && npm run lint && npm test && npm run build
 Voiceover note: "我把脚本模式的状态放到顶栏。录屏时只要打开脚本模式，画面顶部就会提示讲解轨道已打开。"
 Usable for: presenter-state clip, Studio walkthrough polish, Vibe Coding tutorial framing, continued goal run round 35
+
+## Phase AW: v0.8.38 — Studio Latest Recording Asset Card
+
+Date: 2026-06-13
+Clip title: Phase AW: v0.8.38 — Studio Latest Recording Asset Card
+What changed: Replaced the one-line latest asset text in `/studio` with a compact `最新素材包摘要` card showing latest time, asset pack title, and pack label. Empty state now says `暂无最新素材`.
+Why this matters: The recording asset panel now looks more like a designed product surface and makes the latest captured material easier to point at during a workflow walkthrough.
+Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, app/globals.css, README.md, docs/design/real-scenic-preview-roadmap.md, docs/recording/dev-log.md
+Command/result: npm test -- components/studio-mode.test.tsx && npm run lint && npm test && npm run build
+Voiceover note: "我把最新素材从一行日志升级成摘要卡。现在最新素材包的时间、标题和标签都能直接在 Studio 里看清楚。"
+Usable for: latest-asset-card clip, recording material dashboard polish, Vibe Coding product-surface refinement, continued goal run round 36
