@@ -432,3 +432,14 @@ Files shown: scripts/check-recording-suite.mjs, package.json, README.md, docs/de
 Command/result: npm run check:recording-suite && npm run lint && npm test && npm run build
 Voiceover note: "我把 `/dream` 大理、`/dream` 海岸、`/studio` 和素材索引串成一条 recording suite。以后每次产品打磨完，跑一条命令就能生成一批可剪辑素材。"
 Usable for: one-command QA workflow clip, creator-asset pipeline lesson, Vibe Coding verification discipline, continued goal run round 20
+
+## Phase AH: v0.8.23 — Studio Recording Asset Panel
+
+Date: 2026-06-13
+Clip title: Phase AH: v0.8.23 — Studio Recording Asset Panel
+What changed: Added `lib/recording-assets.ts`, `/api/recording-assets`, and `/api/recording-assets/index`. `/studio` now reads local recording QA status and shows pack count, latest QA pack, and an "打开总索引" link inside Creator Track.
+Why this matters: The asset pipeline is now visible in the recording workbench instead of only existing as terminal output and folders. This makes the Vibe Coding process easier to explain on screen.
+Files shown: components/studio-mode.tsx, lib/recording-assets.ts, app/api/recording-assets/route.ts, app/globals.css, README.md, docs/design/real-scenic-preview-roadmap.md, docs/recording/dev-log.md
+Command/result: npm test -- lib/recording-assets.test.ts components/studio-mode.test.tsx && npm run lint && npm test && npm run build
+Voiceover note: "我把素材管理入口接进 `/studio`。现在录屏台能直接显示本地已经有多少个 QA 素材包、最近一次生成是什么，并且能一键打开总索引。"
+Usable for: asset-panel product clip, QA-to-content UI workflow, Vibe Coding process visibility, continued goal run round 21

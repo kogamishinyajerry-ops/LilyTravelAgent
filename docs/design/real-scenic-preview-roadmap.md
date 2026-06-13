@@ -30,6 +30,7 @@
 - `npm run check:studio-visuals` 会自动截取 `/studio` 的大理/海岸 16:9 演示画面，并输出 studio 录屏 notes。
 - `npm run index:recording-assets` 会把 dream/studio 的本地 QA 输出汇总成 `recordings/index.html` 和 `recordings/clip-index.md`。
 - `npm run check:recording-suite` 会一键串起大理 `/dream`、海岸 `/dream`、`/studio` 和素材索引，作为每轮打磨后的本地录屏验收流程。
+- `/studio` 右侧会读取 `/api/recording-assets`，显示本地素材包数量、最新 QA 时间，并通过 `/api/recording-assets/index` 打开本地总索引。
 - 这版是“预览级建模”，不是测绘级真实地形或真实建筑模型。
 
 ## Why This Step Exists
@@ -388,6 +389,23 @@ The project now has enough visual QA and recording assets that a single command 
 ### Recording angle
 
 > 我把三个独立 QA 和素材索引串成一个命令。以后每次做完视觉打磨，我只要跑一条 recording suite，就能拿到 `/dream` 大理、`/dream` 海岸、`/studio` 和总索引，直接进入剪辑素材管理。
+
+## Phase AH: Studio Recording Asset Panel (2026-06-13)
+
+### What changed
+
+- Added `lib/recording-assets.ts`.
+- Added `/api/recording-assets` and `/api/recording-assets/index`.
+- `/studio` now shows a compact recording asset status card with pack count, latest QA pack, and an index link.
+- The index route renders a local HTML overview of recording asset packs and their file paths.
+
+### Why this matters
+
+The recording pipeline now appears inside the creator surface. The user can record not only the generated roadbook, but also the visible asset-management loop: QA creates packs, the suite refreshes the index, and Studio shows the current local archive state.
+
+### Recording angle
+
+> 我不想让素材管理藏在文件夹里，所以把它接进 `/studio`。现在录屏台会直接显示已有多少个 QA 素材包、最近一次是什么，并能一键打开总索引。
 
 ## Phase D: real data sources (2026-06-07)
 

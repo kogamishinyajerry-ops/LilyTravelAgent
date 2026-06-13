@@ -128,6 +128,8 @@ npm run check:recording-suite
 
 `npm run check:recording-suite` expects the local dev server to be running at `http://localhost:3000`. It runs the Dali `/dream` visual QA, coastal `/dream` visual QA, `/studio` visual QA, and recording asset index in sequence. Set `RECORDING_SUITE_BASE_URL`, `DREAM_URL`, or `STUDIO_URL` to target another local server.
 
+`/studio` reads `/api/recording-assets` and shows the current local recording asset count, latest QA pack, and an "打开总索引" link. The link opens `/api/recording-assets/index`, a local HTML overview of the current recording asset packs.
+
 ## Recording And Learning Assets
 
 - `docs/recording/shot-list.md` breaks the build into screen-recording chapters.

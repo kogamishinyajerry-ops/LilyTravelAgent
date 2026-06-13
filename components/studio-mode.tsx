@@ -3,9 +3,11 @@
 import {
   AlertTriangle,
   ArrowLeft,
+  Archive,
   BookOpen,
   CheckCircle2,
   Code2,
+  ExternalLink,
   Loader2,
   Mic2,
   MonitorPlay,
@@ -14,7 +16,7 @@ import {
   Video,
 } from "lucide-react";
 import Link from "next/link";
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import { defaultBrief } from "@/lib/default-brief";
 import { coastalSampleRoadbook, sampleRoadbook } from "@/lib/sample-roadbook";
 import type { GenerateRoadbookResponse, GeocodePlace, GeocodePlacesResponse, GeocodePoint, Roadbook, TravelBrief } from "@/lib/roadbook-types";
@@ -22,6 +24,33 @@ import { clipBlueprints, creatorMilestones, vibeCodingLessons } from "@/lib/vibe
 
 type StudioStage = "demo" | "generating" | "geocoding" | "ready" | "error";
 type StudioDemoRoadbookId = "dali" | "coast";
+type RecordingAssetsState =
+  | { status: "loading" }
+  | {
+      status: "ready";
+      packCount: number;
+      indexAvailable: boolean;
+      indexUrl: string;
+      latestPack: {
+        title: string;
+        createdAt: string;
+        label: string;
+      } | null;
+    }
+  | { status: "error"; message: string };
+
+type RecordingAssetsApiResponse = {
+  ok?: boolean;
+  packCount?: number;
+  indexAvailable?: boolean;
+  indexUrl?: string;
+  latestPack?: {
+    title: string;
+    createdAt: string;
+    label: string;
+  } | null;
+  message?: string;
+};
 
 const studioCoastalBrief: TravelBrief = {
   ...defaultBrief,
@@ -77,6 +106,20 @@ function studioStageText(stage: StudioStage) {
   return "示例脚本模式";
 }
 
+function formatRecordingAssetTime(value: string) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return value;
+  }
+
+  return new Intl.DateTimeFormat("zh-CN", {
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(date);
+}
+
 export function StudioMode() {
   const [brief, setBrief] = useState<TravelBrief>(defaultBrief);
   const [demoRoadbookId, setDemoRoadbookId] = useState<StudioDemoRoadbookId | null>("dali");
@@ -85,9 +128,43 @@ export function StudioMode() {
   const [stage, setStage] = useState<StudioStage>("demo");
   const [error, setError] = useState("");
   const [model, setModel] = useState(localDemoModelLabel);
+  const [recordingAssets, setRecordingAssets] = useState<RecordingAssetsState>({ status: "loading" });
 
   const locatedCount = useMemo(() => points.filter((point) => point.status === "ok").length, [points]);
   const topStops = roadbook.days.flatMap((day) => day.stops.slice(0, 2)).slice(0, 8);
+
+  useEffect(() => {
+    let active = true;
+
+    async function loadRecordingAssets() {
+      try {
+        const response = await fetch("/api/recording-assets", { cache: "no-store" });
+        const data = (await response.json()) as RecordingAssetsApiResponse;
+        if (!response.ok || !data.ok) {
+          throw new Error(data.message || "录屏素材状态读取失败。");
+        }
+        if (!active) return;
+        setRecordingAssets({
+          status: "ready",
+          packCount: data.packCount || 0,
+          indexAvailable: Boolean(data.indexAvailable),
+          indexUrl: data.indexUrl || "",
+          latestPack: data.latestPack || null,
+        });
+      } catch (caught) {
+        if (!active) return;
+        setRecordingAssets({
+          status: "error",
+          message: caught instanceof Error ? caught.message : "录屏素材状态读取失败。",
+        });
+      }
+    }
+
+    loadRecordingAssets();
+    return () => {
+      active = false;
+    };
+  }, []);
 
   function updateBrief<K extends keyof TravelBrief>(key: K, value: TravelBrief[K]) {
     setBrief((current) => ({ ...current, [key]: value }));
@@ -298,6 +375,37 @@ export function StudioMode() {
             <div className="studio-panel-heading">
               <p className="eyebrow">Creator Track</p>
               <h2>边开发边讲清楚</h2>
+            </div>
+
+            <div className="studio-recording-assets">
+              <div className="section-kicker">
+                <Archive size={16} />
+                <span>素材资产</span>
+              </div>
+              {recordingAssets.status === "loading" ? (
+                <p>读取本地 QA 素材中</p>
+              ) : null}
+              {recordingAssets.status === "error" ? (
+                <p>{recordingAssets.message}</p>
+              ) : null}
+              {recordingAssets.status === "ready" ? (
+                <>
+                  <strong>{recordingAssets.packCount} 个素材包</strong>
+                  <p>
+                    {recordingAssets.latestPack
+                      ? `最新 ${formatRecordingAssetTime(recordingAssets.latestPack.createdAt)} · ${recordingAssets.latestPack.title}`
+                      : "还没有本地 QA 素材。"}
+                  </p>
+                  {recordingAssets.indexAvailable && recordingAssets.indexUrl ? (
+                    <a href={recordingAssets.indexUrl} target="_blank" rel="noreferrer">
+                      打开总索引
+                      <ExternalLink size={14} />
+                    </a>
+                  ) : (
+                    <span>先运行 npm run check:recording-suite</span>
+                  )}
+                </>
+              ) : null}
             </div>
 
             <div className="studio-creator-section">
