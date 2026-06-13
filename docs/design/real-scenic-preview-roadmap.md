@@ -20,6 +20,7 @@
   - 古城/城门：古城轮廓
   - 才村/喜洲/码头：山体、水面、村落码头
   - 城市目的地：保留 City Skyline 体块能力
+- 大理已接入第一版目的地专属 cinematic scene preset：苍山分层剪影、洱海岸线、白族院落体块和 D1-D4 当天焦点光标都来自 `lib/cinematic-scene-preset.ts`，不再完全依赖通用几何场景。
 - 这版是“预览级建模”，不是测绘级真实地形或真实建筑模型。
 
 ## Why This Step Exists
@@ -54,6 +55,23 @@ The previous scene proved the workflow, but the visual ceiling was too low. This
 ### Recording angle
 
 > 我没有先换复杂 3D 引擎，而是先把网页端 Three.js 的渲染基线拉起来：色调映射、软阴影、动态水面、雾气、镜头暗角。这样即使真实照片或真实地形还没完全接上，用户看到的也不再是粗糙方块，而是一个有电影感的目的地预览。
+
+## Phase O: Dali Cinematic Scene Preset (2026-06-13)
+
+### What changed
+
+- Added `lib/cinematic-scene-preset.ts` as the first destination-specific scene asset layer.
+- The Dali preset defines structured visual ingredients: layered Cangshan mountain bands, Erhai shoreline curves, Bai courtyard blocks, and four day-specific focus anchors.
+- `components/dream-skyline-scene.tsx` resolves the preset from the generated roadbook text and mounts the additional Three.js layer only when the roadbook is actually Dali-related.
+- `lib/cinematic-scene-preset.test.ts` locks the matching behavior: default Dali resolves, D1-D4 switch focus, non-Dali city roadbooks do not accidentally mount Dali assets.
+
+### Why this matters
+
+The first high-quality rendering pass improved lighting and materials, but the scene was still generic. This phase starts the asset-product layer: popular destinations can have curated, testable visual presets that preserve the Agent workflow while making the preview feel location-specific. It also creates a clean extension point for future Kyoto, Iceland, Morocco, New York, and Dali-plus variants.
+
+### Recording angle
+
+> 上一轮我把 Three.js 的画质基线拉起来；这一轮开始解决“像不像这个地方”。我先给大理做一个专属 scene preset：苍山在后面，洱海有岸线，古城和喜洲有白族院落体块，D1-D4 会切换当天焦点。这样每个目的地未来都可以有自己的视觉资产，而不是所有城市共用一套方块。
 
 ## Phase D: real data sources (2026-06-07)
 

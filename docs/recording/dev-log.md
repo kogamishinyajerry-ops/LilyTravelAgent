@@ -223,3 +223,14 @@ Files shown: components/dream-skyline-scene.tsx, components/real-skyline-scene.t
 Command/result: npm run lint && npm run build && Playwright desktop/mobile canvas pixel checks
 Voiceover note: "这一段我先不换引擎，也不假装已经有真实景区模型。我先把网页端 Three.js 的基础质感拉起来：ACES 色调映射、软阴影、动态水面、雾气、镜头暗角。这样产品从'能跑的 3D demo'变成'有电影感的目的地预览'，后面再接真实地形和 AI 远景资产才有更高的比较基准。"
 Usable for: product-quality critique response, "rough prototype to cinematic web preview" clip, Vibe Coding iteration lesson, Three.js render-quality baseline demo
+
+## Phase O: v0.8.4 — Dali Cinematic Scene Preset
+
+Date: 2026-06-13
+Clip title: Phase O: v0.8.4 — Dali Cinematic Scene Preset
+What changed: Added the first destination-specific visual asset layer for `/dream`. `lib/cinematic-scene-preset.ts` defines the Dali preset as structured data: Cangshan mountain bands, Erhai shoreline curves, four D1-D4 focus anchors, and labels for old town / Erhai / Xizhou village / return-day closure. `components/dream-skyline-scene.tsx` resolves that preset from roadbook text and mounts an extra Three.js layer only for Dali-related roadbooks: layered mountain silhouettes, shoreline glints, Bai courtyard blocks, an Erhai pier on the water day, and a day-specific focus beacon. `lib/cinematic-scene-preset.test.ts` verifies Dali matching, per-day focus switching, non-Dali rejection, and visible scene bounds. README and the scenic preview roadmap now document this as the first reusable high-fidelity destination asset layer.
+Why this matters: v0.8.3 made the generic renderer prettier; v0.8.4 starts making the preview feel like a specific place. This is the bridge between a procedural demo and a real product advantage: popular destinations can get curated, testable scene presets while the Agent still generates the roadbook normally. The pattern is deliberately data-first so future Kyoto / Iceland / Morocco / New York presets can be added without rewriting the renderer.
+Files shown: lib/cinematic-scene-preset.ts, lib/cinematic-scene-preset.test.ts, components/dream-skyline-scene.tsx, README.md, docs/design/real-scenic-preview-roadmap.md, docs/recording/dev-log.md
+Command/result: npm test -- lib/cinematic-scene-preset.test.ts && npm run lint && npm run build && Playwright desktop/mobile canvas pixel checks
+Voiceover note: "上一轮我解决画质基线，这一轮开始解决像不像这个目的地。大理不再只是通用几何体了：我把苍山、洱海、白族院落和 D1-D4 当天焦点做成一个可测试的 scene preset。以后每个高频目的地都可以按这个方式扩展成自己的视觉资产。"
+Usable for: "generic renderer to destination asset layer" clip, Dali-specific product demo, Vibe Coding data-first visual system lesson, 10-goal continuation round 1

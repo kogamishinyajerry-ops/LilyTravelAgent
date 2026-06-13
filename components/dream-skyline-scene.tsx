@@ -5,6 +5,7 @@ import {
   ACESFilmicToneMapping,
   AdditiveBlending,
   AmbientLight,
+  BoxGeometry,
   BufferGeometry,
   CatmullRomCurve3,
   CircleGeometry,
@@ -36,6 +37,10 @@ import type { PreviewAsset, Roadbook } from "@/lib/roadbook-types";
 import type { LandmarkPreset } from "@/lib/landmark-preset";
 import { getFallbackPreset, getFallbackPresetForTemplate } from "@/lib/landmark-preset-fallbacks";
 import { renderLandmarkPreset } from "@/lib/landmark-renderer";
+import {
+  resolveCinematicScenePreset,
+  type ResolvedCinematicScenePreset,
+} from "@/lib/cinematic-scene-preset";
 
 type DreamSkylineSceneProps = {
   roadbook: Roadbook;
@@ -143,6 +148,10 @@ export function DreamSkylineScene({
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const activePlan = roadbook.days.find((day) => day.day === activeDay) || roadbook.days[0];
   const profile = useMemo(() => buildSceneProfile(roadbook, activeDay), [roadbook, activeDay]);
+  const cinematicScene = useMemo(
+    () => resolveCinematicScenePreset(roadbook, activeDay),
+    [roadbook, activeDay],
+  );
   const palette = palettes[mood];
   const assetSource = previewAsset?.imageDataUrl || previewAsset?.imageUrl;
 
@@ -205,6 +214,10 @@ export function DreamSkylineScene({
     scene.add(rim);
 
     root.add(createAtmosphere(palette, mood, disposables));
+    if (cinematicScene) {
+      root.add(createCinematicPresetLayer(cinematicScene, palette, disposables));
+    }
+
     const terrain = createTerrain(profile, palette, disposables);
     root.add(terrain);
 
@@ -262,7 +275,7 @@ export function DreamSkylineScene({
       });
       disposables.forEach((item) => item.dispose());
     };
-  }, [activeDay, assetSource, design.routeStops.length, mood, palette, profile, template, landmarkPreset]);
+  }, [activeDay, assetSource, cinematicScene, design.routeStops.length, mood, palette, profile, template, landmarkPreset]);
 
   return (
     <div ref={wrapRef} className={`dream-skyline-scene dream-skyline-${template}${
@@ -277,12 +290,20 @@ export function DreamSkylineScene({
       {assetSource ? (
         <div className="dream-skyline-asset-backdrop" style={{ backgroundImage: `url(${assetSource})` }} />
       ) : null}
-      <canvas ref={canvasRef} className="dream-skyline-canvas" aria-label={`${profile.destination} 3D 天际线预览`} />
+      <canvas
+        ref={canvasRef}
+        className="dream-skyline-canvas"
+        aria-label={`${cinematicScene?.preset.destination || profile.destination} 3D 天际线预览`}
+      />
       <div className="dream-skyline-glass" />
       <div className="dream-skyline-caption">
         <span>Terrain Preview</span>
-        <strong>{profile.label}</strong>
-        <small>{activePlan?.stops[0]?.name || activePlan?.area || roadbook.destination}</small>
+        <strong>{cinematicScene?.preset.heroLabel || profile.label}</strong>
+        <small>
+          {cinematicScene
+            ? `${cinematicScene.focus.label} · ${cinematicScene.focus.visualCue}`
+            : activePlan?.stops[0]?.name || activePlan?.area || roadbook.destination}
+        </small>
       </div>
       <div className={`dream-skyline-asset-chip ${assetStage}`}>
         <span>Asset</span>
@@ -387,6 +408,207 @@ function createAtmosphere(
     foregroundGeometry,
     foregroundMaterial,
   );
+  return group;
+}
+
+function createCinematicPresetLayer(
+  scene: ResolvedCinematicScenePreset,
+  palette: SkylinePalette,
+  disposables: Array<{ dispose: () => void }>,
+) {
+  const group = new Group();
+  group.name = `cinematic-preset-${scene.preset.id}`;
+
+  scene.preset.mountainBands.forEach((band) => {
+    group.add(createMountainBandMesh(band, disposables));
+  });
+
+  scene.preset.shorelines.forEach((shoreline, index) => {
+    const points = Array.from({ length: 34 }, (_, pointIndex) => {
+      const t = pointIndex / 33;
+      const x = -8.7 + t * 17.4;
+      const wave = Math.sin(t * Math.PI * 2.4 + index * 0.85) * shoreline.amplitude;
+      return new Vector3(x, 0.055 + index * 0.012, shoreline.z + wave);
+    });
+    const geometry = new BufferGeometry().setFromPoints(points);
+    const material = new LineBasicMaterial({
+      color: new Color(palette.light),
+      transparent: true,
+      opacity: shoreline.opacity,
+    });
+    const line = new Line(geometry, material);
+    line.name = `cinematic-shoreline-${shoreline.id}`;
+    group.add(line);
+    disposables.push(geometry, material);
+  });
+
+  group.add(createDaliCourtyardCluster(scene, palette, disposables));
+  group.add(createFocusBeacon(scene, palette, disposables));
+
+  return group;
+}
+
+function createMountainBandMesh(
+  band: ResolvedCinematicScenePreset["preset"]["mountainBands"][number],
+  disposables: Array<{ dispose: () => void }>,
+) {
+  const width = 23.5;
+  const segments = 24;
+  const positions: number[] = [];
+  const indices: number[] = [];
+
+  for (let index = 0; index <= segments; index += 1) {
+    const t = index / segments;
+    const x = -width / 2 + t * width;
+    const ridge =
+      Math.sin(t * Math.PI * 2.2 + band.phase) * 0.18 +
+      Math.sin(t * Math.PI * 5.4 + band.phase * 1.7) * 0.1 +
+      Math.cos(t * Math.PI * 3.2) * 0.08;
+    const topY = band.baseY + band.height * (0.44 + ridge + Math.sin(t * Math.PI) * 0.42);
+
+    positions.push(x, band.baseY - 0.08, band.z);
+    positions.push(x, Math.max(band.baseY + 0.24, topY), band.z);
+  }
+
+  for (let index = 0; index < segments; index += 1) {
+    const a = index * 2;
+    const b = a + 1;
+    const c = a + 2;
+    const d = a + 3;
+    indices.push(a, c, b, b, c, d);
+  }
+
+  const geometry = new BufferGeometry();
+  geometry.setAttribute("position", new Float32BufferAttribute(positions, 3));
+  geometry.setIndex(indices);
+  geometry.computeVertexNormals();
+
+  const material = new MeshBasicMaterial({
+    color: new Color(band.color),
+    transparent: true,
+    opacity: band.opacity,
+    depthWrite: false,
+    side: DoubleSide,
+  });
+  const mesh = new Mesh(geometry, material);
+  mesh.name = `cinematic-mountain-${band.id}`;
+  mesh.renderOrder = -2;
+  disposables.push(geometry, material);
+  return mesh;
+}
+
+function createDaliCourtyardCluster(
+  scene: ResolvedCinematicScenePreset,
+  palette: SkylinePalette,
+  disposables: Array<{ dispose: () => void }>,
+) {
+  const group = new Group();
+  group.name = "dali-bai-courtyards";
+
+  const courtyardAnchors = scene.preset.focusByDay.filter((focus) =>
+    focus.anchorKind === "old-town" || focus.anchorKind === "village" || focus.anchorKind === "return"
+  );
+
+  const wallMaterial = new MeshStandardMaterial({
+    color: new Color(palette.stone),
+    roughness: 0.72,
+    metalness: 0.02,
+  });
+  const roofMaterial = new MeshStandardMaterial({
+    color: new Color(palette.roof),
+    roughness: 0.64,
+    metalness: 0.04,
+  });
+  disposables.push(wallMaterial, roofMaterial);
+
+  courtyardAnchors.forEach((anchor, anchorIndex) => {
+    for (let index = 0; index < 3; index += 1) {
+      const offsetX = (index - 1) * 0.52 + (anchorIndex % 2 === 0 ? 0.12 : -0.12);
+      const offsetZ = (index % 2) * 0.32 - 0.18;
+      const width = 0.42 + index * 0.06;
+      const depth = 0.36 + (2 - index) * 0.04;
+
+      const wallGeometry = new BoxGeometry(width, 0.24, depth);
+      const wall = new Mesh(wallGeometry, wallMaterial);
+      wall.name = "dali-courtyard-wall";
+      wall.position.set(anchor.x + offsetX, 0.08, anchor.z + offsetZ);
+      wall.castShadow = true;
+      wall.receiveShadow = true;
+      group.add(wall);
+      disposables.push(wallGeometry);
+
+      const roofGeometry = new BoxGeometry(width * 1.28, 0.08, depth * 1.22);
+      const roof = new Mesh(roofGeometry, roofMaterial);
+      roof.name = "dali-courtyard-roof";
+      roof.position.set(anchor.x + offsetX, 0.26, anchor.z + offsetZ);
+      roof.rotation.z = (index - 1) * 0.03;
+      roof.castShadow = true;
+      group.add(roof);
+      disposables.push(roofGeometry);
+    }
+  });
+
+  return group;
+}
+
+function createFocusBeacon(
+  scene: ResolvedCinematicScenePreset,
+  palette: SkylinePalette,
+  disposables: Array<{ dispose: () => void }>,
+) {
+  const group = new Group();
+  group.name = `dali-focus-${scene.focus.anchorKind}`;
+
+  const ringGeometry = new CircleGeometry(0.34, 48);
+  const ringMaterial = new MeshBasicMaterial({
+    color: new Color(palette.light),
+    transparent: true,
+    opacity: 0.34,
+    depthWrite: false,
+    blending: AdditiveBlending,
+    side: DoubleSide,
+  });
+  const ring = new Mesh(ringGeometry, ringMaterial);
+  ring.name = "dali-focus-ring";
+  ring.rotation.x = -Math.PI / 2;
+  ring.position.set(scene.focus.x, 0.095, scene.focus.z);
+  ring.renderOrder = 6;
+  group.add(ring);
+
+  const beamGeometry = new PlaneGeometry(0.08, 1.45);
+  const beamMaterial = new MeshBasicMaterial({
+    color: new Color(palette.light),
+    transparent: true,
+    opacity: 0.22,
+    depthWrite: false,
+    blending: AdditiveBlending,
+    side: DoubleSide,
+  });
+  const beam = new Mesh(beamGeometry, beamMaterial);
+  beam.name = "dali-focus-beam";
+  beam.position.set(scene.focus.x, 0.82, scene.focus.z);
+  beam.rotation.y = 0.18;
+  beam.renderOrder = 7;
+  group.add(beam);
+
+  if (scene.focus.anchorKind === "erhai") {
+    const pierMaterial = new MeshStandardMaterial({
+      color: new Color("#d8c3a4"),
+      roughness: 0.58,
+      metalness: 0.02,
+    });
+    const pierGeometry = new BoxGeometry(0.12, 0.05, 1.35);
+    const pier = new Mesh(pierGeometry, pierMaterial);
+    pier.name = "dali-erhai-pier";
+    pier.position.set(scene.focus.x - 0.42, 0.1, scene.focus.z - 0.44);
+    pier.rotation.y = -0.18;
+    pier.castShadow = true;
+    pier.receiveShadow = true;
+    group.add(pier);
+    disposables.push(pierGeometry, pierMaterial);
+  }
+
+  disposables.push(ringGeometry, ringMaterial, beamGeometry, beamMaterial);
   return group;
 }
 
