@@ -551,6 +551,22 @@ The recording surface now has an explicit presenter mode. The user can switch fr
 
 > 我给 Studio 加了脚本模式。录屏时点一下，就能出现“输入需求、生成路书、沉淀素材”三步讲解轨道，帮助我稳定输出教程结构。
 
+## Phase AS: Studio Recording Command Copy (2026-06-13)
+
+### What changed
+
+- Added a "复制命令" action to the `/studio` recording asset panel.
+- The button copies `npm run check:recording-suite` and switches to "已复制" after success.
+- If Clipboard API access is blocked, the button falls back to "手动复制" while the exact command remains visible in the missing-index state.
+
+### Why this matters
+
+The recording-suite workflow can now be demonstrated from the product surface: copy the QA command, run the local suite, return to Studio, refresh assets, and open the full index. It turns the Vibe Coding production loop into an on-screen sequence.
+
+### Recording angle
+
+> 我把 recording suite 命令也放进 Studio 面板。录屏时可以直接点复制，去终端跑 QA，再回来刷新素材库，整个 Agent 工作流就能连成一条线。
+
 ## Phase D: real data sources (2026-06-07)
 
 Replaced the Phase C procedural stubs with real implementations:

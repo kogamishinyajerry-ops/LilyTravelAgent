@@ -1395,6 +1395,14 @@ textarea {
   opacity: 0.72;
 }
 
+.studio-recording-copy-status {
+  justify-self: start;
+  border-radius: 999px;
+  padding: 4px 8px;
+  color: var(--moss);
+  background: rgba(79, 143, 122, 0.14);
+}
+
 .studio-recording-assets a {
   color: #fff;
   text-decoration: none;

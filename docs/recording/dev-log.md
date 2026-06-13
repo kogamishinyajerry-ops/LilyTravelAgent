@@ -553,3 +553,14 @@ Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, app/gl
 Command/result: npm test -- components/studio-mode.test.tsx && npm run lint && npm test && npm run build
 Voiceover note: "我给 Studio 加了脚本模式。录屏时点一下，右侧会出现输入、路书、素材三步讲解轨道，帮我把 Vibe Coding 的过程讲得更稳定。"
 Usable for: studio-presenter-mode clip, tutorial-structure workflow, Vibe Coding walkthrough production, continued goal run round 31
+
+## Phase AS: v0.8.34 — Studio Recording Command Copy
+
+Date: 2026-06-13
+Clip title: Phase AS: v0.8.34 — Studio Recording Command Copy
+What changed: Added a `复制命令` action to the `/studio` recording asset panel. The action copies `npm run check:recording-suite`, shows an `已复制` button state, and keeps a manual-copy fallback if browser clipboard access is blocked.
+Why this matters: The creator can now demonstrate the recording-suite loop directly from Studio: copy command, run QA, refresh assets, and open the local index. This makes the Vibe Coding production workflow easier to show on screen.
+Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, app/globals.css, README.md, docs/design/real-scenic-preview-roadmap.md, docs/recording/dev-log.md
+Command/result: npm test -- components/studio-mode.test.tsx && npm run lint && npm test && npm run build
+Voiceover note: "我把 recording suite 命令做成 Studio 面板里的复制按钮。录屏时不需要背命令，直接点复制、跑 QA、回来刷新，素材管线就能讲完整。"
+Usable for: command-copy workflow clip, local QA loop explanation, Vibe Coding production pipeline, continued goal run round 32

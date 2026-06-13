@@ -83,6 +83,7 @@ describe("StudioMode demo roadbooks", () => {
     expect(screen.getByText("讲解画面")).toBeTruthy();
     expect(screen.getByText("产品画面")).toBeTruthy();
     expect(screen.getAllByText("Dream coastal visual pack")[0]).toBeTruthy();
+    expect(screen.getByRole("button", { name: "复制命令" })).toBeTruthy();
     expect(screen.getByRole("link", { name: /打开总索引/ }).getAttribute("href")).toBe("/api/recording-assets/index");
     expect(screen.queryByLabelText("录屏讲解轨道")).toBeNull();
   });
@@ -156,5 +157,22 @@ describe("StudioMode demo roadbooks", () => {
     expect(screen.getByText("生成路书")).toBeTruthy();
     expect(screen.getByText("沉淀素材")).toBeTruthy();
     expect(screen.getByRole("button", { name: /脚本模式/ }).getAttribute("aria-pressed")).toBe("true");
+  });
+
+  it("copies the local recording suite command for screen-recorded workflow demos", async () => {
+    const writeText = vi.fn(async () => undefined);
+    Object.defineProperty(window.navigator, "clipboard", {
+      value: { writeText },
+      configurable: true,
+    });
+
+    render(<StudioMode />);
+
+    expect(await screen.findByText("15 个素材包")).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: "复制命令" }));
+
+    expect(writeText).toHaveBeenCalledWith("npm run check:recording-suite");
+    expect(await screen.findByText("录屏套件命令已复制")).toBeTruthy();
+    expect(screen.getByRole("button", { name: "已复制" })).toBeTruthy();
   });
 });

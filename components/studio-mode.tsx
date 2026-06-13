@@ -7,6 +7,7 @@ import {
   BookOpen,
   CheckCircle2,
   Code2,
+  Copy,
   ExternalLink,
   ListChecks,
   Loader2,
@@ -101,6 +102,7 @@ const studioDemoRoadbooks: Array<{
 ];
 
 const localDemoModelLabel = "Local Demo";
+const recordingSuiteCommand = "npm run check:recording-suite";
 const studioScriptSteps = [
   {
     step: "01",
@@ -165,6 +167,7 @@ export function StudioMode() {
   const [recordingAssetsReadAt, setRecordingAssetsReadAt] = useState("");
   const [recordingAssetsRefreshing, setRecordingAssetsRefreshing] = useState(false);
   const [scriptMode, setScriptMode] = useState(false);
+  const [recordingCommandCopyState, setRecordingCommandCopyState] = useState<"idle" | "copied" | "error">("idle");
 
   const locatedCount = useMemo(() => points.filter((point) => point.status === "ok").length, [points]);
   const topStops = roadbook.days.flatMap((day) => day.stops.slice(0, 2)).slice(0, 8);
@@ -273,6 +276,15 @@ export function StudioMode() {
     setError("");
     setModel(localDemoModelLabel);
     setStage("demo");
+  }
+
+  async function copyRecordingSuiteCommand() {
+    try {
+      await navigator.clipboard.writeText(recordingSuiteCommand);
+      setRecordingCommandCopyState("copied");
+    } catch {
+      setRecordingCommandCopyState("error");
+    }
   }
 
   return (
@@ -489,10 +501,14 @@ export function StudioMode() {
                   {!recordingAssets.indexAvailable ? (
                     <div className="studio-recording-command">
                       <span>生成本地素材索引</span>
-                      <code>npm run check:recording-suite</code>
+                      <code>{recordingSuiteCommand}</code>
                     </div>
                   ) : null}
                   <div className="studio-recording-actions">
+                    <button type="button" onClick={copyRecordingSuiteCommand}>
+                      <Copy size={14} />
+                      {recordingCommandCopyState === "copied" ? "已复制" : recordingCommandCopyState === "error" ? "手动复制" : "复制命令"}
+                    </button>
                     <button type="button" onClick={() => loadRecordingAssets()} disabled={recordingAssetsRefreshing}>
                       <RotateCcw size={14} className={recordingAssetsRefreshing ? "spin" : ""} />
                       {recordingAssetsRefreshing ? "刷新中" : "刷新"}
@@ -506,6 +522,8 @@ export function StudioMode() {
                       <span>等待索引</span>
                     )}
                   </div>
+                  {recordingCommandCopyState === "copied" ? <span className="studio-recording-copy-status">录屏套件命令已复制</span> : null}
+                  {recordingCommandCopyState === "error" ? <span className="studio-recording-copy-status">浏览器不允许自动复制，可手动复制上方命令</span> : null}
                 </>
               ) : null}
             </div>
