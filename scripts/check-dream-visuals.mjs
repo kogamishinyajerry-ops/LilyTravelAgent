@@ -9,6 +9,10 @@ const expectedTimelineLabels = {
   dali: ["古城南门", "洱海西线", "喜洲村落", "古城收尾"],
   coast: ["海岸灯塔", "蓝色海湾", "港口街区", "日落观景台"],
 };
+const expectedCompositionProofs = {
+  dali: ["D1 old-town beat", "D2 water hero", "D3 village detail", "D4 return beat"],
+  coast: ["D1 lighthouse beat", "D2 bay hero", "D3 harbor skyline", "D4 sunset beat"],
+};
 const runStamp = new Date().toISOString().replace(/[:.]/g, "-");
 const outDir = process.env.DREAM_VISUAL_OUT_DIR || path.join("recordings", "visual-checks", runStamp);
 const systemChromePath = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
@@ -72,6 +76,25 @@ async function readDirectorTimeline(page) {
   );
 }
 
+async function readCompositionProfile(page) {
+  return page.locator(".dream-composition-grid span").evaluateAll((items) =>
+    items.map((item) => ({
+      label: item.querySelector("small")?.textContent?.trim() || "",
+      value: item.querySelector("strong")?.textContent?.trim() || "",
+    })),
+  );
+}
+
+async function readProofStack(page) {
+  return page.locator(".dream-cinematic-proof-grid span").evaluateAll((items) =>
+    items.map((item) => ({
+      label: item.querySelector("small")?.textContent?.trim() || "",
+      value: item.querySelector("strong")?.textContent?.trim() || "",
+      status: item.className || "",
+    })),
+  );
+}
+
 async function main() {
   await mkdir(outDir, { recursive: true });
 
@@ -104,18 +127,31 @@ async function main() {
 
     const inspectorText = await page.locator(".dream-scene-inspector").innerText();
     const timeline = await readDirectorTimeline(page);
+    const composition = await readCompositionProfile(page);
+    const proofStack = await readProofStack(page);
     const canvasStats = await readCanvasStats(page);
     const screenshotPath = path.join(outDir, `dream-${demoRoadbook}-d${day}.png`);
     await page.screenshot({ path: screenshotPath, fullPage: false });
 
     assert(inspectorText.includes(`D${day}`), `Scene Inspector did not mention D${day}.`);
     assert(timeline.length === 4, `Director timeline should have 4 items for D${day}; got ${timeline.length}.`);
+    assert(composition.length === 4, `Composition profile should have 4 items for D${day}; got ${composition.length}.`);
+    assert(proofStack.length === 4, `Proof stack should have 4 items for D${day}; got ${proofStack.length}.`);
     const activeTimelineItem = timeline.find((item) => item.active);
     assert(activeTimelineItem?.day === day, `Director timeline active item should be D${day}.`);
     const expectedLabels = expectedTimelineLabels[demoRoadbook] || expectedTimelineLabels.dali;
+    const expectedProofs = expectedCompositionProofs[demoRoadbook] || expectedCompositionProofs.dali;
     assert(
       timeline.map((item) => item.label).join("|") === expectedLabels.join("|"),
       `Director timeline labels did not match ${demoRoadbook}: ${timeline.map((item) => item.label).join(" / ")}`,
+    );
+    assert(
+      proofStack.find((item) => item.label === "Composition")?.value === expectedProofs[day - 1],
+      `Composition proof mismatch for D${day}: ${proofStack.find((item) => item.label === "Composition")?.value}`,
+    );
+    assert(
+      proofStack.filter((item) => item.status.includes("ready")).length >= 2,
+      `Proof stack should have at least composition + landmark ready for D${day}.`,
     );
     if (demoRoadbook === "coast") {
       assert(inspectorText.includes("海岸海岛"), `Coastal Scene Inspector did not activate for D${day}.`);
@@ -127,6 +163,8 @@ async function main() {
       day,
       inspectorText,
       timeline,
+      composition,
+      proofStack,
       canvasStats,
       screenshotPath,
     });
@@ -190,6 +228,24 @@ function buildHtmlReport(summary) {
             </li>`,
         )
         .join("");
+      const compositionItems = day.composition
+        .map(
+          (item) => `
+            <li>
+              <span>${escapeHtml(item.label)}</span>
+              <strong>${escapeHtml(item.value)}</strong>
+            </li>`,
+        )
+        .join("");
+      const proofItems = day.proofStack
+        .map(
+          (item) => `
+            <li class="${escapeHtml(item.status)}">
+              <span>${escapeHtml(item.label)}</span>
+              <strong>${escapeHtml(item.value)}</strong>
+            </li>`,
+        )
+        .join("");
       return `
         <article class="day-card">
           <img src="${escapeHtml(path.basename(day.screenshotPath))}" alt="D${day.day} /dream screenshot" />
@@ -198,6 +254,8 @@ function buildHtmlReport(summary) {
             <h2>${escapeHtml(shotLine)}</h2>
             <pre>${escapeHtml(day.inspectorText)}</pre>
             <ul class="timeline">${timelineItems}</ul>
+            <ul class="proof-list">${compositionItems}</ul>
+            <ul class="proof-list">${proofItems}</ul>
             <dl>
               <div><dt>lit</dt><dd>${day.canvasStats.lit}</dd></div>
               <div><dt>varied</dt><dd>${day.canvasStats.varied}</dd></div>
@@ -338,6 +396,28 @@ function buildHtmlReport(summary) {
         background: rgba(255, 255, 255, 0.58);
       }
 
+      .proof-list {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+        margin: 0 0 12px;
+        padding: 0;
+        list-style: none;
+      }
+
+      .proof-list li {
+        display: grid;
+        gap: 2px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 8px;
+        background: rgba(247, 243, 236, 0.68);
+      }
+
+      .proof-list li.ready {
+        background: rgba(207, 234, 220, 0.64);
+      }
+
       .timeline li.active {
         color: #fff;
         background: linear-gradient(135deg, #4b8589, #cc8a5f);
@@ -357,6 +437,18 @@ function buildHtmlReport(summary) {
         font-size: 0.72rem;
         font-weight: 900;
         opacity: 0.76;
+      }
+
+      .proof-list span {
+        color: var(--muted);
+        font-size: 0.7rem;
+        font-weight: 900;
+      }
+
+      .proof-list strong {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
 
       dl {
@@ -453,6 +545,8 @@ function buildClipNotes(summary) {
         ``,
         `- Screenshot: ${path.basename(day.screenshotPath)}`,
         `- Director cue: ${active?.cue || "无 cue"}`,
+        `- Composition proof: ${day.proofStack.find((item) => item.label === "Composition")?.value || "无"}`,
+        `- Proof stack: ${day.proofStack.map((item) => `${item.label}=${item.value}`).join(" / ")}`,
         `- Canvas lit pixels: ${day.canvasStats.lit}`,
         `- Canvas checksum: ${day.canvasStats.checksum}`,
         `- Voiceover prompt: 展示 D${day.day} 如何从路书文本变成 ${active?.label || "当天镜头"}，重点讲 ${active?.cue || "视觉线索"}。`,
