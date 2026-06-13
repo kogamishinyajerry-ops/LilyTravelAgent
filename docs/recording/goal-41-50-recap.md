@@ -49,4 +49,4 @@ This recap closes the Studio-Dream bridge run. The theme was turning two separat
 
 ## Next useful slice
 
-The next narrow product slice should turn Bridge QA evidence into an explicit recording-script beat, so the creator can point to the bridge pack while explaining the verified Studio-Dream loop.
+The next narrow product slice should add a compact Bridge QA status card near the Studio script track, so the creator can see whether bridge evidence is present without scanning the full asset list.

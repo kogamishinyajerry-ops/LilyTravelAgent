@@ -153,11 +153,16 @@ const studioScriptSteps = [
     title: "沉淀素材",
     cue: "Recording suite 生成截图、notes 和本地索引。",
   },
+  {
+    step: "04",
+    title: "桥接证据",
+    cue: "指向 Bridge QA 卡片，说明 Studio 和 Dream 的闭环已验证。",
+  },
 ];
 const studioShotCue = {
   title: "当前镜头建议",
-  primary: "输入区 → 路书预览 → 素材资产",
-  note: "讲：这不是只生成攻略，而是在沉淀可复用的 Agent 素材流水线。",
+  primary: "输入区 → 路书预览 → 素材资产 → 桥接证据",
+  note: "讲：这不是只生成攻略，而是在沉淀可复用的 Agent 素材流水线和页面闭环证据。",
 };
 const studioSeriesChapters = [
   "录屏台成型",

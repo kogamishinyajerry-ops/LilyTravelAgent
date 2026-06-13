@@ -133,7 +133,7 @@ npm run check:recording-suite
 
 `/studio` reads `/api/recording-assets` and shows a recording asset readiness badge, the current local recording asset count, Dream/Studio/Bridge counts, product/walkthrough/bridge-validation edit tags, a latest QA pack summary card, recent QA packs with visually distinct Dream/Studio/Bridge badges and usage hints, a copyable recording-suite command, a compact copy/run/refresh/index workflow rail, a refresh control, and an "打开总索引" link. The link opens `/api/recording-assets/index`, a local HTML overview with the same pack type, usage labels, and Dream/Studio/Bridge counts. If the local index is missing, `/studio` shows the exact command: `npm run check:recording-suite`.
 
-`/studio` also has a `脚本模式` toggle that adds a compact three-step creator talking track, a current-shot cue, series chapter chips, a Demo Bridge card, a visible recording-suite coverage badge, and a topbar "讲解轨道已打开" cue for 16:9 walkthrough recording. Its "梦境路书" link carries the selected local demo into `/dream` with `?demo=dali` or `?demo=coast`, and `/dream` returns to `/studio` with the same query, so the recording workbench and cinematic preview can hand off in both directions.
+`/studio` also has a `脚本模式` toggle that adds a compact four-step creator talking track, a current-shot cue with Bridge QA evidence, series chapter chips, a Demo Bridge card, a visible recording-suite coverage badge, and a topbar "讲解轨道已打开" cue for 16:9 walkthrough recording. Its "梦境路书" link carries the selected local demo into `/dream` with `?demo=dali` or `?demo=coast`, and `/dream` returns to `/studio` with the same query, so the recording workbench and cinematic preview can hand off in both directions.
 
 ## Recording And Learning Assets
 

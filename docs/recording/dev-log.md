@@ -795,3 +795,14 @@ Files shown: components/studio-mode.test.tsx, app/globals.css, README.md, docs/r
 Command/result: npm test -- components/studio-mode.test.tsx && npm run lint && npm test && npm run build
 Voiceover note: "我把最近素材里的 Bridge QA 卡片做成独立样式。录屏时可以直接指着它讲：这是页面闭环的证据素材。"
 Usable for: Bridge recent-card clip, evidence material UI, Vibe Coding product polish, continued goal run round 53
+
+## Phase BO: v0.8.56 — Bridge QA Script Beat
+
+Date: 2026-06-13
+Clip title: Phase BO: v0.8.56 — Bridge QA Script Beat
+What changed: Added a fourth `桥接证据` beat to `/studio` script mode and updated the current-shot cue to include Bridge QA evidence.
+Why this matters: The recording track now tells the creator exactly when to point to the Bridge QA card and explain that the Studio-Dream loop is verified.
+Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, README.md, docs/recording/dev-log.md
+Command/result: npm test -- components/studio-mode.test.tsx && npm run lint && npm test && npm run build
+Voiceover note: "我把 Bridge QA 做成脚本模式里的第四步。录屏时不是临时想起证据，而是跟着轨道讲到页面闭环。"
+Usable for: Bridge evidence script clip, walkthrough pacing, Vibe Coding recording workflow, continued goal run round 54
