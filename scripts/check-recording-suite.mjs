@@ -18,6 +18,11 @@ const steps = [
     env: { DREAM_DEMO: "coast", DREAM_URL: dreamUrl },
   },
   {
+    label: "Dream skyline lens visual QA",
+    args: ["run", "check:dream-visuals"],
+    env: { DREAM_DEMO: "dali", DREAM_LENS: "low-skyline", DREAM_URL: dreamUrl },
+  },
+  {
     label: "Studio recording QA",
     args: ["run", "check:studio-visuals"],
     env: { STUDIO_URL: studioUrl },

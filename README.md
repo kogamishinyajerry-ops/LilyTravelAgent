@@ -130,7 +130,7 @@ npm run check:recording-suite
 
 `npm run index:recording-assets` scans local `recordings/visual-checks`, `recordings/studio-checks`, and `recordings/handoff-checks`, then writes `recordings/index.html` and `recordings/clip-index.md` as a local asset index.
 
-`npm run check:recording-suite` expects the local dev server to be running at `http://localhost:3000`. It runs the Dali `/dream` visual QA, coastal `/dream` visual QA, `/studio` visual QA, Studio-Dream handoff QA, and recording asset index in sequence. Set `RECORDING_SUITE_BASE_URL`, `DREAM_URL`, `STUDIO_URL`, or `HANDOFF_BASE_URL` to target another local server.
+`npm run check:recording-suite` expects the local dev server to be running at `http://localhost:3000`. It runs the Dali `/dream` visual QA, coastal `/dream` visual QA, Dali `low-skyline` Director Lens QA, `/studio` visual QA, Studio-Dream handoff QA, and recording asset index in sequence. Set `RECORDING_SUITE_BASE_URL`, `DREAM_URL`, `STUDIO_URL`, or `HANDOFF_BASE_URL` to target another local server.
 
 `/studio` reads `/api/recording-assets` and shows a recording asset readiness badge, the current local recording asset count, Dream/Studio/Bridge counts, product/walkthrough/bridge-validation edit tags, a latest QA pack summary card, recent QA packs with visually distinct Dream/Studio/Bridge badges and usage hints, a copyable recording-suite command, a compact copy/run/refresh/index/bridge-evidence workflow rail, a refresh control, and an "打开总索引" link. The link opens `/api/recording-assets/index`, a local HTML overview with the same pack type, usage labels, and Dream/Studio/Bridge counts. If the local index is missing, `/studio` shows the exact command: `npm run check:recording-suite`.
 
