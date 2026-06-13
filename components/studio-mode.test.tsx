@@ -114,6 +114,8 @@ describe("StudioMode demo roadbooks", () => {
     expect(workflow.textContent).toContain("运行 QA");
     expect(workflow.textContent).toContain("刷新素材");
     expect(workflow.textContent).toContain("打开索引");
+    expect(workflow.textContent).toContain("桥接证据");
+    expect(workflow.textContent).toContain("用 Bridge QA 状态卡证明页面闭环。");
     expect(screen.getByRole("link", { name: /打开总索引/ }).getAttribute("href")).toBe("/api/recording-assets/index");
     expect(screen.queryByLabelText("录屏讲解轨道")).toBeNull();
     expect(screen.queryByLabelText("当前镜头建议")).toBeNull();
@@ -221,7 +223,7 @@ describe("StudioMode demo roadbooks", () => {
     expect(screen.getByText("输入需求")).toBeTruthy();
     expect(screen.getByText("生成路书")).toBeTruthy();
     expect(screen.getByText("沉淀素材")).toBeTruthy();
-    expect(screen.getByText("桥接证据")).toBeTruthy();
+    expect(screen.getAllByText("桥接证据").length).toBeGreaterThanOrEqual(2);
     expect(screen.getByText("指向 Bridge QA 卡片，说明 Studio 和 Dream 的闭环已验证。")).toBeTruthy();
     expect(screen.getByLabelText("Bridge QA 证据状态").textContent).toContain("1 个桥接素材");
     expect(screen.getByLabelText("Bridge QA 证据状态").textContent).toContain("Studio-Dream 闭环已验证");

@@ -8,7 +8,8 @@ Purpose: turn every visual QA run into usable creator material: screenshots, loc
 2. Run `npm run check:recording-suite`.
 3. Open `/studio`.
 4. Click `刷新` in the `素材资产` panel.
-5. Open `打开总索引`.
+5. Point to `Bridge QA 证据状态`.
+6. Open `打开总索引`.
 
 ## What The Suite Creates
 
@@ -25,6 +26,7 @@ Purpose: turn every visual QA run into usable creator material: screenshots, loc
 - Recent three QA packs.
 - Dream QA / Studio QA / Bridge QA badges.
 - `产品画面` / `讲解画面` / `桥接验证` usage hints.
+- `Bridge QA 证据状态` in script mode.
 - `打开总索引` leading to `/api/recording-assets/index`.
 
 ## First-Run State

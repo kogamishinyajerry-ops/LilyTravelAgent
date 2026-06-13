@@ -839,3 +839,14 @@ Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, README
 Command/result: npm test -- components/studio-mode.test.tsx && npm run lint && npm test && npm run build
 Voiceover note: "我把桥接证据做成系列章节的第四章。这样这条内容线从录屏台、素材管线、Agent 产品化，延伸到可验证闭环。"
 Usable for: chapter-chip clip, content-series packaging, Vibe Coding bridge evidence narrative, continued goal run round 57
+
+## Phase BS: v0.8.60 — Bridge Evidence Workflow Rail
+
+Date: 2026-06-13
+Clip title: Phase BS: v0.8.60 — Bridge Evidence Workflow Rail
+What changed: Added `桥接证据` as the fifth step in the `/studio` recording asset workflow rail and updated the recording asset pipeline guide.
+Why this matters: The copy/run/refresh/index loop now ends by pointing to the Bridge QA evidence card. The workflow itself tells the creator where the proof belongs.
+Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, docs/recording/recording-asset-pipeline.md, README.md, docs/recording/dev-log.md
+Command/result: npm test -- components/studio-mode.test.tsx && npm run lint && npm test && npm run build
+Voiceover note: "我把 Bridge QA 也接进素材流程 rail。跑完 QA、刷新、打开索引之后，最后一步就是指向闭环证据。"
+Usable for: workflow-rail clip, Bridge evidence operation flow, Vibe Coding product workflow, continued goal run round 58

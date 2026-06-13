@@ -49,4 +49,4 @@ This recap closes the Studio-Dream bridge run. The theme was turning two separat
 
 ## Next useful slice
 
-The next narrow product slice should add Bridge QA evidence to the Studio recording workflow rail, so the copy/run/refresh/index loop also points to the verified bridge proof.
+The next narrow product slice should close the Bridge QA evidence run with a Goals 51-60 recap that lists the asset index, Studio UI, script, and workflow rail changes.

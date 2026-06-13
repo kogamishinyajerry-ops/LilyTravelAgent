@@ -136,6 +136,11 @@ const recordingWorkflowSteps = [
     title: "打开索引",
     cue: "进入完整素材库挑选剪辑素材。",
   },
+  {
+    step: "5",
+    title: "桥接证据",
+    cue: "用 Bridge QA 状态卡证明页面闭环。",
+  },
 ];
 const studioScriptSteps = [
   {
