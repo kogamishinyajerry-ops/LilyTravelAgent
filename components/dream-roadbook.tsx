@@ -315,6 +315,11 @@ export function DreamRoadbook({ initialDemo = "dali" }: DreamRoadbookProps = {})
         status: sceneInspector.status === "active" ? "ready" : "pending",
       },
       {
+        label: "Director",
+        value: activeDirectorLens.proofLabel,
+        status: "ready",
+      },
+      {
         label: "Landmark",
         value: sceneTimeline.status === "active" ? `${sceneTimeline.items.length} beats` : "fallback",
         status: sceneTimeline.status === "active" ? "ready" : "pending",
@@ -341,7 +346,16 @@ export function DreamRoadbook({ initialDemo = "dali" }: DreamRoadbookProps = {})
         status: points.some((point) => point.status === "ok") ? "ready" : mapConfigured === false ? "pending" : "working",
       },
     ],
-    [assetStage, mapConfigured, points, sceneInspector.composition.proofLabel, sceneInspector.status, sceneTimeline.items.length, sceneTimeline.status],
+    [
+      activeDirectorLens.proofLabel,
+      assetStage,
+      mapConfigured,
+      points,
+      sceneInspector.composition.proofLabel,
+      sceneInspector.status,
+      sceneTimeline.items.length,
+      sceneTimeline.status,
+    ],
   );
   const cinematicProofReadyCount = cinematicProofItems.filter((item) => item.status === "ready").length;
 
@@ -1523,7 +1537,7 @@ export function DreamRoadbook({ initialDemo = "dali" }: DreamRoadbookProps = {})
               </span>
               <span>
                 <small>Proof</small>
-                <strong>{cinematicProofReadyCount}/4 ready</strong>
+                <strong>{cinematicProofReadyCount}/5 ready</strong>
               </span>
               <span>
                 <small>Asset</small>
@@ -1889,7 +1903,7 @@ export function DreamRoadbook({ initialDemo = "dali" }: DreamRoadbookProps = {})
             <div className="dream-cinematic-proof" aria-label="Cinematic Proof Stack">
               <div className="dream-cinematic-proof-head">
                 <span>Proof Stack</span>
-                <strong>{cinematicProofItems.filter((item) => item.status === "ready").length}/4 ready</strong>
+                <strong>{cinematicProofItems.filter((item) => item.status === "ready").length}/5 ready</strong>
               </div>
               <div className="dream-cinematic-proof-grid">
                 {cinematicProofItems.map((item) => (

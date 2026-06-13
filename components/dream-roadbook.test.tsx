@@ -170,9 +170,11 @@ describe("DreamRoadbook a11y polish", () => {
 
     const stack = screen.getByLabelText("Cinematic Proof Stack");
 
-    expect(stack.textContent).toContain("2/4 ready");
+    expect(stack.textContent).toContain("3/5 ready");
     expect(stack.textContent).toContain("Composition");
     expect(stack.textContent).toContain("D1 old-town beat");
+    expect(stack.textContent).toContain("Director");
+    expect(stack.textContent).toContain("auto day lens");
     expect(stack.textContent).toContain("Landmark");
     expect(stack.textContent).toContain("4 beats");
     expect(stack.textContent).toContain("Asset");
@@ -270,7 +272,7 @@ describe("DreamRoadbook a11y polish", () => {
     expect(contract.textContent).toContain("isometric monument");
     expect(contract.textContent).toContain("auto day lens");
     expect(contract.textContent).toContain("D1 old-town beat");
-    expect(contract.textContent).toContain("2/4 ready");
+    expect(contract.textContent).toContain("3/5 ready");
     expect(contract.textContent).toContain("idle");
   });
 
