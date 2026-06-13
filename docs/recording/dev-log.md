@@ -289,3 +289,14 @@ Files shown: lib/cinematic-scene-preset.ts, lib/cinematic-scene-preset.test.ts, 
 Command/result: npm test -- lib/cinematic-scene-preset.test.ts && npm run lint && npm run build && Playwright D1-D4 atmosphere pixel checks
 Voiceover note: "现在 D1-D4 不只是换地标和镜头，连光色、雾气、水面、高光也会跟着变。D2 洱海更亮，D3 喜洲更安静，D4 收尾更暖。这就是我想做的动态路书：不是卡片拼接，而是一个被 Agent 导演的目的地预览。"
 Usable for: day-atmosphere comparison clip, render-direction lesson, Vibe Coding small-helper-to-visual-impact workflow, 10-goal continuation round 6
+
+## Phase U: v0.8.10 — Scene-Aware Preview Image Prompt
+
+Date: 2026-06-13
+Clip title: Phase U: v0.8.10 — Scene-Aware Preview Image Prompt
+What changed: Connected the Dali cinematic scene direction to the image-preview prompt. `lib/preview-asset.ts` now exports `buildCinematicScenePromptLine()`, which resolves the active scene preset and adds preset id, destination, hero label, active shot, visual cue, active landmark silhouette, atmosphere profile, water color, and sun color to the MiniMax image prompt. `lib/preview-asset.test.ts` verifies Dali D2 prompt alignment, D4 switching, and unsupported-destination fallback wording without calling image generation.
+Why this matters: The Three.js scene and AI-generated far-view image now share one director layer. The roadbook's active day can drive both the interactive WebGL foreground and the generated cinematic backplate, making the asset pipeline more coherent and easier to explain in recordings.
+Files shown: lib/preview-asset.ts, lib/preview-asset.test.ts, lib/cinematic-scene-preset.ts, README.md, docs/design/real-scenic-preview-roadmap.md, docs/recording/dev-log.md
+Command/result: npm test -- lib/preview-asset.test.ts && npm run lint && npm run build
+Voiceover note: "这一轮我不是简单加 prompt 形容词，而是把前面做好的 3D 导演数据接进图片资产管线。D2 的 AI 远景图知道它是洱海 shot、帆影地标、erhai-sunset 氛围；D4 会自动变成 return-cafe 和 return-amber。"
+Usable for: scene-data-to-image-prompt clip, asset pipeline explanation, Vibe Coding shared-data-layer lesson, 10-goal continuation round 7

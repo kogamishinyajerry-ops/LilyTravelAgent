@@ -158,6 +158,23 @@ D1-D4 already had route, camera, and landmark changes; atmosphere makes those be
 
 > 这一轮我没有换大框架，而是继续加“导演层”：同样是大理，D2 洱海应该更水、更亮，D3 喜洲应该更安静，D4 收尾应该更暖。于是我把雾、太阳、水面、高光都做成 day atmosphere profile，让路书每天的视觉情绪真的不一样。
 
+## Phase U: Scene-Aware Preview Image Prompt (2026-06-13)
+
+### What changed
+
+- Added `buildCinematicScenePromptLine()` to `lib/preview-asset.ts`.
+- The preview-image prompt now includes the resolved destination scene preset when available: preset id, destination, hero label, active shot, visual cue, active landmark silhouette, atmosphere profile, water color, and sun color.
+- `lib/preview-asset.test.ts` verifies Dali D2 prompt alignment, D4 switching, and unsupported-destination fallback wording.
+- The change is prompt-only and does not call MiniMax image generation during tests.
+
+### Why this matters
+
+The WebGL scene and AI image backplate should not feel like two separate products. This phase uses the same data-driven director layer for both: the Three.js foreground and the generated far-view image now share the route focus, landmark vocabulary, and atmosphere profile. That makes future generated backplates more likely to match the actual interactive scene.
+
+### Recording angle
+
+> 现在我把 3D 场景里的导演数据反向喂给图片生成 prompt：D2 洱海会告诉图片模型“这是大理 preset、洱海 shot、帆影地标、erhai-sunset 氛围”；D4 会换成 return-cafe 和 return-amber。这样 AI 图不是随便生成一张风景，而是跟网页里的动态路书共用同一套导演层。
+
 ## Phase D: real data sources (2026-06-07)
 
 Replaced the Phase C procedural stubs with real implementations:

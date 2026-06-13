@@ -1,4 +1,9 @@
 import type { PreviewAsset, Roadbook, ScenicRenderDesign } from "@/lib/roadbook-types";
+import {
+  buildCinematicAtmosphereProfile,
+  buildCinematicLandmarkSilhouettes,
+  resolveCinematicScenePreset,
+} from "@/lib/cinematic-scene-preset";
 
 type ScenicRenderPromptDesign = Partial<
   Pick<
@@ -33,10 +38,12 @@ export function buildCinematicPreviewPrompt(roadbook: Roadbook, options: Preview
     .join(", ");
   const visualStyle = buildVisualStyle(options.mood, options.template);
   const scenicRenderLine = buildScenicRenderLine(options.scenicDesign);
+  const scenePresetLine = buildCinematicScenePromptLine(roadbook, activeDay);
 
   return compactPrompt(`Cinematic travel destination preview for a custom AI roadbook.
 Location and landmarks: ${locationLine}.
 Scene concept: ${conceptLine}.
+3D scene direction: ${scenePresetLine}.
 Visual details: ${foodAndPhoto.join(", ")}.
 Reference photo render blueprint: ${scenicRenderLine}.
 Render a breathtaking pre-trip hero image: real-world inspired terrain, recognizable local architecture, atmospheric landscape, foreground depth, realistic lighting, premium travel magazine composition, ${visualStyle}.
@@ -53,6 +60,28 @@ export function buildPromptOnlyPreviewAsset(roadbook: Roadbook, options: Preview
     aspectRatio: "16:9",
     message,
   };
+}
+
+export function buildCinematicScenePromptLine(roadbook: Roadbook, activeDay: number) {
+  const resolved = resolveCinematicScenePreset(roadbook, activeDay);
+  if (!resolved) {
+    return "no destination-specific 3D preset; use the roadbook location, route, local terrain, and architecture as the visual source of truth";
+  }
+
+  const landmarkLayer = buildCinematicLandmarkSilhouettes(resolved.preset, resolved.focus.day);
+  const atmosphere = buildCinematicAtmosphereProfile(resolved.focus);
+
+  return [
+    `preset ${resolved.preset.id}`,
+    `destination ${resolved.preset.destination}`,
+    `hero ${resolved.preset.heroLabel}`,
+    `active shot D${resolved.focus.day} ${resolved.focus.label}`,
+    `visual cue ${resolved.focus.visualCue}`,
+    `landmark ${landmarkLayer.activeMarker.kind} (${landmarkLayer.activeMarker.cue})`,
+    `atmosphere ${atmosphere.id} (${atmosphere.label})`,
+    `water ${atmosphere.waterColor}`,
+    `sun ${atmosphere.sunColor}`,
+  ].join("; ");
 }
 
 function buildVisualStyle(mood?: string, template?: string) {

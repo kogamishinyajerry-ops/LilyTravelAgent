@@ -1,5 +1,6 @@
-import { buildCinematicPreviewPrompt, buildPromptOnlyPreviewAsset } from "./preview-asset";
+import { buildCinematicPreviewPrompt, buildCinematicScenePromptLine, buildPromptOnlyPreviewAsset } from "./preview-asset";
 import type { Roadbook } from "./roadbook-types";
+import { sampleRoadbook } from "./sample-roadbook";
 
 const mockRoadbook: Roadbook = {
   title: "Tokyo Discovery",
@@ -41,6 +42,33 @@ const mockRoadbook: Roadbook = {
 };
 
 describe("buildCinematicPreviewPrompt", () => {
+  describe("cinematic scene preset alignment", () => {
+    it("adds Dali scene preset, landmark, and atmosphere direction for the active day", () => {
+      const result = buildCinematicPreviewPrompt(sampleRoadbook, { activeDay: 2, mood: "dusk", template: "monument" });
+
+      expect(result).toContain("preset dali-cangshan-erhai");
+      expect(result).toContain("active shot D2 洱海西线");
+      expect(result).toContain("landmark erhai-sail");
+      expect(result).toContain("atmosphere erhai-sunset");
+      expect(result).toContain("water #78c5cf");
+    });
+
+    it("switches the scene direction when another Dali day is active", () => {
+      const result = buildCinematicScenePromptLine(sampleRoadbook, 4);
+
+      expect(result).toContain("active shot D4 古城收尾");
+      expect(result).toContain("landmark return-cafe");
+      expect(result).toContain("atmosphere return-amber");
+    });
+
+    it("keeps unsupported destinations explicit instead of inventing a preset", () => {
+      const result = buildCinematicScenePromptLine(mockRoadbook, 1);
+
+      expect(result).toContain("no destination-specific 3D preset");
+      expect(result).not.toContain("dali-cangshan-erhai");
+    });
+  });
+
   describe("island template", () => {
     it("uses floating-sky-islands wording", () => {
       const result = buildCinematicPreviewPrompt(mockRoadbook, { template: "island" });

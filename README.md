@@ -76,7 +76,7 @@ For the default Dali roadbook, `/dream` also mounts a destination-specific cinem
 
 Use `http://localhost:3000/share-preview` for the 16:9 post-cover recording card. `/dream` generates the query link automatically from the current roadbook and asset cache.
 
-`/dream` uses two-stage generation: first a lightweight dream preview, then a background full-detail roadbook pass. After the preview roadbook is available, it also requests `/api/generate-preview-asset` to generate a 16:9 cinematic destination image; if image generation fails, the procedural Three.js scene remains as the fallback.
+`/dream` uses two-stage generation: first a lightweight dream preview, then a background full-detail roadbook pass. After the preview roadbook is available, it also requests `/api/generate-preview-asset` to generate a 16:9 cinematic destination image; if image generation fails, the procedural Three.js scene remains as the fallback. The image prompt also receives the active cinematic scene direction when a destination preset is available, so the AI backplate can align with the same day focus, landmark, and atmosphere as the WebGL scene.
 
 The `/dream` Scenic Render Skill panel lets you upload a local PNG/JPG/WebP landscape photo. `/api/generate-scenic-render-design` asks MiniMax-M3 to turn that photo into a structured render blueprint: terrain, architecture, water/vegetation, lighting, camera, materials, Three.js plan, and an image-generation prompt. When you regenerate the preview asset, that blueprint is added to the cinematic image prompt so the destination preview is more grounded in the uploaded scene.
 
