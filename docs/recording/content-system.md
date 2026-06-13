@@ -22,6 +22,7 @@ Examples:
 - "AI 自动生成大理 4 天游玩路书"
 - "输入预算和兴趣，生成一份可截图的旅行计划"
 - "用地图检查 AI 推荐的路线是否顺"
+- "同一份路书，用不同 Director Lens 生成不同视觉预览"
 
 ### 2. Vibe Coding Learning
 
@@ -42,6 +43,7 @@ Examples:
 - "MiniMax 负责生成，高德负责定位，Leaflet 负责地图"
 - "旅游 Agent 的最小架构"
 - "怎么把 AI 文案变成网页路书"
+- "怎么把审美拆成 Prompt、Lens、Scene、Proof、Asset"
 
 ### 4. Future Product Thinking
 
@@ -76,6 +78,8 @@ Use this structure for most videos:
 8. 把路书页面做成适合截图的杂志感
 9. 缺 API key 时不要崩，要显示配置提示
 10. 大理 4 天游玩路书第一次完整生成
+11. 给 AI 路书加 Director Lens：让用户选择镜头语言
+12. 用 Proof Stack 检查一个“好看”的页面
 
 ## What To Record Every Time
 
@@ -90,5 +94,6 @@ Use this structure for most videos:
 - `/` for the real working tool and full roadbook/map experience.
 - `/studio` for clean 16:9 recording with input, roadbook preview, and Creator Track in one frame.
 - `/dream` for the highly visual dream-roadbook direction with minimal text and 2.5D geometry.
+- `/dream` with `Skyline` Director Lens for clips about camera direction and cinematic proof.
 - code editor for implementation breakdowns.
 - terminal only when showing verification commands or setup states.
