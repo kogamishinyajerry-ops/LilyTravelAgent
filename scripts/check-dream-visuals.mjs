@@ -159,7 +159,7 @@ async function main() {
     assert(inspectorText.includes(`D${day}`), `Scene Inspector did not mention D${day}.`);
     assert(timeline.length === 4, `Director timeline should have 4 items for D${day}; got ${timeline.length}.`);
     assert(composition.length === 4, `Composition profile should have 4 items for D${day}; got ${composition.length}.`);
-    assert(proofStack.length === 4, `Proof stack should have 4 items for D${day}; got ${proofStack.length}.`);
+    assert(proofStack.length === 5, `Proof stack should have 5 items for D${day}; got ${proofStack.length}.`);
     const activeTimelineItem = timeline.find((item) => item.active);
     assert(activeTimelineItem?.day === day, `Director timeline active item should be D${day}.`);
     const expectedLabels = expectedTimelineLabels[demoRoadbook] || expectedTimelineLabels.dali;
@@ -173,8 +173,12 @@ async function main() {
       `Composition proof mismatch for D${day}: ${proofStack.find((item) => item.label === "Composition")?.value}`,
     );
     assert(
-      proofStack.filter((item) => item.status.includes("ready")).length >= 2,
-      `Proof stack should have at least composition + landmark ready for D${day}.`,
+      proofStack.find((item) => item.label === "Director")?.value === activeLens?.proof,
+      `Director proof mismatch for D${day}: ${proofStack.find((item) => item.label === "Director")?.value}`,
+    );
+    assert(
+      proofStack.filter((item) => item.status.includes("ready")).length >= 3,
+      `Proof stack should have at least composition + director + landmark ready for D${day}.`,
     );
     if (demoRoadbook === "coast") {
       assert(inspectorText.includes("海岸海岛"), `Coastal Scene Inspector did not activate for D${day}.`);
