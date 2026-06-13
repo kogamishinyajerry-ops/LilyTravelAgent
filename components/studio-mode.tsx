@@ -168,6 +168,7 @@ const studioSeriesChapters = [
   "录屏台成型",
   "素材管线可视化",
   "Agent 产品化",
+  "桥接证据",
 ];
 
 function buildPlaces(roadbook: Roadbook): GeocodePlace[] {

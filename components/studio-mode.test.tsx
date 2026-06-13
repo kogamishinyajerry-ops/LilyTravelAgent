@@ -217,6 +217,7 @@ describe("StudioMode demo roadbooks", () => {
     expect(screen.getByLabelText("系列章节提示").textContent).toContain("01 · 录屏台成型");
     expect(screen.getByLabelText("系列章节提示").textContent).toContain("02 · 素材管线可视化");
     expect(screen.getByLabelText("系列章节提示").textContent).toContain("03 · Agent 产品化");
+    expect(screen.getByLabelText("系列章节提示").textContent).toContain("04 · 桥接证据");
     expect(screen.getByText("输入需求")).toBeTruthy();
     expect(screen.getByText("生成路书")).toBeTruthy();
     expect(screen.getByText("沉淀素材")).toBeTruthy();

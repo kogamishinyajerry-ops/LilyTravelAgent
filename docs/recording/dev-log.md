@@ -828,3 +828,14 @@ Files shown: docs/recording/studio-dream-demo-script.md, docs/recording/dev-log.
 Command/result: npm run lint && npm test && npm run build
 Voiceover note: "我把 Bridge QA 状态卡写进 demo script。录屏时先讲证据，再进入梦境预览，这样产品逻辑更完整。"
 Usable for: demo-script update clip, Bridge evidence narration, Vibe Coding content system, continued goal run round 56
+
+## Phase BR: v0.8.59 — Bridge Evidence Chapter Chip
+
+Date: 2026-06-13
+Clip title: Phase BR: v0.8.59 — Bridge Evidence Chapter Chip
+What changed: Added `桥接证据` as the fourth series chapter chip in `/studio` script mode and covered it in the Studio component test.
+Why this matters: The series packaging now mirrors the four-step recording track. Bridge QA evidence becomes a named chapter in the creator workflow, not just a supporting detail.
+Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, README.md, docs/recording/dev-log.md
+Command/result: npm test -- components/studio-mode.test.tsx && npm run lint && npm test && npm run build
+Voiceover note: "我把桥接证据做成系列章节的第四章。这样这条内容线从录屏台、素材管线、Agent 产品化，延伸到可验证闭环。"
+Usable for: chapter-chip clip, content-series packaging, Vibe Coding bridge evidence narrative, continued goal run round 57
