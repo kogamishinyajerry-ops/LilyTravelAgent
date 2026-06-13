@@ -30,6 +30,14 @@ function recordingAssetsResponse(packCount: number, title = "Studio 16:9 demo pa
             detail: "云南大理 / 三亚海岛",
           },
           {
+            type: "bridge",
+            id: "bridge-latest",
+            title: "Studio-Dream bridge QA pack",
+            createdAt: "2026-06-13T05:46:25.000Z",
+            label: "/studio ↔ /dream handoff QA",
+            detail: "云南大理 / 三亚海岛 round trips",
+          },
+          {
             type: "dream",
             id: "dream-coast",
             title: "Dream coastal visual pack",
@@ -85,9 +93,12 @@ describe("StudioMode demo roadbooks", () => {
     expect(screen.getByLabelText("素材剪辑标签").textContent).toContain("桥接验证 · 1");
     expect(screen.getByLabelText("最近素材包")).toBeTruthy();
     expect(screen.getByText("Studio QA")).toBeTruthy();
+    expect(screen.getByText("Bridge QA")).toBeTruthy();
     expect(screen.getByText("Dream QA")).toBeTruthy();
     expect(screen.getByText("讲解画面")).toBeTruthy();
+    expect(screen.getByText("桥接验证")).toBeTruthy();
     expect(screen.getByText("产品画面")).toBeTruthy();
+    expect(screen.getByText("Studio-Dream bridge QA pack")).toBeTruthy();
     expect(screen.getByLabelText("最新素材包摘要").textContent).toContain("最新素材");
     expect(screen.getByLabelText("最新素材包摘要").textContent).toContain("Studio 16:9 demo pack");
     expect(screen.getByLabelText("最新素材包摘要").textContent).toContain("/studio recording QA");

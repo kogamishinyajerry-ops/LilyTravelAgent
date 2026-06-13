@@ -1661,6 +1661,11 @@ textarea {
   border-left-color: rgba(214, 107, 61, 0.82);
 }
 
+.studio-recording-recent-item.bridge {
+  border-left-color: rgba(108, 123, 217, 0.86);
+  background: rgba(245, 247, 255, 0.72);
+}
+
 .studio-recording-recent small {
   display: flex;
   align-items: center;
@@ -1680,6 +1685,10 @@ textarea {
 
 .studio-recording-recent-item.studio em {
   background: var(--rust);
+}
+
+.studio-recording-recent-item.bridge em {
+  background: #6c7bd9;
 }
 
 .studio-recording-recent strong {
@@ -1704,6 +1713,11 @@ textarea {
 .studio-recording-recent-item.studio b {
   color: #7a3c24;
   background: rgba(214, 107, 61, 0.13);
+}
+
+.studio-recording-recent-item.bridge b {
+  color: #384276;
+  background: rgba(108, 123, 217, 0.14);
 }
 
 .studio-recording-command {

@@ -49,4 +49,4 @@ This recap closes the Studio-Dream bridge run. The theme was turning two separat
 
 ## Next useful slice
 
-The next narrow product slice should make Bridge QA cards visually distinct in `/studio` recent assets, so the recording workbench can separate Dream footage, Studio footage, and Studio-Dream bridge evidence at a glance.
+The next narrow product slice should turn Bridge QA evidence into an explicit recording-script beat, so the creator can point to the bridge pack while explaining the verified Studio-Dream loop.

@@ -784,3 +784,14 @@ Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, app/gl
 Command/result: npm test -- components/studio-mode.test.tsx && npm run lint && npm test && npm run build
 Voiceover note: "我把 Bridge QA 也放进 Studio 面板。现在素材资产区一眼能看到产品画面、讲解画面和桥接验证三类证据。"
 Usable for: Studio asset taxonomy clip, Bridge QA visibility, Vibe Coding evidence dashboard, continued goal run round 52
+
+## Phase BN: v0.8.55 — Bridge QA Recent Card Styling
+
+Date: 2026-06-13
+Clip title: Phase BN: v0.8.55 — Bridge QA Recent Card Styling
+What changed: Added a Bridge QA recent-pack fixture to the Studio test and gave `/studio` Bridge recent asset cards a distinct visual treatment.
+Why this matters: The recent asset list now separates three footage types at a glance. Bridge QA is visible as evidence material, not just a number in the counts row.
+Files shown: components/studio-mode.test.tsx, app/globals.css, README.md, docs/recording/dev-log.md
+Command/result: npm test -- components/studio-mode.test.tsx && npm run lint && npm test && npm run build
+Voiceover note: "我把最近素材里的 Bridge QA 卡片做成独立样式。录屏时可以直接指着它讲：这是页面闭环的证据素材。"
+Usable for: Bridge recent-card clip, evidence material UI, Vibe Coding product polish, continued goal run round 53
