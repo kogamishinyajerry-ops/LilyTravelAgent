@@ -47,6 +47,16 @@
 - Click D1-D4 islands and record the text staying minimal.
 - Voiceover idea: "我不想让 AI 只吐一大段攻略，我想让它生成一个像游戏世界一样的旅行路书。"
 
+## Chapter 6C: Director Lens And Proof Stack
+
+- Open `/dream` with the default Dali demo.
+- Click `Skyline` in `Director Lens`, then click D1-D4 in the director timeline.
+- Point to `Agent Visual Contract`: Prompt / Lens / Scene / Proof / Asset.
+- Point to `Proof Stack`: Composition / Director / Landmark / Asset / Map.
+- Point to `资产缓存` and show the Lens row.
+- Optional evidence command: `DREAM_LENS=low-skyline npm run check:dream-visuals`.
+- Voiceover idea: "我把镜头语言也做成了 Agent 的结构。选 Skyline 后，不只是画面变化，Prompt、Scene、Proof Stack、缓存和 QA 报告都会同步记录。"
+
 ## Chapter 7: Review And Next Steps
 
 - Show `npm run lint` and `npm run build`.
