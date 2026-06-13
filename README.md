@@ -138,6 +138,7 @@ npm run check:recording-suite
 - `docs/recording/video-outline.md` provides short-video and long-video structures.
 - `docs/recording/dev-log.md` is the running production log for each clip.
 - `docs/recording/recording-asset-pipeline.md` explains the local QA-to-recording-assets workflow.
+- `docs/recording/goal-31-40-recap.md` summarizes the Studio presenter-mode and recording-asset workflow run.
 - `docs/recording/content-system.md` defines the account content pillars.
 - `docs/recording/vibe-coding-learning-journal.md` captures the learning narrative for voiceover.
 

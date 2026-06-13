@@ -641,3 +641,14 @@ Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, app/gl
 Command/result: npm test -- components/studio-mode.test.tsx && npm run lint && npm test && npm run build
 Voiceover note: "我把这轮开发直接拆成三个短视频章节：录屏台、素材管线、Agent 产品化。产品界面本身开始反向服务内容生产。"
 Usable for: series-chapter clip, creator workflow planning, Vibe Coding content packaging, continued goal run round 39
+
+## Phase BA: v0.8.42 — Goals 31-40 Recording Recap
+
+Date: 2026-06-13
+Clip title: Phase BA: v0.8.42 — Goals 31-40 Recording Recap
+What changed: Added `docs/recording/goal-31-40-recap.md`, summarizing goals 31-40 with commits, product changes, verification commands, recording sequence, content packaging ideas, and the next useful slice.
+Why this matters: The continuous development run is now itself a content asset. The user can turn the Studio presenter-mode work into a chaptered development recap instead of reconstructing it from git history.
+Files shown: docs/recording/goal-31-40-recap.md, README.md, docs/recording/dev-log.md
+Command/result: npm run lint && npm test && npm run build
+Voiceover note: "我把这 10 轮连续推进整理成一份复盘文档。它不只是代码记录，也是一条可以剪成系列内容的开发路线。"
+Usable for: 10-goal recap clip, development-process summary, Vibe Coding series planning, continued goal run round 40
