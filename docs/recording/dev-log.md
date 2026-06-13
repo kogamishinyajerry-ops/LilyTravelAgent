@@ -894,3 +894,14 @@ Files shown: README.md, docs/recording/recording-asset-pipeline.md, docs/recordi
 Command/result: npm run lint && npm test && npm run build (41 files, 880 tests, build passed)
 Voiceover note: "我把 Dream QA 的说明升级成证据包：截图之外，还记录 Composition、Proof Stack、微动和 Scene Inspector。"
 Usable for: visual QA proof clip, recording asset pipeline update, Vibe Coding verification narrative, continued goal run round 69
+
+## Phase BX: v0.8.65 — Goals 61-70 Cinematic Visual Contract Recap
+
+Date: 2026-06-14
+Clip title: Phase BX: v0.8.65 — Goals 61-70 Cinematic Visual Contract Recap
+What changed: Added `docs/recording/goal-61-70-recap.md`, summarizing the cinematic composition profile, Proof Stack, visual QA proof output, cinematic matte layer, template render strategies, generation prompt integration, Agent Visual Contract panel, and recording script.
+Why this matters: The 61-70 run is now packaged as a full content chapter about turning visual taste into reusable Agent structure.
+Files shown: docs/recording/goal-61-70-recap.md, README.md, docs/recording/dev-log.md
+Command/result: npm run lint && npm test && npm run build
+Voiceover note: "这 10 轮不是单纯做漂亮页面，而是把审美拆成可生成、可验证、可录屏讲解的 Visual Contract。"
+Usable for: 10-goal recap clip, cinematic visual contract chapter, Vibe Coding learning narrative, continued goal run round 70
