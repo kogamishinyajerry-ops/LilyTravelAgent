@@ -663,3 +663,14 @@ Files shown: components/studio-mode.tsx, components/dream-roadbook.tsx, app/drea
 Command/result: npm test -- components/studio-mode.test.tsx components/dream-roadbook.test.tsx && npm run lint && npm test && npm run build
 Voiceover note: "我把录屏台和梦境路书接上了。现在选海岸再点梦境路书，打开的就是海岸版本，演示路径更顺。"
 Usable for: Studio-to-Dream handoff clip, demo-flow polish, Vibe Coding cross-surface workflow, continued goal run round 41
+
+## Phase BC: v0.8.44 — Dream To Studio Reverse Handoff
+
+Date: 2026-06-13
+Clip title: Phase BC: v0.8.44 — Dream To Studio Reverse Handoff
+What changed: `/dream` now links back to `/studio?demo=dali` or `/studio?demo=coast`; `/studio` initializes the matching local roadbook from that query.
+Why this matters: Studio and Dream now form a two-way recording circuit. The creator can move between process explanation and cinematic preview without losing the selected demo route.
+Files shown: app/studio/page.tsx, components/studio-mode.tsx, components/dream-roadbook.tsx, components/studio-mode.test.tsx, components/dream-roadbook.test.tsx, README.md, docs/design/real-scenic-preview-roadmap.md, docs/recording/dev-log.md
+Command/result: npm test -- components/studio-mode.test.tsx components/dream-roadbook.test.tsx && npm run lint && npm test && npm run build
+Voiceover note: "我把反向链接也补上了。从 Dream 回 Studio，还是同一个大理或海岸 demo，这样演示不会断。"
+Usable for: Dream-to-Studio handoff clip, two-way recording circuit, Vibe Coding product-flow polish, continued goal run round 42

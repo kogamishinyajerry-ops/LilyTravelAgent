@@ -1243,7 +1243,7 @@ export function DreamRoadbook({ initialDemo = "dali" }: DreamRoadbookProps = {})
               <ArrowLeft size={16} />
               工具页
             </Link>
-            <Link href="/studio" aria-label="打开录屏台">
+            <Link href={demoRoadbookId ? `/studio?demo=${demoRoadbookId}` : "/studio"} aria-label="打开录屏台">
               <Eye size={16} />
               录屏台
             </Link>

@@ -28,6 +28,9 @@ import { clipBlueprints, creatorMilestones, vibeCodingLessons } from "@/lib/vibe
 
 type StudioStage = "demo" | "generating" | "geocoding" | "ready" | "error";
 type StudioDemoRoadbookId = "dali" | "coast";
+type StudioModeProps = {
+  initialDemo?: string;
+};
 type RecordingAssetsState =
   | { status: "loading" }
   | {
@@ -100,6 +103,15 @@ const studioDemoRoadbooks: Array<{
     brief: studioCoastalBrief,
   },
 ];
+
+function normalizeStudioDemoRoadbookId(value?: string): StudioDemoRoadbookId {
+  return value === "coast" ? "coast" : "dali";
+}
+
+function getStudioDemoRoadbook(value?: string) {
+  const demoId = normalizeStudioDemoRoadbookId(value);
+  return studioDemoRoadbooks.find((option) => option.id === demoId) || studioDemoRoadbooks[0];
+}
 
 const localDemoModelLabel = "Local Demo";
 const recordingSuiteCommand = "npm run check:recording-suite";
@@ -211,10 +223,11 @@ function getRecordingAssetReadiness(summary: Extract<RecordingAssetsState, { sta
   };
 }
 
-export function StudioMode() {
-  const [brief, setBrief] = useState<TravelBrief>(defaultBrief);
-  const [demoRoadbookId, setDemoRoadbookId] = useState<StudioDemoRoadbookId | null>("dali");
-  const [roadbook, setRoadbook] = useState<Roadbook>(sampleRoadbook);
+export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
+  const initialDemoRoadbook = getStudioDemoRoadbook(initialDemo);
+  const [brief, setBrief] = useState<TravelBrief>(initialDemoRoadbook.brief);
+  const [demoRoadbookId, setDemoRoadbookId] = useState<StudioDemoRoadbookId | null>(initialDemoRoadbook.id);
+  const [roadbook, setRoadbook] = useState<Roadbook>(initialDemoRoadbook.roadbook);
   const [points, setPoints] = useState<GeocodePoint[]>([]);
   const [stage, setStage] = useState<StudioStage>("demo");
   const [error, setError] = useState("");

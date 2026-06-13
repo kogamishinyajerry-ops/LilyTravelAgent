@@ -118,6 +118,25 @@ describe("StudioMode demo roadbooks", () => {
     expect(await screen.findByText("15 个素材包")).toBeTruthy();
   });
 
+  it("can initialize directly into the coastal demo from the dream handoff", async () => {
+    render(<StudioMode initialDemo="coast" />);
+
+    expect(screen.getByText("三亚海岛 本地演示")).toBeTruthy();
+    expect(screen.getByText("三亚海岸 4 天梦境路书")).toBeTruthy();
+    expect(screen.getByDisplayValue("三亚海岛")).toBeTruthy();
+    expect(screen.getByRole("link", { name: /梦境路书/ }).getAttribute("href")).toBe("/dream?demo=coast");
+    expect(await screen.findByText("15 个素材包")).toBeTruthy();
+  });
+
+  it("falls back to the Dali demo for unknown dream handoff values", async () => {
+    render(<StudioMode initialDemo="unknown" />);
+
+    expect(screen.getByText("云南大理 本地演示")).toBeTruthy();
+    expect(screen.getByDisplayValue("云南大理")).toBeTruthy();
+    expect(screen.getByRole("link", { name: /梦境路书/ }).getAttribute("href")).toBe("/dream?demo=dali");
+    expect(await screen.findByText("15 个素材包")).toBeTruthy();
+  });
+
   it("refreshes the local recording asset summary without reloading Studio", async () => {
     const fetchMock = vi
       .fn()

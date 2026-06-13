@@ -695,6 +695,22 @@ The recording workbench and cinematic roadbook preview are now connected as one 
 
 > 我把 Studio 和 Dream 接起来了。现在在录屏台选海岸，点梦境路书，打开的就是海岸预览，不用再手动切一遍。
 
+## Phase BC: Dream To Studio Reverse Handoff (2026-06-13)
+
+### What changed
+
+- `/dream` now links back to `/studio?demo=dali` or `/studio?demo=coast` based on the active local demo route.
+- `/studio` accepts the same demo query and initializes the matching local roadbook.
+- Unknown query values fall back to Dali.
+
+### Why this matters
+
+The Studio and Dream surfaces now behave like one recording circuit. A creator can move from workflow explanation to cinematic preview and back without losing the selected destination.
+
+### Recording angle
+
+> 我把反向也补上了。从 Dream 回 Studio，也会保留大理或海岸。这样录制时两个页面可以来回切，路线不会丢。
+
 ## Phase D: real data sources (2026-06-07)
 
 Replaced the Phase C procedural stubs with real implementations:
