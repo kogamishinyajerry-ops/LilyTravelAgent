@@ -883,3 +883,14 @@ Files shown: docs/recording/cinematic-visual-contract-script.md, README.md, docs
 Command/result: npm run lint
 Voiceover note: "我把好看的画面拆成一张 Visual Contract：Prompt、Scene、Proof、Asset。这样录屏时可以讲清楚 AI Agent 是怎么把审美变成结构的。"
 Usable for: visual contract clip, `/dream` cinematic explanation, Vibe Coding product structure, continued goal run round 68
+
+## Phase BW: v0.8.64 — Dream Visual QA Proof Documentation
+
+Date: 2026-06-14
+Clip title: Phase BW: v0.8.64 — Dream Visual QA Proof Documentation
+What changed: Updated README and the recording asset pipeline guide so Dream visual QA now explicitly documents cinematic matte mounting, Composition profile, Proof Stack readiness, Scene Inspector text, WebGL pixel checks, and micro-motion evidence.
+Why this matters: The automated screenshot pack is now described as a proof package for the visual contract, not only a folder of screenshots.
+Files shown: README.md, docs/recording/recording-asset-pipeline.md, docs/recording/dev-log.md
+Command/result: npm run lint && npm test && npm run build (41 files, 880 tests, build passed)
+Voiceover note: "我把 Dream QA 的说明升级成证据包：截图之外，还记录 Composition、Proof Stack、微动和 Scene Inspector。"
+Usable for: visual QA proof clip, recording asset pipeline update, Vibe Coding verification narrative, continued goal run round 69

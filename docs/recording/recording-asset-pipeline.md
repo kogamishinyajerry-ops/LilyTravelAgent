@@ -15,6 +15,7 @@ Purpose: turn every visual QA run into usable creator material: screenshots, loc
 
 - `/dream` Dali QA pack: product footage for the default dream roadbook.
 - `/dream` coastal QA pack: product footage for the coastal preset.
+- Each Dream QA pack includes D1-D4 screenshots, Scene Inspector text, Composition profile, Proof Stack status, WebGL pixel checks, and micro-motion evidence.
 - `/studio` QA pack: walkthrough footage for the 16:9 creator workbench.
 - Studio-Dream Bridge QA pack: handoff proof for the two-way recording circuit.
 - `recordings/index.html` and `recordings/clip-index.md`: the local archive entry points.
@@ -27,6 +28,7 @@ Purpose: turn every visual QA run into usable creator material: screenshots, loc
 - Dream QA / Studio QA / Bridge QA badges.
 - `产品画面` / `讲解画面` / `桥接验证` usage hints.
 - `Bridge QA 证据状态` in script mode.
+- In `/dream`, `Agent Visual Contract`, `Scene Inspector`, and `Proof Stack` show why the cinematic page is structured, not only decorative.
 - `打开总索引` leading to `/api/recording-assets/index`.
 
 ## First-Run State
@@ -44,6 +46,7 @@ Run it, return to `/studio`, then click `刷新`.
 - "I do not only generate a travel roadbook. I also generate the evidence and recording assets around it."
 - "The Agent workflow has two outputs: the product screen and the creator material archive."
 - "Dream QA is product footage. Studio QA is walkthrough footage. Bridge QA proves the handoff."
+- "In Dream QA, the screenshot is paired with a visual contract: prompt strategy, scene proof, asset state, and motion evidence."
 
 ## Verification
 
