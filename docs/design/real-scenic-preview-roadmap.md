@@ -504,6 +504,22 @@ The recording workbench now has a graceful first-run state. A creator starting o
 
 > 我把空状态也做成了录屏友好的流程：没有素材索引时，页面直接告诉我跑 `npm run check:recording-suite`。跑完回来点刷新，就进入正常素材时间线。
 
+## Phase AO: Recording Asset Type Counts (2026-06-13)
+
+### What changed
+
+- `readRecordingAssetsSummary()` now returns `countsByType`.
+- `/studio` shows compact Dream and Studio pack counts above the recent-pack timeline.
+- Tests cover non-empty and empty type-count states.
+
+### Why this matters
+
+The creator can now see the structure of the local asset archive at a glance: how much product footage exists versus walkthrough footage.
+
+### Recording angle
+
+> 我在素材面板里加了 Dream / Studio 数量统计。它不只是告诉我总共有多少素材，还能让我一眼判断产品画面和讲解画面的比例。
+
 ## Phase D: real data sources (2026-06-07)
 
 Replaced the Phase C procedural stubs with real implementations:

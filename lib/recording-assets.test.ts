@@ -40,6 +40,7 @@ describe("recording assets", () => {
     const summary = await readRecordingAssetsSummary(tempRoot);
 
     expect(summary.packCount).toBe(0);
+    expect(summary.countsByType).toEqual({ dream: 0, studio: 0 });
     expect(summary.latestPack).toBeNull();
     expect(summary.indexAvailable).toBe(false);
     expect(summary.clipIndexAvailable).toBe(false);
@@ -118,6 +119,7 @@ describe("recording assets", () => {
     const summary = await readRecordingAssetsSummary(tempRoot);
 
     expect(summary.packCount).toBe(4);
+    expect(summary.countsByType).toEqual({ dream: 2, studio: 2 });
     expect(summary.recentPacks.map((pack) => pack.id)).toEqual(["pack-4", "pack-3", "pack-2"]);
   });
 });

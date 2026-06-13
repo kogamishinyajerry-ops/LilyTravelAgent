@@ -16,6 +16,7 @@ function recordingAssetsResponse(packCount: number, title = "Studio 16:9 demo pa
   return {
     ok: true,
     packCount,
+    countsByType: packCount ? { dream: 12, studio: 3 } : { dream: 0, studio: 0 },
     indexAvailable,
     indexUrl: indexAvailable ? "/api/recording-assets/index" : "",
     recentPacks: packCount
@@ -73,6 +74,9 @@ describe("StudioMode demo roadbooks", () => {
     expect(screen.getByText("大理 4 天松弛路书")).toBeTruthy();
     expect(screen.getByDisplayValue("云南大理")).toBeTruthy();
     expect(await screen.findByText("15 个素材包")).toBeTruthy();
+    expect(screen.getByLabelText("素材包类型统计")).toBeTruthy();
+    expect(screen.getByText("Dream 12")).toBeTruthy();
+    expect(screen.getByText("Studio 3")).toBeTruthy();
     expect(screen.getByLabelText("最近素材包")).toBeTruthy();
     expect(screen.getByText("Studio QA")).toBeTruthy();
     expect(screen.getByText("Dream QA")).toBeTruthy();
@@ -133,6 +137,8 @@ describe("StudioMode demo roadbooks", () => {
     render(<StudioMode />);
 
     expect(await screen.findByText("0 个素材包")).toBeTruthy();
+    expect(screen.getByText("Dream 0")).toBeTruthy();
+    expect(screen.getByText("Studio 0")).toBeTruthy();
     expect(screen.getByText("生成本地素材索引")).toBeTruthy();
     expect(screen.getByText("npm run check:recording-suite")).toBeTruthy();
     expect(screen.getByRole("button", { name: "刷新" })).toBeTruthy();

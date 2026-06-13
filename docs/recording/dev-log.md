@@ -509,3 +509,14 @@ Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, app/gl
 Command/result: npm test -- components/studio-mode.test.tsx && npm run lint && npm test && npm run build
 Voiceover note: "我把空状态也做好了：没有本地素材索引时，Studio 直接告诉我跑哪条命令。跑完 recording suite，回来点刷新，就能看到素材包列表。"
 Usable for: first-run workflow clip, local QA command guidance, Vibe Coding clean-state resilience, continued goal run round 27
+
+## Phase AO: v0.8.30 — Recording Asset Type Counts
+
+Date: 2026-06-13
+Clip title: Phase AO: v0.8.30 — Recording Asset Type Counts
+What changed: Added `countsByType` to the recording asset summary and displayed compact Dream/Studio pack counts in `/studio`.
+Why this matters: The creator can now see whether the local archive is weighted toward product footage or walkthrough footage without opening the full index.
+Files shown: lib/recording-assets.ts, lib/recording-assets.test.ts, components/studio-mode.tsx, components/studio-mode.test.tsx, app/globals.css, README.md, docs/design/real-scenic-preview-roadmap.md, docs/recording/dev-log.md
+Command/result: npm test -- lib/recording-assets.test.ts components/studio-mode.test.tsx && npm run lint && npm test && npm run build
+Voiceover note: "我给素材库加了 Dream / Studio 数量统计。现在不只是知道有多少素材，还能看出产品画面和讲解画面的比例。"
+Usable for: recording archive metrics clip, content operations dashboard polish, Vibe Coding visible progress metrics, continued goal run round 28

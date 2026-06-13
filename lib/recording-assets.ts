@@ -18,6 +18,7 @@ export type RecordingAssetPack = {
 export type RecordingAssetsSummary = {
   recordingsRoot: string;
   packCount: number;
+  countsByType: Record<RecordingAssetType, number>;
   latestPack: RecordingAssetPack | null;
   recentPacks: RecordingAssetPack[];
   indexAvailable: boolean;
@@ -40,12 +41,20 @@ export async function readRecordingAssetsSummary(recordingsRoot = process.env.RE
   return {
     recordingsRoot,
     packCount: packs.length,
+    countsByType: countPacksByType(packs),
     latestPack,
     recentPacks: packs.slice(0, 3),
     indexAvailable: existsSync(indexPath),
     indexPath,
     clipIndexAvailable: existsSync(clipIndexPath),
     clipIndexPath,
+  };
+}
+
+function countPacksByType(packs: RecordingAssetPack[]): Record<RecordingAssetType, number> {
+  return {
+    dream: packs.filter((pack) => pack.type === "dream").length,
+    studio: packs.filter((pack) => pack.type === "studio").length,
   };
 }
 

@@ -1342,6 +1342,21 @@ textarea {
   background: var(--moss);
 }
 
+.studio-recording-counts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.studio-recording-counts span {
+  border: 1px solid rgba(38, 59, 49, 0.12);
+  border-radius: 8px;
+  padding: 6px 8px;
+  color: var(--moss);
+  text-align: center;
+  background: rgba(255, 255, 255, 0.62);
+}
+
 .studio-recording-recent {
   display: grid;
   gap: 6px;

@@ -31,6 +31,7 @@ type RecordingAssetsState =
   | {
       status: "ready";
       packCount: number;
+      countsByType: Record<RecordingAssetType, number>;
       indexAvailable: boolean;
       indexUrl: string;
       recentPacks: RecordingAssetSummaryPack[];
@@ -54,6 +55,7 @@ type RecordingAssetSummaryPack = {
 type RecordingAssetsApiResponse = {
   ok?: boolean;
   packCount?: number;
+  countsByType?: Record<RecordingAssetType, number>;
   indexAvailable?: boolean;
   indexUrl?: string;
   recentPacks?: RecordingAssetSummaryPack[];
@@ -164,6 +166,7 @@ export function StudioMode() {
         setRecordingAssets({
           status: "ready",
           packCount: data.packCount || 0,
+          countsByType: data.countsByType || { dream: 0, studio: 0 },
           indexAvailable: Boolean(data.indexAvailable),
           indexUrl: data.indexUrl || "",
           recentPacks: data.recentPacks || [],
@@ -418,6 +421,10 @@ export function StudioMode() {
               {recordingAssets.status === "ready" ? (
                 <>
                   <strong>{recordingAssets.packCount} 个素材包</strong>
+                  <div className="studio-recording-counts" aria-label="素材包类型统计">
+                    <span>Dream {recordingAssets.countsByType.dream}</span>
+                    <span>Studio {recordingAssets.countsByType.studio}</span>
+                  </div>
                   <p>
                     {recordingAssets.latestPack
                       ? `最新 ${formatRecordingAssetTime(recordingAssets.latestPack.createdAt)} · ${recordingAssets.latestPack.title}`
