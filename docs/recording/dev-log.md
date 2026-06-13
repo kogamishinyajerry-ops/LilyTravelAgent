@@ -872,3 +872,14 @@ Files shown: docs/recording/goal-51-60-recap.md, README.md, docs/recording/dev-l
 Command/result: npm run lint && npm test && npm run build
 Voiceover note: "我把 51 到 60 轮整理成一章：从 Bridge QA 素材索引，到 Studio 证据卡，再到可录屏脚本。"
 Usable for: 10-goal recap clip, Bridge QA evidence summary, Vibe Coding series packaging, continued goal run round 60
+
+## Phase BV: v0.8.63 — Cinematic Visual Contract Script
+
+Date: 2026-06-14
+Clip title: Phase BV: v0.8.63 — Cinematic Visual Contract Script
+What changed: Added `docs/recording/cinematic-visual-contract-script.md`, a short `/dream` recording script that points at template rendering strategy, Agent Visual Contract, Scene Inspector, Proof Stack, and D1-D4 director timeline.
+Why this matters: The cinematic visual work now has a direct content path. The creator can explain that the page turns visual taste into a repeatable Agent contract, not just a decorative 3D scene.
+Files shown: docs/recording/cinematic-visual-contract-script.md, README.md, docs/recording/dev-log.md
+Command/result: npm run lint
+Voiceover note: "我把好看的画面拆成一张 Visual Contract：Prompt、Scene、Proof、Asset。这样录屏时可以讲清楚 AI Agent 是怎么把审美变成结构的。"
+Usable for: visual contract clip, `/dream` cinematic explanation, Vibe Coding product structure, continued goal run round 68
