@@ -366,3 +366,14 @@ Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, app/gl
 Command/result: npm test -- components/studio-mode.test.tsx && npm run lint && npm test && npm run build
 Voiceover note: "`/dream` 是给用户看的动态路书，`/studio` 是我录开发过程和 Agent 工作流的画面。现在录屏台也能一键从大理切到海岸，输入区、预览区和状态条同步变化。"
 Usable for: studio-recording workflow clip, content-production infrastructure clip, Vibe Coding demo-state reuse lesson, continued goal run round 14
+
+## Phase AB: v0.8.17 — Scene Inspector Director Timeline
+
+Date: 2026-06-13
+Clip title: Phase AB: v0.8.17 — Scene Inspector Director Timeline
+What changed: Added a D1-D4 cinematic director timeline inside `/dream` Scene Inspector. `lib/cinematic-scene-preset.ts` now exports `buildCinematicSceneTimeline()`, which returns the active preset's day labels, visual cues, landmark kinds, and active-day state. `components/dream-roadbook.tsx` renders those items as compact clickable director cards, so D1-D4 can be inspected or selected directly from the right rail.
+Why this matters: Scene Inspector already explained the current shot; now it explains the whole visual plan. This makes the Agent's day-by-day rendering decisions visible, useful for debugging, trust, and recording.
+Files shown: lib/cinematic-scene-preset.ts, lib/cinematic-scene-preset.test.ts, components/dream-roadbook.tsx, components/dream-roadbook.test.tsx, app/globals.css, README.md, docs/design/real-scenic-preview-roadmap.md, docs/recording/dev-log.md
+Command/result: npm test -- lib/cinematic-scene-preset.test.ts components/dream-roadbook.test.tsx && npm run lint && DREAM_DEMO=coast npm run check:dream-visuals && npm test && npm run build
+Voiceover note: "我把 Scene Inspector 从当前镜头信息升级成一条 D1-D4 导演轨道。现在你能直接看到 Agent 对每一天的视觉安排：灯塔、海湾、港口、日落观景台。"
+Usable for: Agent director-timeline clip, visible planning layer explanation, Vibe Coding helper-to-UI workflow, continued goal run round 15

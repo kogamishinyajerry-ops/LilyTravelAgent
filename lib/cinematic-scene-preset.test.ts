@@ -8,6 +8,7 @@ import {
   buildCinematicMotionProfile,
   buildCinematicRouteRail,
   buildCinematicSceneInspector,
+  buildCinematicSceneTimeline,
   COASTAL_CINEMATIC_SCENE_PRESET,
   DALI_CINEMATIC_SCENE_PRESET,
   getCinematicDayFocus,
@@ -229,6 +230,51 @@ describe("buildCinematicSceneInspector", () => {
       visualCue: "码头 / 拱廊 / 城市线",
       routeProgress: "D1-D2-D3",
       routePointCount: 4,
+    });
+  });
+});
+
+describe("buildCinematicSceneTimeline", () => {
+  it("builds a D1-D4 director timeline for the Dali preset", () => {
+    const timeline = buildCinematicSceneTimeline(sampleRoadbook, 2);
+
+    expect(timeline).toMatchObject({
+      status: "active",
+      presetId: "dali-cangshan-erhai",
+      destination: "云南大理",
+    });
+    expect(timeline.items.map((item) => item.label)).toEqual(["古城南门", "洱海西线", "喜洲村落", "古城收尾"]);
+    expect(timeline.items.find((item) => item.isActive)).toMatchObject({
+      day: 2,
+      landmarkKind: "erhai-sail",
+      visualCue: "水面 / S 湾 / 日落",
+    });
+  });
+
+  it("builds a coastal director timeline with coastal landmark kinds", () => {
+    const timeline = buildCinematicSceneTimeline(coastalRoadbook, 4);
+
+    expect(timeline.items.map((item) => item.landmarkKind)).toEqual([
+      "coast-lighthouse",
+      "bay-sail",
+      "harbor-arcade",
+      "sunset-deck",
+    ]);
+    expect(timeline.items.find((item) => item.isActive)).toMatchObject({
+      day: 4,
+      label: "日落观景台",
+      visualCue: "落日 / 木栈道 / 返程",
+    });
+  });
+
+  it("returns an empty fallback timeline for unsupported destinations", () => {
+    const timeline = buildCinematicSceneTimeline(cityRoadbook, 1);
+
+    expect(timeline).toMatchObject({
+      status: "fallback",
+      presetId: "generic",
+      destination: "上海",
+      items: [],
     });
   });
 });

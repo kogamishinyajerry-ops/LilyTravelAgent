@@ -147,6 +147,21 @@ export type CinematicSceneInspector = {
   parallaxWeight: number;
 };
 
+export type CinematicSceneTimelineItem = {
+  day: number;
+  label: string;
+  visualCue: string;
+  landmarkKind: CinematicLandmarkKind;
+  isActive: boolean;
+};
+
+export type CinematicSceneTimeline = {
+  status: "active" | "fallback";
+  presetId: CinematicScenePreset["id"] | "generic";
+  destination: string;
+  items: CinematicSceneTimelineItem[];
+};
+
 export const DALI_CINEMATIC_SCENE_PRESET: CinematicScenePreset = {
   id: "dali-cangshan-erhai",
   destination: "云南大理",
@@ -679,6 +694,32 @@ export function buildCinematicSceneInspector(roadbook: Roadbook, activeDay: numb
     cameraFov: pose.fov,
     cameraX: roundCameraValue(pose.camera[0]),
     parallaxWeight: pose.parallaxWeight,
+  };
+}
+
+export function buildCinematicSceneTimeline(roadbook: Roadbook, activeDay: number): CinematicSceneTimeline {
+  const resolved = resolveCinematicScenePreset(roadbook, activeDay);
+
+  if (!resolved) {
+    return {
+      status: "fallback",
+      presetId: "generic",
+      destination: roadbook.destination || "Custom destination",
+      items: [],
+    };
+  }
+
+  return {
+    status: "active",
+    presetId: resolved.preset.id,
+    destination: resolved.preset.destination,
+    items: resolved.preset.focusByDay.map((focus) => ({
+      day: focus.day,
+      label: focus.label,
+      visualCue: focus.visualCue,
+      landmarkKind: getLandmarkKindForFocus(focus.anchorKind),
+      isActive: focus.day === resolved.focus.day,
+    })),
   };
 }
 

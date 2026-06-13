@@ -24,6 +24,7 @@
 - 海岸/海岛 preset 已从数据层进入 Three.js 渲染层：D1-D4 可以出现灯塔、海湾帆影、港口拱廊、日落观景台、沙洲和水面高光。
 - `/dream` 控制栏提供大理/海岸本地演示路书切换，录屏和视觉 QA 不需要每次等待 MiniMax 真实生成。
 - `/studio` 录屏台也支持大理/海岸本地演示切换，16:9 讲解画面的输入区、预览区和状态条会同步切换。
+- `/dream` Scene Inspector 会显示 D1-D4 cinematic director timeline，直接展示每一天对应的视觉 cue 和当前高亮镜头。
 - 这版是“预览级建模”，不是测绘级真实地形或真实建筑模型。
 
 ## Why This Step Exists
@@ -281,6 +282,23 @@ The visual product needs repeatable demo material. Waiting for a real MiniMax ge
 ### Recording angle
 
 > `/dream` 是给用户看的动态路书，`/studio` 是我录开发过程和 Agent 工作流的画面。现在录屏台也能一键从大理切到海岸，输入区、预览区和状态条同步变化，所以我不用每次等真实生成，也能稳定讲多目的地 preset catalog。
+
+## Phase AB: Scene Inspector Director Timeline (2026-06-13)
+
+### What changed
+
+- Added `buildCinematicSceneTimeline()` to `lib/cinematic-scene-preset.ts`.
+- The helper returns the active preset's D1-D4 labels, visual cues, landmark kinds, and active day state while preserving empty fallback behavior for unsupported destinations.
+- `/dream` renders the timeline inside Scene Inspector as compact clickable D1-D4 director cards.
+- `lib/cinematic-scene-preset.test.ts` covers Dali, coastal, and fallback timelines; `components/dream-roadbook.test.tsx` covers the clickable coastal timeline.
+
+### Why this matters
+
+Scene Inspector already showed the current shot, but the user still had to click around to understand the whole visual plan. This phase makes the Agent's director layer legible at a glance: D1 is a lighthouse, D2 is a bay sail, D3 is a harbor arcade, D4 is a sunset deck. It is useful for debugging, product trust, and screen recording.
+
+### Recording angle
+
+> 我把 Scene Inspector 从“当前镜头信息”升级成一条 D1-D4 导演轨道。现在你能直接看到 Agent 对每一天的视觉安排：灯塔、海湾、港口、日落观景台。录屏时这就是解释 Agent 工作流的证据。
 
 ## Phase D: real data sources (2026-06-07)
 

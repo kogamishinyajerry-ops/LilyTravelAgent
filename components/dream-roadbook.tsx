@@ -11,7 +11,7 @@ import {
   type DreamMood,
   type DreamTemplate,
 } from "@/lib/dream-design-skill";
-import { buildCinematicSceneInspector } from "@/lib/cinematic-scene-preset";
+import { buildCinematicSceneInspector, buildCinematicSceneTimeline } from "@/lib/cinematic-scene-preset";
 import { defaultBrief } from "@/lib/default-brief";
 import type { LandmarkPreset } from "@/lib/landmark-preset";
 import {
@@ -214,6 +214,7 @@ export function DreamRoadbook() {
   const activeStop = design.routeStops.find((stop) => stop.day === activePlan?.day) || design.routeStops[0];
   const activeTemplate = dreamTemplates.find((item) => item.id === template) || dreamTemplates[0];
   const sceneInspector = useMemo(() => buildCinematicSceneInspector(roadbook, activeDay), [activeDay, roadbook]);
+  const sceneTimeline = useMemo(() => buildCinematicSceneTimeline(roadbook, activeDay), [activeDay, roadbook]);
   // Lazily build the real terrain/buildings sources only when the toggle is on,
   // so MAPBOX_TOKEN env lookups don't run at module-load time.
   const [realTerrainSources, setRealTerrainSources] = useState<
@@ -1718,6 +1719,24 @@ export function DreamRoadbook() {
               </span>
             </div>
             <p>{sceneInspector.visualCue}</p>
+            {sceneTimeline.status === "active" ? (
+              <div className="dream-scene-timeline" aria-label="D1-D4 视觉导演轨道">
+                {sceneTimeline.items.map((item) => (
+                  <button
+                    key={item.day}
+                    type="button"
+                    className={item.isActive ? "active" : ""}
+                    onClick={() => setActiveDay(item.day)}
+                    aria-pressed={item.isActive}
+                    aria-label={`D${item.day} ${item.label} · ${item.visualCue}`}
+                  >
+                    <small>D{item.day}</small>
+                    <strong>{item.label}</strong>
+                    <em>{item.visualCue}</em>
+                  </button>
+                ))}
+              </div>
+            ) : null}
           </div>
 
           <DreamMiniMap roadbook={roadbook} points={points} configured={mapConfigured} loading={mapLoading} />
