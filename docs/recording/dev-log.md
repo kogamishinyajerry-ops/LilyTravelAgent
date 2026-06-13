@@ -421,3 +421,14 @@ Files shown: scripts/index-recording-assets.mjs, package.json, README.md, docs/d
 Command/result: npm run index:recording-assets && npm run lint && npm test && npm run build
 Voiceover note: "我现在每次 QA 都会产出素材包，所以又加了一个总索引命令。跑完以后，本地 recordings 目录会有一个 index.html 和 clip-index.md，快速找到最近的 dream/studio 图集和旁白 notes。"
 Usable for: content archive workflow clip, QA-pack indexing lesson, Vibe Coding recording-material management, continued goal run round 19
+
+## Phase AG: v0.8.22 — One-Command Recording QA Suite
+
+Date: 2026-06-13
+Clip title: Phase AG: v0.8.22 — One-Command Recording QA Suite
+What changed: Added `scripts/check-recording-suite.mjs` and `npm run check:recording-suite`. The suite checks that `/dream` and `/studio` are reachable, then runs Dali `/dream` visual QA, coastal `/dream` visual QA, `/studio` recording QA, and recording asset indexing in sequence.
+Why this matters: The product now has multiple useful QA/content commands. This suite turns them into one repeatable local workflow so each visual polish pass can produce fresh screenshots, galleries, clip notes, and a top-level recording index.
+Files shown: scripts/check-recording-suite.mjs, package.json, README.md, docs/design/real-scenic-preview-roadmap.md, docs/recording/dev-log.md
+Command/result: npm run check:recording-suite && npm run lint && npm test && npm run build
+Voiceover note: "我把 `/dream` 大理、`/dream` 海岸、`/studio` 和素材索引串成一条 recording suite。以后每次产品打磨完，跑一条命令就能生成一批可剪辑素材。"
+Usable for: one-command QA workflow clip, creator-asset pipeline lesson, Vibe Coding verification discipline, continued goal run round 20

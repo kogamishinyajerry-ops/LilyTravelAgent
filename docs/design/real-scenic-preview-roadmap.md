@@ -29,6 +29,7 @@
 - 每次 `/dream` 视觉 QA 会额外生成 `clip-notes.md`，把截图、导演 cue、微动证据和短旁白整理成录屏素材提纲。
 - `npm run check:studio-visuals` 会自动截取 `/studio` 的大理/海岸 16:9 演示画面，并输出 studio 录屏 notes。
 - `npm run index:recording-assets` 会把 dream/studio 的本地 QA 输出汇总成 `recordings/index.html` 和 `recordings/clip-index.md`。
+- `npm run check:recording-suite` 会一键串起大理 `/dream`、海岸 `/dream`、`/studio` 和素材索引，作为每轮打磨后的本地录屏验收流程。
 - 这版是“预览级建模”，不是测绘级真实地形或真实建筑模型。
 
 ## Why This Step Exists
@@ -370,6 +371,23 @@ Once the project starts generating QA packs every iteration, the user needs a wa
 ### Recording angle
 
 > 我现在每次 QA 都会产出素材包，所以又加了一个总索引命令。跑完以后，本地 recordings 目录会有一个 index.html 和 clip-index.md，快速找到最近的 dream/studio 图集和旁白 notes。
+
+## Phase AG: One-Command Recording QA Suite (2026-06-13)
+
+### What changed
+
+- Added `scripts/check-recording-suite.mjs`.
+- Added `npm run check:recording-suite`.
+- The suite first checks that `/dream` and `/studio` are reachable, then runs Dali dream visual QA, coastal dream visual QA, studio recording QA, and recording asset indexing in sequence.
+- The suite keeps the existing dedicated QA scripts as the source of truth instead of copying screenshot or validation logic.
+
+### Why this matters
+
+The project now has enough visual QA and recording assets that a single command becomes useful. After each product polish pass, the user can run one local suite and get fresh screenshots, galleries, notes, and the top-level asset index.
+
+### Recording angle
+
+> 我把三个独立 QA 和素材索引串成一个命令。以后每次做完视觉打磨，我只要跑一条 recording suite，就能拿到 `/dream` 大理、`/dream` 海岸、`/studio` 和总索引，直接进入剪辑素材管理。
 
 ## Phase D: real data sources (2026-06-07)
 
