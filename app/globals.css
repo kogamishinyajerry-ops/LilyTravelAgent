@@ -3605,6 +3605,72 @@ textarea {
   font-weight: 800;
 }
 
+.dream-cinematic-proof {
+  display: grid;
+  gap: 6px;
+  border: 1px solid rgba(54, 100, 105, 0.18);
+  border-radius: 8px;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.dream-cinematic-proof-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.dream-cinematic-proof-head span,
+.dream-cinematic-proof-grid small {
+  color: var(--dream-soft);
+  font-size: 0.66rem;
+  font-weight: 900;
+}
+
+.dream-cinematic-proof-head strong {
+  color: rgba(37, 76, 79, 0.74);
+  font-size: 0.64rem;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.dream-cinematic-proof-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.dream-cinematic-proof-grid span {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+  border-radius: 7px;
+  padding: 6px;
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.dream-cinematic-proof-grid span.ready {
+  background: rgba(199, 232, 218, 0.34);
+}
+
+.dream-cinematic-proof-grid span.working {
+  background: rgba(244, 218, 167, 0.3);
+}
+
+.dream-cinematic-proof-grid span.pending {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.dream-cinematic-proof-grid strong {
+  overflow: hidden;
+  color: rgba(38, 58, 60, 0.82);
+  font-size: 0.69rem;
+  font-weight: 900;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .dream-scene-timeline {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));

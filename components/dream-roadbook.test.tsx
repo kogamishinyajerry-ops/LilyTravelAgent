@@ -165,6 +165,22 @@ describe("DreamRoadbook a11y polish", () => {
     expect(within(composition).getByText("slow breath")).toBeTruthy();
   });
 
+  it("shows a compact cinematic proof stack for recording", () => {
+    render(<DreamRoadbook />);
+
+    const stack = screen.getByLabelText("Cinematic Proof Stack");
+
+    expect(stack.textContent).toContain("2/4 ready");
+    expect(stack.textContent).toContain("Composition");
+    expect(stack.textContent).toContain("D1 old-town beat");
+    expect(stack.textContent).toContain("Landmark");
+    expect(stack.textContent).toContain("4 beats");
+    expect(stack.textContent).toContain("Asset");
+    expect(stack.textContent).toContain("pending");
+    expect(stack.textContent).toContain("Map");
+    expect(stack.textContent).toContain("compact route pending");
+  });
+
   it("renders the AI landmark empty state with a 'click to generate' action when no preset is present", () => {
     render(<DreamRoadbook />);
     const empty = document.querySelector(

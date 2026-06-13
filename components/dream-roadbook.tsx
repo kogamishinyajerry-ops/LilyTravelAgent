@@ -296,6 +296,42 @@ export function DreamRoadbook({ initialDemo = "dali" }: DreamRoadbookProps = {})
     () => buildSharePreviewHref(roadbook, previewAsset, coverHistory),
     [coverHistory, previewAsset, roadbook],
   );
+  const cinematicProofItems = useMemo(
+    () => [
+      {
+        label: "Composition",
+        value: sceneInspector.composition.proofLabel,
+        status: sceneInspector.status === "active" ? "ready" : "pending",
+      },
+      {
+        label: "Landmark",
+        value: sceneTimeline.status === "active" ? `${sceneTimeline.items.length} beats` : "fallback",
+        status: sceneTimeline.status === "active" ? "ready" : "pending",
+      },
+      {
+        label: "Asset",
+        value:
+          assetStage === "ready"
+            ? "AI backdrop ready"
+            : assetStage === "generating"
+              ? "generating"
+              : assetStage === "fallback"
+                ? "3D fallback"
+                : "pending",
+        status: assetStage === "ready" || assetStage === "fallback" ? "ready" : assetStage === "generating" ? "working" : "pending",
+      },
+      {
+        label: "Map",
+        value: points.some((point) => point.status === "ok")
+          ? "Amap points ready"
+          : mapConfigured === false
+            ? "key missing"
+            : "compact route pending",
+        status: points.some((point) => point.status === "ok") ? "ready" : mapConfigured === false ? "pending" : "working",
+      },
+    ],
+    [assetStage, mapConfigured, points, sceneInspector.composition.proofLabel, sceneInspector.status, sceneTimeline.items.length, sceneTimeline.status],
+  );
 
   useEffect(() => {
     if (trackDemoStep === null || trackDemoStep >= demoTrackNotes.length - 1 || isBusy) {
@@ -1762,6 +1798,20 @@ export function DreamRoadbook({ initialDemo = "dali" }: DreamRoadbookProps = {})
               </span>
             </div>
             <p>{sceneInspector.visualCue}</p>
+            <div className="dream-cinematic-proof" aria-label="Cinematic Proof Stack">
+              <div className="dream-cinematic-proof-head">
+                <span>Proof Stack</span>
+                <strong>{cinematicProofItems.filter((item) => item.status === "ready").length}/4 ready</strong>
+              </div>
+              <div className="dream-cinematic-proof-grid">
+                {cinematicProofItems.map((item) => (
+                  <span key={item.label} className={item.status}>
+                    <small>{item.label}</small>
+                    <strong>{item.value}</strong>
+                  </span>
+                ))}
+              </div>
+            </div>
             {sceneTimeline.status === "active" ? (
               <div className="dream-scene-timeline" aria-label="D1-D4 视觉导演轨道">
                 {sceneTimeline.items.map((item) => (
