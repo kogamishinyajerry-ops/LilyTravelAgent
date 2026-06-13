@@ -1,4 +1,5 @@
 import { buildCinematicPreviewPrompt, buildCinematicScenePromptLine, buildPromptOnlyPreviewAsset } from "./preview-asset";
+import { buildPreviewAssetCacheKey } from "./preview-asset-cache";
 import type { Roadbook } from "./roadbook-types";
 import { sampleRoadbook } from "./sample-roadbook";
 
@@ -120,11 +121,39 @@ describe("buildCinematicPreviewPrompt", () => {
       expect(result).toContain("soft morning light");
     });
 
+    it("includes Director Lens direction in the image prompt", () => {
+      const result = buildCinematicPreviewPrompt(mockRoadbook, {
+        directorLens: "low-skyline",
+      });
+
+      expect(result).toContain("Director Lens: Low Skyline");
+      expect(result).toContain("low angle skyline");
+      expect(result).toContain("lower camera with skyline lift");
+    });
+
     it("cloud + island mood+template combination", () => {
       const result = buildCinematicPreviewPrompt(mockRoadbook, { mood: "cloud", template: "island" });
       expect(result).toContain("floating sky islands");
       expect(result).toContain("soft morning light");
     });
+  });
+});
+
+describe("buildPreviewAssetCacheKey", () => {
+  it("separates cache keys by Director Lens even when the prompt is otherwise identical", () => {
+    const base = {
+      roadbook: mockRoadbook,
+      activeDay: 1,
+      mood: "cloud",
+      template: "monument",
+      model: "image-01",
+      prompt: "same prompt",
+      aspectRatio: "16:9" as const,
+    };
+
+    expect(
+      buildPreviewAssetCacheKey({ ...base, directorLens: "wide-water" }),
+    ).not.toBe(buildPreviewAssetCacheKey({ ...base, directorLens: "low-skyline" }));
   });
 });
 

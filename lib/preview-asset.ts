@@ -1,4 +1,5 @@
 import type { PreviewAsset, Roadbook, ScenicRenderDesign } from "@/lib/roadbook-types";
+import { resolveDirectorLens } from "@/lib/director-lens";
 import {
   buildCinematicAtmosphereProfile,
   buildCinematicLandmarkSilhouettes,
@@ -24,6 +25,8 @@ type PreviewAssetOptions = {
   activeDay?: number;
   mood?: string;
   template?: string;
+  directorLens?: string;
+  directorLensPrompt?: string;
   scenicDesign?: ScenicRenderPromptDesign;
 };
 
@@ -37,6 +40,7 @@ export function buildCinematicPreviewPrompt(roadbook: Roadbook, options: Preview
     .filter(Boolean)
     .join(", ");
   const visualStyle = buildVisualStyle(options.mood, options.template);
+  const directorLensLine = buildDirectorLensLine(options);
   const scenicRenderLine = buildScenicRenderLine(options.scenicDesign);
   const scenePresetLine = buildCinematicScenePromptLine(roadbook, activeDay);
 
@@ -44,10 +48,11 @@ export function buildCinematicPreviewPrompt(roadbook: Roadbook, options: Preview
 Location and landmarks: ${locationLine}.
 Scene concept: ${conceptLine}.
 3D scene direction: ${scenePresetLine}.
+Director Lens: ${directorLensLine}.
 Visual details: ${foodAndPhoto.join(", ")}.
 Reference photo render blueprint: ${scenicRenderLine}.
 Render a breathtaking pre-trip hero image: real-world inspired terrain, recognizable local architecture, atmospheric landscape, foreground depth, realistic lighting, premium travel magazine composition, ${visualStyle}.
-Camera: wide 16:9 establishing shot, slightly elevated cinematic view, immersive depth, natural haze, detailed water/terrain/skyline when relevant.
+Camera: wide 16:9 establishing shot, ${directorLensLine}, immersive depth, natural haze, detailed water/terrain/skyline when relevant.
 Strict negative constraints: no text, no captions, no UI, no logos, no watermark, no map pins, no people close-up, no distorted architecture.`);
 }
 
@@ -111,6 +116,15 @@ function buildVisualStyle(mood?: string, template?: string) {
                   : "monumental scenic composition with layered terrain";
 
   return `${moodText}, ${templateText}, photorealistic cinematic render, high detail, elegant color grading`;
+}
+
+function buildDirectorLensLine(options: PreviewAssetOptions) {
+  if (options.directorLensPrompt) {
+    return options.directorLensPrompt;
+  }
+
+  const lens = resolveDirectorLens(options.directorLens);
+  return `${lens.label}: ${lens.promptCue}; camera=${lens.cameraCue}`;
 }
 
 function buildScenicRenderLine(design?: ScenicRenderPromptDesign) {

@@ -30,6 +30,9 @@ const previewAssetRequestSchema = z.object({
   activeDay: z.coerce.number().int().min(1).optional(),
   mood: z.string().max(40).optional(),
   template: z.string().max(40).optional(),
+  directorLens: z.string().max(40).optional(),
+  directorLensLabel: z.string().max(60).optional(),
+  directorLensPrompt: z.string().max(220).optional(),
   scenicDesign: z
     .object({
       status: z.enum(["generated", "fallback"]).optional(),
@@ -99,6 +102,7 @@ export async function POST(request: Request) {
     activeDay,
     mood: payload.mood,
     template: payload.template,
+    directorLens: payload.directorLens,
     model,
     prompt,
     aspectRatio: "16:9" as const,

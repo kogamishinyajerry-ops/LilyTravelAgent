@@ -1006,6 +1006,9 @@ export function DreamRoadbook({ initialDemo = "dali" }: DreamRoadbookProps = {})
           activeDay: nextRoadbook.days[0]?.day || 1,
           mood,
           template,
+          directorLens: activeDirectorLens.id,
+          directorLensLabel: activeDirectorLens.label,
+          directorLensPrompt: formatDirectorLensPrompt(activeDirectorLens),
           scenicDesign: scenicDesign || undefined,
           forceRegenerate: options.forceRegenerate,
         }),
@@ -2175,7 +2178,7 @@ export function DreamRoadbook({ initialDemo = "dali" }: DreamRoadbookProps = {})
                         <span className="dream-asset-thumb" style={{ backgroundImage: `url(${item.imageDataUrl})` }} aria-hidden="true" />
                         <span>
                           <strong>{item.isCover ? "最终封面" : isCurrent ? "当前版本" : `版本 ${assetHistory.length - index}`}</strong>
-                          <small>{formatAssetTime(item.createdAt)} / {item.mood || item.template || "visual"}</small>
+                          <small>{formatAssetTime(item.createdAt)} / {[item.mood, item.template, item.directorLens].filter(Boolean).join(" / ") || "visual"}</small>
                         </span>
                         <em>{isRestoring ? "恢复中" : isCurrent ? "使用中" : "恢复"}</em>
                       </button>

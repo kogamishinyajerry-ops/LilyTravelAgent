@@ -10,6 +10,7 @@ type PreviewAssetCacheInput = {
   activeDay: number;
   mood?: string;
   template?: string;
+  directorLens?: string;
   model: string;
   prompt: string;
   aspectRatio: "16:9";
@@ -30,6 +31,7 @@ type PreviewAssetCacheMetadata = {
   style: {
     mood?: string;
     template?: string;
+    directorLens?: string;
   };
 };
 
@@ -59,6 +61,7 @@ export function buildPreviewAssetCacheKey(input: PreviewAssetCacheInput) {
     style: {
       mood: input.mood || "",
       template: input.template || "",
+      directorLens: input.directorLens || "",
     },
     model: input.model,
     prompt: input.prompt,
@@ -139,6 +142,7 @@ export async function writeCachedPreviewAsset(
     style: {
       mood: input.mood,
       template: input.template,
+      directorLens: input.directorLens,
     },
   };
 
@@ -334,6 +338,7 @@ async function readHistoryItem(
       destination: metadata.destination,
       mood: metadata.style.mood,
       template: metadata.style.template,
+      directorLens: metadata.style.directorLens,
       imageDataUrl: `data:${metadata.mimeType};base64,${image.toString("base64")}`,
       isCover: metadata.historyId === coverHistoryId,
     } satisfies PreviewAssetHistoryItem;

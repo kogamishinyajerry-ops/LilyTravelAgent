@@ -147,6 +147,7 @@ export type PreviewAssetHistoryItem = {
   destination: string;
   mood?: string;
   template?: string;
+  directorLens?: string;
   imageDataUrl: string;
   isCover?: boolean;
 };
