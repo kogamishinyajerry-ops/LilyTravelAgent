@@ -905,3 +905,14 @@ Files shown: docs/recording/goal-61-70-recap.md, README.md, docs/recording/dev-l
 Command/result: npm run lint && npm test && npm run build
 Voiceover note: "这 10 轮不是单纯做漂亮页面，而是把审美拆成可生成、可验证、可录屏讲解的 Visual Contract。"
 Usable for: 10-goal recap clip, cinematic visual contract chapter, Vibe Coding learning narrative, continued goal run round 70
+
+## Phase BY: v0.8.66 — Director Lens Visual Contract
+
+Date: 2026-06-14
+Clip title: Phase BY: v0.8.66 — Director Lens Visual Contract
+What changed: Added Director Lens as a visible `/dream` control and contract layer. The selected lens now affects the scene camera pose, Scene Inspector, generation prompt contract, preview asset prompt, preview asset cache key, Agent Visual Contract, Proof Stack, asset panel, and Dream visual QA output.
+Why this matters: Camera direction is no longer a hidden implementation detail. It is a user-facing creative control and a creator-facing proof layer for explaining how a generated travel roadbook becomes a cinematic preview.
+Files shown: lib/director-lens.ts, components/dream-roadbook.tsx, scripts/check-dream-visuals.mjs, README.md, docs/recording/director-lens-demo-script.md
+Command/result: npm test -- components/dream-roadbook.test.tsx && npm run lint
+Voiceover note: "我把镜头语言也做成了 Agent 的结构：用户选 Skyline，Prompt、Scene、Proof Stack、资产缓存和 QA 报告都会同步记录。"
+Usable for: Director Lens product clip, visual contract explanation, Vibe Coding camera-direction lesson, continued goal run round 89
