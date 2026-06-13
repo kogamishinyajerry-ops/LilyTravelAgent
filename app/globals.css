@@ -2512,6 +2512,65 @@ textarea {
   white-space: nowrap;
 }
 
+.dream-agent-visual-contract {
+  display: grid;
+  gap: 8px;
+  border: 1px solid rgba(86, 119, 126, 0.2);
+  border-radius: 8px;
+  padding: 10px;
+  color: rgba(38, 49, 54, 0.84);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.36), rgba(210, 228, 224, 0.18)),
+    rgba(255, 255, 255, 0.18);
+}
+
+.dream-agent-visual-contract-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.dream-agent-visual-contract-head span,
+.dream-agent-visual-contract-grid small {
+  color: var(--dream-soft);
+  font-size: 0.66rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.dream-agent-visual-contract-head strong {
+  overflow: hidden;
+  font-size: 0.72rem;
+  font-weight: 950;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dream-agent-visual-contract-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.dream-agent-visual-contract-grid span {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+  border: 1px solid rgba(255, 255, 255, 0.42);
+  border-radius: 7px;
+  padding: 6px;
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.dream-agent-visual-contract-grid strong {
+  overflow: hidden;
+  font-size: 0.66rem;
+  font-weight: 900;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .dream-mood-switcher {
   display: grid;
   gap: 8px;

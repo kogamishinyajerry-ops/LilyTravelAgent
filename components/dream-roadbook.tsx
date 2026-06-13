@@ -332,6 +332,7 @@ export function DreamRoadbook({ initialDemo = "dali" }: DreamRoadbookProps = {})
     ],
     [assetStage, mapConfigured, points, sceneInspector.composition.proofLabel, sceneInspector.status, sceneTimeline.items.length, sceneTimeline.status],
   );
+  const cinematicProofReadyCount = cinematicProofItems.filter((item) => item.status === "ready").length;
 
   useEffect(() => {
     if (trackDemoStep === null || trackDemoStep >= demoTrackNotes.length - 1 || isBusy) {
@@ -1462,6 +1463,31 @@ export function DreamRoadbook({ initialDemo = "dali" }: DreamRoadbookProps = {})
               <span>
                 <small>Motion</small>
                 <strong>{activeTemplate.renderStrategy.motion}</strong>
+              </span>
+            </div>
+          </div>
+
+          <div className="dream-agent-visual-contract" aria-label="Agent Visual Contract">
+            <div className="dream-agent-visual-contract-head">
+              <span>Visual Contract</span>
+              <strong>{activeTemplate.label} · {mood}</strong>
+            </div>
+            <div className="dream-agent-visual-contract-grid">
+              <span>
+                <small>Prompt</small>
+                <strong>{activeTemplate.renderStrategy.lens}</strong>
+              </span>
+              <span>
+                <small>Scene</small>
+                <strong>{sceneInspector.composition.proofLabel}</strong>
+              </span>
+              <span>
+                <small>Proof</small>
+                <strong>{cinematicProofReadyCount}/4 ready</strong>
+              </span>
+              <span>
+                <small>Asset</small>
+                <strong>{assetStage === "ready" ? "backdrop ready" : assetStage}</strong>
               </span>
             </div>
           </div>
