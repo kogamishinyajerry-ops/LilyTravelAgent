@@ -751,3 +751,14 @@ Files shown: components/dream-roadbook.tsx, components/dream-roadbook.test.tsx, 
 Command/result: npm test -- components/dream-roadbook.test.tsx && npm run lint && npm test && npm run build
 Voiceover note: "我把 Dream 侧也加上总套件覆盖状态。这样从预览页回录屏台时，观众能看到这条桥同样被自动验收。"
 Usable for: Dream bridge badge clip, cinematic-to-studio QA visibility, Vibe Coding product polish, continued goal run round 49
+
+## Phase BK: v0.8.52 — Goals 41-50 Bridge Recap
+
+Date: 2026-06-13
+Clip title: Phase BK: v0.8.52 — Goals 41-50 Bridge Recap
+What changed: Added `docs/recording/goal-41-50-recap.md`, summarizing the Studio-Dream bridge run with commits, verification commands, recording sequence, content packaging ideas, and the next useful slice.
+Why this matters: The two-way Studio-Dream workflow is now a content chapter. The creator can explain both the product change and the Vibe Coding process without reconstructing the story from individual commits.
+Files shown: docs/recording/goal-41-50-recap.md, README.md, docs/recording/dev-log.md
+Command/result: npm run lint && npm test && npm run build
+Voiceover note: "我把这 10 轮整理成一章：先连通 Studio 和 Dream，再把桥接做成自动 QA，最后把验收状态放回画面。"
+Usable for: 10-goal recap clip, Studio-Dream bridge summary, Vibe Coding series packaging, continued goal run round 50
