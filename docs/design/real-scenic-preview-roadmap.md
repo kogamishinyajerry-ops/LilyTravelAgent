@@ -647,6 +647,22 @@ The presenter mode now supports pacing, not just information display. It helps t
 
 > 我给脚本模式加了当前镜头建议。录屏时我只需要按这个顺序扫画面：输入、路书、素材资产，然后讲这是在沉淀可复用的 Agent 素材流水线。
 
+## Phase AY: Studio Recording Edit Tags (2026-06-13)
+
+### What changed
+
+- Added "素材剪辑标签" to the `/studio` recording asset panel.
+- Dream packs are summarized as "产品画面" and Studio packs as "讲解画面" using the existing local counts.
+- The tags reuse the same usage vocabulary already used by the recent pack list and local recording index.
+
+### Why this matters
+
+The panel now helps with editing decisions, not only QA status. A creator can see the balance between product-demo footage and process/tutorial footage before opening the full index.
+
+### Recording angle
+
+> 我把素材用途也做成标签：Dream 是产品画面，Studio 是讲解画面。这样素材库一多，剪辑时不用重新判断每个文件该放在哪一类。
+
 ## Phase D: real data sources (2026-06-07)
 
 Replaced the Phase C procedural stubs with real implementations:

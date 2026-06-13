@@ -619,3 +619,14 @@ Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, app/gl
 Command/result: npm test -- components/studio-mode.test.tsx && npm run lint && npm test && npm run build
 Voiceover note: "我给脚本模式加了当前镜头建议。录屏时按照输入区、路书预览、素材资产扫一遍，就能讲清楚 Agent 工作流。"
 Usable for: shot-cue clip, silent-recording pacing, Vibe Coding voiceover prep, continued goal run round 37
+
+## Phase AY: v0.8.40 — Studio Recording Edit Tags
+
+Date: 2026-06-13
+Clip title: Phase AY: v0.8.40 — Studio Recording Edit Tags
+What changed: Added `素材剪辑标签` to `/studio`, summarizing Dream packs as `产品画面` and Studio packs as `讲解画面` with the existing counts.
+Why this matters: The recording panel now helps with editing decisions, not only QA status. The creator can see the balance between product-demo footage and tutorial/process footage at a glance.
+Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, app/globals.css, README.md, docs/design/real-scenic-preview-roadmap.md, docs/recording/dev-log.md
+Command/result: npm test -- components/studio-mode.test.tsx && npm run lint && npm test && npm run build
+Voiceover note: "我把素材用途做成剪辑标签：产品画面和讲解画面。这样后面素材越来越多，也能马上知道哪些适合放产品展示，哪些适合讲开发过程。"
+Usable for: edit-tags clip, content operations polish, recording archive editing workflow, continued goal run round 38

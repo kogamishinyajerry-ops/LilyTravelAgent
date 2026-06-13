@@ -545,6 +545,10 @@ export function StudioMode() {
                     <span>Dream {recordingAssets.countsByType.dream}</span>
                     <span>Studio {recordingAssets.countsByType.studio}</span>
                   </div>
+                  <div className="studio-recording-edit-tags" aria-label="素材剪辑标签">
+                    <span>{getRecordingAssetUsageHint("dream")} · {recordingAssets.countsByType.dream}</span>
+                    <span>{getRecordingAssetUsageHint("studio")} · {recordingAssets.countsByType.studio}</span>
+                  </div>
                   <div className="studio-recording-latest" aria-label="最新素材包摘要">
                     {recordingAssets.latestPack ? (
                       <>

@@ -1528,6 +1528,21 @@ textarea {
   background: rgba(255, 255, 255, 0.62);
 }
 
+.studio-recording-edit-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.studio-recording-assets .studio-recording-edit-tags span {
+  border: 1px solid rgba(214, 107, 61, 0.16);
+  border-radius: 999px;
+  padding: 4px 8px;
+  color: #7a3c24;
+  font-size: 0.7rem;
+  background: rgba(214, 107, 61, 0.1);
+}
+
 .studio-recording-latest {
   display: grid;
   gap: 3px;
