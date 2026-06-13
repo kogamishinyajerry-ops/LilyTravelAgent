@@ -1351,15 +1351,35 @@ textarea {
   display: grid;
   gap: 2px;
   border: 1px solid rgba(38, 59, 49, 0.12);
+  border-left: 4px solid rgba(79, 143, 122, 0.72);
   border-radius: 8px;
   padding: 8px;
   background: rgba(255, 255, 255, 0.58);
 }
 
+.studio-recording-recent-item.studio {
+  border-left-color: rgba(214, 107, 61, 0.82);
+}
+
 .studio-recording-recent small {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   color: var(--sage);
   font-size: 0.68rem;
   font-weight: 900;
+}
+
+.studio-recording-recent em {
+  border-radius: 999px;
+  padding: 2px 6px;
+  color: #fff;
+  font-style: normal;
+  background: var(--sage);
+}
+
+.studio-recording-recent-item.studio em {
+  background: var(--rust);
 }
 
 .studio-recording-recent strong {

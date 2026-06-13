@@ -20,6 +20,7 @@ function recordingAssetsResponse(packCount: number, title = "Studio 16:9 demo pa
     indexUrl: "/api/recording-assets/index",
     recentPacks: [
       {
+        type: "studio",
         id: "latest",
         title,
         createdAt: "2026-06-13T05:46:30.958Z",
@@ -27,6 +28,7 @@ function recordingAssetsResponse(packCount: number, title = "Studio 16:9 demo pa
         detail: "云南大理 / 三亚海岛",
       },
       {
+        type: "dream",
         id: "dream-coast",
         title: "Dream coastal visual pack",
         createdAt: "2026-06-13T05:46:20.615Z",
@@ -68,6 +70,8 @@ describe("StudioMode demo roadbooks", () => {
     expect(screen.getByDisplayValue("云南大理")).toBeTruthy();
     expect(await screen.findByText("15 个素材包")).toBeTruthy();
     expect(screen.getByLabelText("最近素材包")).toBeTruthy();
+    expect(screen.getByText("Studio QA")).toBeTruthy();
+    expect(screen.getByText("Dream QA")).toBeTruthy();
     expect(screen.getAllByText("Dream coastal visual pack")[0]).toBeTruthy();
     expect(screen.getByRole("link", { name: /打开总索引/ }).getAttribute("href")).toBe("/api/recording-assets/index");
   });

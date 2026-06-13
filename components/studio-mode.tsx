@@ -42,6 +42,7 @@ type RecordingAssetsState =
   | { status: "error"; message: string };
 
 type RecordingAssetSummaryPack = {
+  type: "dream" | "studio";
   id: string;
   title: string;
   createdAt: string;
@@ -129,6 +130,10 @@ function formatRecordingAssetTime(value: string) {
     hour: "2-digit",
     minute: "2-digit",
   }).format(date);
+}
+
+function recordingAssetTypeLabel(type: RecordingAssetSummaryPack["type"]) {
+  return type === "studio" ? "Studio QA" : "Dream QA";
 }
 
 export function StudioMode() {
@@ -425,8 +430,11 @@ export function StudioMode() {
                   {recordingAssets.recentPacks.length ? (
                     <div className="studio-recording-recent" aria-label="最近素材包">
                       {recordingAssets.recentPacks.map((pack) => (
-                        <div key={`${pack.label}-${pack.id}`}>
-                          <small>{formatRecordingAssetTime(pack.createdAt)}</small>
+                        <div className={`studio-recording-recent-item ${pack.type}`} key={`${pack.label}-${pack.id}`}>
+                          <small>
+                            <em>{recordingAssetTypeLabel(pack.type)}</em>
+                            {formatRecordingAssetTime(pack.createdAt)}
+                          </small>
                           <strong>{pack.title}</strong>
                           <span>{pack.detail}</span>
                         </div>

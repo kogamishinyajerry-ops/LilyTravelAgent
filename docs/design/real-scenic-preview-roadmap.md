@@ -30,7 +30,7 @@
 - `npm run check:studio-visuals` 会自动截取 `/studio` 的大理/海岸 16:9 演示画面，并输出 studio 录屏 notes。
 - `npm run index:recording-assets` 会把 dream/studio 的本地 QA 输出汇总成 `recordings/index.html` 和 `recordings/clip-index.md`。
 - `npm run check:recording-suite` 会一键串起大理 `/dream`、海岸 `/dream`、`/studio` 和素材索引，作为每轮打磨后的本地录屏验收流程。
-- `/studio` 右侧会读取 `/api/recording-assets`，显示本地素材包数量、最新 QA 时间、最近 3 个 QA 包，支持手动刷新，并通过 `/api/recording-assets/index` 打开本地总索引。
+- `/studio` 右侧会读取 `/api/recording-assets`，显示本地素材包数量、最新 QA 时间、最近 3 个 QA 包，带 Dream/Studio 类型标识，支持手动刷新，并通过 `/api/recording-assets/index` 打开本地总索引。
 - 这版是“预览级建模”，不是测绘级真实地形或真实建筑模型。
 
 ## Why This Step Exists
@@ -439,6 +439,22 @@ The panel no longer only shows a count. It shows the latest sequence of QA outpu
 ### Recording angle
 
 > 我把素材面板从一个数字升级成最近 3 条素材时间线。这样录屏时，观众能看到每次 QA 都留下了具体产物，而不是只有一个抽象的数量。
+
+## Phase AK: Recording Pack Type Badges (2026-06-13)
+
+### What changed
+
+- Recent recording packs in `/studio` now show `Dream QA` or `Studio QA` badges.
+- Dream and Studio entries use different left accents so the pack type is readable at a glance.
+- Tests assert that both badge labels render in the Studio recording asset panel.
+
+### Why this matters
+
+The recording archive contains two different evidence surfaces: `/dream` product visuals and `/studio` creator-workbench visuals. Clear badges reduce explanation overhead when recording the asset timeline.
+
+### Recording angle
+
+> 我给最近素材包加了 Dream QA / Studio QA 标签。这样讲解时不用先解释每个文件夹是什么，观众一眼能看出它是用户看到的动态路书，还是我录教程用的工作台。
 
 ## Phase D: real data sources (2026-06-07)
 

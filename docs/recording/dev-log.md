@@ -465,3 +465,14 @@ Files shown: lib/recording-assets.ts, lib/recording-assets.test.ts, components/s
 Command/result: npm test -- lib/recording-assets.test.ts components/studio-mode.test.tsx && npm run lint && npm test && npm run build
 Voiceover note: "我把素材面板从一个数字升级成最近 3 条素材时间线。每次 QA 产出的 dream、studio 包都会留在这里，录屏时能直接讲清楚素材是怎么积累出来的。"
 Usable for: recording-asset timeline clip, QA evidence history explanation, Vibe Coding process archive, continued goal run round 23
+
+## Phase AK: v0.8.26 — Recording Pack Type Badges
+
+Date: 2026-06-13
+Clip title: Phase AK: v0.8.26 — Recording Pack Type Badges
+What changed: Added Dream QA / Studio QA badges to recent recording packs in `/studio`, with distinct visual accents for product-view evidence and creator-workbench evidence.
+Why this matters: The local recording archive now communicates what kind of evidence each pack represents. This lowers the explanation cost during screen recording.
+Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, app/globals.css, README.md, docs/design/real-scenic-preview-roadmap.md, docs/recording/dev-log.md
+Command/result: npm test -- components/studio-mode.test.tsx && npm run lint && npm test && npm run build
+Voiceover note: "我给最近素材包加了 Dream QA / Studio QA 标签。现在这条时间线能直接区分用户看到的梦境路书画面，和我录教程用的 Studio 工作台画面。"
+Usable for: asset-type explanation clip, creator-workbench evidence taxonomy, Vibe Coding recording archive polish, continued goal run round 24
