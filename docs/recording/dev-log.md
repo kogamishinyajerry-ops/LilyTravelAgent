@@ -938,3 +938,14 @@ Files shown: scripts/check-recording-suite.mjs, components/dream-roadbook.tsx, d
 Command/result: npm run lint && npm test && npm run build (43 files, 892 tests, build passed)
 Voiceover note: "我把 Skyline 镜头也接进总录屏套件。以后跑一条命令，不只检查默认大理和海岸，还会多产出一份镜头语言证据。"
 Usable for: recording-suite update clip, Director Lens QA evidence, Vibe Coding automation narrative, continued goal run round 98
+
+## Phase CB: v0.8.69 — Goals 71-100 Director Lens Recap
+
+Date: 2026-06-14
+Clip title: Phase CB: v0.8.69 — Goals 71-100 Director Lens Recap
+What changed: Added `docs/recording/goal-71-100-recap.md` and linked it from README. The recap packages the Director Lens model, camera pose, UI selector, generation prompt contract, preview asset cache, Proof Stack, visual QA, recording suite, and content docs into one chapter.
+Why this matters: The 30-goal run now has a clean creator handoff. It can become a long-form segment about turning a vague desire for "high-quality 3D visual impact" into a controlled, verifiable camera-direction system.
+Files shown: docs/recording/goal-71-100-recap.md, README.md, docs/recording/dev-log.md, `/dream`
+Command/result: npm run lint && npm test && npm run build
+Voiceover note: "这 30 轮的重点不是又堆了一个按钮，而是把镜头语言变成了产品结构：模型、提示词、画面、缓存、QA 和录屏脚本全部打通。"
+Usable for: 30-goal recap clip, Director Lens chapter, Vibe Coding long-form outline, continued product polish

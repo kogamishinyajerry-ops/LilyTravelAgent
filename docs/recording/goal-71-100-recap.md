@@ -38,8 +38,8 @@ This run turned camera direction into a product-level Agent contract. Director L
 | 96 | `102f5e2` | Added a Director Lens shot flow to the shot list. |
 | 97 | `8bee4e6` | Added Director Lens content angles to the content system. |
 | 98 | `216646b` | Logged a recording-suite verification checkpoint. |
-| 99 | pending | Packaged this recap for the content archive. |
-| 100 | pending | Final README/dev-log closeout and push. |
+| 99 | `d077e24` | Packaged this recap for the content archive. |
+| 100 | closeout | Final README/dev-log closeout and push. |
 
 ## Recording Sequence
 
