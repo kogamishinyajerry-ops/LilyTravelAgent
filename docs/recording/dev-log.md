@@ -278,3 +278,14 @@ Files shown: lib/cinematic-scene-preset.ts, lib/cinematic-scene-preset.test.ts, 
 Command/result: npm test -- lib/cinematic-scene-preset.test.ts && npm run lint && npm run build && Playwright D1-D4 WebGL checks
 Voiceover note: "这一轮我给 D1-D4 加了更有记忆点的地标剪影：古城门、洱海帆影、喜洲院落拱门、返程咖啡标记。重点不是一次性做复杂 3D，而是先建立一套可以被 Agent 调度的目的地视觉语汇。"
 Usable for: D1-D4 landmark comparison clip, destination-specific visual language lesson, Vibe Coding data-to-geometry workflow, 10-goal continuation round 5
+
+## Phase T: v0.8.9 — Day Atmosphere Director
+
+Date: 2026-06-13
+Clip title: Phase T: v0.8.9 — Day Atmosphere Director
+What changed: Added a render-atmosphere director layer for the Dali scene. `lib/cinematic-scene-preset.ts` now exports `buildCinematicAtmosphereProfile()`, which maps the active D1-D4 focus into fog color/range, sun color/intensity/position, sun-disc placement, haze opacity, water color/opacity, tone-mapping exposure, and water-glint strength. `components/dream-skyline-scene.tsx` applies that profile to Three.js `Fog`, directional light, atmosphere planes, water material, and specular ribbons. `lib/cinematic-scene-preset.test.ts` verifies the generic fallback, brighter Erhai water day, calmer Xizhou morning, and warmer return-day hour.
+Why this matters: The previous rounds made D1-D4 spatial and recognizable; this round makes them feel directed. D2 can become brighter and more reflective for Erhai, D3 can calm down for Xizhou, and D4 can warm up for the closing return beat. It is another small data-to-render step toward high-quality cinematic roadbooks.
+Files shown: lib/cinematic-scene-preset.ts, lib/cinematic-scene-preset.test.ts, components/dream-skyline-scene.tsx, README.md, docs/design/real-scenic-preview-roadmap.md, docs/recording/dev-log.md
+Command/result: npm test -- lib/cinematic-scene-preset.test.ts && npm run lint && npm run build && Playwright D1-D4 atmosphere pixel checks
+Voiceover note: "现在 D1-D4 不只是换地标和镜头，连光色、雾气、水面、高光也会跟着变。D2 洱海更亮，D3 喜洲更安静，D4 收尾更暖。这就是我想做的动态路书：不是卡片拼接，而是一个被 Agent 导演的目的地预览。"
+Usable for: day-atmosphere comparison clip, render-direction lesson, Vibe Coding small-helper-to-visual-impact workflow, 10-goal continuation round 6

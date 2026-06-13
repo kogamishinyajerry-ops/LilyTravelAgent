@@ -78,6 +78,26 @@ export type CinematicLandmarkSilhouetteLayer = {
   activeMarker: CinematicLandmarkSilhouette;
 };
 
+export type CinematicAtmosphereProfile = {
+  id: "old-town-dusk" | "erhai-sunset" | "xizhou-morning" | "return-amber" | "generic-soft";
+  label: string;
+  fogColor: string;
+  fogNear: number;
+  fogFar: number;
+  sunColor: string;
+  sunIntensity: number;
+  sunPosition: [number, number, number];
+  sunDiscPosition: [number, number, number];
+  sunDiscOpacity: number;
+  hazeColor: string;
+  hazeOpacity: number;
+  foregroundHazeOpacity: number;
+  waterColor: string;
+  waterOpacity: number;
+  toneMappingExposure: number;
+  ribbonOpacityScale: number;
+};
+
 export type CinematicSceneInspector = {
   status: "active" | "fallback";
   presetId: CinematicScenePreset["id"] | "generic";
@@ -225,6 +245,118 @@ export function buildCinematicLandmarkSilhouettes(
   return {
     markers,
     activeMarker: markers.find((marker) => marker.day === activeFocus.day) ?? markers[0] ?? fallbackMarker,
+  };
+}
+
+export function buildCinematicAtmosphereProfile(
+  focus?: CinematicSceneFocus | null,
+): CinematicAtmosphereProfile {
+  if (!focus) {
+    return {
+      id: "generic-soft",
+      label: "Soft procedural haze",
+      fogColor: "#d7ded8",
+      fogNear: 12,
+      fogFar: 26,
+      sunColor: "#ffe0a8",
+      sunIntensity: 3.4,
+      sunPosition: [-5.5, 8, 7],
+      sunDiscPosition: [-5.9, 5.7, -6.35],
+      sunDiscOpacity: 0.48,
+      hazeColor: "#d7ded8",
+      hazeOpacity: 0.34,
+      foregroundHazeOpacity: 0.18,
+      waterColor: "#8cc9cb",
+      waterOpacity: 0.68,
+      toneMappingExposure: 1,
+      ribbonOpacityScale: 1,
+    };
+  }
+
+  if (focus.anchorKind === "erhai") {
+    return {
+      id: "erhai-sunset",
+      label: "Erhai water sunset",
+      fogColor: "#c8e2e6",
+      fogNear: 10,
+      fogFar: 29,
+      sunColor: "#ffd8a3",
+      sunIntensity: 4.2,
+      sunPosition: [-7.2, 6.4, 6.8],
+      sunDiscPosition: [4.8, 4.85, -6.1],
+      sunDiscOpacity: 0.58,
+      hazeColor: "#b8dce1",
+      hazeOpacity: 0.42,
+      foregroundHazeOpacity: 0.15,
+      waterColor: "#78c5cf",
+      waterOpacity: 0.76,
+      toneMappingExposure: 1.07,
+      ribbonOpacityScale: 1.36,
+    };
+  }
+
+  if (focus.anchorKind === "village") {
+    return {
+      id: "xizhou-morning",
+      label: "Xizhou courtyard morning",
+      fogColor: "#dce1d3",
+      fogNear: 11,
+      fogFar: 24,
+      sunColor: "#f6e3b5",
+      sunIntensity: 3.65,
+      sunPosition: [-3.6, 8.8, 5.2],
+      sunDiscPosition: [-4.2, 5.25, -6.2],
+      sunDiscOpacity: 0.38,
+      hazeColor: "#dfe5d8",
+      hazeOpacity: 0.28,
+      foregroundHazeOpacity: 0.14,
+      waterColor: "#92c4bf",
+      waterOpacity: 0.64,
+      toneMappingExposure: 0.98,
+      ribbonOpacityScale: 0.88,
+    };
+  }
+
+  if (focus.anchorKind === "return") {
+    return {
+      id: "return-amber",
+      label: "Amber return hour",
+      fogColor: "#ead3c2",
+      fogNear: 9.5,
+      fogFar: 25,
+      sunColor: "#f4a56d",
+      sunIntensity: 4.55,
+      sunPosition: [-4.6, 7.2, 7.6],
+      sunDiscPosition: [-2.8, 4.8, -6.05],
+      sunDiscOpacity: 0.54,
+      hazeColor: "#efcdb6",
+      hazeOpacity: 0.4,
+      foregroundHazeOpacity: 0.22,
+      waterColor: "#9fc9bd",
+      waterOpacity: 0.7,
+      toneMappingExposure: 1.04,
+      ribbonOpacityScale: 1.12,
+    };
+  }
+
+  return {
+    id: "old-town-dusk",
+    label: "Old town dusk",
+    fogColor: "#d8d0bd",
+    fogNear: 11,
+    fogFar: 25,
+    sunColor: "#ffc582",
+    sunIntensity: 3.9,
+    sunPosition: [-5.8, 7.7, 7.2],
+    sunDiscPosition: [-5.7, 5.55, -6.3],
+    sunDiscOpacity: 0.5,
+    hazeColor: "#dcc8ad",
+    hazeOpacity: 0.36,
+    foregroundHazeOpacity: 0.19,
+    waterColor: "#91c8c3",
+    waterOpacity: 0.68,
+    toneMappingExposure: 1.02,
+    ribbonOpacityScale: 1,
   };
 }
 

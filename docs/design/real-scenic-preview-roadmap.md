@@ -141,6 +141,23 @@ The route rail showed the itinerary as a path, but the individual route beats st
 
 > 我继续把大理从“抽象漂亮”往“有辨识度”推进：D1 是古城门，D2 是洱海帆影，D3 是白族院落拱门，D4 是咖啡和返程收尾。先用轻量程序化几何做地标语汇，后面再把真实照片和 AI 贴片接得更重。
 
+## Phase T: Day Atmosphere Director (2026-06-13)
+
+### What changed
+
+- Added `buildCinematicAtmosphereProfile()` to `lib/cinematic-scene-preset.ts`.
+- The helper converts the active Dali focus into render parameters: fog color/range, sun color/intensity/position, sun-disc placement, haze opacity, water color/opacity, tone-mapping exposure, and water-glint strength.
+- `components/dream-skyline-scene.tsx` now applies that profile to the Three.js `Fog`, directional sun, atmosphere planes, water material, and water specular ribbons.
+- `lib/cinematic-scene-preset.test.ts` verifies the generic fallback, brighter Erhai water day, calmer Xizhou morning, and warmer return-day hour.
+
+### Why this matters
+
+D1-D4 already had route, camera, and landmark changes; atmosphere makes those beats feel more cinematic. The implementation remains pure-data and testable, but the output starts to behave more like shot direction: water days become brighter and glintier, village days become calmer, and return days get warmer closure.
+
+### Recording angle
+
+> 这一轮我没有换大框架，而是继续加“导演层”：同样是大理，D2 洱海应该更水、更亮，D3 喜洲应该更安静，D4 收尾应该更暖。于是我把雾、太阳、水面、高光都做成 day atmosphere profile，让路书每天的视觉情绪真的不一样。
+
 ## Phase D: real data sources (2026-06-07)
 
 Replaced the Phase C procedural stubs with real implementations:

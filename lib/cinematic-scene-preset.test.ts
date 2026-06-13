@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { sampleRoadbook } from "./sample-roadbook";
 import type { Roadbook } from "./roadbook-types";
 import {
+  buildCinematicAtmosphereProfile,
   buildCinematicCameraPose,
   buildCinematicLandmarkSilhouettes,
   buildCinematicRouteRail,
@@ -199,5 +200,45 @@ describe("buildCinematicLandmarkSilhouettes", () => {
 
     expect(layer.activeMarker.day).toBe(1);
     expect(layer.activeMarker.kind).toBe("old-town-gate");
+  });
+});
+
+describe("buildCinematicAtmosphereProfile", () => {
+  it("returns a stable soft profile when no cinematic focus is available", () => {
+    expect(buildCinematicAtmosphereProfile()).toMatchObject({
+      id: "generic-soft",
+      label: "Soft procedural haze",
+      fogNear: 12,
+      fogFar: 26,
+      waterColor: "#8cc9cb",
+      ribbonOpacityScale: 1,
+    });
+  });
+
+  it("directs the Erhai day toward brighter water and stronger glints", () => {
+    const profile = buildCinematicAtmosphereProfile(getCinematicDayFocus(DALI_CINEMATIC_SCENE_PRESET, 2));
+
+    expect(profile.id).toBe("erhai-sunset");
+    expect(profile.sunIntensity).toBeGreaterThan(4);
+    expect(profile.waterOpacity).toBeGreaterThan(0.7);
+    expect(profile.ribbonOpacityScale).toBeGreaterThan(1.2);
+    expect(profile.sunDiscPosition[0]).toBeGreaterThan(0);
+  });
+
+  it("keeps the Xizhou village day calmer than the Erhai water day", () => {
+    const village = buildCinematicAtmosphereProfile(getCinematicDayFocus(DALI_CINEMATIC_SCENE_PRESET, 3));
+    const erhai = buildCinematicAtmosphereProfile(getCinematicDayFocus(DALI_CINEMATIC_SCENE_PRESET, 2));
+
+    expect(village.id).toBe("xizhou-morning");
+    expect(village.hazeOpacity).toBeLessThan(erhai.hazeOpacity);
+    expect(village.ribbonOpacityScale).toBeLessThan(erhai.ribbonOpacityScale);
+  });
+
+  it("warms the return day for a closing-hour feel", () => {
+    const profile = buildCinematicAtmosphereProfile(getCinematicDayFocus(DALI_CINEMATIC_SCENE_PRESET, 4));
+
+    expect(profile.id).toBe("return-amber");
+    expect(profile.sunColor).toBe("#f4a56d");
+    expect(profile.foregroundHazeOpacity).toBeGreaterThan(0.2);
   });
 });

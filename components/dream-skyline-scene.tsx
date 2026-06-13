@@ -38,10 +38,12 @@ import type { LandmarkPreset } from "@/lib/landmark-preset";
 import { getFallbackPreset, getFallbackPresetForTemplate } from "@/lib/landmark-preset-fallbacks";
 import { renderLandmarkPreset } from "@/lib/landmark-renderer";
 import {
+  buildCinematicAtmosphereProfile,
   buildCinematicCameraPose,
   buildCinematicLandmarkSilhouettes,
   buildCinematicRouteRail,
   resolveCinematicScenePreset,
+  type CinematicAtmosphereProfile,
   type CinematicLandmarkSilhouette,
   type ResolvedCinematicScenePreset,
 } from "@/lib/cinematic-scene-preset";
@@ -160,6 +162,10 @@ export function DreamSkylineScene({
     () => buildCinematicCameraPose(cinematicScene?.focus),
     [cinematicScene],
   );
+  const atmosphereProfile = useMemo(
+    () => buildCinematicAtmosphereProfile(cinematicScene?.focus),
+    [cinematicScene],
+  );
   const palette = palettes[mood];
   const assetSource = previewAsset?.imageDataUrl || previewAsset?.imageUrl;
 
@@ -174,7 +180,7 @@ export function DreamSkylineScene({
     let frameId = 0;
     const disposables: Array<{ dispose: () => void }> = [];
     const scene = new Scene();
-    scene.fog = new Fog(new Color(palette.fog), 12, 26);
+    scene.fog = new Fog(new Color(atmosphereProfile.fogColor), atmosphereProfile.fogNear, atmosphereProfile.fogFar);
 
     const camera = new PerspectiveCamera(cameraPose.fov, 1, 0.1, 90);
     camera.position.set(...cameraPose.camera);
@@ -192,7 +198,8 @@ export function DreamSkylineScene({
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     renderer.outputColorSpace = SRGBColorSpace;
     renderer.toneMapping = ACESFilmicToneMapping;
-    renderer.toneMappingExposure = mood === "neon" ? 1.18 : mood === "dusk" ? 1.08 : 1.02;
+    const moodExposure = mood === "neon" ? 1.18 : mood === "dusk" ? 1.08 : 1.02;
+    renderer.toneMappingExposure = moodExposure * atmosphereProfile.toneMappingExposure;
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = PCFShadowMap;
     disposables.push(renderer);
@@ -201,11 +208,11 @@ export function DreamSkylineScene({
     root.rotation.x = -0.06;
     scene.add(root);
 
-    scene.add(new AmbientLight(0xffffff, mood === "neon" ? 1.05 : 1.35));
-    scene.add(new HemisphereLight(new Color(palette.sky), new Color(palette.ground), mood === "neon" ? 1.35 : 1.55));
+    scene.add(new AmbientLight(0xffffff, mood === "neon" ? 0.98 : 1.22));
+    scene.add(new HemisphereLight(new Color(palette.sky), new Color(palette.ground), mood === "neon" ? 1.28 : 1.45));
 
-    const sun = new DirectionalLight(new Color(palette.light), mood === "dusk" ? 4.3 : 3.4);
-    sun.position.set(-5.5, 8, 7);
+    const sun = new DirectionalLight(new Color(atmosphereProfile.sunColor), atmosphereProfile.sunIntensity);
+    sun.position.set(...atmosphereProfile.sunPosition);
     sun.castShadow = true;
     sun.shadow.mapSize.set(2048, 2048);
     sun.shadow.camera.near = 1;
@@ -221,7 +228,7 @@ export function DreamSkylineScene({
     rim.position.set(6, 4, -8);
     scene.add(rim);
 
-    root.add(createAtmosphere(palette, mood, disposables));
+    root.add(createAtmosphere(palette, mood, atmosphereProfile, disposables));
     if (cinematicScene) {
       root.add(createCinematicPresetLayer(cinematicScene, palette, disposables));
     }
@@ -233,10 +240,10 @@ export function DreamSkylineScene({
       root.add(createPreviewAssetBillboard(assetSource, disposables));
     }
 
-    const water = profile.hasWater ? createWater(palette, disposables) : null;
+    const water = profile.hasWater ? createWater(palette, atmosphereProfile, disposables) : null;
     if (water) {
       root.add(water);
-      root.add(createWaterSpecularRibbons(palette, disposables));
+      root.add(createWaterSpecularRibbons(palette, atmosphereProfile, disposables));
     }
 
     root.add(createSkyline(profile, palette, template, disposables));
@@ -288,7 +295,7 @@ export function DreamSkylineScene({
       });
       disposables.forEach((item) => item.dispose());
     };
-  }, [activeDay, assetSource, cameraPose, cinematicScene, design.routeStops.length, mood, palette, profile, template, landmarkPreset]);
+  }, [activeDay, assetSource, atmosphereProfile, cameraPose, cinematicScene, design.routeStops.length, mood, palette, profile, template, landmarkPreset]);
 
   return (
     <div ref={wrapRef} className={`dream-skyline-scene dream-skyline-${template}${
@@ -365,6 +372,7 @@ function createPreviewAssetBillboard(assetSource: string, disposables: Array<{ d
 function createAtmosphere(
   palette: SkylinePalette,
   mood: DreamMood,
+  atmosphereProfile: CinematicAtmosphereProfile,
   disposables: Array<{ dispose: () => void }>,
 ) {
   const group = new Group();
@@ -372,23 +380,23 @@ function createAtmosphere(
 
   const sunGeometry = new CircleGeometry(1.35, 48);
   const sunMaterial = new MeshBasicMaterial({
-    color: new Color(palette.light),
+    color: new Color(atmosphereProfile.sunColor),
     transparent: true,
-    opacity: mood === "neon" ? 0.26 : 0.5,
+    opacity: mood === "neon" ? atmosphereProfile.sunDiscOpacity * 0.62 : atmosphereProfile.sunDiscOpacity,
     depthWrite: false,
     blending: AdditiveBlending,
   });
   const sunDisc = new Mesh(sunGeometry, sunMaterial);
   sunDisc.name = "atmosphere-sun-disc";
-  sunDisc.position.set(-5.9, 5.7, -6.35);
+  sunDisc.position.set(...atmosphereProfile.sunDiscPosition);
   sunDisc.renderOrder = -4;
   group.add(sunDisc);
 
   const hazeGeometry = new PlaneGeometry(20, 8.2);
   const hazeMaterial = new MeshBasicMaterial({
-    color: new Color(mood === "neon" ? palette.glass : palette.fog),
+    color: new Color(mood === "neon" ? palette.glass : atmosphereProfile.hazeColor),
     transparent: true,
-    opacity: mood === "neon" ? 0.2 : 0.34,
+    opacity: mood === "neon" ? 0.2 : atmosphereProfile.hazeOpacity,
     depthWrite: false,
     side: DoubleSide,
   });
@@ -400,9 +408,9 @@ function createAtmosphere(
 
   const foregroundGeometry = new PlaneGeometry(24, 4.6);
   const foregroundMaterial = new MeshBasicMaterial({
-    color: new Color(palette.fog),
+    color: new Color(atmosphereProfile.fogColor),
     transparent: true,
-    opacity: mood === "neon" ? 0.08 : 0.18,
+    opacity: mood === "neon" ? 0.08 : atmosphereProfile.foregroundHazeOpacity,
     depthWrite: false,
     side: DoubleSide,
   });
@@ -1030,7 +1038,11 @@ function createTerrain(
   return terrain;
 }
 
-function createWater(palette: SkylinePalette, disposables: Array<{ dispose: () => void }>) {
+function createWater(
+  palette: SkylinePalette,
+  atmosphereProfile: CinematicAtmosphereProfile,
+  disposables: Array<{ dispose: () => void }>,
+) {
   const geometry = new PlaneGeometry(25, 8, 96, 24);
   const position = geometry.getAttribute("position") as Float32BufferAttribute;
   const baseWaveZ = new Float32Array(position.count);
@@ -1039,9 +1051,9 @@ function createWater(palette: SkylinePalette, disposables: Array<{ dispose: () =
   }
 
   const material = new MeshPhysicalMaterial({
-    color: new Color(palette.water),
+    color: new Color(atmosphereProfile.waterColor || palette.water),
     transparent: true,
-    opacity: 0.7,
+    opacity: atmosphereProfile.waterOpacity,
     roughness: 0.16,
     metalness: 0.04,
     clearcoat: 0.72,
@@ -1061,6 +1073,7 @@ function createWater(palette: SkylinePalette, disposables: Array<{ dispose: () =
 
 function createWaterSpecularRibbons(
   palette: SkylinePalette,
+  atmosphereProfile: CinematicAtmosphereProfile,
   disposables: Array<{ dispose: () => void }>,
 ) {
   const group = new Group();
@@ -1078,7 +1091,7 @@ function createWaterSpecularRibbons(
     const material = new LineBasicMaterial({
       color: new Color(palette.light),
       transparent: true,
-      opacity: 0.1 + ribbonIndex * 0.025,
+      opacity: (0.1 + ribbonIndex * 0.025) * atmosphereProfile.ribbonOpacityScale,
     });
     const line = new Line(geometry, material);
     line.name = "water-specular-ribbon";
