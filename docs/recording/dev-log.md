@@ -773,3 +773,14 @@ Files shown: lib/recording-asset-labels.ts, lib/recording-assets.ts, scripts/ind
 Command/result: npm test -- lib/recording-assets.test.ts && npm run lint && npm test && npm run build
 Voiceover note: "我把桥接检查也纳入素材索引。现在 Dream 是产品画面，Studio 是讲解画面，Bridge QA 就是页面闭环的证据。"
 Usable for: Bridge QA asset clip, recording asset taxonomy, Vibe Coding evidence pipeline, continued goal run round 51
+
+## Phase BM: v0.8.54 — Studio Bridge Asset Counts
+
+Date: 2026-06-13
+Clip title: Phase BM: v0.8.54 — Studio Bridge Asset Counts
+What changed: Added Bridge pack counts and `桥接验证` usage tags to the `/studio` recording asset panel.
+Why this matters: The recording workbench can now show all three material categories without opening the full index: Dream product footage, Studio walkthrough footage, and Bridge QA evidence.
+Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, app/globals.css, README.md, docs/recording/dev-log.md
+Command/result: npm test -- components/studio-mode.test.tsx && npm run lint && npm test && npm run build
+Voiceover note: "我把 Bridge QA 也放进 Studio 面板。现在素材资产区一眼能看到产品画面、讲解画面和桥接验证三类证据。"
+Usable for: Studio asset taxonomy clip, Bridge QA visibility, Vibe Coding evidence dashboard, continued goal run round 52

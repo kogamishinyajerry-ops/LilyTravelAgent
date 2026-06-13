@@ -49,4 +49,4 @@ This recap closes the Studio-Dream bridge run. The theme was turning two separat
 
 ## Next useful slice
 
-The next narrow product slice should make Bridge QA counts explicit in `/studio`, so the recording workbench can show Dream, Studio, and Studio-Dream bridge evidence as three visible material types.
+The next narrow product slice should make Bridge QA cards visually distinct in `/studio` recent assets, so the recording workbench can separate Dream footage, Studio footage, and Studio-Dream bridge evidence at a glance.

@@ -79,8 +79,10 @@ describe("StudioMode demo roadbooks", () => {
     expect(screen.getByLabelText("素材包类型统计")).toBeTruthy();
     expect(screen.getByText("Dream 12")).toBeTruthy();
     expect(screen.getByText("Studio 3")).toBeTruthy();
+    expect(screen.getByText("Bridge 1")).toBeTruthy();
     expect(screen.getByLabelText("素材剪辑标签").textContent).toContain("产品画面 · 12");
     expect(screen.getByLabelText("素材剪辑标签").textContent).toContain("讲解画面 · 3");
+    expect(screen.getByLabelText("素材剪辑标签").textContent).toContain("桥接验证 · 1");
     expect(screen.getByLabelText("最近素材包")).toBeTruthy();
     expect(screen.getByText("Studio QA")).toBeTruthy();
     expect(screen.getByText("Dream QA")).toBeTruthy();

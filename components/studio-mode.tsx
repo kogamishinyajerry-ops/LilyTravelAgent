@@ -579,10 +579,12 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
                   <div className="studio-recording-counts" aria-label="素材包类型统计">
                     <span>Dream {recordingAssets.countsByType.dream}</span>
                     <span>Studio {recordingAssets.countsByType.studio}</span>
+                    <span>Bridge {recordingAssets.countsByType.bridge}</span>
                   </div>
                   <div className="studio-recording-edit-tags" aria-label="素材剪辑标签">
                     <span>{getRecordingAssetUsageHint("dream")} · {recordingAssets.countsByType.dream}</span>
                     <span>{getRecordingAssetUsageHint("studio")} · {recordingAssets.countsByType.studio}</span>
+                    <span>{getRecordingAssetUsageHint("bridge")} · {recordingAssets.countsByType.bridge}</span>
                   </div>
                   <div className="studio-recording-latest" aria-label="最新素材包摘要">
                     {recordingAssets.latestPack ? (
