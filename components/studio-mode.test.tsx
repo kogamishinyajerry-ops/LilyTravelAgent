@@ -72,6 +72,8 @@ describe("StudioMode demo roadbooks", () => {
     expect(screen.getByLabelText("最近素材包")).toBeTruthy();
     expect(screen.getByText("Studio QA")).toBeTruthy();
     expect(screen.getByText("Dream QA")).toBeTruthy();
+    expect(screen.getByText("讲解画面")).toBeTruthy();
+    expect(screen.getByText("产品画面")).toBeTruthy();
     expect(screen.getAllByText("Dream coastal visual pack")[0]).toBeTruthy();
     expect(screen.getByRole("link", { name: /打开总索引/ }).getAttribute("href")).toBe("/api/recording-assets/index");
   });

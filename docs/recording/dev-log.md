@@ -476,3 +476,14 @@ Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, app/gl
 Command/result: npm test -- components/studio-mode.test.tsx && npm run lint && npm test && npm run build
 Voiceover note: "我给最近素材包加了 Dream QA / Studio QA 标签。现在这条时间线能直接区分用户看到的梦境路书画面，和我录教程用的 Studio 工作台画面。"
 Usable for: asset-type explanation clip, creator-workbench evidence taxonomy, Vibe Coding recording archive polish, continued goal run round 24
+
+## Phase AL: v0.8.27 — Recording Pack Usage Hints
+
+Date: 2026-06-13
+Clip title: Phase AL: v0.8.27 — Recording Pack Usage Hints
+What changed: Added usage hints to recent recording packs in `/studio`: Dream QA maps to "产品画面" and Studio QA maps to "讲解画面".
+Why this matters: The recording archive now helps with editing decisions, not only QA status. The user can separate product-demo footage from process/tutorial footage at a glance.
+Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, app/globals.css, README.md, docs/design/real-scenic-preview-roadmap.md, docs/recording/dev-log.md
+Command/result: npm test -- components/studio-mode.test.tsx && npm run lint && npm test && npm run build
+Voiceover note: "我给素材包加了用途提示：Dream QA 是产品画面，Studio QA 是讲解画面。这样素材一多起来，后面剪视频也不会乱。"
+Usable for: editing-workflow clip, asset taxonomy polish, Vibe Coding content operations, continued goal run round 25

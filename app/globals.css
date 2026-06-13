@@ -1392,6 +1392,20 @@ textarea {
   white-space: nowrap;
 }
 
+.studio-recording-recent b {
+  justify-self: start;
+  border-radius: 999px;
+  padding: 3px 7px;
+  color: var(--moss);
+  font-size: 0.7rem;
+  background: rgba(79, 143, 122, 0.13);
+}
+
+.studio-recording-recent-item.studio b {
+  color: #7a3c24;
+  background: rgba(214, 107, 61, 0.13);
+}
+
 .studio-mini-card.accent {
   border-color: rgba(214, 107, 61, 0.24);
   background: rgba(214, 107, 61, 0.09);

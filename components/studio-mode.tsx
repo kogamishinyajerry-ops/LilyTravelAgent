@@ -136,6 +136,10 @@ function recordingAssetTypeLabel(type: RecordingAssetSummaryPack["type"]) {
   return type === "studio" ? "Studio QA" : "Dream QA";
 }
 
+function recordingAssetUsageHint(type: RecordingAssetSummaryPack["type"]) {
+  return type === "studio" ? "讲解画面" : "产品画面";
+}
+
 export function StudioMode() {
   const [brief, setBrief] = useState<TravelBrief>(defaultBrief);
   const [demoRoadbookId, setDemoRoadbookId] = useState<StudioDemoRoadbookId | null>("dali");
@@ -437,6 +441,7 @@ export function StudioMode() {
                           </small>
                           <strong>{pack.title}</strong>
                           <span>{pack.detail}</span>
+                          <b>{recordingAssetUsageHint(pack.type)}</b>
                         </div>
                       ))}
                     </div>

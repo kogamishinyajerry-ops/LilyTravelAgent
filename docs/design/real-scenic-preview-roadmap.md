@@ -30,7 +30,7 @@
 - `npm run check:studio-visuals` 会自动截取 `/studio` 的大理/海岸 16:9 演示画面，并输出 studio 录屏 notes。
 - `npm run index:recording-assets` 会把 dream/studio 的本地 QA 输出汇总成 `recordings/index.html` 和 `recordings/clip-index.md`。
 - `npm run check:recording-suite` 会一键串起大理 `/dream`、海岸 `/dream`、`/studio` 和素材索引，作为每轮打磨后的本地录屏验收流程。
-- `/studio` 右侧会读取 `/api/recording-assets`，显示本地素材包数量、最新 QA 时间、最近 3 个 QA 包，带 Dream/Studio 类型标识，支持手动刷新，并通过 `/api/recording-assets/index` 打开本地总索引。
+- `/studio` 右侧会读取 `/api/recording-assets`，显示本地素材包数量、最新 QA 时间、最近 3 个 QA 包，带 Dream/Studio 类型标识和用途提示，支持手动刷新，并通过 `/api/recording-assets/index` 打开本地总索引。
 - 这版是“预览级建模”，不是测绘级真实地形或真实建筑模型。
 
 ## Why This Step Exists
@@ -455,6 +455,22 @@ The recording archive contains two different evidence surfaces: `/dream` product
 ### Recording angle
 
 > 我给最近素材包加了 Dream QA / Studio QA 标签。这样讲解时不用先解释每个文件夹是什么，观众一眼能看出它是用户看到的动态路书，还是我录教程用的工作台。
+
+## Phase AL: Recording Pack Usage Hints (2026-06-13)
+
+### What changed
+
+- Recent recording packs now show a concise usage hint.
+- `Dream QA` packs are labeled as product footage.
+- `Studio QA` packs are labeled as walkthrough footage.
+
+### Why this matters
+
+The asset timeline now helps with editing decisions, not just technical QA review. The creator can quickly decide which clips belong in product demo cuts and which belong in process/tutorial cuts.
+
+### Recording angle
+
+> 我给素材包加了“产品画面 / 讲解画面”的用途提示。这样我后面剪视频时，不需要重新判断每个素材应该放在哪类内容里。
 
 ## Phase D: real data sources (2026-06-07)
 
