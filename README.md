@@ -106,8 +106,12 @@ v0.5.0 adds full 高德 3D building pipeline: extensions=all, multi-type-code qu
 
 ```bash
 npm run lint
+npm test
 npm run build
+npm run check:dream-visuals
 ```
+
+`npm run check:dream-visuals` expects the local dev server to be running at `http://localhost:3000/dream` unless `DREAM_URL` is set. It writes D1-D4 screenshots plus `summary.json` under `recordings/visual-checks/`, which is ignored by git and intended for recording/product review.
 
 ## Recording And Learning Assets
 

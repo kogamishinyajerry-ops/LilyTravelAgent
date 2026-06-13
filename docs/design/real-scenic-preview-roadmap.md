@@ -192,6 +192,23 @@ High-quality dynamic roadbooks need motion restraint, not random animation every
 
 > 动态路书不是把所有东西乱动起来，而是让每一天有自己的微动节奏。D2 洱海的水面和 haze 更流动，D3 喜洲更安静，D4 收尾的焦点和地标有一点暖光呼吸。这个 motion profile 继续沿用前面的数据驱动方式。
 
+## Phase W: Local Dream Visual QA (2026-06-13)
+
+### What changed
+
+- Added `scripts/check-dream-visuals.mjs`.
+- Added `npm run check:dream-visuals`.
+- The script opens `/dream`, clicks D1-D4, verifies Scene Inspector text, checks WebGL canvas pixels, verifies D2 motion by comparing two canvas checksums, and saves screenshots plus `summary.json`.
+- Outputs go to `recordings/visual-checks/`, which remains git-ignored for local recording and review.
+
+### Why this matters
+
+The visual stack is now complex enough that "looks good on my screen" is not enough. This phase gives every future visual iteration a repeatable local review pack: screenshots, pixel checks, motion evidence, and browser console errors in one artifact. It supports both engineering confidence and the user's recording workflow.
+
+### Recording angle
+
+> 视觉产品不能只靠主观感觉。我加了一个本地视觉 QA 命令：自动打开 /dream，点 D1-D4，截图，检查 WebGL 像素，确认微动还在，然后写一个 summary.json。以后每次打磨画面，都能留下可复盘的视觉证据。
+
 ## Phase D: real data sources (2026-06-07)
 
 Replaced the Phase C procedural stubs with real implementations:
