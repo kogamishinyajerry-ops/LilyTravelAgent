@@ -268,6 +268,7 @@ describe("DreamRoadbook a11y polish", () => {
     expect(contract.textContent).toContain("Visual Contract");
     expect(contract.textContent).toContain("纪念碑 · cloud");
     expect(contract.textContent).toContain("isometric monument");
+    expect(contract.textContent).toContain("auto day lens");
     expect(contract.textContent).toContain("D1 old-town beat");
     expect(contract.textContent).toContain("2/4 ready");
     expect(contract.textContent).toContain("idle");

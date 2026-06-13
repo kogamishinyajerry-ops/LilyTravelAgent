@@ -1514,6 +1514,10 @@ export function DreamRoadbook({ initialDemo = "dali" }: DreamRoadbookProps = {})
                 <strong>{activeTemplate.renderStrategy.lens}</strong>
               </span>
               <span>
+                <small>Lens</small>
+                <strong>{activeDirectorLens.proofLabel}</strong>
+              </span>
+              <span>
                 <small>Scene</small>
                 <strong>{sceneInspector.composition.proofLabel}</strong>
               </span>
