@@ -916,3 +916,14 @@ Files shown: lib/director-lens.ts, components/dream-roadbook.tsx, scripts/check-
 Command/result: npm test -- components/dream-roadbook.test.tsx && npm run lint
 Voiceover note: "我把镜头语言也做成了 Agent 的结构：用户选 Skyline，Prompt、Scene、Proof Stack、资产缓存和 QA 报告都会同步记录。"
 Usable for: Director Lens product clip, visual contract explanation, Vibe Coding camera-direction lesson, continued goal run round 89
+
+## Phase BZ: v0.8.67 — Director Lens Verification Checkpoint
+
+Date: 2026-06-14
+Clip title: Phase BZ: v0.8.67 — Director Lens Verification Checkpoint
+What changed: Ran the full local quality gate after adding Director Lens model, UI controls, generation wiring, preview-asset cache wiring, Proof Stack integration, visual QA evidence, and recording docs.
+Why this matters: The Director Lens layer is now covered by focused tests plus the full app lint/test/build gate, so it is safe to use as recording material for the next product polish pass.
+Files shown: docs/recording/dev-log.md, terminal verification output, `/dream`
+Command/result: npm run lint && npm test && npm run build (43 files, 892 tests, build passed)
+Voiceover note: "我不会只说页面看起来更高级，而是跑完整质量门：lint、892 个测试、生产构建。这样录屏里的 Vibe Coding 不是玄学，是每一步都有证据。"
+Usable for: verification checkpoint clip, reliability proof, Vibe Coding learning narrative, continued goal run round 90
