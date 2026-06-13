@@ -1763,6 +1763,7 @@ export function DreamRoadbook({ initialDemo = "dali" }: DreamRoadbookProps = {})
               assetMessage={assetMessage}
               onSelectDay={setActiveDay}
               landmarkPreset={landmarkPreset}
+              directorLens={directorLens}
             />
           )}
           <div className="dream-title-block">

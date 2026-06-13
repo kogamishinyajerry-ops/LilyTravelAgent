@@ -33,6 +33,7 @@ import {
 } from "three";
 import type { Material, Object3D } from "three";
 import type { DreamMood, DreamRoadbookDesign, DreamTemplate } from "@/lib/dream-design-skill";
+import type { DirectorLensId } from "@/lib/director-lens";
 import type { PreviewAsset, Roadbook } from "@/lib/roadbook-types";
 import type { LandmarkPreset } from "@/lib/landmark-preset";
 import { getFallbackPreset, getFallbackPresetForTemplate } from "@/lib/landmark-preset-fallbacks";
@@ -61,6 +62,7 @@ type DreamSkylineSceneProps = {
   assetMessage?: string;
   onSelectDay: (day: number) => void;
   landmarkPreset?: LandmarkPreset | null;
+  directorLens?: DirectorLensId;
 };
 
 type SceneProfile = {
@@ -157,6 +159,7 @@ export function DreamSkylineScene({
   assetMessage,
   onSelectDay,
   landmarkPreset,
+  directorLens = "auto",
 }: DreamSkylineSceneProps) {
   const wrapRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -167,8 +170,8 @@ export function DreamSkylineScene({
     [roadbook, activeDay],
   );
   const cameraPose = useMemo(
-    () => buildCinematicCameraPose(cinematicScene?.focus),
-    [cinematicScene],
+    () => buildCinematicCameraPose(cinematicScene?.focus, directorLens),
+    [cinematicScene, directorLens],
   );
   const atmosphereProfile = useMemo(
     () => buildCinematicAtmosphereProfile(cinematicScene?.focus),
@@ -309,7 +312,7 @@ export function DreamSkylineScene({
       });
       disposables.forEach((item) => item.dispose());
     };
-  }, [activeDay, assetSource, atmosphereProfile, cameraPose, cinematicScene, design.routeStops.length, landmarkPreset, mood, motionProfile, palette, profile, template]);
+  }, [activeDay, assetSource, atmosphereProfile, cameraPose, cinematicScene, design.routeStops.length, directorLens, landmarkPreset, mood, motionProfile, palette, profile, template]);
 
   return (
     <div ref={wrapRef} className={`dream-skyline-scene dream-skyline-${template}${
