@@ -143,6 +143,7 @@ npm run check:recording-suite
 - `docs/recording/recording-asset-pipeline.md` explains the local QA-to-recording-assets workflow.
 - `docs/recording/goal-31-40-recap.md` summarizes the Studio presenter-mode and recording-asset workflow run.
 - `docs/recording/goal-41-50-recap.md` summarizes the Studio-Dream bridge and recording-suite coverage run.
+- `docs/recording/goal-51-60-recap.md` summarizes the Bridge QA evidence asset workflow run.
 - `docs/recording/studio-dream-demo-script.md` gives a shot-by-shot Studio ↔ Dream demo recording path.
 - `docs/recording/bridge-qa-evidence-script.md` gives a short Bridge QA proof clip script.
 - `docs/recording/content-system.md` defines the account content pillars.
