@@ -26,6 +26,7 @@
 - `/studio` 录屏台也支持大理/海岸本地演示切换，16:9 讲解画面的输入区、预览区和状态条会同步切换。
 - `/dream` Scene Inspector 会显示 D1-D4 cinematic director timeline，直接展示每一天对应的视觉 cue 和当前高亮镜头。
 - `npm run check:dream-visuals` 会把 Director Timeline 纳入自动检查和 HTML gallery，默认大理和 `DREAM_DEMO=coast` 都可验证。
+- 每次 `/dream` 视觉 QA 会额外生成 `clip-notes.md`，把截图、导演 cue、微动证据和短旁白整理成录屏素材提纲。
 - 这版是“预览级建模”，不是测绘级真实地形或真实建筑模型。
 
 ## Why This Step Exists
@@ -317,6 +318,22 @@ The visual QA command already checked whether the WebGL scene was alive. This ph
 ### Recording angle
 
 > 我把自动视觉 QA 从“画面亮不亮”升级到“Agent 的导演轨道有没有正确出现”。现在 summary 和 gallery 会记录 D1-D4 的视觉 cue，海岸样例也会检查灯塔、海湾、港口和日落观景台。
+
+## Phase AD: Visual QA Clip Notes (2026-06-13)
+
+### What changed
+
+- `scripts/check-dream-visuals.mjs` now writes `clip-notes.md` next to `summary.json` and `index.html`.
+- The notes include demo mode, screenshot filenames, D1-D4 director cues, canvas evidence, motion checksum evidence, and short voiceover prompts.
+- Default Dali and `DREAM_DEMO=coast` runs both generate notes.
+
+### Why this matters
+
+The project goal is not only to build a roadbook product; it is also to produce content about building it. The visual QA output now becomes a local recording kit: screenshots for review, gallery for visual comparison, JSON for evidence, and Markdown notes for editing and voiceover planning.
+
+### Recording angle
+
+> 我把自动 QA 输出直接变成素材包：截图、HTML gallery、summary.json，再加一个 clip-notes.md。这样每次我打磨产品，系统都会顺手帮我整理这条视频该讲什么。
 
 ## Phase D: real data sources (2026-06-07)
 

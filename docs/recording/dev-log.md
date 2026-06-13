@@ -388,3 +388,14 @@ Files shown: scripts/check-dream-visuals.mjs, README.md, docs/design/real-scenic
 Command/result: npm run check:dream-visuals && DREAM_DEMO=coast npm run check:dream-visuals && npm run lint && npm test && npm run build
 Voiceover note: "我把自动视觉 QA 从画面亮不亮，升级到 Agent 的导演轨道有没有正确出现。现在 summary 和 gallery 会记录每一天的视觉 cue。"
 Usable for: evidence-based visual QA clip, Agent planning verification lesson, recording-gallery workflow, continued goal run round 16
+
+## Phase AD: v0.8.19 — Visual QA Clip Notes
+
+Date: 2026-06-13
+Clip title: Phase AD: v0.8.19 — Visual QA Clip Notes
+What changed: `scripts/check-dream-visuals.mjs` now writes `clip-notes.md` into every local visual QA output folder. The notes summarize demo mode, target URL, route director line, screenshot filenames, D1-D4 visual cues, canvas checksums, motion evidence, and short voiceover prompts. Both Dali and `DREAM_DEMO=coast` runs generate recording notes.
+Why this matters: The visual QA output now doubles as a content-production kit. After each product iteration, the user gets screenshots, a gallery, structured evidence, and a concise markdown outline for editing or later voiceover.
+Files shown: scripts/check-dream-visuals.mjs, README.md, docs/design/real-scenic-preview-roadmap.md, docs/recording/dev-log.md
+Command/result: npm run check:dream-visuals && DREAM_DEMO=coast npm run check:dream-visuals && npm run lint && npm test && npm run build
+Voiceover note: "我把自动 QA 输出直接变成素材包：截图、HTML gallery、summary.json，再加一个 clip-notes.md。每次打磨产品，系统都会顺手整理这条视频该讲什么。"
+Usable for: recording-kit workflow clip, QA-to-content pipeline lesson, Vibe Coding evidence archive workflow, continued goal run round 17

@@ -159,13 +159,16 @@ async function main() {
   };
   const summaryPath = path.join(outDir, "summary.json");
   const htmlPath = path.join(outDir, "index.html");
+  const clipNotesPath = path.join(outDir, "clip-notes.md");
   await writeFile(summaryPath, `${JSON.stringify(summary, null, 2)}\n`);
   await writeFile(htmlPath, buildHtmlReport(summary));
+  await writeFile(clipNotesPath, buildClipNotes(summary));
 
   assert(consoleMessages.length === 0, `Unexpected browser console messages:\n${consoleMessages.join("\n")}`);
 
   console.log(`Dream visual QA passed: ${summaryPath}`);
   console.log(`Dream visual QA gallery: ${htmlPath}`);
+  console.log(`Dream visual QA clip notes: ${clipNotesPath}`);
 }
 
 main().catch((error) => {
@@ -432,6 +435,50 @@ function buildHtmlReport(summary) {
   </body>
 </html>
 `;
+}
+
+function buildClipNotes(summary) {
+  const demoLabel = summary.demoRoadbook === "coast" ? "海岸 / Coastal preset" : "大理 / Dali preset";
+  const routeLine = summary.days
+    .map((day) => {
+      const active = day.timeline.find((item) => item.active) || day.timeline[0];
+      return `D${day.day} ${active?.label || "未命名"}(${active?.cue || "无 cue"})`;
+    })
+    .join(" -> ");
+  const dayNotes = summary.days
+    .map((day) => {
+      const active = day.timeline.find((item) => item.active) || day.timeline[0];
+      return [
+        `## D${day.day} ${active?.label || "未命名镜头"}`,
+        ``,
+        `- Screenshot: ${path.basename(day.screenshotPath)}`,
+        `- Director cue: ${active?.cue || "无 cue"}`,
+        `- Canvas lit pixels: ${day.canvasStats.lit}`,
+        `- Canvas checksum: ${day.canvasStats.checksum}`,
+        `- Voiceover prompt: 展示 D${day.day} 如何从路书文本变成 ${active?.label || "当天镜头"}，重点讲 ${active?.cue || "视觉线索"}。`,
+      ].join("\n");
+    })
+    .join("\n\n");
+
+  return [
+    `# /dream Visual QA Clip Notes`,
+    ``,
+    `- Demo mode: ${demoLabel}`,
+    `- Target URL: ${summary.targetUrl}`,
+    `- Created at: ${summary.createdAt}`,
+    `- Viewport: ${summary.viewport.width}x${summary.viewport.height}`,
+    `- Route director line: ${routeLine}`,
+    `- Motion evidence: D${summary.motion.day} checksum ${summary.motion.changed ? "changed" : "did not change"} (${summary.motion.start.checksum} -> ${summary.motion.end.checksum})`,
+    ``,
+    `## Short Voiceover`,
+    ``,
+    summary.demoRoadbook === "coast"
+      ? `我用海岸样例检查动态路书的导演轨道：D1 灯塔、D2 海湾、D3 港口、D4 日落观景台。自动 QA 不只截图，还会验证每一天的视觉 cue 和微动证据。`
+      : `我用大理样例检查动态路书的导演轨道：古城、洱海、喜洲、返程收尾。自动 QA 会把截图、Scene Inspector、D1-D4 视觉 cue 和微动证据都整理出来。`,
+    ``,
+    dayNotes,
+    ``,
+  ].join("\n");
 }
 
 function escapeHtml(value) {
