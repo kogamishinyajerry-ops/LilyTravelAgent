@@ -1349,6 +1349,33 @@ textarea {
   line-height: 1.35;
 }
 
+.studio-shot-cue {
+  display: grid;
+  gap: 5px;
+  border: 1px solid rgba(191, 128, 85, 0.24);
+  border-radius: 8px;
+  padding: 9px;
+  background: rgba(191, 128, 85, 0.11);
+}
+
+.studio-shot-cue span {
+  color: var(--rust);
+  font-size: 0.72rem;
+  font-weight: 950;
+}
+
+.studio-shot-cue strong {
+  color: var(--moss);
+  font-size: 0.88rem;
+}
+
+.studio-shot-cue p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.76rem;
+  line-height: 1.35;
+}
+
 .studio-recording-assets {
   display: grid;
   gap: 8px;

@@ -142,6 +142,11 @@ const studioScriptSteps = [
     cue: "Recording suite 生成截图、notes 和本地索引。",
   },
 ];
+const studioShotCue = {
+  title: "当前镜头建议",
+  primary: "输入区 → 路书预览 → 素材资产",
+  note: "讲：这不是只生成攻略，而是在沉淀可复用的 Agent 素材流水线。",
+};
 
 function buildPlaces(roadbook: Roadbook): GeocodePlace[] {
   return roadbook.days.flatMap((day) =>
@@ -495,15 +500,22 @@ export function StudioMode() {
             </div>
 
             {scriptMode ? (
-              <div className="studio-script-track" aria-label="录屏讲解轨道">
-                {studioScriptSteps.map((item) => (
-                  <div key={item.step}>
-                    <span>{item.step}</span>
-                    <strong>{item.title}</strong>
-                    <p>{item.cue}</p>
-                  </div>
-                ))}
-              </div>
+              <>
+                <div className="studio-script-track" aria-label="录屏讲解轨道">
+                  {studioScriptSteps.map((item) => (
+                    <div key={item.step}>
+                      <span>{item.step}</span>
+                      <strong>{item.title}</strong>
+                      <p>{item.cue}</p>
+                    </div>
+                  ))}
+                </div>
+                <div className="studio-shot-cue" aria-label="当前镜头建议">
+                  <span>{studioShotCue.title}</span>
+                  <strong>{studioShotCue.primary}</strong>
+                  <p>{studioShotCue.note}</p>
+                </div>
+              </>
             ) : null}
 
             <div className="studio-recording-assets">

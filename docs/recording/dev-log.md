@@ -608,3 +608,14 @@ Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, app/gl
 Command/result: npm test -- components/studio-mode.test.tsx && npm run lint && npm test && npm run build
 Voiceover note: "我把最新素材从一行日志升级成摘要卡。现在最新素材包的时间、标题和标签都能直接在 Studio 里看清楚。"
 Usable for: latest-asset-card clip, recording material dashboard polish, Vibe Coding product-surface refinement, continued goal run round 36
+
+## Phase AX: v0.8.39 — Studio Current Shot Cue
+
+Date: 2026-06-13
+Clip title: Phase AX: v0.8.39 — Studio Current Shot Cue
+What changed: Added a script-mode-only `当前镜头建议` cue in `/studio`, with the shot path `输入区 → 路书预览 → 素材资产` and a short talking point about reusable Agent footage.
+Why this matters: Presenter mode now supports recording pacing, not just information display. The creator can record silent chapters first and use the cue for later voiceover.
+Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, app/globals.css, README.md, docs/design/real-scenic-preview-roadmap.md, docs/recording/dev-log.md
+Command/result: npm test -- components/studio-mode.test.tsx && npm run lint && npm test && npm run build
+Voiceover note: "我给脚本模式加了当前镜头建议。录屏时按照输入区、路书预览、素材资产扫一遍，就能讲清楚 Agent 工作流。"
+Usable for: shot-cue clip, silent-recording pacing, Vibe Coding voiceover prep, continued goal run round 37

@@ -631,6 +631,22 @@ The recording panel now feels more like a product surface and less like a log vi
 
 > 我把“最新素材”做成摘要卡。现在最新生成的素材包、时间和标签能分开看，录屏时可以直接指着这张小卡讲素材管线。
 
+## Phase AX: Studio Current Shot Cue (2026-06-13)
+
+### What changed
+
+- Added a script-mode-only "当前镜头建议" cue in `/studio`.
+- The cue gives a compact shot path: input panel, roadbook preview, and recording asset panel.
+- It also provides one short talking point about turning generation work into reusable Agent footage.
+
+### Why this matters
+
+The presenter mode now supports pacing, not just information display. It helps the creator record silent screen chapters first, then add voiceover later with a clear shot structure.
+
+### Recording angle
+
+> 我给脚本模式加了当前镜头建议。录屏时我只需要按这个顺序扫画面：输入、路书、素材资产，然后讲这是在沉淀可复用的 Agent 素材流水线。
+
 ## Phase D: real data sources (2026-06-07)
 
 Replaced the Phase C procedural stubs with real implementations:

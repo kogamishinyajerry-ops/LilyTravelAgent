@@ -97,6 +97,7 @@ describe("StudioMode demo roadbooks", () => {
     expect(workflow.textContent).toContain("打开索引");
     expect(screen.getByRole("link", { name: /打开总索引/ }).getAttribute("href")).toBe("/api/recording-assets/index");
     expect(screen.queryByLabelText("录屏讲解轨道")).toBeNull();
+    expect(screen.queryByLabelText("当前镜头建议")).toBeNull();
     expect(screen.queryByText("讲解轨道已打开")).toBeNull();
   });
 
@@ -169,6 +170,8 @@ describe("StudioMode demo roadbooks", () => {
     fireEvent.click(screen.getByRole("button", { name: /脚本模式/ }));
 
     expect(await screen.findByLabelText("录屏讲解轨道")).toBeTruthy();
+    expect(screen.getByLabelText("当前镜头建议").textContent).toContain("输入区 → 路书预览 → 素材资产");
+    expect(screen.getByLabelText("当前镜头建议").textContent).toContain("可复用的 Agent 素材流水线");
     expect(screen.getByText("输入需求")).toBeTruthy();
     expect(screen.getByText("生成路书")).toBeTruthy();
     expect(screen.getByText("沉淀素材")).toBeTruthy();
