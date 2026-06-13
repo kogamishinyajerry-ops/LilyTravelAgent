@@ -16,7 +16,7 @@ function recordingAssetsResponse(packCount: number, title = "Studio 16:9 demo pa
   return {
     ok: true,
     packCount,
-    countsByType: packCount ? { dream: 12, studio: 3 } : { dream: 0, studio: 0 },
+    countsByType: packCount ? { dream: 12, studio: 3, bridge: 1 } : { dream: 0, studio: 0, bridge: 0 },
     indexAvailable,
     indexUrl: indexAvailable ? "/api/recording-assets/index" : "",
     recentPacks: packCount

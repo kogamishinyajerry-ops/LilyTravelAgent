@@ -49,4 +49,4 @@ This recap closes the Studio-Dream bridge run. The theme was turning two separat
 
 ## Next useful slice
 
-The next narrow product slice should include handoff QA packs in the recording asset index, so `/studio` can show Dream, Studio, and Studio-Dream bridge evidence as three visible material types.
+The next narrow product slice should make Bridge QA counts explicit in `/studio`, so the recording workbench can show Dream, Studio, and Studio-Dream bridge evidence as three visible material types.

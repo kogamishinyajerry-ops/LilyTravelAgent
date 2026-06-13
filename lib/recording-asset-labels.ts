@@ -1,9 +1,25 @@
-export type RecordingAssetType = "dream" | "studio";
+export type RecordingAssetType = "dream" | "studio" | "bridge";
 
 export function getRecordingAssetTypeLabel(type: RecordingAssetType) {
-  return type === "studio" ? "Studio QA" : "Dream QA";
+  if (type === "studio") {
+    return "Studio QA";
+  }
+
+  if (type === "bridge") {
+    return "Bridge QA";
+  }
+
+  return "Dream QA";
 }
 
 export function getRecordingAssetUsageHint(type: RecordingAssetType) {
-  return type === "studio" ? "讲解画面" : "产品画面";
+  if (type === "studio") {
+    return "讲解画面";
+  }
+
+  if (type === "bridge") {
+    return "桥接验证";
+  }
+
+  return "产品画面";
 }

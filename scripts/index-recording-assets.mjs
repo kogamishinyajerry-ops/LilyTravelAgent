@@ -6,6 +6,7 @@ const recordingsRoot = process.env.RECORDINGS_DIR || "recordings";
 const sources = [
   { type: "dream", dir: "visual-checks", label: "/dream visual QA" },
   { type: "studio", dir: "studio-checks", label: "/studio recording QA" },
+  { type: "bridge", dir: "handoff-checks", label: "/studio ↔ /dream handoff QA" },
 ];
 
 async function main() {
@@ -65,6 +66,10 @@ function buildPackTitle(type, summary) {
     return "Studio 16:9 demo pack";
   }
 
+  if (type === "bridge") {
+    return "Studio-Dream bridge QA pack";
+  }
+
   return summary.demoRoadbook === "coast" ? "Dream coastal visual pack" : "Dream Dali visual pack";
 }
 
@@ -72,6 +77,11 @@ function buildPackDetail(type, summary) {
   if (type === "studio") {
     const names = (summary.captures || []).map((capture) => capture.destination).join(" / ");
     return names || "Dali / Coastal recording layouts";
+  }
+
+  if (type === "bridge") {
+    const names = (summary.captures || []).map((capture) => capture.destination).filter(Boolean).join(" / ");
+    return names ? `${names} round trips` : "Studio ↔ Dream round trips";
   }
 
   const days = (summary.days || []).length;

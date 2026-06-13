@@ -30,6 +30,7 @@ export type RecordingAssetsSummary = {
 const sources = [
   { type: "dream" as const, dir: "visual-checks", label: "/dream visual QA" },
   { type: "studio" as const, dir: "studio-checks", label: "/studio recording QA" },
+  { type: "bridge" as const, dir: "handoff-checks", label: "/studio ↔ /dream handoff QA" },
 ];
 
 export async function readRecordingAssetsSummary(recordingsRoot = process.env.RECORDINGS_DIR || "recordings"): Promise<RecordingAssetsSummary> {
@@ -55,6 +56,7 @@ function countPacksByType(packs: RecordingAssetPack[]): Record<RecordingAssetTyp
   return {
     dream: packs.filter((pack) => pack.type === "dream").length,
     studio: packs.filter((pack) => pack.type === "studio").length,
+    bridge: packs.filter((pack) => pack.type === "bridge").length,
   };
 }
 
@@ -106,6 +108,10 @@ function buildPackTitle(type: RecordingAssetPack["type"], summary: Record<string
     return "Studio 16:9 demo pack";
   }
 
+  if (type === "bridge") {
+    return "Studio-Dream bridge QA pack";
+  }
+
   return summary.demoRoadbook === "coast" ? "Dream coastal visual pack" : "Dream Dali visual pack";
 }
 
@@ -114,6 +120,12 @@ function buildPackDetail(type: RecordingAssetPack["type"], summary: Record<strin
     const captures = Array.isArray(summary.captures) ? summary.captures : [];
     const names = captures.map((capture) => readString((capture as Record<string, unknown>).destination)).filter(Boolean).join(" / ");
     return names || "Dali / Coastal recording layouts";
+  }
+
+  if (type === "bridge") {
+    const captures = Array.isArray(summary.captures) ? summary.captures : [];
+    const names = captures.map((capture) => readString((capture as Record<string, unknown>).destination)).filter(Boolean).join(" / ");
+    return names ? `${names} round trips` : "Studio ↔ Dream round trips";
   }
 
   const days = Array.isArray(summary.days) ? summary.days.length : 0;

@@ -1,6 +1,6 @@
 import path from "node:path";
 import { NextResponse } from "next/server";
-import { getRecordingAssetTypeLabel, getRecordingAssetUsageHint } from "@/lib/recording-asset-labels";
+import { getRecordingAssetTypeLabel, getRecordingAssetUsageHint, type RecordingAssetType } from "@/lib/recording-asset-labels";
 import {
   listRecordingAssetPacks,
   readRecordingAssetsSummary,
@@ -28,7 +28,7 @@ export async function GET() {
 
 function buildRecordingIndexHtml(
   packs: Awaited<ReturnType<typeof listRecordingAssetPacks>>,
-  countsByType: { dream: number; studio: number },
+  countsByType: Record<RecordingAssetType, number>,
 ) {
   const cards = packs.length
     ? packs
@@ -66,12 +66,15 @@ function buildRecordingIndexHtml(
       article { display: grid; gap: 9px; border: 1px solid rgba(47, 64, 56, 0.13); border-radius: 8px; padding: 16px; background: rgba(255, 255, 255, 0.72); box-shadow: 0 18px 42px rgba(40, 52, 47, 0.1); }
       article.studio { border-left: 5px solid #d66b3d; }
       article.dream { border-left: 5px solid #4f8f7a; }
+      article.bridge { border-left: 5px solid #6c7bd9; }
       article p, small { color: #66806f; font-size: 0.76rem; font-weight: 900; text-transform: uppercase; }
       article p { display: flex; flex-wrap: wrap; align-items: center; gap: 7px; }
       article p span, em { border-radius: 999px; padding: 3px 7px; color: #fff; font-style: normal; background: #4f8f7a; }
       article.studio p span { background: #d66b3d; }
+      article.bridge p span { background: #6c7bd9; }
       em { justify-self: start; color: #284f42; background: rgba(79, 143, 122, 0.14); font-size: 0.78rem; font-weight: 900; }
       article.studio em { color: #7a3c24; background: rgba(214, 107, 61, 0.14); }
+      article.bridge em { color: #384276; background: rgba(108, 123, 217, 0.14); }
       h2 { font-size: 1.35rem; }
       strong { color: #34443c; }
       code { display: block; overflow: auto; border-radius: 8px; padding: 7px 9px; color: #284f42; background: rgba(255, 255, 255, 0.68); }
@@ -89,6 +92,7 @@ function buildRecordingIndexHtml(
           <span>${packs.length} packs</span>
           <span>Dream ${countsByType.dream}</span>
           <span>Studio ${countsByType.studio}</span>
+          <span>Bridge ${countsByType.bridge}</span>
         </div>
       </header>
       <section class="grid">${cards}</section>

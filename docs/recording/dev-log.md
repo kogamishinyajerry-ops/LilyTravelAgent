@@ -762,3 +762,14 @@ Files shown: docs/recording/goal-41-50-recap.md, README.md, docs/recording/dev-l
 Command/result: npm run lint && npm test && npm run build
 Voiceover note: "我把这 10 轮整理成一章：先连通 Studio 和 Dream，再把桥接做成自动 QA，最后把验收状态放回画面。"
 Usable for: 10-goal recap clip, Studio-Dream bridge summary, Vibe Coding series packaging, continued goal run round 50
+
+## Phase BL: v0.8.53 — Bridge QA Asset Indexing
+
+Date: 2026-06-13
+Clip title: Phase BL: v0.8.53 — Bridge QA Asset Indexing
+What changed: Added `bridge` as a recording asset type, scanned `recordings/handoff-checks`, labeled Bridge QA packs, and included Bridge counts in the local recording asset index.
+Why this matters: Studio-Dream handoff screenshots are now first-class creator material instead of hidden QA output. The asset pipeline can distinguish product footage, walkthrough footage, and bridge verification.
+Files shown: lib/recording-asset-labels.ts, lib/recording-assets.ts, scripts/index-recording-assets.mjs, app/api/recording-assets/index/route.ts, docs/recording/recording-asset-pipeline.md, README.md, docs/recording/dev-log.md
+Command/result: npm test -- lib/recording-assets.test.ts && npm run lint && npm test && npm run build
+Voiceover note: "我把桥接检查也纳入素材索引。现在 Dream 是产品画面，Studio 是讲解画面，Bridge QA 就是页面闭环的证据。"
+Usable for: Bridge QA asset clip, recording asset taxonomy, Vibe Coding evidence pipeline, continued goal run round 51

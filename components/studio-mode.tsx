@@ -258,7 +258,7 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
         setRecordingAssets({
           status: "ready",
           packCount: data.packCount || 0,
-          countsByType: data.countsByType || { dream: 0, studio: 0 },
+          countsByType: data.countsByType || { dream: 0, studio: 0, bridge: 0 },
           indexAvailable: Boolean(data.indexAvailable),
           indexUrl: data.indexUrl || "",
           recentPacks: data.recentPacks || [],

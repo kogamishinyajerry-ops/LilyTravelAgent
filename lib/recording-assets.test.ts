@@ -32,21 +32,23 @@ describe("recording assets", () => {
   it("maps pack types to creator-facing labels and usage hints", () => {
     expect(getRecordingAssetTypeLabel("dream")).toBe("Dream QA");
     expect(getRecordingAssetTypeLabel("studio")).toBe("Studio QA");
+    expect(getRecordingAssetTypeLabel("bridge")).toBe("Bridge QA");
     expect(getRecordingAssetUsageHint("dream")).toBe("产品画面");
     expect(getRecordingAssetUsageHint("studio")).toBe("讲解画面");
+    expect(getRecordingAssetUsageHint("bridge")).toBe("桥接验证");
   });
 
   it("returns an empty summary when recordings do not exist", async () => {
     const summary = await readRecordingAssetsSummary(tempRoot);
 
     expect(summary.packCount).toBe(0);
-    expect(summary.countsByType).toEqual({ dream: 0, studio: 0 });
+    expect(summary.countsByType).toEqual({ dream: 0, studio: 0, bridge: 0 });
     expect(summary.latestPack).toBeNull();
     expect(summary.indexAvailable).toBe(false);
     expect(summary.clipIndexAvailable).toBe(false);
   });
 
-  it("lists dream and studio packs newest first", async () => {
+  it("lists dream, studio, and bridge packs newest first", async () => {
     await writeSummary("visual-checks/old-dali", {
       createdAt: "2026-06-13T01:00:00.000Z",
       demoRoadbook: "dali",
@@ -63,18 +65,24 @@ describe("recording assets", () => {
       createdAt: "2026-06-13T02:00:00.000Z",
       captures: [{ destination: "云南大理" }, { destination: "三亚海岛" }],
     });
+    await writeSummary("handoff-checks/latest-bridge", {
+      createdAt: "2026-06-13T04:00:00.000Z",
+      captures: [{ destination: "云南大理" }, { destination: "三亚海岛" }],
+    });
 
     const packs = await listRecordingAssetPacks(tempRoot);
 
-    expect(packs).toHaveLength(3);
+    expect(packs).toHaveLength(4);
     expect(packs.map((pack) => pack.title)).toEqual([
+      "Studio-Dream bridge QA pack",
       "Dream coastal visual pack",
       "Studio 16:9 demo pack",
       "Dream Dali visual pack",
     ]);
-    expect(packs[0].detail).toBe("coast · 4 day screenshots · motion verified");
-    expect(packs[1].detail).toBe("云南大理 / 三亚海岛");
-    expect(packs[0].notesPath).toBe("visual-checks/new-coast/clip-notes.md");
+    expect(packs[0].detail).toBe("云南大理 / 三亚海岛 round trips");
+    expect(packs[1].detail).toBe("coast · 4 day screenshots · motion verified");
+    expect(packs[2].detail).toBe("云南大理 / 三亚海岛");
+    expect(packs[0].notesPath).toBe("handoff-checks/latest-bridge/clip-notes.md");
   });
 
   it("reports index availability and latest pack", async () => {
@@ -115,11 +123,15 @@ describe("recording assets", () => {
       createdAt: "2026-06-13T04:00:00.000Z",
       captures: [],
     });
+    await writeSummary("handoff-checks/pack-5", {
+      createdAt: "2026-06-13T05:00:00.000Z",
+      captures: [],
+    });
 
     const summary = await readRecordingAssetsSummary(tempRoot);
 
-    expect(summary.packCount).toBe(4);
-    expect(summary.countsByType).toEqual({ dream: 2, studio: 2 });
-    expect(summary.recentPacks.map((pack) => pack.id)).toEqual(["pack-4", "pack-3", "pack-2"]);
+    expect(summary.packCount).toBe(5);
+    expect(summary.countsByType).toEqual({ dream: 2, studio: 2, bridge: 1 });
+    expect(summary.recentPacks.map((pack) => pack.id)).toEqual(["pack-5", "pack-4", "pack-3"]);
   });
 });
