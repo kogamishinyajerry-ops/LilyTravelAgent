@@ -2828,10 +2828,10 @@ textarea {
 
 .dream-scene-inspector {
   display: grid;
-  gap: 10px;
+  gap: 8px;
   border: 1px solid rgba(119, 145, 145, 0.34);
   border-radius: 8px;
-  padding: 16px;
+  padding: 12px;
   color: rgba(33, 43, 46, 0.86);
   background:
     linear-gradient(135deg, rgba(246, 249, 241, 0.62), rgba(190, 214, 213, 0.22)),
@@ -2849,14 +2849,18 @@ textarea {
 
 .dream-scene-inspector-head,
 .dream-scene-inspector-title {
-  display: flex;
+  display: grid;
   align-items: center;
-  justify-content: space-between;
   gap: 10px;
+}
+
+.dream-scene-inspector-head {
+  grid-template-columns: minmax(0, 1fr) auto;
 }
 
 .dream-scene-inspector-head span {
   color: var(--dream-soft);
+  display: block;
   font-size: 0.74rem;
   font-weight: 900;
 }
@@ -2869,10 +2873,11 @@ textarea {
   font-size: 0.64rem;
   letter-spacing: 0.03em;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .dream-scene-inspector-title {
-  justify-content: flex-start;
+  grid-template-columns: auto minmax(0, 1fr);
 }
 
 .dream-scene-inspector-title svg {
@@ -2889,11 +2894,13 @@ textarea {
 .dream-scene-inspector-title small,
 .dream-scene-inspector-grid small {
   color: var(--dream-soft);
+  display: block;
   font-size: 0.68rem;
   font-weight: 900;
 }
 
 .dream-scene-inspector-title b {
+  display: block;
   overflow: hidden;
   font-size: 0.94rem;
   text-overflow: ellipsis;
@@ -2908,17 +2915,17 @@ textarea {
 
 .dream-scene-inspector-grid span {
   display: grid;
-  gap: 3px;
+  gap: 2px;
   min-width: 0;
   border: 1px solid rgba(255, 255, 255, 0.44);
   border-radius: 8px;
-  padding: 7px;
+  padding: 6px 7px;
   background: rgba(255, 255, 255, 0.28);
 }
 
 .dream-scene-inspector-grid strong {
   overflow: hidden;
-  font-size: 0.78rem;
+  font-size: 0.76rem;
   text-overflow: ellipsis;
   white-space: nowrap;
 }

@@ -3,6 +3,7 @@ import { sampleRoadbook } from "./sample-roadbook";
 import type { Roadbook } from "./roadbook-types";
 import {
   buildCinematicCameraPose,
+  buildCinematicLandmarkSilhouettes,
   buildCinematicRouteRail,
   buildCinematicSceneInspector,
   DALI_CINEMATIC_SCENE_PRESET,
@@ -167,5 +168,36 @@ describe("buildCinematicSceneInspector", () => {
       routePointCount: 0,
       cameraFov: 38,
     });
+  });
+});
+
+describe("buildCinematicLandmarkSilhouettes", () => {
+  it("creates one recognizable Dali silhouette marker per day", () => {
+    const layer = buildCinematicLandmarkSilhouettes(DALI_CINEMATIC_SCENE_PRESET, 1);
+
+    expect(layer.markers.map((marker) => marker.day)).toEqual([1, 2, 3, 4]);
+    expect(layer.markers.map((marker) => marker.kind)).toEqual([
+      "old-town-gate",
+      "erhai-sail",
+      "bai-courtyard-arch",
+      "return-cafe",
+    ]);
+    expect(layer.markers.map((marker) => marker.cue)).toContain("水线 / 帆影 / 码头");
+  });
+
+  it("emphasizes the active day marker without changing the marker order", () => {
+    const layer = buildCinematicLandmarkSilhouettes(DALI_CINEMATIC_SCENE_PRESET, 3);
+
+    expect(layer.activeMarker.day).toBe(3);
+    expect(layer.activeMarker.kind).toBe("bai-courtyard-arch");
+    expect(layer.markers.filter((marker) => marker.isActive).map((marker) => marker.day)).toEqual([3]);
+    expect(layer.activeMarker.scale).toBeGreaterThan(layer.markers[0].scale);
+  });
+
+  it("falls back to day 1 when an unknown active day is requested", () => {
+    const layer = buildCinematicLandmarkSilhouettes(DALI_CINEMATIC_SCENE_PRESET, 99);
+
+    expect(layer.activeMarker.day).toBe(1);
+    expect(layer.activeMarker.kind).toBe("old-town-gate");
   });
 });

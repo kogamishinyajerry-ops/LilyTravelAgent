@@ -124,6 +124,23 @@ The scene now has destination assets, camera direction, and a route rail, but th
 
 > 我把 3D 场景背后的 Agent 决策暴露出来：当前用了哪个目的地 preset，今天是哪个 shot，路线走到哪里，镜头 FOV 和 parallax 是多少。这样录屏时观众能看到：这不是一张静态图，而是一条从路书内容到视觉资产再到 3D 导演层的生成管线。
 
+## Phase S: Day Landmark Silhouettes (2026-06-13)
+
+### What changed
+
+- Added `buildCinematicLandmarkSilhouettes()` to `lib/cinematic-scene-preset.ts`.
+- The Dali preset now maps D1-D4 into recognizable marker types: old-town gate, Erhai sail, Bai courtyard arch, and return-day cafe.
+- `components/dream-skyline-scene.tsx` renders those markers as lightweight Three.js geometry inside the existing Dali preset layer, with the active day scaled and brightened.
+- `lib/cinematic-scene-preset.test.ts` verifies marker ordering, kind mapping, active-day emphasis, and unknown-day fallback.
+
+### Why this matters
+
+The route rail showed the itinerary as a path, but the individual route beats still needed stronger destination memory. This phase adds small landmark silhouettes that make each day easier to read at a glance without depending on heavy imported 3D assets. It is still procedural and fast, but it gives the product a clearer visual vocabulary for destination-specific previews.
+
+### Recording angle
+
+> 我继续把大理从“抽象漂亮”往“有辨识度”推进：D1 是古城门，D2 是洱海帆影，D3 是白族院落拱门，D4 是咖啡和返程收尾。先用轻量程序化几何做地标语汇，后面再把真实照片和 AI 贴片接得更重。
+
 ## Phase D: real data sources (2026-06-07)
 
 Replaced the Phase C procedural stubs with real implementations:

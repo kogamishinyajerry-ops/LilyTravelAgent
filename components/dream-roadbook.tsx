@@ -1627,8 +1627,6 @@ export function DreamRoadbook() {
             </p>
           </div>
 
-          <DreamMiniMap roadbook={roadbook} points={points} configured={mapConfigured} loading={mapLoading} />
-
           <div className={`dream-scene-inspector ${sceneInspector.status}`} aria-label="3D 场景预设检查器">
             <div className="dream-scene-inspector-head">
               <span>Scene Inspector</span>
@@ -1652,7 +1650,7 @@ export function DreamRoadbook() {
               </span>
               <span>
                 <small>Lens</small>
-                <strong>{sceneInspector.cameraFov}FOV</strong>
+                <strong>FOV {sceneInspector.cameraFov}</strong>
               </span>
               <span>
                 <small>Parallax</small>
@@ -1661,6 +1659,8 @@ export function DreamRoadbook() {
             </div>
             <p>{sceneInspector.visualCue}</p>
           </div>
+
+          <DreamMiniMap roadbook={roadbook} points={points} configured={mapConfigured} loading={mapLoading} />
 
           <div className={`dream-scenic-skill ${scenicStage}`} aria-label="风景照片转建模渲染技能">
             <div className="dream-scenic-head">

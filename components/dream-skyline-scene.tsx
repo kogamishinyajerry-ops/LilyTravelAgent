@@ -39,8 +39,10 @@ import { getFallbackPreset, getFallbackPresetForTemplate } from "@/lib/landmark-
 import { renderLandmarkPreset } from "@/lib/landmark-renderer";
 import {
   buildCinematicCameraPose,
+  buildCinematicLandmarkSilhouettes,
   buildCinematicRouteRail,
   resolveCinematicScenePreset,
+  type CinematicLandmarkSilhouette,
   type ResolvedCinematicScenePreset,
 } from "@/lib/cinematic-scene-preset";
 
@@ -455,6 +457,7 @@ function createCinematicPresetLayer(
 
   group.add(createDaliRouteRail(scene, palette, disposables));
   group.add(createDaliCourtyardCluster(scene, palette, disposables));
+  group.add(createDaliLandmarkSilhouettes(scene, palette, disposables));
   group.add(createFocusBeacon(scene, palette, disposables));
 
   return group;
@@ -620,6 +623,203 @@ function createDaliCourtyardCluster(
   });
 
   return group;
+}
+
+function createDaliLandmarkSilhouettes(
+  scene: ResolvedCinematicScenePreset,
+  palette: SkylinePalette,
+  disposables: Array<{ dispose: () => void }>,
+) {
+  const layer = buildCinematicLandmarkSilhouettes(scene.preset, scene.focus.day);
+  const group = new Group();
+  group.name = "dali-cinematic-landmark-silhouettes";
+
+  layer.markers.forEach((marker) => {
+    const markerGroup = createDaliLandmarkMarker(marker, palette, disposables);
+    markerGroup.name = marker.id;
+    markerGroup.position.set(marker.x, 0.14, marker.z);
+    markerGroup.scale.setScalar(marker.scale);
+    markerGroup.rotation.y = marker.kind === "erhai-sail" ? -0.18 : marker.kind === "return-cafe" ? 0.24 : 0.12;
+    group.add(markerGroup);
+  });
+
+  return group;
+}
+
+function createDaliLandmarkMarker(
+  marker: CinematicLandmarkSilhouette,
+  palette: SkylinePalette,
+  disposables: Array<{ dispose: () => void }>,
+) {
+  const group = new Group();
+  const opacity = marker.isActive ? 0.92 : 0.4;
+  const accentOpacity = marker.isActive ? 0.72 : 0.28;
+  const bodyMaterial = new MeshStandardMaterial({
+    color: new Color(marker.kind === "erhai-sail" ? "#f0e3cc" : palette.stone),
+    roughness: 0.68,
+    metalness: 0.02,
+    transparent: true,
+    opacity,
+  });
+  const roofMaterial = new MeshStandardMaterial({
+    color: new Color(marker.kind === "return-cafe" ? "#a75545" : palette.roof),
+    roughness: 0.58,
+    metalness: 0.03,
+    transparent: true,
+    opacity: marker.isActive ? 0.96 : 0.5,
+  });
+  const accentMaterial = new MeshBasicMaterial({
+    color: new Color(marker.isActive ? "#fff1c3" : palette.light),
+    transparent: true,
+    opacity: accentOpacity,
+    depthWrite: false,
+    blending: AdditiveBlending,
+    side: DoubleSide,
+  });
+  disposables.push(bodyMaterial, roofMaterial, accentMaterial);
+
+  const baseRingGeometry = new CircleGeometry(marker.isActive ? 0.42 : 0.31, 36);
+  const baseRing = new Mesh(baseRingGeometry, accentMaterial);
+  baseRing.name = `${marker.id}-ground-glow`;
+  baseRing.rotation.x = -Math.PI / 2;
+  baseRing.position.y = 0.012;
+  baseRing.renderOrder = 7;
+  group.add(baseRing);
+  disposables.push(baseRingGeometry);
+
+  if (marker.kind === "erhai-sail") {
+    createDaliSailMarker(group, marker, bodyMaterial, accentMaterial, disposables);
+    return group;
+  }
+
+  if (marker.kind === "bai-courtyard-arch") {
+    createDaliCourtyardArchMarker(group, marker, bodyMaterial, roofMaterial, accentMaterial, disposables);
+    return group;
+  }
+
+  if (marker.kind === "return-cafe") {
+    createDaliCafeMarker(group, marker, bodyMaterial, roofMaterial, accentMaterial, disposables);
+    return group;
+  }
+
+  createDaliGateMarker(group, marker, bodyMaterial, roofMaterial, accentMaterial, disposables);
+  return group;
+}
+
+function createDaliGateMarker(
+  group: Group,
+  marker: CinematicLandmarkSilhouette,
+  bodyMaterial: Material,
+  roofMaterial: Material,
+  accentMaterial: Material,
+  disposables: Array<{ dispose: () => void }>,
+) {
+  addMarkerBox(group, `${marker.id}-left-tower`, 0.18, 0.72, 0.22, -0.31, 0.36, 0, bodyMaterial, disposables);
+  addMarkerBox(group, `${marker.id}-right-tower`, 0.18, 0.72, 0.22, 0.31, 0.36, 0, bodyMaterial, disposables);
+  addMarkerBox(group, `${marker.id}-lintel`, 0.8, 0.16, 0.24, 0, 0.69, 0, bodyMaterial, disposables);
+  addMarkerBox(group, `${marker.id}-roof-main`, 0.96, 0.08, 0.32, 0, 0.84, 0, roofMaterial, disposables, 0.04);
+  addMarkerBox(group, `${marker.id}-roof-tip`, 1.08, 0.04, 0.24, 0, 0.93, 0, roofMaterial, disposables, -0.04);
+  addMarkerBox(group, `${marker.id}-gate-light`, 0.16, 0.24, 0.02, 0, 0.36, -0.12, accentMaterial, disposables);
+}
+
+function createDaliSailMarker(
+  group: Group,
+  marker: CinematicLandmarkSilhouette,
+  bodyMaterial: Material,
+  accentMaterial: Material,
+  disposables: Array<{ dispose: () => void }>,
+) {
+  addMarkerBox(group, `${marker.id}-hull`, 0.66, 0.08, 0.2, 0, 0.16, 0, bodyMaterial, disposables, -0.04);
+  addMarkerBox(group, `${marker.id}-mast`, 0.035, 0.74, 0.035, -0.06, 0.48, 0, bodyMaterial, disposables);
+
+  const sailGeometry = new BufferGeometry();
+  sailGeometry.setAttribute(
+    "position",
+    new Float32BufferAttribute([
+      -0.02, 0.16, 0.01,
+      -0.02, 0.82, 0.01,
+      0.42, 0.28, 0.01,
+    ], 3),
+  );
+  sailGeometry.setIndex([0, 1, 2]);
+  sailGeometry.computeVertexNormals();
+  const sail = new Mesh(sailGeometry, accentMaterial);
+  sail.name = `${marker.id}-sail`;
+  sail.renderOrder = 8;
+  group.add(sail);
+  disposables.push(sailGeometry);
+
+  addMarkerBox(group, `${marker.id}-water-glint`, 0.9, 0.018, 0.04, 0.05, 0.08, 0.2, accentMaterial, disposables);
+}
+
+function createDaliCourtyardArchMarker(
+  group: Group,
+  marker: CinematicLandmarkSilhouette,
+  bodyMaterial: Material,
+  roofMaterial: Material,
+  accentMaterial: Material,
+  disposables: Array<{ dispose: () => void }>,
+) {
+  addMarkerBox(group, `${marker.id}-left-wall`, 0.16, 0.54, 0.2, -0.26, 0.29, 0, bodyMaterial, disposables);
+  addMarkerBox(group, `${marker.id}-right-wall`, 0.16, 0.54, 0.2, 0.26, 0.29, 0, bodyMaterial, disposables);
+  addMarkerBox(group, `${marker.id}-arch-top`, 0.68, 0.14, 0.22, 0, 0.56, 0, bodyMaterial, disposables);
+  addMarkerBox(group, `${marker.id}-roof`, 0.86, 0.08, 0.32, 0, 0.72, 0, roofMaterial, disposables, -0.03);
+
+  const windowGeometry = new CircleGeometry(0.11, 24);
+  const window = new Mesh(windowGeometry, accentMaterial);
+  window.name = `${marker.id}-round-window`;
+  window.position.set(0, 0.37, -0.12);
+  window.renderOrder = 8;
+  group.add(window);
+  disposables.push(windowGeometry);
+}
+
+function createDaliCafeMarker(
+  group: Group,
+  marker: CinematicLandmarkSilhouette,
+  bodyMaterial: Material,
+  roofMaterial: Material,
+  accentMaterial: Material,
+  disposables: Array<{ dispose: () => void }>,
+) {
+  addMarkerBox(group, `${marker.id}-cafe-body`, 0.62, 0.42, 0.24, 0, 0.28, 0, bodyMaterial, disposables);
+  addMarkerBox(group, `${marker.id}-awning`, 0.82, 0.1, 0.34, 0, 0.56, 0, roofMaterial, disposables, 0.02);
+  addMarkerBox(group, `${marker.id}-counter`, 0.48, 0.08, 0.06, 0, 0.22, -0.16, accentMaterial, disposables);
+
+  const signGeometry = new CircleGeometry(0.13, 26);
+  const sign = new Mesh(signGeometry, accentMaterial);
+  sign.name = `${marker.id}-cafe-sign`;
+  sign.position.set(0.32, 0.46, -0.14);
+  sign.renderOrder = 8;
+  group.add(sign);
+  disposables.push(signGeometry);
+
+  addMarkerBox(group, `${marker.id}-cup`, 0.12, 0.1, 0.08, -0.18, 0.34, -0.17, accentMaterial, disposables);
+}
+
+function addMarkerBox(
+  group: Group,
+  name: string,
+  width: number,
+  height: number,
+  depth: number,
+  x: number,
+  y: number,
+  z: number,
+  material: Material,
+  disposables: Array<{ dispose: () => void }>,
+  rotationZ = 0,
+) {
+  const geometry = new BoxGeometry(width, height, depth);
+  const mesh = new Mesh(geometry, material);
+  mesh.name = name;
+  mesh.position.set(x, y, z);
+  mesh.rotation.z = rotationZ;
+  mesh.castShadow = true;
+  mesh.receiveShadow = true;
+  group.add(mesh);
+  disposables.push(geometry);
+  return mesh;
 }
 
 function createFocusBeacon(

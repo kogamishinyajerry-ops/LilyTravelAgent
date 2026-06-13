@@ -267,3 +267,14 @@ Files shown: lib/cinematic-scene-preset.ts, lib/cinematic-scene-preset.test.ts, 
 Command/result: npm test -- lib/cinematic-scene-preset.test.ts && npm run lint && npm run build && Playwright right-rail inspector checks
 Voiceover note: "现在我把 3D 背后的 Agent 决策直接放进 UI：当前 destination preset 是什么，D2 镜头在拍洱海还是 D3 在拍喜洲，route rail 走到哪，FOV 和 parallax 是多少。这样用户看到的不是魔法效果，而是一条可解释的动态路书生成管线。"
 Usable for: visible Agent pipeline clip, scene-inspector recording, D1-D4 shot breakdown, 10-goal continuation round 4
+
+## Phase S: v0.8.8 — Day Landmark Silhouettes
+
+Date: 2026-06-13
+Clip title: Phase S: v0.8.8 — Day Landmark Silhouettes
+What changed: Added a day-marker layer to the Dali cinematic preset. `lib/cinematic-scene-preset.ts` now exports `buildCinematicLandmarkSilhouettes()`, mapping D1-D4 to old-town gate, Erhai sail, Bai courtyard arch, and return-day cafe markers. `components/dream-skyline-scene.tsx` renders those markers as lightweight Three.js geometry inside the existing Dali preset layer; the active day is larger and brighter, while inactive markers stay as quiet route context. `lib/cinematic-scene-preset.test.ts` covers marker ordering, kind mapping, active-day emphasis, and unknown-day fallback.
+Why this matters: The scene already had mountains, water, route rail, and camera direction, but day-level memory still needed stronger visual symbols. This round gives each day a quick-recognition marker without importing heavy 3D files, keeping the MVP fast while moving toward real destination preview language.
+Files shown: lib/cinematic-scene-preset.ts, lib/cinematic-scene-preset.test.ts, components/dream-skyline-scene.tsx, README.md, docs/design/real-scenic-preview-roadmap.md, docs/recording/dev-log.md
+Command/result: npm test -- lib/cinematic-scene-preset.test.ts && npm run lint && npm run build && Playwright D1-D4 WebGL checks
+Voiceover note: "这一轮我给 D1-D4 加了更有记忆点的地标剪影：古城门、洱海帆影、喜洲院落拱门、返程咖啡标记。重点不是一次性做复杂 3D，而是先建立一套可以被 Agent 调度的目的地视觉语汇。"
+Usable for: D1-D4 landmark comparison clip, destination-specific visual language lesson, Vibe Coding data-to-geometry workflow, 10-goal continuation round 5

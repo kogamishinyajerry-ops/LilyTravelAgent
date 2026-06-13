@@ -55,6 +55,29 @@ export type CinematicRouteRail = {
   activeIndex: number;
 };
 
+export type CinematicLandmarkKind =
+  | "old-town-gate"
+  | "erhai-sail"
+  | "bai-courtyard-arch"
+  | "return-cafe";
+
+export type CinematicLandmarkSilhouette = {
+  id: string;
+  day: number;
+  label: string;
+  kind: CinematicLandmarkKind;
+  x: number;
+  z: number;
+  scale: number;
+  isActive: boolean;
+  cue: string;
+};
+
+export type CinematicLandmarkSilhouetteLayer = {
+  markers: CinematicLandmarkSilhouette[];
+  activeMarker: CinematicLandmarkSilhouette;
+};
+
 export type CinematicSceneInspector = {
   status: "active" | "fallback";
   presetId: CinematicScenePreset["id"] | "generic";
@@ -165,6 +188,46 @@ export function buildCinematicRouteRail(
   };
 }
 
+export function buildCinematicLandmarkSilhouettes(
+  preset: CinematicScenePreset,
+  activeDay: number,
+): CinematicLandmarkSilhouetteLayer {
+  const activeFocus = getCinematicDayFocus(preset, activeDay);
+  const activeKind = getLandmarkKindForFocus(activeFocus.anchorKind);
+  const fallbackMarker: CinematicLandmarkSilhouette = {
+    id: `${preset.id}-d${activeFocus.day}-${activeKind}`,
+    day: activeFocus.day,
+    label: activeFocus.label,
+    kind: activeKind,
+    x: activeFocus.x,
+    z: activeFocus.z,
+    scale: 1.16,
+    isActive: true,
+    cue: getLandmarkCue(activeKind),
+  };
+  const markers = [...preset.focusByDay]
+    .sort((left, right) => left.day - right.day)
+    .map((focus) => {
+      const kind = getLandmarkKindForFocus(focus.anchorKind);
+      return {
+        id: `${preset.id}-d${focus.day}-${kind}`,
+        day: focus.day,
+        label: focus.label,
+        kind,
+        x: focus.x,
+        z: focus.z,
+        scale: focus.day === activeFocus.day ? 1.16 : 0.86,
+        isActive: focus.day === activeFocus.day,
+        cue: getLandmarkCue(kind),
+      };
+    });
+
+  return {
+    markers,
+    activeMarker: markers.find((marker) => marker.day === activeFocus.day) ?? markers[0] ?? fallbackMarker,
+  };
+}
+
 export function buildCinematicSceneInspector(roadbook: Roadbook, activeDay: number): CinematicSceneInspector {
   const resolved = resolveCinematicScenePreset(roadbook, activeDay);
   const pose = buildCinematicCameraPose(resolved?.focus);
@@ -217,6 +280,38 @@ function matchesPreset(preset: CinematicScenePreset, searchText: string) {
   }
 
   return matchCount >= 2;
+}
+
+function getLandmarkKindForFocus(anchorKind: CinematicSceneFocus["anchorKind"]): CinematicLandmarkKind {
+  if (anchorKind === "erhai") {
+    return "erhai-sail";
+  }
+
+  if (anchorKind === "village") {
+    return "bai-courtyard-arch";
+  }
+
+  if (anchorKind === "return") {
+    return "return-cafe";
+  }
+
+  return "old-town-gate";
+}
+
+function getLandmarkCue(kind: CinematicLandmarkKind) {
+  if (kind === "erhai-sail") {
+    return "水线 / 帆影 / 码头";
+  }
+
+  if (kind === "bai-courtyard-arch") {
+    return "白墙 / 拱门 / 青瓦";
+  }
+
+  if (kind === "return-cafe") {
+    return "咖啡 / 灯牌 / 返程";
+  }
+
+  return "城门 / 屋檐 / 石路";
 }
 
 function clamp(value: number, min: number, max: number) {
