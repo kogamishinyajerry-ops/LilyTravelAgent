@@ -41,10 +41,12 @@ import {
   buildCinematicAtmosphereProfile,
   buildCinematicCameraPose,
   buildCinematicLandmarkSilhouettes,
+  buildCinematicMotionProfile,
   buildCinematicRouteRail,
   resolveCinematicScenePreset,
   type CinematicAtmosphereProfile,
   type CinematicLandmarkSilhouette,
+  type CinematicMotionProfile,
   type ResolvedCinematicScenePreset,
 } from "@/lib/cinematic-scene-preset";
 
@@ -89,6 +91,12 @@ type AnimatedWaterMesh = Mesh<PlaneGeometry, MeshPhysicalMaterial> & {
   userData: {
     baseWaveZ?: Float32Array;
   };
+};
+
+type CinematicMotionTargets = {
+  haze: Mesh[];
+  focus: Mesh[];
+  activeLandmarks: Group[];
 };
 
 const palettes: Record<DreamMood, SkylinePalette> = {
@@ -164,6 +172,10 @@ export function DreamSkylineScene({
   );
   const atmosphereProfile = useMemo(
     () => buildCinematicAtmosphereProfile(cinematicScene?.focus),
+    [cinematicScene],
+  );
+  const motionProfile = useMemo(
+    () => buildCinematicMotionProfile(cinematicScene?.focus),
     [cinematicScene],
   );
   const palette = palettes[mood];
@@ -250,6 +262,7 @@ export function DreamSkylineScene({
     root.add(createRouteRibbon(palette, design.routeStops.length, disposables));
     root.add(createLandmark(profile, palette, template, disposables, landmarkPreset));
     applyHighQualityShading(root);
+    const motionTargets = collectCinematicMotionTargets(root);
 
     const resize = () => {
       const rect = wrap.getBoundingClientRect();
@@ -276,8 +289,9 @@ export function DreamSkylineScene({
         cameraPose.lookAt[2],
       );
       if (water) {
-        animateWater(water, elapsed);
+        animateWater(water, elapsed, motionProfile);
       }
+      animateCinematicMotionTargets(motionTargets, elapsed, motionProfile);
       renderer.render(scene, camera);
       frameId = window.requestAnimationFrame(animate);
     };
@@ -295,7 +309,7 @@ export function DreamSkylineScene({
       });
       disposables.forEach((item) => item.dispose());
     };
-  }, [activeDay, assetSource, atmosphereProfile, cameraPose, cinematicScene, design.routeStops.length, mood, palette, profile, template, landmarkPreset]);
+  }, [activeDay, assetSource, atmosphereProfile, cameraPose, cinematicScene, design.routeStops.length, landmarkPreset, mood, motionProfile, palette, profile, template]);
 
   return (
     <div ref={wrapRef} className={`dream-skyline-scene dream-skyline-${template}${
@@ -660,6 +674,7 @@ function createDaliLandmarkMarker(
   disposables: Array<{ dispose: () => void }>,
 ) {
   const group = new Group();
+  group.userData.isActiveCinematicLandmark = marker.isActive;
   const opacity = marker.isActive ? 0.92 : 0.4;
   const accentOpacity = marker.isActive ? 0.72 : 0.28;
   const bodyMaterial = new MeshStandardMaterial({
@@ -1102,7 +1117,7 @@ function createWaterSpecularRibbons(
   return group;
 }
 
-function animateWater(water: AnimatedWaterMesh, elapsed: number) {
+function animateWater(water: AnimatedWaterMesh, elapsed: number, motionProfile: CinematicMotionProfile) {
   const position = water.geometry.getAttribute("position") as Float32BufferAttribute;
   const baseWaveZ = water.userData.baseWaveZ;
   if (!baseWaveZ) {
@@ -1112,15 +1127,101 @@ function animateWater(water: AnimatedWaterMesh, elapsed: number) {
   for (let index = 0; index < position.count; index += 1) {
     const x = position.getX(index);
     const y = position.getY(index);
+    const motionElapsed = elapsed * motionProfile.waterSpeed;
     const wave =
-      Math.sin(x * 0.88 + elapsed * 0.82) * 0.036 +
-      Math.cos(y * 2.05 + elapsed * 1.22) * 0.022 +
-      Math.sin((x + y) * 0.42 + elapsed * 0.54) * 0.014;
-    position.setZ(index, baseWaveZ[index] + wave);
+      Math.sin(x * 0.88 + motionElapsed * 0.82) * 0.036 +
+      Math.cos(y * 2.05 + motionElapsed * 1.22) * 0.022 +
+      Math.sin((x + y) * 0.42 + motionElapsed * 0.54) * 0.014;
+    position.setZ(index, baseWaveZ[index] + wave * motionProfile.waterAmplitude);
   }
 
   position.needsUpdate = true;
   water.geometry.computeVertexNormals();
+}
+
+function collectCinematicMotionTargets(root: Group): CinematicMotionTargets {
+  const targets: CinematicMotionTargets = {
+    haze: [],
+    focus: [],
+    activeLandmarks: [],
+  };
+
+  root.traverse((object) => {
+    if (object instanceof Mesh || object instanceof Group) {
+      object.userData.motionBasePosition = object.position.clone();
+      object.userData.motionBaseScale = object.scale.clone();
+    }
+
+    if (object instanceof Mesh && (object.name === "atmosphere-haze" || object.name === "atmosphere-foreground-haze")) {
+      targets.haze.push(object);
+    }
+
+    if (object instanceof Mesh && (object.name === "dali-focus-ring" || object.name === "dali-focus-beam")) {
+      targets.focus.push(object);
+      storeBaseMaterialOpacity(object.material);
+    }
+
+    if (object instanceof Group && object.userData.isActiveCinematicLandmark) {
+      targets.activeLandmarks.push(object);
+    }
+  });
+
+  return targets;
+}
+
+function animateCinematicMotionTargets(
+  targets: CinematicMotionTargets,
+  elapsed: number,
+  motionProfile: CinematicMotionProfile,
+) {
+  const hazeWave = Math.sin(elapsed * motionProfile.hazeSpeed);
+  targets.haze.forEach((object, index) => {
+    const basePosition = object.userData.motionBasePosition as Vector3 | undefined;
+    if (!basePosition) {
+      return;
+    }
+    object.position.x = basePosition.x + hazeWave * motionProfile.hazeDrift * (index === 0 ? 1 : 0.55);
+  });
+
+  const focusWave = Math.sin(elapsed * motionProfile.focusPulseSpeed);
+  targets.focus.forEach((object) => {
+    const baseScale = object.userData.motionBaseScale as Vector3 | undefined;
+    if (!baseScale) {
+      return;
+    }
+    const scale = 1 + focusWave * motionProfile.focusPulse;
+    object.scale.set(baseScale.x * scale, baseScale.y * scale, baseScale.z * scale);
+    updateMaterialOpacity(object.material, 1 + focusWave * motionProfile.focusPulse * 0.9);
+  });
+
+  const landmarkWave = Math.sin(elapsed * motionProfile.landmarkBreathSpeed + 0.4);
+  targets.activeLandmarks.forEach((object) => {
+    const baseScale = object.userData.motionBaseScale as Vector3 | undefined;
+    if (!baseScale) {
+      return;
+    }
+    const scale = 1 + landmarkWave * motionProfile.landmarkBreath;
+    object.scale.set(baseScale.x * scale, baseScale.y * scale, baseScale.z * scale);
+  });
+}
+
+function storeBaseMaterialOpacity(material: Material | Material[]) {
+  const materials = Array.isArray(material) ? material : [material];
+  materials.forEach((item) => {
+    if ("opacity" in item && typeof item.opacity === "number" && item.userData.motionBaseOpacity === undefined) {
+      item.userData.motionBaseOpacity = item.opacity;
+    }
+  });
+}
+
+function updateMaterialOpacity(material: Material | Material[], multiplier: number) {
+  const materials = Array.isArray(material) ? material : [material];
+  materials.forEach((item) => {
+    if ("opacity" in item && typeof item.opacity === "number") {
+      const baseOpacity = typeof item.userData.motionBaseOpacity === "number" ? item.userData.motionBaseOpacity : item.opacity;
+      item.opacity = Math.min(0.9, Math.max(0.02, baseOpacity * multiplier));
+    }
+  });
 }
 
 function applyHighQualityShading(root: Group) {

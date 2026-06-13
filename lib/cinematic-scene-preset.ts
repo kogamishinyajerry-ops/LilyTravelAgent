@@ -98,6 +98,19 @@ export type CinematicAtmosphereProfile = {
   ribbonOpacityScale: number;
 };
 
+export type CinematicMotionProfile = {
+  id: "old-town-breath" | "erhai-glide" | "xizhou-stillness" | "return-glow" | "generic-drift";
+  label: string;
+  waterSpeed: number;
+  waterAmplitude: number;
+  hazeDrift: number;
+  hazeSpeed: number;
+  focusPulse: number;
+  focusPulseSpeed: number;
+  landmarkBreath: number;
+  landmarkBreathSpeed: number;
+};
+
 export type CinematicSceneInspector = {
   status: "active" | "fallback";
   presetId: CinematicScenePreset["id"] | "generic";
@@ -357,6 +370,81 @@ export function buildCinematicAtmosphereProfile(
     waterOpacity: 0.68,
     toneMappingExposure: 1.02,
     ribbonOpacityScale: 1,
+  };
+}
+
+export function buildCinematicMotionProfile(focus?: CinematicSceneFocus | null): CinematicMotionProfile {
+  if (!focus) {
+    return {
+      id: "generic-drift",
+      label: "Soft scene drift",
+      waterSpeed: 1,
+      waterAmplitude: 1,
+      hazeDrift: 0.06,
+      hazeSpeed: 0.11,
+      focusPulse: 0.06,
+      focusPulseSpeed: 0.8,
+      landmarkBreath: 0.025,
+      landmarkBreathSpeed: 0.72,
+    };
+  }
+
+  if (focus.anchorKind === "erhai") {
+    return {
+      id: "erhai-glide",
+      label: "Erhai water glide",
+      waterSpeed: 1.28,
+      waterAmplitude: 1.18,
+      hazeDrift: 0.11,
+      hazeSpeed: 0.14,
+      focusPulse: 0.08,
+      focusPulseSpeed: 0.66,
+      landmarkBreath: 0.03,
+      landmarkBreathSpeed: 0.58,
+    };
+  }
+
+  if (focus.anchorKind === "village") {
+    return {
+      id: "xizhou-stillness",
+      label: "Xizhou still air",
+      waterSpeed: 0.82,
+      waterAmplitude: 0.78,
+      hazeDrift: 0.035,
+      hazeSpeed: 0.08,
+      focusPulse: 0.045,
+      focusPulseSpeed: 0.54,
+      landmarkBreath: 0.018,
+      landmarkBreathSpeed: 0.48,
+    };
+  }
+
+  if (focus.anchorKind === "return") {
+    return {
+      id: "return-glow",
+      label: "Warm closing glow",
+      waterSpeed: 0.94,
+      waterAmplitude: 0.96,
+      hazeDrift: 0.08,
+      hazeSpeed: 0.1,
+      focusPulse: 0.09,
+      focusPulseSpeed: 0.76,
+      landmarkBreath: 0.034,
+      landmarkBreathSpeed: 0.68,
+    };
+  }
+
+  return {
+    id: "old-town-breath",
+    label: "Old town slow breath",
+    waterSpeed: 0.92,
+    waterAmplitude: 0.9,
+    hazeDrift: 0.055,
+    hazeSpeed: 0.1,
+    focusPulse: 0.065,
+    focusPulseSpeed: 0.7,
+    landmarkBreath: 0.024,
+    landmarkBreathSpeed: 0.62,
   };
 }
 

@@ -5,6 +5,7 @@ import {
   buildCinematicAtmosphereProfile,
   buildCinematicCameraPose,
   buildCinematicLandmarkSilhouettes,
+  buildCinematicMotionProfile,
   buildCinematicRouteRail,
   buildCinematicSceneInspector,
   DALI_CINEMATIC_SCENE_PRESET,
@@ -240,5 +241,43 @@ describe("buildCinematicAtmosphereProfile", () => {
     expect(profile.id).toBe("return-amber");
     expect(profile.sunColor).toBe("#f4a56d");
     expect(profile.foregroundHazeOpacity).toBeGreaterThan(0.2);
+  });
+});
+
+describe("buildCinematicMotionProfile", () => {
+  it("returns a stable generic drift profile when no focus is available", () => {
+    expect(buildCinematicMotionProfile()).toMatchObject({
+      id: "generic-drift",
+      waterSpeed: 1,
+      waterAmplitude: 1,
+      label: "Soft scene drift",
+    });
+  });
+
+  it("makes the Erhai water day more fluid than the old-town day", () => {
+    const oldTown = buildCinematicMotionProfile(getCinematicDayFocus(DALI_CINEMATIC_SCENE_PRESET, 1));
+    const erhai = buildCinematicMotionProfile(getCinematicDayFocus(DALI_CINEMATIC_SCENE_PRESET, 2));
+
+    expect(erhai.id).toBe("erhai-glide");
+    expect(erhai.waterSpeed).toBeGreaterThan(oldTown.waterSpeed);
+    expect(erhai.waterAmplitude).toBeGreaterThan(oldTown.waterAmplitude);
+    expect(erhai.hazeDrift).toBeGreaterThan(oldTown.hazeDrift);
+  });
+
+  it("keeps the Xizhou village day calmer than the water day", () => {
+    const village = buildCinematicMotionProfile(getCinematicDayFocus(DALI_CINEMATIC_SCENE_PRESET, 3));
+    const erhai = buildCinematicMotionProfile(getCinematicDayFocus(DALI_CINEMATIC_SCENE_PRESET, 2));
+
+    expect(village.id).toBe("xizhou-stillness");
+    expect(village.waterSpeed).toBeLessThan(erhai.waterSpeed);
+    expect(village.landmarkBreath).toBeLessThan(erhai.landmarkBreath);
+  });
+
+  it("gives the return day the strongest focus pulse", () => {
+    const returnDay = buildCinematicMotionProfile(getCinematicDayFocus(DALI_CINEMATIC_SCENE_PRESET, 4));
+    const village = buildCinematicMotionProfile(getCinematicDayFocus(DALI_CINEMATIC_SCENE_PRESET, 3));
+
+    expect(returnDay.id).toBe("return-glow");
+    expect(returnDay.focusPulse).toBeGreaterThan(village.focusPulse);
   });
 });

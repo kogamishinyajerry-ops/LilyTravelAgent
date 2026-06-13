@@ -175,6 +175,23 @@ The WebGL scene and AI image backplate should not feel like two separate product
 
 > 现在我把 3D 场景里的导演数据反向喂给图片生成 prompt：D2 洱海会告诉图片模型“这是大理 preset、洱海 shot、帆影地标、erhai-sunset 氛围”；D4 会换成 return-cafe 和 return-amber。这样 AI 图不是随便生成一张风景，而是跟网页里的动态路书共用同一套导演层。
 
+## Phase V: Cinematic Micro-Motion Profile (2026-06-13)
+
+### What changed
+
+- Added `buildCinematicMotionProfile()` to `lib/cinematic-scene-preset.ts`.
+- The helper maps the active Dali focus into water speed/amplitude, haze drift, focus pulse, and active-landmark breathing values.
+- `components/dream-skyline-scene.tsx` now collects named motion targets from the Three.js scene and applies the profile inside the existing animation loop.
+- `lib/cinematic-scene-preset.test.ts` verifies generic drift, stronger Erhai water motion, calmer Xizhou stillness, and return-day focus glow.
+
+### Why this matters
+
+High-quality dynamic roadbooks need motion restraint, not random animation everywhere. This phase keeps movement subtle and data-driven: water days glide more, village days stay calmer, and return days get a warmer pulse. The result is more alive on screen while preserving the quiet premium style.
+
+### Recording angle
+
+> 动态路书不是把所有东西乱动起来，而是让每一天有自己的微动节奏。D2 洱海的水面和 haze 更流动，D3 喜洲更安静，D4 收尾的焦点和地标有一点暖光呼吸。这个 motion profile 继续沿用前面的数据驱动方式。
+
 ## Phase D: real data sources (2026-06-07)
 
 Replaced the Phase C procedural stubs with real implementations:

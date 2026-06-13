@@ -300,3 +300,14 @@ Files shown: lib/preview-asset.ts, lib/preview-asset.test.ts, lib/cinematic-scen
 Command/result: npm test -- lib/preview-asset.test.ts && npm run lint && npm run build
 Voiceover note: "这一轮我不是简单加 prompt 形容词，而是把前面做好的 3D 导演数据接进图片资产管线。D2 的 AI 远景图知道它是洱海 shot、帆影地标、erhai-sunset 氛围；D4 会自动变成 return-cafe 和 return-amber。"
 Usable for: scene-data-to-image-prompt clip, asset pipeline explanation, Vibe Coding shared-data-layer lesson, 10-goal continuation round 7
+
+## Phase V: v0.8.11 — Cinematic Micro-Motion Profile
+
+Date: 2026-06-13
+Clip title: Phase V: v0.8.11 — Cinematic Micro-Motion Profile
+What changed: Added a micro-motion director layer for the Dali scene. `lib/cinematic-scene-preset.ts` now exports `buildCinematicMotionProfile()`, mapping the active D1-D4 focus into water speed/amplitude, haze drift, focus pulse, and active-landmark breathing. `components/dream-skyline-scene.tsx` collects named motion targets from the Three.js scene and applies the profile in the existing animation loop; water waves now read from the motion profile, atmosphere haze drifts, focus rings pulse, and the active landmark breathes subtly. `lib/cinematic-scene-preset.test.ts` verifies generic drift, stronger Erhai water motion, calmer Xizhou stillness, and return-day focus glow.
+Why this matters: The product now feels more alive without turning into noisy animation. D2 Erhai glides more, D3 Xizhou stays calmer, and D4 return gets a warmer closing pulse. This is another data-driven director layer that makes the roadbook feel custom per day.
+Files shown: lib/cinematic-scene-preset.ts, lib/cinematic-scene-preset.test.ts, components/dream-skyline-scene.tsx, README.md, docs/design/real-scenic-preview-roadmap.md, docs/recording/dev-log.md
+Command/result: npm test -- lib/cinematic-scene-preset.test.ts && npm run lint && npm run build && Playwright motion checksum check
+Voiceover note: "我没有让页面为了动而动，而是给不同天数一个微动 profile。洱海的水更流动，喜洲更安静，返程日有一点焦点呼吸。这样动态路书开始有预告片感，但仍然很克制。"
+Usable for: static-to-dynamic scene clip, micro-motion design lesson, Vibe Coding animation profile workflow, 10-goal continuation round 8
