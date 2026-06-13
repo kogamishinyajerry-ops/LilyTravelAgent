@@ -927,3 +927,14 @@ Files shown: docs/recording/dev-log.md, terminal verification output, `/dream`
 Command/result: npm run lint && npm test && npm run build (43 files, 892 tests, build passed)
 Voiceover note: "我不会只说页面看起来更高级，而是跑完整质量门：lint、892 个测试、生产构建。这样录屏里的 Vibe Coding 不是玄学，是每一步都有证据。"
 Usable for: verification checkpoint clip, reliability proof, Vibe Coding learning narrative, continued goal run round 90
+
+## Phase CA: v0.8.68 — Director Lens Recording Suite Checkpoint
+
+Date: 2026-06-14
+Clip title: Phase CA: v0.8.68 — Director Lens Recording Suite Checkpoint
+What changed: Re-ran the full local quality gate after adding the recording controller Lens chip, the Skyline Lens pass in `npm run check:recording-suite`, and the Director Lens content docs.
+Why this matters: The visible recording surface, creator docs, and automation script now agree on the same Director Lens workflow. This keeps the product and the content-production system aligned.
+Files shown: scripts/check-recording-suite.mjs, components/dream-roadbook.tsx, docs/recording/shot-list.md, docs/recording/dev-log.md
+Command/result: npm run lint && npm test && npm run build (43 files, 892 tests, build passed)
+Voiceover note: "我把 Skyline 镜头也接进总录屏套件。以后跑一条命令，不只检查默认大理和海岸，还会多产出一份镜头语言证据。"
+Usable for: recording-suite update clip, Director Lens QA evidence, Vibe Coding automation narrative, continued goal run round 98
