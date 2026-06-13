@@ -9,7 +9,7 @@ An AI travel-roadbook prototype for generating cinematic, recording-ready trip g
 - Generates a customized Chinese travel roadbook from a short trip brief.
 - Shows a `/dream` roadbook with minimal text, 2.5D terrain, day switching, a compact map, and asset controls.
 - Upgrades the `/dream` WebGL layer with filmic tone mapping, soft shadows, animated water, atmospheric haze, and real-terrain renderer parity.
-- Uses destination-specific cinematic scene presets, starting with Dali's Cangshan / Erhai / old-town layer and a coastal island / bay director data layer.
+- Uses destination-specific cinematic scene presets, starting with Dali's Cangshan / Erhai / old-town layer and a coastal island / bay layer with rendered lighthouse, bay, harbor, and sunset-deck cues.
 - Uses a two-stage Agent flow: fast preview first, then fuller travel details in the background.
 - Turns uploaded or sample landscape photos into MiniMax-M3 render blueprints for cinematic destination previews.
 - Caches generated preview assets locally, keeps history versions, and lets you mark a final cover.
@@ -72,7 +72,7 @@ Use `http://localhost:3000/studio` for the 16:9 recording mode.
 
 Use `http://localhost:3000/dream` for the generative dream-roadbook prototype with minimal text, Three.js terrain, and an optional MiniMax cinematic preview image layer. The default renderer uses ACES filmic tone mapping, soft shadows, animated water, atmospheric haze, and a composited AI-image backdrop so the fallback view still feels cinematic when image generation is unavailable.
 
-For the default Dali roadbook, `/dream` also mounts a destination-specific cinematic scene preset from `lib/cinematic-scene-preset.ts`: layered Cangshan silhouettes, Erhai shoreline curves, Bai courtyard blocks, day-specific landmark silhouettes, day-directed atmosphere and motion, a focus marker, a world-space D1-D4 route rail, and a small day-director camera pose so D1-D4 change both the label and the framing. The same data layer now also includes a coastal island / bay preset for sea, lighthouse, harbor, and sunset routes. A compact Scene Inspector in the right rail exposes the active preset, shot cue, route progress, and lens/parallax values for recording the Agent visual pipeline.
+For the default Dali roadbook, `/dream` also mounts a destination-specific cinematic scene preset from `lib/cinematic-scene-preset.ts`: layered Cangshan silhouettes, Erhai shoreline curves, Bai courtyard blocks, day-specific landmark silhouettes, day-directed atmosphere and motion, a focus marker, a world-space D1-D4 route rail, and a small day-director camera pose so D1-D4 change both the label and the framing. The same renderer now also supports a coastal island / bay preset with sea bands, sandbars, lighthouse arrival, turquoise bay sail, harbor arcade, and sunset-deck geometry. A compact Scene Inspector in the right rail exposes the active preset, shot cue, route progress, and lens/parallax values for recording the Agent visual pipeline.
 
 Use `http://localhost:3000/share-preview` for the 16:9 post-cover recording card. `/dream` generates the query link automatically from the current roadbook and asset cache.
 

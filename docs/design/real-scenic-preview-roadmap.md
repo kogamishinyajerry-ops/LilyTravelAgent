@@ -21,6 +21,7 @@
   - 才村/喜洲/码头：山体、水面、村落码头
   - 城市目的地：保留 City Skyline 体块能力
 - 大理已接入第一版目的地专属 cinematic scene preset：苍山分层剪影、洱海岸线、白族院落体块和 D1-D4 当天焦点光标都来自 `lib/cinematic-scene-preset.ts`，不再完全依赖通用几何场景。
+- 海岸/海岛 preset 已从数据层进入 Three.js 渲染层：D1-D4 可以出现灯塔、海湾帆影、港口拱廊、日落观景台、沙洲和水面高光。
 - 这版是“预览级建模”，不是测绘级真实地形或真实建筑模型。
 
 ## Why This Step Exists
@@ -226,6 +227,23 @@ The Dali work proved the cinematic director model, but a product needs repeatabi
 ### Recording angle
 
 > 我没有马上把第二个目的地的 3D 全部做完，而是先把数据层扩成多目的地：海岸/海岛也有 D1-D4 的镜头、地标、氛围和微动。这样证明这个系统不是为大理写死的，而是能长成一个 preset catalog。
+
+## Phase Y: Coastal Three.js Landmark Rendering (2026-06-13)
+
+### What changed
+
+- `components/dream-skyline-scene.tsx` now routes cinematic preset rendering by preset id.
+- The Dali preset continues to render Bai courtyard blocks and Dali-specific landmark silhouettes.
+- The coastal island / bay preset now renders a separate waterfront layer with sandbars, water glints, harbor blocks, lighthouse, bay sail, harbor arcade, and sunset deck.
+- The change preserves the existing route rail, focus beacon, atmosphere profile, motion profile, and Scene Inspector behavior.
+
+### Why this matters
+
+Phase X proved the data catalog; this phase proves the catalog can drive visible destination-specific geometry. It is still lightweight procedural 2.5D rather than photogrammetry, but the user-facing scene no longer treats every non-Dali marker as a Dali gate. This gives the product a clearer path toward beach, skyline, mountain, and old-city visual packs.
+
+### Recording angle
+
+> 上一轮我把海岸路线做成数据 preset，这一轮把它真正接进 Three.js。D1 是灯塔，D2 是海湾帆影，D3 是港口拱廊，D4 是日落观景台。这样用户不是只看到文字换了，而是能看到目的地视觉语汇也跟着变。
 
 ## Phase D: real data sources (2026-06-07)
 

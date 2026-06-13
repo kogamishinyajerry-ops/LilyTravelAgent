@@ -333,3 +333,14 @@ Files shown: lib/cinematic-scene-preset.ts, lib/cinematic-scene-preset.test.ts, 
 Command/result: npm test -- lib/cinematic-scene-preset.test.ts && npm run lint && npm run build
 Voiceover note: "这一轮我把大理的一次性 preset 扩成多目的地数据层。海岸/海岛路书也能解析出灯塔、海湾、港口、日落观景台四个镜头，并且有自己的地标、氛围和微动 profile。"
 Usable for: multi-destination preset catalog clip, data-layer scaling lesson, Vibe Coding small-safe-generalization workflow, continued goal run round 11
+
+## Phase Y: v0.8.14 — Coastal Three.js Landmark Rendering
+
+Date: 2026-06-13
+Clip title: Phase Y: v0.8.14 — Coastal Three.js Landmark Rendering
+What changed: Connected the coastal island / bay preset to the `/dream` Three.js renderer. `components/dream-skyline-scene.tsx` now branches cinematic preset geometry by preset id: Dali keeps the Bai courtyard and Dali landmark layer, while the coastal preset gets its own waterfront cluster with sandbars, water glints, harbor blocks, lighthouse, bay sail, harbor arcade, and sunset deck geometry. Existing route rail, focus beacon, atmosphere, motion, and Scene Inspector behavior are preserved.
+Why this matters: The previous phase proved that coastal routes can be represented as data. This phase makes that data visible in the product. It is still lightweight procedural geometry, but it stops treating every non-Dali landmark as a Dali gate and gives future beach/skyline/mountain presets a clear rendering pattern.
+Files shown: components/dream-skyline-scene.tsx, README.md, docs/design/real-scenic-preview-roadmap.md, docs/recording/dev-log.md
+Command/result: npm run lint && npm test -- lib/cinematic-scene-preset.test.ts && npm test && npm run build && npm run check:dream-visuals
+Voiceover note: "上一轮我把海岸路线做成数据 preset，这一轮把它真正接进 Three.js。D1 是灯塔，D2 是海湾帆影，D3 是港口拱廊，D4 是日落观景台。这样用户不是只看到文字换了，而是目的地视觉语汇也跟着变。"
+Usable for: preset-data-to-render clip, coastal destination visual language lesson, Vibe Coding small-renderer-extension workflow, continued goal run round 12

@@ -478,8 +478,13 @@ function createCinematicPresetLayer(
   });
 
   group.add(createDaliRouteRail(scene, palette, disposables));
-  group.add(createDaliCourtyardCluster(scene, palette, disposables));
-  group.add(createDaliLandmarkSilhouettes(scene, palette, disposables));
+  if (scene.preset.id === "coast-island-bay") {
+    group.add(createCoastalWaterfrontCluster(scene, palette, disposables));
+    group.add(createCoastalLandmarkSilhouettes(scene, palette, disposables));
+  } else {
+    group.add(createDaliCourtyardCluster(scene, palette, disposables));
+    group.add(createDaliLandmarkSilhouettes(scene, palette, disposables));
+  }
   group.add(createFocusBeacon(scene, palette, disposables));
 
   return group;
@@ -727,6 +732,264 @@ function createDaliLandmarkMarker(
 
   createDaliGateMarker(group, marker, bodyMaterial, roofMaterial, accentMaterial, disposables);
   return group;
+}
+
+function createCoastalWaterfrontCluster(
+  scene: ResolvedCinematicScenePreset,
+  palette: SkylinePalette,
+  disposables: Array<{ dispose: () => void }>,
+) {
+  const group = new Group();
+  group.name = "coastal-waterfront-architecture";
+
+  const sandMaterial = new MeshStandardMaterial({
+    color: new Color("#d7bea1"),
+    roughness: 0.74,
+    metalness: 0.02,
+    transparent: true,
+    opacity: 0.72,
+  });
+  const stoneMaterial = new MeshStandardMaterial({
+    color: new Color("#e4ded0"),
+    roughness: 0.66,
+    metalness: 0.03,
+    transparent: true,
+    opacity: 0.78,
+  });
+  const glassMaterial = new MeshBasicMaterial({
+    color: new Color(palette.light),
+    transparent: true,
+    opacity: 0.2,
+    depthWrite: false,
+    blending: AdditiveBlending,
+  });
+  disposables.push(sandMaterial, stoneMaterial, glassMaterial);
+
+  scene.preset.focusByDay.forEach((anchor, index) => {
+    const xShift = index % 2 === 0 ? -0.2 : 0.18;
+    addMarkerBox(
+      group,
+      `coastal-sandbar-d${anchor.day}`,
+      1.18,
+      0.035,
+      0.34,
+      anchor.x + xShift,
+      0.075,
+      anchor.z + 0.52,
+      sandMaterial,
+      disposables,
+      index % 2 === 0 ? 0.035 : -0.035,
+    );
+
+    if (anchor.anchorKind === "harbor" || anchor.anchorKind === "coast-return") {
+      for (let blockIndex = 0; blockIndex < 3; blockIndex += 1) {
+        addMarkerBox(
+          group,
+          `coastal-harbor-block-d${anchor.day}-${blockIndex}`,
+          0.22 + blockIndex * 0.06,
+          0.2 + blockIndex * 0.08,
+          0.2,
+          anchor.x - 0.36 + blockIndex * 0.34,
+          0.17 + blockIndex * 0.04,
+          anchor.z - 0.3,
+          stoneMaterial,
+          disposables,
+        );
+      }
+    }
+
+    if (anchor.anchorKind === "bay" || anchor.anchorKind === "coast-arrival") {
+      for (let waveIndex = 0; waveIndex < 3; waveIndex += 1) {
+        addMarkerBox(
+          group,
+          `coastal-wave-glint-d${anchor.day}-${waveIndex}`,
+          0.74 - waveIndex * 0.12,
+          0.012,
+          0.035,
+          anchor.x - 0.12 + waveIndex * 0.19,
+          0.092 + waveIndex * 0.004,
+          anchor.z + 0.2 + waveIndex * 0.12,
+          glassMaterial,
+          disposables,
+          0.05 - waveIndex * 0.04,
+        );
+      }
+    }
+  });
+
+  return group;
+}
+
+function createCoastalLandmarkSilhouettes(
+  scene: ResolvedCinematicScenePreset,
+  palette: SkylinePalette,
+  disposables: Array<{ dispose: () => void }>,
+) {
+  const layer = buildCinematicLandmarkSilhouettes(scene.preset, scene.focus.day);
+  const group = new Group();
+  group.name = "coastal-cinematic-landmark-silhouettes";
+
+  layer.markers.forEach((marker) => {
+    const markerGroup = createCoastalLandmarkMarker(marker, palette, disposables);
+    markerGroup.name = marker.id;
+    markerGroup.position.set(marker.x, 0.14, marker.z);
+    markerGroup.scale.setScalar(marker.scale);
+    markerGroup.rotation.y =
+      marker.kind === "bay-sail" ? -0.22 : marker.kind === "harbor-arcade" ? 0.18 : 0.08;
+    group.add(markerGroup);
+  });
+
+  return group;
+}
+
+function createCoastalLandmarkMarker(
+  marker: CinematicLandmarkSilhouette,
+  palette: SkylinePalette,
+  disposables: Array<{ dispose: () => void }>,
+) {
+  const group = new Group();
+  group.userData.isActiveCinematicLandmark = marker.isActive;
+  const opacity = marker.isActive ? 0.94 : 0.42;
+  const bodyMaterial = new MeshStandardMaterial({
+    color: new Color(marker.kind === "harbor-arcade" ? "#ded6c8" : "#f0e6d6"),
+    roughness: 0.62,
+    metalness: 0.03,
+    transparent: true,
+    opacity,
+  });
+  const roofMaterial = new MeshStandardMaterial({
+    color: new Color(marker.kind === "coast-lighthouse" ? "#b9574f" : "#c98f62"),
+    roughness: 0.56,
+    metalness: 0.04,
+    transparent: true,
+    opacity: marker.isActive ? 0.96 : 0.52,
+  });
+  const accentMaterial = new MeshBasicMaterial({
+    color: new Color(marker.isActive ? "#fff0bd" : palette.light),
+    transparent: true,
+    opacity: marker.isActive ? 0.76 : 0.3,
+    depthWrite: false,
+    blending: AdditiveBlending,
+    side: DoubleSide,
+  });
+  disposables.push(bodyMaterial, roofMaterial, accentMaterial);
+
+  const baseGeometry = new CircleGeometry(marker.isActive ? 0.44 : 0.32, 36);
+  const base = new Mesh(baseGeometry, accentMaterial);
+  base.name = `${marker.id}-coastal-ground-glow`;
+  base.rotation.x = -Math.PI / 2;
+  base.position.y = 0.012;
+  base.renderOrder = 7;
+  group.add(base);
+  disposables.push(baseGeometry);
+
+  if (marker.kind === "bay-sail") {
+    createDaliSailMarker(group, marker, bodyMaterial, accentMaterial, disposables);
+    createCoastalWaveBands(group, marker, accentMaterial, disposables);
+    return group;
+  }
+
+  if (marker.kind === "harbor-arcade") {
+    createCoastalHarborArcadeMarker(group, marker, bodyMaterial, roofMaterial, accentMaterial, disposables);
+    return group;
+  }
+
+  if (marker.kind === "sunset-deck") {
+    createCoastalSunsetDeckMarker(group, marker, bodyMaterial, roofMaterial, accentMaterial, disposables);
+    return group;
+  }
+
+  createCoastalLighthouseMarker(group, marker, bodyMaterial, roofMaterial, accentMaterial, disposables);
+  return group;
+}
+
+function createCoastalLighthouseMarker(
+  group: Group,
+  marker: CinematicLandmarkSilhouette,
+  bodyMaterial: Material,
+  roofMaterial: Material,
+  accentMaterial: Material,
+  disposables: Array<{ dispose: () => void }>,
+) {
+  addMarkerBox(group, `${marker.id}-lighthouse-base`, 0.42, 0.16, 0.3, 0, 0.16, 0, bodyMaterial, disposables);
+  addMarkerBox(group, `${marker.id}-lighthouse-tower`, 0.26, 0.78, 0.24, 0, 0.58, 0, bodyMaterial, disposables);
+  addMarkerBox(group, `${marker.id}-lighthouse-band`, 0.31, 0.05, 0.27, 0, 0.72, 0, roofMaterial, disposables);
+  addMarkerBox(group, `${marker.id}-lantern-room`, 0.36, 0.16, 0.28, 0, 1.03, 0, accentMaterial, disposables);
+  addMarkerBox(group, `${marker.id}-lighthouse-cap`, 0.42, 0.08, 0.32, 0, 1.17, 0, roofMaterial, disposables, 0.04);
+
+  const beamGeometry = new PlaneGeometry(0.86, 0.13);
+  const beam = new Mesh(beamGeometry, accentMaterial);
+  beam.name = `${marker.id}-lighthouse-beam`;
+  beam.position.set(0.52, 1.03, -0.03);
+  beam.rotation.z = 0.1;
+  beam.renderOrder = 8;
+  group.add(beam);
+  disposables.push(beamGeometry);
+}
+
+function createCoastalHarborArcadeMarker(
+  group: Group,
+  marker: CinematicLandmarkSilhouette,
+  bodyMaterial: Material,
+  roofMaterial: Material,
+  accentMaterial: Material,
+  disposables: Array<{ dispose: () => void }>,
+) {
+  addMarkerBox(group, `${marker.id}-pier`, 0.98, 0.07, 0.34, 0, 0.14, 0.05, roofMaterial, disposables, -0.03);
+  for (let index = 0; index < 4; index += 1) {
+    const x = -0.42 + index * 0.28;
+    addMarkerBox(group, `${marker.id}-arcade-post-${index}`, 0.075, 0.46, 0.16, x, 0.38, -0.03, bodyMaterial, disposables);
+    addMarkerBox(group, `${marker.id}-arcade-light-${index}`, 0.055, 0.08, 0.02, x, 0.48, -0.13, accentMaterial, disposables);
+  }
+  addMarkerBox(group, `${marker.id}-arcade-roof`, 1.08, 0.11, 0.28, 0, 0.68, -0.02, roofMaterial, disposables, 0.02);
+  addMarkerBox(group, `${marker.id}-cityline-left`, 0.2, 0.34, 0.17, -0.66, 0.3, 0.06, bodyMaterial, disposables);
+  addMarkerBox(group, `${marker.id}-cityline-right`, 0.24, 0.42, 0.18, 0.66, 0.34, 0.03, bodyMaterial, disposables);
+}
+
+function createCoastalSunsetDeckMarker(
+  group: Group,
+  marker: CinematicLandmarkSilhouette,
+  bodyMaterial: Material,
+  roofMaterial: Material,
+  accentMaterial: Material,
+  disposables: Array<{ dispose: () => void }>,
+) {
+  const sunGeometry = new CircleGeometry(0.25, 36);
+  const sun = new Mesh(sunGeometry, accentMaterial);
+  sun.name = `${marker.id}-sun-disc`;
+  sun.position.set(0.28, 0.74, -0.12);
+  sun.renderOrder = 6;
+  group.add(sun);
+  disposables.push(sunGeometry);
+
+  addMarkerBox(group, `${marker.id}-deck`, 0.96, 0.08, 0.38, 0, 0.18, 0, roofMaterial, disposables, -0.025);
+  addMarkerBox(group, `${marker.id}-left-post`, 0.055, 0.44, 0.06, -0.4, 0.4, -0.1, bodyMaterial, disposables);
+  addMarkerBox(group, `${marker.id}-right-post`, 0.055, 0.44, 0.06, 0.4, 0.4, -0.1, bodyMaterial, disposables);
+  addMarkerBox(group, `${marker.id}-rail`, 0.9, 0.045, 0.055, 0, 0.52, -0.1, bodyMaterial, disposables);
+  addMarkerBox(group, `${marker.id}-sun-reflection`, 0.66, 0.018, 0.04, 0.22, 0.11, 0.28, accentMaterial, disposables, -0.02);
+}
+
+function createCoastalWaveBands(
+  group: Group,
+  marker: CinematicLandmarkSilhouette,
+  accentMaterial: Material,
+  disposables: Array<{ dispose: () => void }>,
+) {
+  for (let index = 0; index < 3; index += 1) {
+    addMarkerBox(
+      group,
+      `${marker.id}-coastal-ripple-${index}`,
+      0.82 - index * 0.16,
+      0.014,
+      0.035,
+      0.05 + index * 0.08,
+      0.09 + index * 0.006,
+      0.2 + index * 0.1,
+      accentMaterial,
+      disposables,
+      0.04 - index * 0.04,
+    );
+  }
 }
 
 function createDaliGateMarker(
