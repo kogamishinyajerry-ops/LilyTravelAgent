@@ -256,3 +256,14 @@ Files shown: lib/cinematic-scene-preset.ts, lib/cinematic-scene-preset.test.ts, 
 Command/result: npm test -- lib/cinematic-scene-preset.test.ts && npm run lint && npm run build && Playwright D1-D4 canvas checks
 Voiceover note: "这一轮我把路线从 UI 按钮搬进 3D 世界：大理 D1-D4 的焦点锚点会生成一条 route rail，全路线是淡线，当前已走到的段落更亮。用户看到的不只是四张卡，而是一条真的在场景里流动的旅行线。"
 Usable for: route-in-3D demo, D1-D4 spatial itinerary clip, Vibe Coding helper-to-render pattern, 10-goal continuation round 3
+
+## Phase R: v0.8.7 — Scene Preset Inspector
+
+Date: 2026-06-13
+Clip title: Phase R: v0.8.7 — Scene Preset Inspector
+What changed: Added a transparent inspector layer for the destination-scene pipeline. `lib/cinematic-scene-preset.ts` now exports `buildCinematicSceneInspector()`, which turns the active roadbook/day into a compact summary: preset status, destination, hero label, shot label, visual cue, route progress, route point count, FOV, camera X, and parallax. `/dream` renders that payload in a new right-rail Scene Inspector under the mini map, so the viewer can see which destination preset is active and how D1-D4 are being directed. `lib/cinematic-scene-preset.test.ts` now covers the Dali active inspector, D3 route progress, and a generic fallback for unsupported destinations.
+Why this matters: The previous three rounds added real scene mechanics, but they were mostly invisible unless you inspected the code. This round turns the visual pipeline into product UI. It helps debugging, helps users trust the generation, and gives recording footage a clear "Agent is directing the scene" explanation surface.
+Files shown: lib/cinematic-scene-preset.ts, lib/cinematic-scene-preset.test.ts, components/dream-roadbook.tsx, app/globals.css, README.md, docs/design/real-scenic-preview-roadmap.md, docs/recording/dev-log.md
+Command/result: npm test -- lib/cinematic-scene-preset.test.ts && npm run lint && npm run build && Playwright right-rail inspector checks
+Voiceover note: "现在我把 3D 背后的 Agent 决策直接放进 UI：当前 destination preset 是什么，D2 镜头在拍洱海还是 D3 在拍喜洲，route rail 走到哪，FOV 和 parallax 是多少。这样用户看到的不是魔法效果，而是一条可解释的动态路书生成管线。"
+Usable for: visible Agent pipeline clip, scene-inspector recording, D1-D4 shot breakdown, 10-goal continuation round 4

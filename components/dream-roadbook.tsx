@@ -11,6 +11,7 @@ import {
   type DreamMood,
   type DreamTemplate,
 } from "@/lib/dream-design-skill";
+import { buildCinematicSceneInspector } from "@/lib/cinematic-scene-preset";
 import { defaultBrief } from "@/lib/default-brief";
 import type { LandmarkPreset } from "@/lib/landmark-preset";
 import {
@@ -170,6 +171,7 @@ export function DreamRoadbook() {
   const activePlan = roadbook.days.find((day) => day.day === activeDay) || roadbook.days[0];
   const activeStop = design.routeStops.find((stop) => stop.day === activePlan?.day) || design.routeStops[0];
   const activeTemplate = dreamTemplates.find((item) => item.id === template) || dreamTemplates[0];
+  const sceneInspector = useMemo(() => buildCinematicSceneInspector(roadbook, activeDay), [activeDay, roadbook]);
   // Lazily build the real terrain/buildings sources only when the toggle is on,
   // so MAPBOX_TOKEN env lookups don't run at module-load time.
   const [realTerrainSources, setRealTerrainSources] = useState<
@@ -1626,6 +1628,39 @@ export function DreamRoadbook() {
           </div>
 
           <DreamMiniMap roadbook={roadbook} points={points} configured={mapConfigured} loading={mapLoading} />
+
+          <div className={`dream-scene-inspector ${sceneInspector.status}`} aria-label="3D 场景预设检查器">
+            <div className="dream-scene-inspector-head">
+              <span>Scene Inspector</span>
+              <strong>{sceneInspector.status === "active" ? "preset active" : "fallback"}</strong>
+            </div>
+            <div className="dream-scene-inspector-title">
+              <Eye size={15} aria-hidden="true" />
+              <div>
+                <small>{sceneInspector.destination}</small>
+                <b>{sceneInspector.heroLabel}</b>
+              </div>
+            </div>
+            <div className="dream-scene-inspector-grid">
+              <span>
+                <small>Shot</small>
+                <strong>{sceneInspector.shotLabel}</strong>
+              </span>
+              <span>
+                <small>Route</small>
+                <strong>{sceneInspector.routeProgress}</strong>
+              </span>
+              <span>
+                <small>Lens</small>
+                <strong>{sceneInspector.cameraFov}FOV</strong>
+              </span>
+              <span>
+                <small>Parallax</small>
+                <strong>{sceneInspector.parallaxWeight.toFixed(2)}x</strong>
+              </span>
+            </div>
+            <p>{sceneInspector.visualCue}</p>
+          </div>
 
           <div className={`dream-scenic-skill ${scenicStage}`} aria-label="风景照片转建模渲染技能">
             <div className="dream-scenic-head">

@@ -55,6 +55,20 @@ export type CinematicRouteRail = {
   activeIndex: number;
 };
 
+export type CinematicSceneInspector = {
+  status: "active" | "fallback";
+  presetId: CinematicScenePreset["id"] | "generic";
+  destination: string;
+  heroLabel: string;
+  shotLabel: string;
+  visualCue: string;
+  routeProgress: string;
+  routePointCount: number;
+  cameraFov: number;
+  cameraX: number;
+  parallaxWeight: number;
+};
+
 export const DALI_CINEMATIC_SCENE_PRESET: CinematicScenePreset = {
   id: "dali-cangshan-erhai",
   destination: "云南大理",
@@ -151,6 +165,48 @@ export function buildCinematicRouteRail(
   };
 }
 
+export function buildCinematicSceneInspector(roadbook: Roadbook, activeDay: number): CinematicSceneInspector {
+  const resolved = resolveCinematicScenePreset(roadbook, activeDay);
+  const pose = buildCinematicCameraPose(resolved?.focus);
+
+  if (!resolved) {
+    return {
+      status: "fallback",
+      presetId: "generic",
+      destination: roadbook.destination || "Custom destination",
+      heroLabel: "Procedural Skyline",
+      shotLabel: `D${activeDay}`,
+      visualCue: "通用体块 / 动态水面 / 远景贴片",
+      routeProgress: "Default path",
+      routePointCount: 0,
+      cameraFov: pose.fov,
+      cameraX: roundCameraValue(pose.camera[0]),
+      parallaxWeight: pose.parallaxWeight,
+    };
+  }
+
+  const rail = buildCinematicRouteRail(resolved.preset, resolved.focus.day);
+  const activeRoutePoints = rail.points.slice(0, rail.activeIndex + 1);
+  const routeProgress =
+    activeRoutePoints.length > 0
+      ? activeRoutePoints.map((point) => `D${point.day}`).join("-")
+      : `D${resolved.focus.day}`;
+
+  return {
+    status: "active",
+    presetId: resolved.preset.id,
+    destination: resolved.preset.destination,
+    heroLabel: resolved.preset.heroLabel,
+    shotLabel: `D${resolved.focus.day} · ${resolved.focus.label}`,
+    visualCue: resolved.focus.visualCue,
+    routeProgress,
+    routePointCount: rail.points.length,
+    cameraFov: pose.fov,
+    cameraX: roundCameraValue(pose.camera[0]),
+    parallaxWeight: pose.parallaxWeight,
+  };
+}
+
 function matchesPreset(preset: CinematicScenePreset, searchText: string) {
   const matchCount = preset.matchers.reduce((count, matcher) => {
     return searchText.includes(matcher) ? count + 1 : count;
@@ -165,6 +221,10 @@ function matchesPreset(preset: CinematicScenePreset, searchText: string) {
 
 function clamp(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max);
+}
+
+function roundCameraValue(value: number) {
+  return Math.round(value * 100) / 100;
 }
 
 function buildRoadbookSearchText(roadbook: Roadbook) {

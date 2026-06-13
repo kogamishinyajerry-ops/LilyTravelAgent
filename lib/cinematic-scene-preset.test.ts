@@ -4,6 +4,7 @@ import type { Roadbook } from "./roadbook-types";
 import {
   buildCinematicCameraPose,
   buildCinematicRouteRail,
+  buildCinematicSceneInspector,
   DALI_CINEMATIC_SCENE_PRESET,
   getCinematicDayFocus,
   resolveCinematicScenePreset,
@@ -124,5 +125,47 @@ describe("buildCinematicRouteRail", () => {
 
     expect(rail.activeIndex).toBe(0);
     expect(rail.points.some((point) => point.isActive)).toBe(false);
+  });
+});
+
+describe("buildCinematicSceneInspector", () => {
+  it("summarizes the active Dali scene preset for recording", () => {
+    const inspector = buildCinematicSceneInspector(sampleRoadbook, 2);
+
+    expect(inspector).toMatchObject({
+      status: "active",
+      presetId: "dali-cangshan-erhai",
+      destination: "云南大理",
+      heroLabel: "苍山 / 洱海 / 白族院落",
+      shotLabel: "D2 · 洱海西线",
+      visualCue: "水面 / S 湾 / 日落",
+      routeProgress: "D1-D2",
+      routePointCount: 4,
+      cameraFov: 39,
+    });
+    expect(inspector.parallaxWeight).toBeGreaterThan(1);
+  });
+
+  it("advances route progress through the selected Dali day", () => {
+    const inspector = buildCinematicSceneInspector(sampleRoadbook, 3);
+
+    expect(inspector.shotLabel).toBe("D3 · 喜洲村落");
+    expect(inspector.routeProgress).toBe("D1-D2-D3");
+    expect(inspector.cameraX).toBeLessThan(0.55);
+  });
+
+  it("returns a transparent fallback inspector for unsupported destinations", () => {
+    const inspector = buildCinematicSceneInspector(cityRoadbook, 1);
+
+    expect(inspector).toMatchObject({
+      status: "fallback",
+      presetId: "generic",
+      destination: "上海",
+      heroLabel: "Procedural Skyline",
+      shotLabel: "D1",
+      routeProgress: "Default path",
+      routePointCount: 0,
+      cameraFov: 38,
+    });
   });
 });

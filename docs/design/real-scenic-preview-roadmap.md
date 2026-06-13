@@ -107,6 +107,23 @@ The roadbook already had day buttons and a mini map, but the main 3D world did n
 
 > 我把路线从按钮搬进了 3D 世界。D1-D4 不再只是底部几个按钮，而是一条在场景里发光的 route rail：全路线是淡线，已经走到的段落会更亮。动态路书开始像一个可浏览的旅行预告片。
 
+## Phase R: Scene Preset Inspector (2026-06-13)
+
+### What changed
+
+- Added `buildCinematicSceneInspector()` to `lib/cinematic-scene-preset.ts`.
+- The helper converts the active roadbook/day into a recording-friendly inspector payload: active preset, destination, shot label, visual cue, route progress, route-point count, FOV, camera X, and parallax.
+- `/dream` now shows a compact Scene Inspector directly under the mini map so the visual asset pipeline is visible while the 3D scene is running.
+- `lib/cinematic-scene-preset.test.ts` verifies Dali active-state summaries, D3 route progress, and unsupported-destination fallback behavior.
+
+### Why this matters
+
+The scene now has destination assets, camera direction, and a route rail, but those systems were mostly invisible to a viewer. This phase turns the internal director layer into product UI: useful for debugging, useful for users who want to understand what the Agent produced, and especially useful for silent screen recording where the workflow needs to read clearly without voiceover.
+
+### Recording angle
+
+> 我把 3D 场景背后的 Agent 决策暴露出来：当前用了哪个目的地 preset，今天是哪个 shot，路线走到哪里，镜头 FOV 和 parallax 是多少。这样录屏时观众能看到：这不是一张静态图，而是一条从路书内容到视觉资产再到 3D 导演层的生成管线。
+
 ## Phase D: real data sources (2026-06-07)
 
 Replaced the Phase C procedural stubs with real implementations:
