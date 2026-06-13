@@ -740,3 +740,14 @@ Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, app/gl
 Command/result: npm test -- components/studio-mode.test.tsx && npm run lint && npm test && npm run build
 Voiceover note: "我把总套件覆盖状态做进 Studio 的 Demo Bridge。画面里直接能看到，这条跳转已经纳入自动验收。"
 Usable for: Studio bridge badge clip, QA visibility, Vibe Coding product polish, continued goal run round 48
+
+## Phase BJ: v0.8.51 — Dream Bridge Suite Badge
+
+Date: 2026-06-13
+Clip title: Phase BJ: v0.8.51 — Dream Bridge Suite Badge
+What changed: Added a `Recording suite 已覆盖` badge to the `/dream` Studio Bridge card and covered it in the Dream component test.
+Why this matters: The cinematic preview now carries the same QA status as Studio. During recording, the viewer can see that the return path is part of the same verified workflow, not a disconnected navigation shortcut.
+Files shown: components/dream-roadbook.tsx, components/dream-roadbook.test.tsx, app/globals.css, README.md, docs/recording/dev-log.md
+Command/result: npm test -- components/dream-roadbook.test.tsx && npm run lint && npm test && npm run build
+Voiceover note: "我把 Dream 侧也加上总套件覆盖状态。这样从预览页回录屏台时，观众能看到这条桥同样被自动验收。"
+Usable for: Dream bridge badge clip, cinematic-to-studio QA visibility, Vibe Coding product polish, continued goal run round 49

@@ -2113,6 +2113,18 @@ textarea {
   line-height: 1.35;
 }
 
+.dream-studio-bridge-badge {
+  justify-self: start;
+  border: 1px solid rgba(255, 255, 255, 0.56);
+  border-radius: 999px;
+  padding: 4px 8px;
+  color: var(--dream-ink);
+  font-size: 0.67rem;
+  font-weight: 950;
+  letter-spacing: 0;
+  background: rgba(255, 255, 255, 0.52);
+}
+
 .dream-studio-bridge a {
   display: inline-flex;
   align-items: center;

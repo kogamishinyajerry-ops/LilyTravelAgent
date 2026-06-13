@@ -124,6 +124,7 @@ describe("DreamRoadbook a11y polish", () => {
     expect(within(screen.getByLabelText("本地演示路书")).getByRole("button", { name: /海岸/ }).getAttribute("aria-pressed")).toBe("true");
     expect(screen.getByRole("link", { name: /打开录屏台/ }).getAttribute("href")).toBe("/studio?demo=coast");
     expect(screen.getByLabelText("Studio Bridge").textContent).toContain("三亚海岛 → Studio");
+    expect(screen.getByLabelText("Studio Bridge").textContent).toContain("Recording suite 已覆盖");
     expect(within(screen.getByLabelText("Studio Bridge")).getByRole("link", { name: /返回同款录屏台/ }).getAttribute("href")).toBe("/studio?demo=coast");
   });
 

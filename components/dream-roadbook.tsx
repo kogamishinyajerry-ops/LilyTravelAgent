@@ -1388,6 +1388,7 @@ export function DreamRoadbook({ initialDemo = "dali" }: DreamRoadbookProps = {})
             <span>Studio Bridge</span>
             <strong>{roadbook.destination} → Studio</strong>
             <p>{demoRoadbookId ? "保留当前本地演示，回到同款录屏台。" : "真实生成后可回到录屏台继续拆解。"}</p>
+            <small className="dream-studio-bridge-badge">Recording suite 已覆盖</small>
             <Link href={studioHandoffHref}>
               返回同款录屏台
               <Eye size={13} />
