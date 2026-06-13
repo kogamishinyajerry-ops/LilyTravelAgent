@@ -575,3 +575,14 @@ Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, app/gl
 Command/result: npm test -- components/studio-mode.test.tsx && npm run lint && npm test && npm run build
 Voiceover note: "我把素材工作流做成四步：复制命令、运行 QA、刷新素材、打开索引。这样录屏时右侧面板自己就能讲清楚下一步。"
 Usable for: workflow-rail clip, recording asset pipeline explanation, Vibe Coding visible process, continued goal run round 33
+
+## Phase AU: v0.8.36 — Studio Recording Asset Readiness
+
+Date: 2026-06-13
+Clip title: Phase AU: v0.8.36 — Studio Recording Asset Readiness
+What changed: Added a `录屏素材状态` badge to `/studio`. It shows `素材已准备` when the local index and asset packs exist, `素材待补充` when an empty index exists, and `等待生成索引` when the index is missing.
+Why this matters: The recording asset panel now communicates readiness before the creator opens the index or reads the counts. This makes the local material pipeline easier to understand during silent screen capture.
+Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, app/globals.css, README.md, docs/design/real-scenic-preview-roadmap.md, docs/recording/dev-log.md
+Command/result: npm test -- components/studio-mode.test.tsx && npm run lint && npm test && npm run build
+Voiceover note: "我给素材面板加了一个状态牌。以后录屏时，观众可以先看到素材是不是已经准备好，而不是只看一堆数字。"
+Usable for: asset-readiness clip, QA pipeline status explanation, Vibe Coding recording workbench polish, continued goal run round 34

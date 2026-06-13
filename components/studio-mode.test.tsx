@@ -74,6 +74,8 @@ describe("StudioMode demo roadbooks", () => {
     expect(screen.getByText("大理 4 天松弛路书")).toBeTruthy();
     expect(screen.getByDisplayValue("云南大理")).toBeTruthy();
     expect(await screen.findByText("15 个素材包")).toBeTruthy();
+    expect(screen.getByLabelText("录屏素材状态").textContent).toContain("素材已准备");
+    expect(screen.getByLabelText("录屏素材状态").textContent).toContain("可以直接打开索引挑选片段");
     expect(screen.getByLabelText("素材包类型统计")).toBeTruthy();
     expect(screen.getByText("Dream 12")).toBeTruthy();
     expect(screen.getByText("Studio 3")).toBeTruthy();
@@ -145,6 +147,8 @@ describe("StudioMode demo roadbooks", () => {
     render(<StudioMode />);
 
     expect(await screen.findByText("0 个素材包")).toBeTruthy();
+    expect(screen.getByLabelText("录屏素材状态").textContent).toContain("等待生成索引");
+    expect(screen.getByLabelText("录屏素材状态").textContent).toContain("先跑 recording suite");
     expect(screen.getByText("Dream 0")).toBeTruthy();
     expect(screen.getByText("Studio 0")).toBeTruthy();
     expect(screen.getByText("生成本地素材索引")).toBeTruthy();

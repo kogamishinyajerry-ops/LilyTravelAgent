@@ -583,6 +583,22 @@ The asset pipeline now reads as a sequence instead of isolated controls. It help
 
 > 我把素材管线变成了四步小轨道：复制命令、运行 QA、刷新素材、打开索引。这样观众不用看我解释太久，一眼就知道这套 Agent 工作流在干什么。
 
+## Phase AU: Studio Recording Asset Readiness (2026-06-13)
+
+### What changed
+
+- Added a "录屏素材状态" badge to the `/studio` recording asset panel.
+- The badge shows "素材已准备" when the local index exists and asset packs are available.
+- It shows "等待生成索引" when the index is missing, pointing the creator back to the recording-suite step.
+
+### Why this matters
+
+The asset panel now communicates readiness before the viewer reads counts or opens links. This is useful for screen recordings because the state of the local material pipeline is visible at a glance.
+
+### Recording angle
+
+> 我给素材面板加了状态牌。现在录屏时不用解释当前是不是准备好了，观众能直接看到“素材已准备”或“等待生成索引”。
+
 ## Phase D: real data sources (2026-06-07)
 
 Replaced the Phase C procedural stubs with real implementations:

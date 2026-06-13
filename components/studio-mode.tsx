@@ -177,6 +177,30 @@ function formatRecordingAssetTime(value: string) {
   }).format(date);
 }
 
+function getRecordingAssetReadiness(summary: Extract<RecordingAssetsState, { status: "ready" }>) {
+  if (!summary.indexAvailable) {
+    return {
+      state: "missing",
+      title: "等待生成索引",
+      detail: "先跑 recording suite，再刷新这里。",
+    };
+  }
+
+  if (summary.packCount === 0) {
+    return {
+      state: "empty",
+      title: "素材待补充",
+      detail: "索引已存在，继续生成 QA 素材。",
+    };
+  }
+
+  return {
+    state: "ready",
+    title: "素材已准备",
+    detail: "可以直接打开索引挑选片段。",
+  };
+}
+
 export function StudioMode() {
   const [brief, setBrief] = useState<TravelBrief>(defaultBrief);
   const [demoRoadbookId, setDemoRoadbookId] = useState<StudioDemoRoadbookId | null>("dali");
@@ -494,6 +518,15 @@ export function StudioMode() {
               ) : null}
               {recordingAssets.status === "ready" ? (
                 <>
+                  {(() => {
+                    const readiness = getRecordingAssetReadiness(recordingAssets);
+                    return (
+                      <div className={`studio-recording-readiness ${readiness.state}`} aria-label="录屏素材状态">
+                        <span>{readiness.title}</span>
+                        <p>{readiness.detail}</p>
+                      </div>
+                    );
+                  })()}
                   <strong>{recordingAssets.packCount} 个素材包</strong>
                   <div className="studio-recording-counts" aria-label="素材包类型统计">
                     <span>Dream {recordingAssets.countsByType.dream}</span>

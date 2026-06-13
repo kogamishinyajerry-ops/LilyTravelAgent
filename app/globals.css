@@ -1360,6 +1360,41 @@ textarea {
   line-height: 1.05;
 }
 
+.studio-recording-readiness {
+  display: grid;
+  gap: 3px;
+  border: 1px solid rgba(79, 143, 122, 0.18);
+  border-radius: 8px;
+  padding: 8px 9px;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.studio-recording-assets .studio-recording-readiness span {
+  color: var(--moss);
+  font-size: 0.82rem;
+  font-weight: 950;
+}
+
+.studio-recording-assets .studio-recording-readiness p {
+  font-size: 0.72rem;
+  line-height: 1.25;
+}
+
+.studio-recording-readiness.ready {
+  border-color: rgba(79, 143, 122, 0.28);
+  background: rgba(79, 143, 122, 0.13);
+}
+
+.studio-recording-readiness.empty {
+  border-color: rgba(191, 128, 85, 0.26);
+  background: rgba(191, 128, 85, 0.12);
+}
+
+.studio-recording-readiness.missing {
+  border-color: rgba(214, 107, 61, 0.28);
+  background: rgba(214, 107, 61, 0.12);
+}
+
 .studio-recording-assets p,
 .studio-recording-assets span {
   margin: 0;
