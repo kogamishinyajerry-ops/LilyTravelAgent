@@ -1489,6 +1489,7 @@ export function DreamRoadbook({ initialDemo = "dali" }: DreamRoadbookProps = {})
                   <button
                     key={lens.id}
                     type="button"
+                    data-lens-id={lens.id}
                     className={isActive ? "active" : ""}
                     onClick={() => setDirectorLens(lens.id)}
                     aria-pressed={isActive}

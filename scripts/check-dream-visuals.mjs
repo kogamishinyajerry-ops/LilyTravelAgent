@@ -5,6 +5,7 @@ import { chromium } from "playwright";
 
 const targetUrl = process.env.DREAM_URL || "http://localhost:3000/dream";
 const demoRoadbook = process.env.DREAM_DEMO || "dali";
+const directorLens = process.env.DREAM_LENS || "auto";
 const expectedTimelineLabels = {
   dali: ["古城南门", "洱海西线", "喜洲村落", "古城收尾"],
   coast: ["海岸灯塔", "蓝色海湾", "港口街区", "日落观景台"],
@@ -95,6 +96,17 @@ async function readProofStack(page) {
   );
 }
 
+async function readDirectorLens(page) {
+  return page.locator(".dream-director-lens button").evaluateAll((buttons) =>
+    buttons.map((button) => ({
+      id: button.dataset.lensId || "",
+      label: button.querySelector("small")?.textContent?.trim() || "",
+      proof: button.querySelector("strong")?.textContent?.trim() || "",
+      active: button.getAttribute("aria-pressed") === "true",
+    })),
+  );
+}
+
 async function main() {
   await mkdir(outDir, { recursive: true });
 
@@ -120,6 +132,16 @@ async function main() {
     await page.getByRole("button", { name: /海岸/ }).first().click();
     await page.waitForTimeout(800);
   }
+
+  if (directorLens !== "auto") {
+    await page.locator(`.dream-director-lens button[data-lens-id="${directorLens}"]`).click();
+    await page.waitForTimeout(500);
+  }
+
+  const lensItems = await readDirectorLens(page);
+  const activeLens = lensItems.find((item) => item.active);
+  assert(lensItems.length === 5, `Director Lens selector should have 5 items; got ${lensItems.length}.`);
+  assert(activeLens?.id === directorLens, `Active Director Lens should be ${directorLens}; got ${activeLens?.id}.`);
 
   const days = [];
   for (const day of [1, 2, 3, 4]) {
@@ -166,6 +188,7 @@ async function main() {
       timeline,
       composition,
       proofStack,
+      directorLens: activeLens,
       canvasStats,
       screenshotPath,
     });
@@ -184,6 +207,8 @@ async function main() {
   const summary = {
     targetUrl,
     demoRoadbook,
+    directorLens,
+    activeLens,
     createdAt: new Date().toISOString(),
     viewport: { width: 1280, height: 800 },
     outDir,
@@ -512,6 +537,7 @@ function buildHtmlReport(summary) {
         </div>
         <p class="meta">
           demo: ${escapeHtml(summary.demoRoadbook)}<br />
+          lens: ${escapeHtml(summary.activeLens?.proof || summary.directorLens)}<br />
           ${escapeHtml(summary.createdAt)}<br />
           ${escapeHtml(summary.targetUrl)}
         </p>
@@ -546,6 +572,7 @@ function buildClipNotes(summary) {
         ``,
         `- Screenshot: ${path.basename(day.screenshotPath)}`,
         `- Director cue: ${active?.cue || "无 cue"}`,
+        `- Director Lens: ${day.directorLens?.proof || "auto"}`,
         `- Composition proof: ${day.proofStack.find((item) => item.label === "Composition")?.value || "无"}`,
         `- Proof stack: ${day.proofStack.map((item) => `${item.label}=${item.value}`).join(" / ")}`,
         `- Canvas lit pixels: ${day.canvasStats.lit}`,
@@ -562,6 +589,7 @@ function buildClipNotes(summary) {
     `- Target URL: ${summary.targetUrl}`,
     `- Created at: ${summary.createdAt}`,
     `- Viewport: ${summary.viewport.width}x${summary.viewport.height}`,
+    `- Director Lens: ${summary.activeLens?.label || summary.directorLens} / ${summary.activeLens?.proof || "auto"}`,
     `- Route director line: ${routeLine}`,
     `- Motion evidence: D${summary.motion.day} checksum ${summary.motion.changed ? "changed" : "did not change"} (${summary.motion.start.checksum} -> ${summary.motion.end.checksum})`,
     ``,

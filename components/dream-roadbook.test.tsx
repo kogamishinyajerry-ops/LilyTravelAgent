@@ -199,6 +199,7 @@ describe("DreamRoadbook a11y polish", () => {
     const skylineButton = within(lensGroup).getByRole("button", { name: /Skyline.*low-skyline lens/ });
 
     expect(autoButton.getAttribute("aria-pressed")).toBe("true");
+    expect(skylineButton.getAttribute("data-lens-id")).toBe("low-skyline");
     expect(screen.getAllByText("auto day lens").length).toBeGreaterThanOrEqual(2);
 
     fireEvent.click(skylineButton);
