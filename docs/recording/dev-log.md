@@ -531,3 +531,14 @@ Files shown: app/api/recording-assets/index/route.ts, README.md, docs/design/rea
 Command/result: npm run lint && npm test && npm run build
 Voiceover note: "我把总索引页也补上 Dream / Studio 数量统计。点开完整素材库后，看到的还是和 Studio 小面板一致的结构。"
 Usable for: recording index metrics clip, information consistency polish, Vibe Coding asset archive UX, continued goal run round 29
+
+## Phase AQ: v0.8.32 — Recording Asset Pipeline Guide
+
+Date: 2026-06-13
+Clip title: Phase AQ: v0.8.32 — Recording Asset Pipeline Guide
+What changed: Added `docs/recording/recording-asset-pipeline.md`, a concise guide for the local workflow from `npm run check:recording-suite` to `/studio` refresh and `/api/recording-assets/index`.
+Why this matters: The product work and content workflow are now documented as one repeatable creator loop. This gives future recording sessions a stable script.
+Files shown: docs/recording/recording-asset-pipeline.md, README.md, docs/recording/dev-log.md
+Command/result: npm run lint && npm test && npm run build
+Voiceover note: "我把这套录屏素材管线单独写成文档：先跑 recording suite，再到 Studio 点刷新，再打开总索引。以后每一轮产品打磨都可以这样沉淀素材。"
+Usable for: workflow recap clip, creator operations guide, Vibe Coding documentation habit, continued goal run round 30
