@@ -4,6 +4,7 @@ import { extractJsonObject } from "@/lib/json-extract";
 import { readPositiveIntegerEnv, resolveMiniMaxModel } from "@/lib/minimax-config";
 import { callM3Chat, type M3ChatRequest } from "@/lib/m3-client";
 import { classifyM3Error, getM3ErrorMessage } from "@/lib/m3-error-classifier";
+import { formatVisualGenerationContract } from "@/lib/generation-visual-contract";
 import { normalizeRoadbook } from "@/lib/roadbook-normalize";
 import type { DayPlan, GenerateRoadbookResponse, ItineraryStop, Roadbook } from "@/lib/roadbook-types";
 import { formatZodIssues, roadbookSchema, travelBriefSchema } from "@/lib/roadbook-validation";
@@ -41,7 +42,7 @@ const dreamPreviewSchema = z.object({
 });
 
 function buildPreviewPrompt(brief: ReturnType<typeof travelBriefSchema.parse>) {
-  const visualStrategy = formatVisualStrategy(brief);
+  const visualContract = formatVisualGenerationContract(brief);
   return `你是一个旅游路书 Agent 的第一阶段生成器。请先生成“可立即展示的极简梦境路书骨架”，用于动态网页预览。
 
 只输出 JSON 对象，不要 Markdown，不要解释。
@@ -55,8 +56,8 @@ function buildPreviewPrompt(brief: ReturnType<typeof travelBriefSchema.parse>) {
 - 避免：${brief.mustAvoid}
 - 偏好：${brief.specialRequests}
 - 语气：${brief.tone}
-- 视觉模板：${brief.visualTemplateLabel || brief.visualTemplate || "未指定"}
-- 渲染策略：${visualStrategy}
+- 视觉生成契约：
+${visualContract}
 
 JSON 结构：
 {
@@ -90,16 +91,6 @@ JSON 结构：
 - 总输出尽量控制在 1200 个中文字符以内。
 - 不要输出 why、tip、duration、budget、packing、reminders。
 - 地点尽量真实，但不要承诺营业时间、票价、预约状态。`;
-}
-
-function formatVisualStrategy(brief: ReturnType<typeof travelBriefSchema.parse>) {
-  const strategy = brief.renderStrategy;
-
-  if (!strategy) {
-    return "未指定，使用通用 cinematic 旅行预览。";
-  }
-
-  return `lens=${strategy.lens}; surface=${strategy.surface}; motion=${strategy.motion}`;
 }
 
 function ensureItems(values: string[], minCount: number, fallbacks: string[]) {
