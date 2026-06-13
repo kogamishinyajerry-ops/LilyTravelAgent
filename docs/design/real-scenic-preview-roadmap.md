@@ -472,6 +472,22 @@ The asset timeline now helps with editing decisions, not just technical QA revie
 
 > 我给素材包加了“产品画面 / 讲解画面”的用途提示。这样我后面剪视频时，不需要重新判断每个素材应该放在哪类内容里。
 
+## Phase AM: Recording Index Label Parity (2026-06-13)
+
+### What changed
+
+- Centralized recording pack type/usage mapping in `lib/recording-assets.ts`.
+- `/studio` and `/api/recording-assets/index` now use the same Dream QA / Studio QA labels and product/walkthrough usage hints.
+- The local index page visually accents Dream and Studio packs differently.
+
+### Why this matters
+
+The Studio panel and the opened index page now speak the same language. A creator can move from the compact panel to the full local index without relearning what each pack represents.
+
+### Recording angle
+
+> 我把 Studio 面板和总索引页的标签统一了。这样从录屏台点进总索引，看到的还是同一套 Dream QA / Studio QA 和“产品画面 / 讲解画面”逻辑。
+
 ## Phase D: real data sources (2026-06-07)
 
 Replaced the Phase C procedural stubs with real implementations:

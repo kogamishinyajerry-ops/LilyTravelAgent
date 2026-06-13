@@ -487,3 +487,14 @@ Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, app/gl
 Command/result: npm test -- components/studio-mode.test.tsx && npm run lint && npm test && npm run build
 Voiceover note: "我给素材包加了用途提示：Dream QA 是产品画面，Studio QA 是讲解画面。这样素材一多起来，后面剪视频也不会乱。"
 Usable for: editing-workflow clip, asset taxonomy polish, Vibe Coding content operations, continued goal run round 25
+
+## Phase AM: v0.8.28 — Recording Index Label Parity
+
+Date: 2026-06-13
+Clip title: Phase AM: v0.8.28 — Recording Index Label Parity
+What changed: Centralized recording pack type and usage mapping in `lib/recording-assets.ts`. `/studio` and `/api/recording-assets/index` now use the same Dream QA / Studio QA labels and product/walkthrough usage hints.
+Why this matters: The compact Studio panel and full local recording index now use the same vocabulary, so the asset workflow feels coherent on screen.
+Files shown: lib/recording-assets.ts, lib/recording-assets.test.ts, components/studio-mode.tsx, app/api/recording-assets/index/route.ts, README.md, docs/design/real-scenic-preview-roadmap.md, docs/recording/dev-log.md
+Command/result: npm test -- lib/recording-assets.test.ts components/studio-mode.test.tsx && npm run lint && npm test && npm run build
+Voiceover note: "我把 Studio 面板和总索引页的素材标签统一了。现在点进总索引，还是同一套 Dream QA / Studio QA 和产品画面 / 讲解画面逻辑。"
+Usable for: local asset index polish clip, consistent information design lesson, Vibe Coding product coherence, continued goal run round 26

@@ -1,9 +1,10 @@
 import { existsSync } from "node:fs";
 import { readFile, readdir, stat } from "node:fs/promises";
 import path from "node:path";
+import type { RecordingAssetType } from "./recording-asset-labels";
 
 export type RecordingAssetPack = {
-  type: "dream" | "studio";
+  type: RecordingAssetType;
   label: string;
   id: string;
   createdAt: string;

@@ -2,7 +2,11 @@ import { mkdtemp, mkdir, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { listRecordingAssetPacks, readRecordingAssetsSummary } from "./recording-assets";
+import { getRecordingAssetTypeLabel, getRecordingAssetUsageHint } from "./recording-asset-labels";
+import {
+  listRecordingAssetPacks,
+  readRecordingAssetsSummary,
+} from "./recording-assets";
 
 let tempRoot = "";
 
@@ -25,6 +29,13 @@ async function writeSummary(relativeDir: string, summary: Record<string, unknown
 }
 
 describe("recording assets", () => {
+  it("maps pack types to creator-facing labels and usage hints", () => {
+    expect(getRecordingAssetTypeLabel("dream")).toBe("Dream QA");
+    expect(getRecordingAssetTypeLabel("studio")).toBe("Studio QA");
+    expect(getRecordingAssetUsageHint("dream")).toBe("产品画面");
+    expect(getRecordingAssetUsageHint("studio")).toBe("讲解画面");
+  });
+
   it("returns an empty summary when recordings do not exist", async () => {
     const summary = await readRecordingAssetsSummary(tempRoot);
 

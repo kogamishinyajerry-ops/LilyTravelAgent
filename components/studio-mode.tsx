@@ -19,6 +19,7 @@ import {
 import Link from "next/link";
 import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { defaultBrief } from "@/lib/default-brief";
+import { getRecordingAssetTypeLabel, getRecordingAssetUsageHint, type RecordingAssetType } from "@/lib/recording-asset-labels";
 import { coastalSampleRoadbook, sampleRoadbook } from "@/lib/sample-roadbook";
 import type { GenerateRoadbookResponse, GeocodePlace, GeocodePlacesResponse, GeocodePoint, Roadbook, TravelBrief } from "@/lib/roadbook-types";
 import { clipBlueprints, creatorMilestones, vibeCodingLessons } from "@/lib/vibe-coding-content";
@@ -42,7 +43,7 @@ type RecordingAssetsState =
   | { status: "error"; message: string };
 
 type RecordingAssetSummaryPack = {
-  type: "dream" | "studio";
+  type: RecordingAssetType;
   id: string;
   title: string;
   createdAt: string;
@@ -130,14 +131,6 @@ function formatRecordingAssetTime(value: string) {
     hour: "2-digit",
     minute: "2-digit",
   }).format(date);
-}
-
-function recordingAssetTypeLabel(type: RecordingAssetSummaryPack["type"]) {
-  return type === "studio" ? "Studio QA" : "Dream QA";
-}
-
-function recordingAssetUsageHint(type: RecordingAssetSummaryPack["type"]) {
-  return type === "studio" ? "讲解画面" : "产品画面";
 }
 
 export function StudioMode() {
@@ -436,12 +429,12 @@ export function StudioMode() {
                       {recordingAssets.recentPacks.map((pack) => (
                         <div className={`studio-recording-recent-item ${pack.type}`} key={`${pack.label}-${pack.id}`}>
                           <small>
-                            <em>{recordingAssetTypeLabel(pack.type)}</em>
+                            <em>{getRecordingAssetTypeLabel(pack.type)}</em>
                             {formatRecordingAssetTime(pack.createdAt)}
                           </small>
                           <strong>{pack.title}</strong>
                           <span>{pack.detail}</span>
-                          <b>{recordingAssetUsageHint(pack.type)}</b>
+                          <b>{getRecordingAssetUsageHint(pack.type)}</b>
                         </div>
                       ))}
                     </div>

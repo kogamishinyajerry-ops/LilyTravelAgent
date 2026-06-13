@@ -1,6 +1,10 @@
 import path from "node:path";
 import { NextResponse } from "next/server";
-import { listRecordingAssetPacks, readRecordingAssetsSummary } from "@/lib/recording-assets";
+import { getRecordingAssetTypeLabel, getRecordingAssetUsageHint } from "@/lib/recording-asset-labels";
+import {
+  listRecordingAssetPacks,
+  readRecordingAssetsSummary,
+} from "@/lib/recording-assets";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -27,10 +31,11 @@ function buildRecordingIndexHtml(packs: Awaited<ReturnType<typeof listRecordingA
     ? packs
         .map(
           (pack) => `
-            <article>
-              <p>${escapeHtml(pack.label)}</p>
+            <article class="${escapeHtml(pack.type)}">
+              <p><span>${escapeHtml(getRecordingAssetTypeLabel(pack.type))}</span>${escapeHtml(pack.label)}</p>
               <h2>${escapeHtml(pack.title)}</h2>
               <small>${escapeHtml(pack.createdAt)}</small>
+              <em>${escapeHtml(getRecordingAssetUsageHint(pack.type))}</em>
               <strong>${escapeHtml(pack.detail)}</strong>
               <code>recordings/${escapeHtml(pack.galleryPath)}</code>
               ${pack.notesPath ? `<code>recordings/${escapeHtml(pack.notesPath)}</code>` : ""}
@@ -54,7 +59,14 @@ function buildRecordingIndexHtml(packs: Awaited<ReturnType<typeof listRecordingA
       h1 { font-size: clamp(2rem, 4vw, 3.6rem); line-height: 0.95; }
       .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
       article { display: grid; gap: 9px; border: 1px solid rgba(47, 64, 56, 0.13); border-radius: 8px; padding: 16px; background: rgba(255, 255, 255, 0.72); box-shadow: 0 18px 42px rgba(40, 52, 47, 0.1); }
+      article.studio { border-left: 5px solid #d66b3d; }
+      article.dream { border-left: 5px solid #4f8f7a; }
       article p, small { color: #66806f; font-size: 0.76rem; font-weight: 900; text-transform: uppercase; }
+      article p { display: flex; flex-wrap: wrap; align-items: center; gap: 7px; }
+      article p span, em { border-radius: 999px; padding: 3px 7px; color: #fff; font-style: normal; background: #4f8f7a; }
+      article.studio p span { background: #d66b3d; }
+      em { justify-self: start; color: #284f42; background: rgba(79, 143, 122, 0.14); font-size: 0.78rem; font-weight: 900; }
+      article.studio em { color: #7a3c24; background: rgba(214, 107, 61, 0.14); }
       h2 { font-size: 1.35rem; }
       strong { color: #34443c; }
       code { display: block; overflow: auto; border-radius: 8px; padding: 7px 9px; color: #284f42; background: rgba(255, 255, 255, 0.68); }
