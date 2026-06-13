@@ -586,3 +586,14 @@ Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, app/gl
 Command/result: npm test -- components/studio-mode.test.tsx && npm run lint && npm test && npm run build
 Voiceover note: "我给素材面板加了一个状态牌。以后录屏时，观众可以先看到素材是不是已经准备好，而不是只看一堆数字。"
 Usable for: asset-readiness clip, QA pipeline status explanation, Vibe Coding recording workbench polish, continued goal run round 34
+
+## Phase AV: v0.8.37 — Studio Script Mode Topbar Cue
+
+Date: 2026-06-13
+Clip title: Phase AV: v0.8.37 — Studio Script Mode Topbar Cue
+What changed: Added a topbar `讲解轨道已打开` cue that appears when `/studio` script mode is enabled.
+Why this matters: The recording state is now visible in the first glance of the 16:9 frame, so a tutorial clip can start with the product already showing that it is in walkthrough mode.
+Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, app/globals.css, README.md, docs/design/real-scenic-preview-roadmap.md, docs/recording/dev-log.md
+Command/result: npm test -- components/studio-mode.test.tsx && npm run lint && npm test && npm run build
+Voiceover note: "我把脚本模式的状态放到顶栏。录屏时只要打开脚本模式，画面顶部就会提示讲解轨道已打开。"
+Usable for: presenter-state clip, Studio walkthrough polish, Vibe Coding tutorial framing, continued goal run round 35

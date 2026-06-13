@@ -349,6 +349,7 @@ export function StudioMode() {
           <div className="studio-top-actions">
             <span>{demoRoadbookId ? `${roadbook.destination} 本地演示` : roadbook.destination}</span>
             <span>{studioStageText(stage)}</span>
+            {scriptMode ? <span className="studio-presenter-cue">讲解轨道已打开</span> : null}
             <button
               type="button"
               className={`studio-mode-toggle ${scriptMode ? "active" : ""}`}

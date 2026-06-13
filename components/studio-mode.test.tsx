@@ -94,6 +94,7 @@ describe("StudioMode demo roadbooks", () => {
     expect(workflow.textContent).toContain("打开索引");
     expect(screen.getByRole("link", { name: /打开总索引/ }).getAttribute("href")).toBe("/api/recording-assets/index");
     expect(screen.queryByLabelText("录屏讲解轨道")).toBeNull();
+    expect(screen.queryByText("讲解轨道已打开")).toBeNull();
   });
 
   it("switches the 16:9 recording view to the coastal demo roadbook", async () => {
@@ -166,6 +167,7 @@ describe("StudioMode demo roadbooks", () => {
     expect(screen.getByText("输入需求")).toBeTruthy();
     expect(screen.getByText("生成路书")).toBeTruthy();
     expect(screen.getByText("沉淀素材")).toBeTruthy();
+    expect(screen.getByText("讲解轨道已打开")).toBeTruthy();
     expect(screen.getByRole("button", { name: /脚本模式/ }).getAttribute("aria-pressed")).toBe("true");
   });
 

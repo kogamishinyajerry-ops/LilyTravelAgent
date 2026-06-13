@@ -130,7 +130,7 @@ npm run check:recording-suite
 
 `/studio` reads `/api/recording-assets` and shows a recording asset readiness badge, the current local recording asset count, Dream/Studio counts, latest QA pack, recent QA packs with Dream/Studio badges and usage hints, a copyable recording-suite command, a compact copy/run/refresh/index workflow rail, a refresh control, and an "打开总索引" link. The link opens `/api/recording-assets/index`, a local HTML overview with the same pack type, usage labels, and Dream/Studio counts. If the local index is missing, `/studio` shows the exact command: `npm run check:recording-suite`.
 
-`/studio` also has a `脚本模式` toggle that adds a compact three-step creator talking track for 16:9 walkthrough recording.
+`/studio` also has a `脚本模式` toggle that adds a compact three-step creator talking track and a topbar "讲解轨道已打开" cue for 16:9 walkthrough recording.
 
 ## Recording And Learning Assets
 

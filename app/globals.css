@@ -998,6 +998,11 @@ textarea {
   background: var(--moss);
 }
 
+.studio-top-actions > .studio-presenter-cue {
+  padding-inline: 10px;
+  background: linear-gradient(135deg, #bf8055, #d66b3d);
+}
+
 .ghost-link {
   gap: 6px;
   border: 1px solid var(--line);

@@ -599,6 +599,22 @@ The asset panel now communicates readiness before the viewer reads counts or ope
 
 > 我给素材面板加了状态牌。现在录屏时不用解释当前是不是准备好了，观众能直接看到“素材已准备”或“等待生成索引”。
 
+## Phase AV: Studio Script Mode Topbar Cue (2026-06-13)
+
+### What changed
+
+- Added a topbar "讲解轨道已打开" cue when `/studio` script mode is enabled.
+- The cue appears beside the existing destination and generation status pills.
+- The script-mode rail remains hidden by default, preserving the normal Studio layout.
+
+### Why this matters
+
+The recording state is now visible in the first glance of the 16:9 frame. A creator can start a clip from the Studio topbar and immediately show that the page is in walkthrough mode.
+
+### Recording angle
+
+> 我把脚本模式的状态也放到了顶栏。观众刚看到画面就知道现在是讲解轨道打开的版本，不需要我再额外解释。
+
 ## Phase D: real data sources (2026-06-07)
 
 Replaced the Phase C procedural stubs with real implementations:
