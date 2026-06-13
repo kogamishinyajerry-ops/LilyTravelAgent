@@ -21,6 +21,7 @@ DREAM_LENS=low-skyline npm run check:dream-visuals
 
 - `/dream` Dali QA pack: product footage for the default dream roadbook.
 - `/dream` coastal QA pack: product footage for the coastal preset.
+- `/dream` Skyline Lens QA pack: camera-direction proof for the Dali roadbook with `DREAM_LENS=low-skyline`.
 - Each Dream QA pack includes D1-D4 screenshots, Scene Inspector text, Composition profile, Director Lens status, Proof Stack status, WebGL pixel checks, and micro-motion evidence.
 - `/studio` QA pack: walkthrough footage for the 16:9 creator workbench.
 - Studio-Dream Bridge QA pack: handoff proof for the two-way recording circuit.
@@ -33,6 +34,7 @@ DREAM_LENS=low-skyline npm run check:dream-visuals
 - Recent three QA packs.
 - Dream QA / Studio QA / Bridge QA badges.
 - `产品画面` / `讲解画面` / `桥接验证` usage hints.
+- A Skyline Lens Dream QA pack in the local index after `npm run check:recording-suite`.
 - `Bridge QA 证据状态` in script mode.
 - In `/dream`, `Agent Visual Contract`, `Director Lens`, `Scene Inspector`, and `Proof Stack` show why the cinematic page is structured, not only decorative.
 - `打开总索引` leading to `/api/recording-assets/index`.
