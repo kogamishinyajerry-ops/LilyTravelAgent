@@ -817,3 +817,14 @@ Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, app/gl
 Command/result: npm test -- components/studio-mode.test.tsx && npm run lint && npm test && npm run build
 Voiceover note: "我给脚本模式旁边加了一张 Bridge QA 状态卡。看到 1 个桥接素材，就可以直接讲 Studio-Dream 闭环已经被验证。"
 Usable for: Bridge evidence status clip, script-mode proof cue, Vibe Coding recording workflow, continued goal run round 55
+
+## Phase BQ: v0.8.58 — Bridge QA Demo Script Update
+
+Date: 2026-06-13
+Clip title: Phase BQ: v0.8.58 — Bridge QA Demo Script Update
+What changed: Updated `docs/recording/studio-dream-demo-script.md` so the Studio-Dream recording path explicitly points to the Bridge QA evidence status card before entering Dream.
+Why this matters: The written recording path now matches the current product surface. The creator can follow the script and show verification evidence before showing the cinematic page.
+Files shown: docs/recording/studio-dream-demo-script.md, docs/recording/dev-log.md
+Command/result: npm run lint && npm test && npm run build
+Voiceover note: "我把 Bridge QA 状态卡写进 demo script。录屏时先讲证据，再进入梦境预览，这样产品逻辑更完整。"
+Usable for: demo-script update clip, Bridge evidence narration, Vibe Coding content system, continued goal run round 56
