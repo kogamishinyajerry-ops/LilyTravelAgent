@@ -123,14 +123,236 @@ async function main() {
     consoleMessages,
   };
   const summaryPath = path.join(outDir, "summary.json");
+  const htmlPath = path.join(outDir, "index.html");
   await writeFile(summaryPath, `${JSON.stringify(summary, null, 2)}\n`);
+  await writeFile(htmlPath, buildHtmlReport(summary));
 
   assert(consoleMessages.length === 0, `Unexpected browser console messages:\n${consoleMessages.join("\n")}`);
 
   console.log(`Dream visual QA passed: ${summaryPath}`);
+  console.log(`Dream visual QA gallery: ${htmlPath}`);
 }
 
 main().catch((error) => {
   console.error(error);
   process.exitCode = 1;
 });
+
+function buildHtmlReport(summary) {
+  const dayCards = summary.days
+    .map((day) => {
+      const shotLine = day.inspectorText.split("\n").find((line) => /^D\d/.test(line)) || `D${day.day}`;
+      return `
+        <article class="day-card">
+          <img src="${escapeHtml(path.basename(day.screenshotPath))}" alt="D${day.day} /dream screenshot" />
+          <div class="day-body">
+            <p class="eyebrow">D${day.day} Visual Check</p>
+            <h2>${escapeHtml(shotLine)}</h2>
+            <pre>${escapeHtml(day.inspectorText)}</pre>
+            <dl>
+              <div><dt>lit</dt><dd>${day.canvasStats.lit}</dd></div>
+              <div><dt>varied</dt><dd>${day.canvasStats.varied}</dd></div>
+              <div><dt>checksum</dt><dd>${day.canvasStats.checksum}</dd></div>
+            </dl>
+          </div>
+        </article>`;
+    })
+    .join("");
+
+  return `<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>LilyTravelAgent /dream Visual QA</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --ink: #25303a;
+        --muted: #6f7b86;
+        --paper: #f7f3ec;
+        --line: rgba(45, 63, 76, 0.14);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        color: var(--ink);
+        background: #e9edf1;
+        font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      main {
+        width: min(1440px, calc(100vw - 32px));
+        margin: 0 auto;
+        padding: 28px 0 40px;
+      }
+
+      header {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 18px;
+        margin-bottom: 18px;
+      }
+
+      h1,
+      h2,
+      p {
+        margin: 0;
+      }
+
+      h1 {
+        font-size: clamp(1.9rem, 3vw, 3.2rem);
+        line-height: 0.95;
+      }
+
+      .meta {
+        color: var(--muted);
+        font-size: 0.9rem;
+        font-weight: 700;
+        text-align: right;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+      }
+
+      .day-card,
+      .motion-card {
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.72);
+        box-shadow: 0 18px 50px rgba(47, 60, 70, 0.12);
+      }
+
+      .day-card img {
+        display: block;
+        width: 100%;
+        aspect-ratio: 16 / 10;
+        object-fit: cover;
+        background: #dce4e8;
+      }
+
+      .day-body,
+      .motion-card {
+        padding: 16px;
+      }
+
+      .eyebrow {
+        color: var(--muted);
+        font-size: 0.72rem;
+        font-weight: 900;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      h2 {
+        margin-top: 5px;
+        font-size: 1.3rem;
+      }
+
+      pre {
+        overflow: auto;
+        margin: 12px 0;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 10px;
+        color: #35414a;
+        background: var(--paper);
+        font-size: 0.78rem;
+        line-height: 1.45;
+        white-space: pre-wrap;
+      }
+
+      dl {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+        margin: 0;
+      }
+
+      dl div {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 8px;
+        background: rgba(255, 255, 255, 0.64);
+      }
+
+      dt {
+        color: var(--muted);
+        font-size: 0.7rem;
+        font-weight: 900;
+        text-transform: uppercase;
+      }
+
+      dd {
+        margin: 3px 0 0;
+        font-weight: 900;
+      }
+
+      .motion-card {
+        margin-top: 16px;
+      }
+
+      .motion-ok {
+        color: #18724d;
+      }
+
+      @media (max-width: 900px) {
+        header,
+        .grid {
+          display: block;
+        }
+
+        .meta {
+          margin-top: 10px;
+          text-align: left;
+        }
+
+        .day-card + .day-card {
+          margin-top: 14px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <div>
+          <p class="eyebrow">LilyTravelAgent Visual QA</p>
+          <h1>/dream D1-D4 Review</h1>
+        </div>
+        <p class="meta">
+          ${escapeHtml(summary.createdAt)}<br />
+          ${escapeHtml(summary.targetUrl)}
+        </p>
+      </header>
+      <section class="grid">${dayCards}</section>
+      <section class="motion-card">
+        <p class="eyebrow">Motion Evidence</p>
+        <h2 class="${summary.motion.changed ? "motion-ok" : ""}">
+          D${summary.motion.day} checksum ${summary.motion.changed ? "changed" : "did not change"}
+        </h2>
+        <pre>${escapeHtml(JSON.stringify(summary.motion, null, 2))}</pre>
+      </section>
+    </main>
+  </body>
+</html>
+`;
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}

@@ -199,15 +199,16 @@ High-quality dynamic roadbooks need motion restraint, not random animation every
 - Added `scripts/check-dream-visuals.mjs`.
 - Added `npm run check:dream-visuals`.
 - The script opens `/dream`, clicks D1-D4, verifies Scene Inspector text, checks WebGL canvas pixels, verifies D2 motion by comparing two canvas checksums, and saves screenshots plus `summary.json`.
+- It also writes a local `index.html` gallery with the four screenshots, Inspector summaries, canvas metrics, and motion evidence.
 - Outputs go to `recordings/visual-checks/`, which remains git-ignored for local recording and review.
 
 ### Why this matters
 
-The visual stack is now complex enough that "looks good on my screen" is not enough. This phase gives every future visual iteration a repeatable local review pack: screenshots, pixel checks, motion evidence, and browser console errors in one artifact. It supports both engineering confidence and the user's recording workflow.
+The visual stack is now complex enough that "looks good on my screen" is not enough. This phase gives every future visual iteration a repeatable local review pack: screenshots, pixel checks, motion evidence, browser console errors, and a readable gallery. It supports both engineering confidence and the user's recording workflow.
 
 ### Recording angle
 
-> 视觉产品不能只靠主观感觉。我加了一个本地视觉 QA 命令：自动打开 /dream，点 D1-D4，截图，检查 WebGL 像素，确认微动还在，然后写一个 summary.json。以后每次打磨画面，都能留下可复盘的视觉证据。
+> 视觉产品不能只靠主观感觉。我加了一个本地视觉 QA 命令：自动打开 /dream，点 D1-D4，截图，检查 WebGL 像素，确认微动还在，然后写 summary.json 和一个 HTML gallery。以后每次打磨画面，都能留下可复盘的视觉证据。
 
 ## Phase D: real data sources (2026-06-07)
 
