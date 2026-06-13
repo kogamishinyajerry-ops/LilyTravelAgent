@@ -850,3 +850,14 @@ Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, docs/r
 Command/result: npm test -- components/studio-mode.test.tsx && npm run lint && npm test && npm run build
 Voiceover note: "我把 Bridge QA 也接进素材流程 rail。跑完 QA、刷新、打开索引之后，最后一步就是指向闭环证据。"
 Usable for: workflow-rail clip, Bridge evidence operation flow, Vibe Coding product workflow, continued goal run round 58
+
+## Phase BT: v0.8.61 — Bridge QA Evidence Script
+
+Date: 2026-06-13
+Clip title: Phase BT: v0.8.61 — Bridge QA Evidence Script
+What changed: Added `docs/recording/bridge-qa-evidence-script.md`, a short recording script focused on Bridge QA proof, and linked it from README.
+Why this matters: The Bridge QA evidence workflow is now a standalone content asset. It can become a 30-60 second insert explaining why the product is verified, not only visually connected.
+Files shown: docs/recording/bridge-qa-evidence-script.md, README.md, docs/recording/dev-log.md
+Command/result: npm run lint && npm test && npm run build
+Voiceover note: "我把 Bridge QA 单独做成一条短脚本。它可以插在 Studio 工作台和 Dream 视觉预览之间，专门讲产品闭环证据。"
+Usable for: Bridge proof short clip, evidence narrative, Vibe Coding content system, continued goal run round 59

@@ -49,4 +49,4 @@ This recap closes the Studio-Dream bridge run. The theme was turning two separat
 
 ## Next useful slice
 
-The next narrow product slice should close the Bridge QA evidence run with a Goals 51-60 recap that lists the asset index, Studio UI, script, and workflow rail changes.
+The next narrow product slice should close the Bridge QA evidence run with `docs/recording/goal-51-60-recap.md`.
