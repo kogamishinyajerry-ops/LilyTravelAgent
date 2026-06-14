@@ -196,6 +196,11 @@ describe("StudioMode demo roadbooks", () => {
     expect(evidenceTimelineText).toContain("Suite Run · 7 步 · 7 通过");
     expect(evidenceTimelineText).toContain("Dream + Studio 双证据 · 6 条链接");
     expect(evidenceTimelineText).toContain("7 步 · 7 通过");
+    const storyPreview = screen.getByLabelText("证据讲解稿预览");
+    expect(storyPreview.textContent).toContain("01. Dream Proof: 已验证 · Proof · 3/5 ready");
+    expect(storyPreview.textContent).toContain("02. Studio Proof: 已捕获 · Suite Run · 7 步 · 7 通过");
+    expect(storyPreview.textContent).toContain("03. Index QA: 已验证 · Dream + Studio 双证据 · 6 条链接");
+    expect(storyPreview.textContent).toContain("04. Suite Run: 已通过 · 7 步 · 7 通过");
     expect(within(evidenceTimeline).getByRole("link", { name: /Dream Proof/ }).getAttribute("href")).toBe(
       "/api/recording-assets/file?path=visual-checks%2Fdream-proof-latest%2Fsummary.json",
     );
@@ -412,6 +417,10 @@ describe("StudioMode demo roadbooks", () => {
     expect(screen.getByLabelText("录屏证据时间线").textContent).toContain("npm run check:studio-visuals");
     expect(screen.getByLabelText("录屏证据时间线").textContent).toContain("npm run check:recording-index");
     expect(screen.getByLabelText("录屏证据时间线").textContent).toContain("npm run check:recording-suite");
+    expect(screen.getByLabelText("证据讲解稿预览").textContent).toContain("01. Dream Proof: 待运行 · npm run check:dream-visuals");
+    expect(screen.getByLabelText("证据讲解稿预览").textContent).toContain("02. Studio Proof: 待运行 · npm run check:studio-visuals");
+    expect(screen.getByLabelText("证据讲解稿预览").textContent).toContain("03. Index QA: 待运行 · npm run check:recording-index");
+    expect(screen.getByLabelText("证据讲解稿预览").textContent).toContain("04. Suite Run: 待运行 · npm run check:recording-suite");
     expect(screen.getByText("Dream 0")).toBeTruthy();
     expect(screen.getByText("Studio 0")).toBeTruthy();
     expect(screen.getByText("生成本地素材索引")).toBeTruthy();
@@ -560,16 +569,10 @@ describe("StudioMode demo roadbooks", () => {
     render(<StudioMode />);
 
     expect(await screen.findByText("15 个素材包")).toBeTruthy();
+    const previewLines = Array.from(screen.getByLabelText("证据讲解稿预览").querySelectorAll("p")).map((line) => line.textContent || "");
     fireEvent.click(screen.getByRole("button", { name: "复制讲解稿" }));
 
-    expect(writeText).toHaveBeenCalledWith(
-      [
-        "01. Dream Proof: 已验证 · Proof · 3/5 ready",
-        "02. Studio Proof: 已捕获 · Suite Run · 7 步 · 7 通过",
-        "03. Index QA: 已验证 · Dream + Studio 双证据 · 6 条链接",
-        "04. Suite Run: 已通过 · 7 步 · 7 通过",
-      ].join("\n"),
-    );
+    expect(writeText).toHaveBeenCalledWith(previewLines.join("\n"));
     expect(await screen.findByText("证据讲解稿已复制")).toBeTruthy();
     expect(screen.getByRole("button", { name: "讲解稿已复制" })).toBeTruthy();
   });

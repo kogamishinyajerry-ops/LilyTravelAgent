@@ -444,6 +444,10 @@ function getRecordingEvidenceTimeline(recordingAssets: RecordingAssetsState) {
   ];
 }
 
+function buildProofStoryLines(timeline: ReturnType<typeof getRecordingEvidenceTimeline>) {
+  return timeline.map((item, index) => `${String(index + 1).padStart(2, "0")}. ${item.label}: ${item.state} · ${item.detail}`);
+}
+
 function getRecordingProofChecklist(recordingAssets: RecordingAssetsState) {
   if (recordingAssets.status !== "ready") {
     return [
@@ -542,6 +546,7 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
       ? getRecordingIndexCheckCoverage(recordingAssets.latestRecordingIndexCheck)
       : null;
   const recordingEvidenceTimeline = useMemo(() => getRecordingEvidenceTimeline(recordingAssets), [recordingAssets]);
+  const proofStoryLines = useMemo(() => buildProofStoryLines(recordingEvidenceTimeline), [recordingEvidenceTimeline]);
 
   const loadRecordingAssets = useCallback(
     async ({ markRefreshing = true, isActive = () => true }: { markRefreshing?: boolean; isActive?: () => boolean } = {}) => {
@@ -690,12 +695,8 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
   }
 
   async function copyProofStory() {
-    const story = recordingEvidenceTimeline
-      .map((item, index) => `${String(index + 1).padStart(2, "0")}. ${item.label}: ${item.state} · ${item.detail}`)
-      .join("\n");
-
     try {
-      await navigator.clipboard.writeText(story);
+      await navigator.clipboard.writeText(proofStoryLines.join("\n"));
       setProofStoryCopyState("copied");
     } catch {
       setProofStoryCopyState("error");
@@ -1009,6 +1010,12 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
                         })}
                       </div>
                       <div className="studio-proof-story-actions" aria-label="证据讲解稿">
+                        <div className="studio-proof-story-preview" aria-label="证据讲解稿预览">
+                          <small>讲解稿预览</small>
+                          {proofStoryLines.map((line) => (
+                            <p key={line}>{line}</p>
+                          ))}
+                        </div>
                         <button type="button" onClick={copyProofStory}>
                           <Copy size={13} />
                           {proofStoryCopyState === "copied" ? "讲解稿已复制" : proofStoryCopyState === "error" ? "手动复制讲解稿" : "复制讲解稿"}

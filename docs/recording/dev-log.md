@@ -1708,3 +1708,14 @@ Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, app/gl
 Command/result: npm test -- components/studio-mode.test.tsx passed with 13 tests; browser check confirmed the action is visible, the four timeline steps remain visible, and console errors were empty; npm run lint && npm test && npm run build passed with 44 files, 921 tests, and a successful production build.
 Voiceover note: "证据时间线现在可以一键复制成四行讲解稿，录完屏之后可以直接当字幕或旁白草稿用。"
 Usable for: voiceover workflow clip, creator tooling narration, continued goal run round 514
+
+## Phase ET: v0.8.139 — Proof Story Preview
+
+Date: 2026-06-14
+Clip title: Phase ET: v0.8.139 — Proof Story Preview
+What changed: `/studio` now shows a compact `讲解稿预览` block under the evidence timeline. The preview displays the same four lines that `复制讲解稿` writes to the clipboard.
+Why this matters: The creator can inspect the narration before copying, recording, or pasting it into captions.
+Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, app/globals.css
+Command/result: npm test -- components/studio-mode.test.tsx passed with 13 tests; browser check confirmed the four preview lines and empty console errors; npm run lint && npm test && npm run build passed with 44 files, 921 tests, and a successful production build.
+Voiceover note: "现在复制讲解稿之前，Studio 会先把四行文案展示出来。录屏时观众能看到这条证据链怎么变成旁白。"
+Usable for: proof-story preview clip, caption workflow narration, continued goal run round 524
