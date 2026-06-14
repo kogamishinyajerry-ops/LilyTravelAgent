@@ -23,6 +23,12 @@ The full recording suite also covers every Director Lens mode:
 npm run check:recording-suite
 ```
 
+After at least two complete lens batches exist, verify the dashboard-to-`/dream` candidate handoff:
+
+```bash
+npm run check:lens-candidate-handoff
+```
+
 ## Output
 
 Each lens run writes a folder under `recordings/visual-checks/` with:
@@ -60,6 +66,7 @@ After `npm run index:recording-assets`, the top-level recording index shows lens
 - Do the candidate thumbnails make the visual difference readable without scrolling down to the full crop grid?
 - Does each candidate explain why it was picked in one short `Why:` badge?
 - Does hover/focus make the active candidate obvious without changing the strip height?
+- Do `Open first candidate`, the first card, and a queue chip all land on `/dream` with matching rank/day/lens context?
 - Does the `/dream` handoff show the candidate cue in the first viewport?
 - Does the cue show current candidate count and the next candidate without needing storage?
 - Does the `Next` chip advance to the next ranked candidate when clicked?

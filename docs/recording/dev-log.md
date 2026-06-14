@@ -1411,3 +1411,14 @@ Files shown: docs/recording/goal-261-270-recap.md, `/api/recording-assets/lens-c
 Command/result: npm run lint && npm test && npm run build (44 files, 909 tests, build passed)
 Voiceover note: "Why 徽章和交互状态做完后，继续完整质量门。现在这个候选队列更像产品控件，而不是临时报告。"
 Usable for: goal closeout clip, candidate rationale proof, click-through QA handoff, continued goal run round 267
+
+## Phase DS: v0.8.112 — Candidate Click-Through QA
+
+Date: 2026-06-14
+Clip title: Phase DS: v0.8.112 — Candidate Click-Through QA
+What changed: Added `npm run check:lens-candidate-handoff`, a local Playwright QA script that clicks the candidate primary action, first candidate card, and one queue chip, then verifies `/dream` rank/day/lens context.
+Why this matters: The candidate queue is now mechanically checked as a real workflow, not just a visual strip.
+Files shown: scripts/check-lens-candidate-handoff.mjs, package.json, docs/recording/lens-visual-capture-workflow.md
+Command/result: npm run check:lens-candidate-handoff should write screenshots, summary.json, and clip-notes.md under recordings/candidate-handoff-checks.
+Voiceover note: "这里我把录屏链路也做成 QA：脚本真的去点三个入口，再确认 /dream 的候选 cue、镜头和 D 几都对。"
+Usable for: click-through QA proof clip, dashboard-to-Dream workflow evidence, continued goal run round 274
