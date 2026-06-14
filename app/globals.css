@@ -1917,6 +1917,38 @@ textarea {
   font-size: 0.58rem;
 }
 
+.studio-proof-production-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 5px;
+  align-items: center;
+}
+
+.studio-proof-production-row .studio-proof-production-status,
+.studio-proof-production-row .studio-proof-production-receipt {
+  min-width: 0;
+}
+
+.studio-proof-production-receipt {
+  display: inline-flex;
+  align-items: center;
+  justify-self: end;
+  width: max-content;
+  height: 20px;
+  min-height: 0;
+  border-radius: 7px;
+  padding: 2px 6px;
+  font-size: 0.58rem;
+  line-height: 1.1;
+}
+
+.studio-recording-assets .studio-proof-production-receipt {
+  flex: 0 0 auto;
+  min-height: 0;
+  font-size: 0.58rem;
+  line-height: 1.1;
+}
+
 .studio-proof-closeout {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));

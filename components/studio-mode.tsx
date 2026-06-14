@@ -1143,12 +1143,25 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
                           ) : (
                             <span className="studio-proof-script-status missing">Index QA 待验证脚本素材 · {recordingIndexCommand}</span>
                           )}
-                          <span
-                            className={`studio-proof-script-status studio-proof-production-status ${proofStoryProductionAssets.ready ? "ready" : "missing"}`}
-                            aria-label="Proof Story Production Assets 状态"
-                          >
-                            {proofStoryProductionAssetsLine}
-                          </span>
+                          <div className="studio-proof-production-row">
+                            <span
+                              className={`studio-proof-script-status studio-proof-production-status ${proofStoryProductionAssets.ready ? "ready" : "missing"}`}
+                              aria-label="Proof Story Production Assets 状态"
+                            >
+                              {proofStoryProductionAssetsLine}
+                            </span>
+                            {proofStoryProductionAssets.ready && recordingAssets.status === "ready" && recordingAssets.latestRecordingIndexCheck?.notesPath ? (
+                              <a
+                                className="studio-proof-script-status studio-proof-production-receipt ready"
+                                href={buildRecordingEvidenceUrl(recordingAssets.latestRecordingIndexCheck.notesPath)}
+                                target="_blank"
+                                rel="noreferrer"
+                                aria-label="Production Assets QA 收据"
+                              >
+                                QA 收据
+                              </a>
+                            ) : null}
+                          </div>
                           <div className="studio-proof-closeout" aria-label="Proof Story 收口清单">
                             {proofStoryCloseoutItems.map((item) => (
                               <span className={item.ready ? "ready" : "missing"} key={item.label}>

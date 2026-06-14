@@ -1884,3 +1884,14 @@ Files shown: scripts/check-recording-index.mjs, recordings/index-checks/2026-06-
 Command/result: node --check scripts/check-recording-index.mjs passed; npm run check:recording-index passed and the newest clip notes contain `Production Assets QA`.
 Voiceover note: "现在这份 QA proof pack 自己也会写清楚：Production Assets 的标题、口播、收口状态和三条链接都检查过。"
 Usable for: QA receipt clip, clip-notes workflow narration, continued goal run round 674
+
+## Phase FJ: v0.8.155 — Studio Links Production Assets QA Receipt
+
+Date: 2026-06-14
+Clip title: Phase FJ: v0.8.155 — Studio Links Production Assets QA Receipt
+What changed: `/studio` now shows a compact `QA 收据` link next to the Proof Story `Production Assets` readiness chip when the latest index-check clip notes exist. The link uses `/api/recording-assets/file` and points to the latest `index-checks/.../clip-notes.md`.
+Why this matters: The Proof Story production-assets loop now returns from QA proof pack back into Studio: readiness chip plus receipt link in the same small row.
+Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, app/globals.css, docs/recording/goal-681-690-recap.md
+Command/result: npm test -- components/studio-mode.test.tsx passed with 18 tests; browser check confirmed the `Production Assets QA 收据` link is visible, compact, points to `clip-notes.md`, and console errors are empty.
+Voiceover note: "现在 Studio 这张卡不只告诉我 Production Assets 已入库，还能一键打开刚刚的 QA 收据。"
+Usable for: Studio QA receipt loop, production-assets closeout narration, continued goal run round 684
