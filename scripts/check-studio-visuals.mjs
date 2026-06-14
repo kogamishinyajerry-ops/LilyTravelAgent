@@ -114,17 +114,18 @@ async function captureProofPlayback(page) {
 
   const initialCues = await readProofChecklist(page);
   assert(initialCues.some((cue) => cue.label === "Suite Run"), "Studio proof checklist should include Suite Run.");
+  assert(initialCues.some((cue) => cue.label === "Final Handoff"), "Studio proof checklist should include Final Handoff.");
 
   const checklist = page.locator('[aria-label="录屏证据清单"]');
   await checklist.getByRole("button", { name: "播放证据线" }).click();
   await page.waitForFunction(
-    () => document.querySelector('[aria-label="录屏证据清单"] [aria-current="step"]')?.textContent?.includes("Suite Run"),
+    () => document.querySelector('[aria-label="录屏证据清单"] [aria-current="step"]')?.textContent?.includes("Final Handoff"),
     null,
-    { timeout: 10_000 },
+    { timeout: 15_000 },
   );
 
   const finalActiveCue = (await readProofChecklist(page)).find((cue) => cue.active) || null;
-  assert(finalActiveCue?.label === "Suite Run", `Studio proof playback should end on Suite Run, got ${finalActiveCue?.label || "none"}.`);
+  assert(finalActiveCue?.label === "Final Handoff", `Studio proof playback should end on Final Handoff, got ${finalActiveCue?.label || "none"}.`);
 
   const screenshotPath = path.join(outDir, "studio-suite-run-proof.png");
   await page.screenshot({ path: screenshotPath, fullPage: false });
@@ -159,6 +160,11 @@ async function captureProofStoryScriptMaterial(page) {
   const completeBundleCopyButton = card.getByRole("button", { name: "复制 Proof Story Complete Bundle" });
   const bundleChainCopyButton = card.getByRole("button", { name: "复制 Proof Story Bundle Chain" });
   const proofChainSummaryCopyButton = card.getByRole("button", { name: "复制 Proof Chain Summary" });
+  const finalDeliveryCue = page.getByLabel("脚本模式最终交付摘要");
+  const finalDeliveryCopyButton = page.getByRole("button", { name: "复制脚本模式最终交付摘要" });
+  const finalDeliveryNotesBadge = page.getByLabel("脚本模式后期 notes 状态");
+  const finalDeliverySummaryLine = await finalDeliveryCue.locator("p").innerText();
+  const finalDeliveryNotesBadgeBeforeCopy = await finalDeliveryNotesBadge.innerText();
   assert(text.includes(proofStoryScriptPath), `Proof Story script card did not include ${proofStoryScriptPath}: ${text}`);
   assert(text.includes(proofStoryScriptCue), `Proof Story script card did not include cue text: ${text}`);
   assert(handoffPreview.includes("Proof Story Handoff"), `Proof Story script card did not include handoff preview: ${handoffPreview}`);
@@ -169,6 +175,11 @@ async function captureProofStoryScriptMaterial(page) {
   assert(completeBundleLine.includes("Proof Story Complete Bundle"), `Proof Story script card did not include Complete Bundle: ${completeBundleLine}`);
   assert(bundleChainLine.includes("Proof Story Bundle Chain"), `Proof Story script card did not include Bundle Chain: ${bundleChainLine}`);
   assert(proofChainSummaryLine.includes("Proof Chain Summary"), `Proof Story script card did not include Proof Chain Summary: ${proofChainSummaryLine}`);
+  assert(finalDeliverySummaryLine.includes("最终交付摘要"), `Final delivery summary cue missing final summary line: ${finalDeliverySummaryLine}`);
+  assert(
+    /后期 notes 待(复制|补齐)/.test(finalDeliveryNotesBadgeBeforeCopy),
+    `Final delivery notes badge did not start in a pending state: ${finalDeliveryNotesBadgeBeforeCopy}`,
+  );
 
   await handoffCopyButton.click();
   await page.waitForFunction(
@@ -240,6 +251,23 @@ async function captureProofStoryScriptMaterial(page) {
     `Proof Chain Summary copy did not reach copied or fallback state: ${proofChainSummaryCopyButtonText}`,
   );
 
+  await finalDeliveryCopyButton.click();
+  await page.waitForFunction(
+    () => document.querySelector('[aria-label="脚本模式后期 notes 状态"]')?.textContent?.includes("已复制到后期 notes"),
+    null,
+    { timeout: 5_000 },
+  );
+  const finalDeliveryCopyButtonText = await finalDeliveryCopyButton.innerText();
+  const finalDeliveryNotesBadgeAfterCopy = await finalDeliveryNotesBadge.innerText();
+  const finalDeliveryCopyState = finalDeliveryCopyButtonText.includes("已复制")
+    ? "Final Handoff 已复制"
+    : `Final Handoff ${finalDeliveryCopyButtonText.trim() || "手动"}`;
+  assert(finalDeliveryCopyState === "Final Handoff 已复制", `Final Handoff copy did not reach copied state: ${finalDeliveryCopyButtonText}`);
+  assert(
+    finalDeliveryNotesBadgeAfterCopy === "已复制到后期 notes",
+    `Final delivery notes badge did not reach copied state: ${finalDeliveryNotesBadgeAfterCopy}`,
+  );
+
   const screenshotPath = path.join(outDir, "studio-proof-story-script-material.png");
   await card.screenshot({ path: screenshotPath });
 
@@ -257,6 +285,10 @@ async function captureProofStoryScriptMaterial(page) {
     bundleChainCopyState,
     proofChainSummaryLine,
     proofChainSummaryCopyState,
+    finalDeliverySummaryLine,
+    finalDeliveryCopyState,
+    finalDeliveryNotesBadgeBeforeCopy,
+    finalDeliveryNotesBadgeAfterCopy,
     text,
     screenshotPath,
   };
@@ -299,7 +331,7 @@ function buildHtmlReport(summary) {
   const proof = summary.proofPlayback
     ? `
       <section class="proof">
-        <img src="${escapeHtml(path.basename(summary.proofPlayback.screenshotPath))}" alt="Studio Suite Run proof playback final state" />
+        <img src="${escapeHtml(path.basename(summary.proofPlayback.screenshotPath))}" alt="Studio proof playback final state" />
         <div>
           <p>proof playback</p>
           <h2>${escapeHtml(summary.proofPlayback.finalActiveCue?.label || "Proof cue")}</h2>
@@ -330,6 +362,10 @@ function buildHtmlReport(summary) {
             <div><dt>chain copy</dt><dd>${escapeHtml(summary.scriptMaterial.bundleChainCopyState || "")}</dd></div>
             <div><dt>proof chain summary</dt><dd>${escapeHtml(summary.scriptMaterial.proofChainSummaryLine || "")}</dd></div>
             <div><dt>summary copy</dt><dd>${escapeHtml(summary.scriptMaterial.proofChainSummaryCopyState || "")}</dd></div>
+            <div><dt>final handoff</dt><dd>${escapeHtml(summary.scriptMaterial.finalDeliverySummaryLine || "")}</dd></div>
+            <div><dt>final copy</dt><dd>${escapeHtml(summary.scriptMaterial.finalDeliveryCopyState || "")}</dd></div>
+            <div><dt>notes badge before</dt><dd>${escapeHtml(summary.scriptMaterial.finalDeliveryNotesBadgeBeforeCopy || "")}</dd></div>
+            <div><dt>notes badge after</dt><dd>${escapeHtml(summary.scriptMaterial.finalDeliveryNotesBadgeAfterCopy || "")}</dd></div>
           </dl>
         </div>
       </section>`
@@ -485,7 +521,7 @@ function buildClipNotes(summary) {
     `- State: ${summary.proofPlayback.finalActiveCue?.state || ""}`,
     `- Detail: ${summary.proofPlayback.finalActiveCue?.detail || ""}`,
     `- Button after playback: ${summary.proofPlayback.buttonTextAfterPlayback}`,
-    `- Voiceover prompt: 播放证据线最后停在 Suite Run，用 full suite 总收据给 Studio 录屏证据链收口。`,
+    `- Voiceover prompt: 播放证据线最后停在 Final Handoff，用最终交付摘要给 Studio 录屏证据链收口。`,
     ``,
     `## Proof Story Script Material`,
     ``,
@@ -502,6 +538,10 @@ function buildClipNotes(summary) {
     `- Bundle Chain copy state: ${summary.scriptMaterial.bundleChainCopyState}`,
     `- Proof Chain Summary: ${summary.scriptMaterial.proofChainSummaryLine}`,
     `- Proof Chain Summary copy state: ${summary.scriptMaterial.proofChainSummaryCopyState}`,
+    `- Final Handoff summary: ${summary.scriptMaterial.finalDeliverySummaryLine}`,
+    `- Final Handoff copy state: ${summary.scriptMaterial.finalDeliveryCopyState}`,
+    `- Notes badge before copy: ${summary.scriptMaterial.finalDeliveryNotesBadgeBeforeCopy}`,
+    `- Notes badge after copy: ${summary.scriptMaterial.finalDeliveryNotesBadgeAfterCopy}`,
     `- Voiceover prompt: Studio 现在把 Proof Story 脚本路径、证据时间线、四行预览和复制动作放在同一个录屏面板里。`,
     ``,
   ].join("\n");

@@ -2269,3 +2269,14 @@ Files shown: components/studio-mode.tsx, app/globals.css, components/studio-mode
 Command/result: npm test -- components/studio-mode.test.tsx passed with 41 tests; browser check against `http://localhost:3000/studio` showed the badge changing from `后期 notes 待复制` to `已复制到后期 notes`, copied text containing `最终交付摘要`, no topbar overflow, and 0 console errors.
 Voiceover note: "复制动作现在有主视角反馈：点完最终交付摘要，顶部直接变成已复制到后期 notes。观众不用猜剪贴板发生了什么。"
 Usable for: script-mode closing state clip, post-production notes handoff demo, continued goal run round 1024
+
+## Phase FS: v0.8.190 — Studio QA Captures Notes Badge
+
+Date: 2026-06-14
+Clip title: Phase FS: v0.8.190 — Studio QA Captures Notes Badge
+What changed: `npm run check:studio-visuals` now waits for proof playback to end on `Final Handoff`, clicks the script-mode final handoff copy button, and records the `后期 notes` badge before/after copy text.
+Why this matters: The visible post-production handoff state is now part of the automated QA proof pack, not only a manual browser check.
+Files shown: scripts/check-studio-visuals.mjs, README.md, docs/recording/goal-1031-1040-recap.md
+Command/result: node --check scripts/check-studio-visuals.mjs passed; npm run check:studio-visuals passed and generated `recordings/studio-checks/2026-06-14T12-47-58-949Z/clip-notes.md` with `Notes badge before copy: 后期 notes 待复制` and `Notes badge after copy: 已复制到后期 notes`.
+Voiceover note: "现在 QA 脚本也会亲自点最后的复制按钮，并把顶部后期 notes 状态写进证据包。这个功能不是只在我眼前看起来能用，而是被自动验收了。"
+Usable for: Studio QA automation clip, final handoff evidence-pack walkthrough, continued goal run round 1034
