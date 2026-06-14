@@ -1664,3 +1664,14 @@ Files shown: scripts/check-recording-index.mjs, recordings/index-checks/2026-06-
 Command/result: node --check scripts/check-recording-index.mjs passed; npm run check:recording-index passed with 6 evidence links; empty recordings root skipped cleanly; Dream-only root failed with a missing Studio Proof message; npm run check:recording-suite passed; npm run lint && npm test && npm run build passed with 44 files, 918 tests, and a successful production build.
 Voiceover note: "现在 Index QA 不是只检查 Dream Proof，而是同时检查 Dream 和 Studio。六条证据链接都能打开，archive 才算真的自证。"
 Usable for: double-proof QA clip, Agent asset pipeline narration, continued goal run round 474
+
+## Phase EP: v0.8.135 — Studio Double-Proof Index QA Copy
+
+Date: 2026-06-14
+Clip title: Phase EP: v0.8.135 — Studio Double-Proof Index QA Copy
+What changed: `/studio` now reads the latest Recording Index QA link count and labels the card/checklist as `Dream + Studio 双证据` for 6-link checks, while preserving `Dream 单证据` for older 3-link summaries.
+Why this matters: The recording workbench now explains what the strengthened Index QA actually proves, instead of making the archive receipt look Dream-only.
+Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, recordings/index-checks/2026-06-14T08-39-25-476Z/summary.json
+Command/result: npm test -- components/studio-mode.test.tsx passed with 11 tests; browser check confirmed `/studio` shows `Dream + Studio 双证据 · Proof · 3/5 ready · 6 条证据链接`, script mode shows `Dream + Studio 双证据 · 6 条链接`, and console errors were empty; npm run lint && npm test && npm run build passed with 44 files, 919 tests, and a successful production build.
+Voiceover note: "现在 Studio 不是只告诉我索引 QA 通过了，而是明确告诉我：这个 QA 覆盖 Dream 和 Studio 两条证据链。"
+Usable for: Studio evidence-card narration, double-proof QA walkthrough, continued goal run round 484

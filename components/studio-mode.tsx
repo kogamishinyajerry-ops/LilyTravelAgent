@@ -354,6 +354,20 @@ function getBridgeEvidenceCue(recordingAssets: RecordingAssetsState) {
   };
 }
 
+function getRecordingIndexCheckCoverage(indexCheck: RecordingIndexCheckSummary) {
+  const isDoubleProof = indexCheck.linkCount >= 6;
+  const label = isDoubleProof ? "Dream + Studio 双证据" : "Dream 单证据";
+  const linkUnit = isDoubleProof ? "条链接" : "条证据链接";
+
+  return {
+    isDoubleProof,
+    label,
+    checklistDetail: `${label} · ${indexCheck.linkCount} ${linkUnit}`,
+    cardDetail: `${label} · ${indexCheck.finalCueLabel} · ${indexCheck.finalCueValue} · ${indexCheck.linkCount} 条证据链接`,
+    cue: isDoubleProof ? "确认总索引同时验收 Dream 和 Studio 两条证据链。" : "确认素材总索引本身也有自动验收。",
+  };
+}
+
 function getRecordingProofChecklist(recordingAssets: RecordingAssetsState) {
   if (recordingAssets.status !== "ready") {
     return [
@@ -367,6 +381,9 @@ function getRecordingProofChecklist(recordingAssets: RecordingAssetsState) {
   }
 
   const bridgeCount = recordingAssets.countsByType.bridge;
+  const indexCoverage = recordingAssets.latestRecordingIndexCheck
+    ? getRecordingIndexCheckCoverage(recordingAssets.latestRecordingIndexCheck)
+    : null;
   return [
     {
       label: "Bridge QA",
@@ -401,11 +418,9 @@ function getRecordingProofChecklist(recordingAssets: RecordingAssetsState) {
     {
       label: "Index QA",
       state: recordingAssets.latestRecordingIndexCheck ? "已验证" : "待运行",
-      detail: recordingAssets.latestRecordingIndexCheck
-        ? `${recordingAssets.latestRecordingIndexCheck.linkCount} 条证据链接`
-        : recordingIndexCommand,
+      detail: indexCoverage ? indexCoverage.checklistDetail : recordingIndexCommand,
       href: recordingAssets.latestRecordingIndexCheck?.summaryPath || "",
-      cue: "确认素材总索引本身也有自动验收。",
+      cue: indexCoverage ? indexCoverage.cue : "确认素材总索引本身也有自动验收。",
     },
     {
       label: "Suite Run",
@@ -445,6 +460,10 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
   const topStops = roadbook.days.flatMap((day) => day.stops.slice(0, 2)).slice(0, 8);
   const dreamHandoffHref = demoRoadbookId ? `/dream?demo=${demoRoadbookId}` : "/dream";
   const recordingProofChecklist = useMemo(() => getRecordingProofChecklist(recordingAssets), [recordingAssets]);
+  const recordingIndexCoverage =
+    recordingAssets.status === "ready" && recordingAssets.latestRecordingIndexCheck
+      ? getRecordingIndexCheckCoverage(recordingAssets.latestRecordingIndexCheck)
+      : null;
 
   const loadRecordingAssets = useCallback(
     async ({ markRefreshing = true, isActive = () => true }: { markRefreshing?: boolean; isActive?: () => boolean } = {}) => {
@@ -946,9 +965,7 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
                       <>
                         <small>Index QA · {formatRecordingAssetTime(recordingAssets.latestRecordingIndexCheck.createdAt)}</small>
                         <strong>素材总索引已验证</strong>
-                        <span>
-                          {recordingAssets.latestRecordingIndexCheck.finalCueLabel} · {recordingAssets.latestRecordingIndexCheck.finalCueValue} · {recordingAssets.latestRecordingIndexCheck.linkCount} 条证据链接
-                        </span>
+                        <span>{recordingIndexCoverage?.cardDetail}</span>
                         <div className="studio-dream-proof-links">
                           {recordingAssets.latestRecordingIndexCheck.screenshotPath ? (
                             <a href={buildRecordingEvidenceUrl(recordingAssets.latestRecordingIndexCheck.screenshotPath)} target="_blank" rel="noreferrer">

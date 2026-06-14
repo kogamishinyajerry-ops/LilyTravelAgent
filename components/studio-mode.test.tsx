@@ -12,7 +12,13 @@ vi.mock("next/link", () => ({
 
 import { StudioMode } from "./studio-mode";
 
-function recordingAssetsResponse(packCount: number, title = "Studio 16:9 demo pack", indexAvailable = true) {
+function recordingAssetsResponse(
+  packCount: number,
+  title = "Studio 16:9 demo pack",
+  indexAvailable = true,
+  options: { indexLinkCount?: number } = {},
+) {
+  const indexLinkCount = options.indexLinkCount ?? 6;
   return {
     ok: true,
     packCount,
@@ -48,8 +54,11 @@ function recordingAssetsResponse(packCount: number, title = "Studio 16:9 demo pa
           createdAt: "2026-06-13T05:49:00.000Z",
           finalCueLabel: "Proof",
           finalCueValue: "3/5 ready",
-          linkCount: 3,
-          proofText: "Dream Proof · Proof · 3/5 ready",
+          linkCount: indexLinkCount,
+          proofText:
+            indexLinkCount >= 6
+              ? "Dream Proof · Proof · 3/5 ready\nStudio Proof · Suite Run · 7 步 · 7 通过"
+              : "Dream Proof · Proof · 3/5 ready",
           apiIndexUrl: "http://localhost:3000/api/recording-assets/index",
           screenshotPath: "index-checks/index-check-latest/recording-index-dream-proof.png",
           summaryPath: "index-checks/index-check-latest/summary.json",
@@ -184,7 +193,7 @@ describe("StudioMode demo roadbooks", () => {
       "/api/recording-assets/file?path=visual-checks%2Fdream-proof-latest%2Fclip-notes.md",
     );
     expect(screen.getByLabelText("Recording Index QA 状态").textContent).toContain("素材总索引已验证");
-    expect(screen.getByLabelText("Recording Index QA 状态").textContent).toContain("Proof · 3/5 ready · 3 条证据链接");
+    expect(screen.getByLabelText("Recording Index QA 状态").textContent).toContain("Dream + Studio 双证据 · Proof · 3/5 ready · 6 条证据链接");
     expect(screen.getByLabelText("Recording Index QA 状态").textContent).toContain("Index QA");
     expect(within(screen.getByLabelText("Recording Index QA 状态")).getByRole("link", { name: /索引截图/ }).getAttribute("href")).toBe(
       "/api/recording-assets/file?path=index-checks%2Findex-check-latest%2Frecording-index-dream-proof.png",
@@ -240,6 +249,31 @@ describe("StudioMode demo roadbooks", () => {
     expect(screen.queryByLabelText("系列章节提示")).toBeNull();
     expect(screen.queryByLabelText("录屏证据清单")).toBeNull();
     expect(screen.queryByText("讲解轨道已打开")).toBeNull();
+  });
+
+  it("keeps legacy Dream-only wording for older 3-link recording index checks", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => ({
+        ok: true,
+        status: 200,
+        json: async () => recordingAssetsResponse(15, "Studio 16:9 demo pack", true, { indexLinkCount: 3 }),
+      })) as unknown as typeof fetch,
+    );
+
+    render(<StudioMode />);
+
+    const indexCard = await screen.findByLabelText("Recording Index QA 状态");
+    expect(indexCard.textContent).toContain("Dream 单证据 · Proof · 3/5 ready · 3 条证据链接");
+    expect(indexCard.textContent).not.toContain("Dream + Studio 双证据");
+
+    fireEvent.click(screen.getByRole("button", { name: /脚本模式/ }));
+    const proofChecklist = await screen.findByLabelText("录屏证据清单");
+    expect(proofChecklist.textContent).toContain("Dream 单证据 · 3 条证据链接");
+    expect(proofChecklist.textContent).not.toContain("Dream + Studio 双证据 · 6 条链接");
+    expect(within(proofChecklist).getByRole("link", { name: /Dream 单证据 · 3 条证据链接/ }).getAttribute("href")).toBe(
+      "index-checks/index-check-latest/summary.json",
+    );
   });
 
   it("switches the 16:9 recording view to the coastal demo roadbook", async () => {
@@ -373,7 +407,7 @@ describe("StudioMode demo roadbooks", () => {
     expect(proofChecklist.textContent).toContain("Asset Index");
     expect(proofChecklist.textContent).toContain("15 个素材包");
     expect(proofChecklist.textContent).toContain("Index QA");
-    expect(proofChecklist.textContent).toContain("3 条证据链接");
+    expect(proofChecklist.textContent).toContain("Dream + Studio 双证据 · 6 条链接");
     expect(proofChecklist.textContent).toContain("Suite Run");
     expect(proofChecklist.textContent).toContain("7 步 · 7 通过");
     expect(within(proofChecklist).getByRole("button", { name: "播放证据线" })).toBeTruthy();
@@ -381,7 +415,7 @@ describe("StudioMode demo roadbooks", () => {
     expect(within(proofChecklist).getByRole("link", { name: /3 个入口/ }).getAttribute("href")).toBe("candidate-handoff-checks/candidate-latest/summary.json");
     expect(within(proofChecklist).getByRole("link", { name: /镜头候选对比/ }).getAttribute("href")).toBe("/api/recording-assets/lens-comparison");
     expect(within(proofChecklist).getByRole("link", { name: /15 个素材包/ }).getAttribute("href")).toBe("/api/recording-assets/index");
-    expect(within(proofChecklist).getByRole("link", { name: /3 条证据链接/ }).getAttribute("href")).toBe("index-checks/index-check-latest/summary.json");
+    expect(within(proofChecklist).getByRole("link", { name: /Dream \+ Studio 双证据 · 6 条链接/ }).getAttribute("href")).toBe("index-checks/index-check-latest/summary.json");
     expect(within(proofChecklist).getByRole("link", { name: /7 步 · 7 通过/ }).getAttribute("href")).toBe("suite-runs/suite-run-latest/summary.json");
     expect(screen.getByText("讲解轨道已打开")).toBeTruthy();
     expect(screen.getByRole("button", { name: /脚本模式/ }).getAttribute("aria-pressed")).toBe("true");
@@ -422,7 +456,7 @@ describe("StudioMode demo roadbooks", () => {
       vi.advanceTimersByTime(1200);
     });
     expect(proofChecklist.querySelector('[aria-current="step"]')?.textContent).toContain("Index QA");
-    expect(proofChecklist.querySelector('[aria-current="step"]')?.textContent).toContain("确认素材总索引本身也有自动验收。");
+    expect(proofChecklist.querySelector('[aria-current="step"]')?.textContent).toContain("确认总索引同时验收 Dream 和 Studio 两条证据链。");
     expect(within(proofChecklist).getByRole("button", { name: "讲解中" }).getAttribute("aria-pressed")).toBe("true");
 
     await act(async () => {
