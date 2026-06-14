@@ -41,6 +41,7 @@ DREAM_LENSES=low-skyline,isometric-atlas npm run check:dream-lenses
 - `recordings/index.html` and `recordings/clip-index.md`: the local archive entry points.
 - Dream visual-proof playback evidence in both local archive entry points when a Dream QA pack contains `summary.visualProof`.
 - `recordings/index-checks/*`: proof that the generated archive exposes Dream Proof and that screenshot, summary, and notes links return HTTP 200.
+- `recordings/suite-runs/*`: top-level proof for a full recording-suite run, listing every step, pass/fail status, duration, and output paths.
 - `/api/recording-assets/lens-comparison`: the local Director Lens comparison dashboard with D1-D4 thumbnails.
 
 ## What To Show On Screen
@@ -65,6 +66,7 @@ DREAM_LENSES=low-skyline,isometric-atlas npm run check:dream-lenses
 - `/dream` `播放视觉证据`, highlighting those five visual proof cues in recording order.
 - `npm run check:dream-visuals` captures the visual proof cue labels, final `Proof` playback state, and `dream-*-visual-proof-playback.png`.
 - `npm run check:recording-index` verifies `/api/recording-assets/index` exposes Dream Proof and writes an `index-checks` proof pack. `npm run check:recording-suite` now runs this step after generating the asset index.
+- `npm run check:recording-suite` writes a `suite-runs` manifest and clip notes after the full QA chain finishes.
 - In `/dream`, `Agent Visual Contract`, `Director Lens`, `Scene Inspector`, and `Proof Stack` show why the cinematic page is structured, not only decorative.
 - `打开总索引` leading to `/api/recording-assets/index`.
 - `镜头对比` leading to `/api/recording-assets/lens-comparison`.
@@ -88,6 +90,7 @@ Run it, return to `/studio`, then click `刷新`.
 - "The archive does not only list screenshots. It also carries the Dream Proof playback result, so evidence survives outside the Studio screen."
 - "The Studio panel now shows that the archive itself was checked: screenshot, summary, and notes are all linked from Index QA."
 - "The full recording suite now creates the index proof pack automatically, so one command prepares both assets and their archive QA."
+- "The suite manifest is the receipt for the whole run: every step, every output folder, one top-level proof."
 - "The lens batch lets me compare five camera directions before I tune or record the final clip."
 
 ## Verification

@@ -1,9 +1,13 @@
 import { spawn } from "node:child_process";
+import { mkdir, writeFile } from "node:fs/promises";
+import path from "node:path";
 
 const baseUrl = process.env.RECORDING_SUITE_BASE_URL || "http://localhost:3000";
 const dreamUrl = process.env.DREAM_URL || new URL("/dream", baseUrl).toString();
 const studioUrl = process.env.STUDIO_URL || new URL("/studio", baseUrl).toString();
 const handoffBaseUrl = process.env.HANDOFF_BASE_URL || baseUrl;
+const runStamp = new Date().toISOString().replace(/[:.]/g, "-");
+const suiteOutDir = process.env.RECORDING_SUITE_OUT_DIR || path.join("recordings", "suite-runs", runStamp);
 const npmCommand = process.platform === "win32" ? "npm.cmd" : "npm";
 
 const steps = [
@@ -52,14 +56,44 @@ const steps = [
 ];
 
 async function main() {
-  await assertReachable("dream", dreamUrl);
-  await assertReachable("studio", studioUrl);
+  const startedAt = new Date().toISOString();
+  const results = [];
+  await mkdir(suiteOutDir, { recursive: true });
 
-  for (const step of steps) {
-    await runStep(step);
+  try {
+    await assertReachable("dream", dreamUrl);
+    await assertReachable("studio", studioUrl);
+
+    for (const step of steps) {
+      const result = await runStep(step);
+      results.push(result);
+      if (result.status !== "passed") {
+        throw new Error(`${step.label} failed with ${result.signal ? `signal ${result.signal}` : `exit code ${result.exitCode}`}.`);
+      }
+    }
+
+    const manifest = await writeSuiteManifest({
+      status: "passed",
+      startedAt,
+      finishedAt: new Date().toISOString(),
+      results,
+      failureMessage: "",
+    });
+
+    console.log(`\nRecording QA suite manifest: ${manifest.summaryPath}`);
+    console.log(`Recording QA suite clip notes: ${manifest.notesPath}`);
+    console.log("\nRecording QA suite passed.");
+  } catch (error) {
+    const failureMessage = error instanceof Error ? error.message : String(error);
+    await writeSuiteManifest({
+      status: "failed",
+      startedAt,
+      finishedAt: new Date().toISOString(),
+      results,
+      failureMessage,
+    });
+    throw error;
   }
-
-  console.log("\nRecording QA suite passed.");
 }
 
 async function assertReachable(label, url) {
@@ -82,23 +116,127 @@ async function assertReachable(label, url) {
 }
 
 function runStep(step) {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     console.log(`\n>>> ${step.label}`);
+    const startedAt = new Date().toISOString();
     const child = spawn(npmCommand, step.args, {
       env: { ...process.env, ...step.env },
-      stdio: "inherit",
+      stdio: ["ignore", "pipe", "pipe"],
     });
+    let stdout = "";
+    let stderr = "";
 
-    child.on("error", reject);
+    child.stdout.on("data", (chunk) => {
+      const text = chunk.toString();
+      stdout += text;
+      process.stdout.write(text);
+    });
+    child.stderr.on("data", (chunk) => {
+      const text = chunk.toString();
+      stderr += text;
+      process.stderr.write(text);
+    });
+    child.on("error", (error) => {
+      resolve({
+        label: step.label,
+        args: step.args,
+        env: step.env,
+        status: "failed",
+        startedAt,
+        finishedAt: new Date().toISOString(),
+        durationMs: Date.now() - new Date(startedAt).getTime(),
+        exitCode: null,
+        signal: "",
+        outputPaths: parseOutputPaths(`${stdout}\n${stderr}`),
+        error: error instanceof Error ? error.message : String(error),
+      });
+    });
     child.on("exit", (code, signal) => {
-      if (code === 0) {
-        resolve();
-        return;
-      }
-
-      reject(new Error(`${step.label} failed with ${signal ? `signal ${signal}` : `exit code ${code}`}.`));
+      const finishedAt = new Date().toISOString();
+      resolve({
+        label: step.label,
+        args: step.args,
+        env: step.env,
+        status: code === 0 ? "passed" : "failed",
+        startedAt,
+        finishedAt,
+        durationMs: new Date(finishedAt).getTime() - new Date(startedAt).getTime(),
+        exitCode: code,
+        signal: signal || "",
+        outputPaths: parseOutputPaths(`${stdout}\n${stderr}`),
+        error: code === 0 ? "" : `${step.label} failed with ${signal ? `signal ${signal}` : `exit code ${code}`}.`,
+      });
     });
   });
+}
+
+async function writeSuiteManifest({ status, startedAt, finishedAt, results, failureMessage }) {
+  const summaryPath = path.join(suiteOutDir, "summary.json");
+  const notesPath = path.join(suiteOutDir, "clip-notes.md");
+  const summary = {
+    status,
+    baseUrl,
+    dreamUrl,
+    studioUrl,
+    handoffBaseUrl,
+    createdAt: finishedAt,
+    startedAt,
+    finishedAt,
+    durationMs: new Date(finishedAt).getTime() - new Date(startedAt).getTime(),
+    outDir: suiteOutDir,
+    failureMessage,
+    stepCount: results.length,
+    steps: results,
+  };
+
+  await writeFile(summaryPath, `${JSON.stringify(summary, null, 2)}\n`);
+  await writeFile(notesPath, buildClipNotes(summary));
+
+  return { summaryPath, notesPath };
+}
+
+function parseOutputPaths(output) {
+  return Array.from(new Set(
+    [...output.matchAll(/recordings\/[^\s)]+/g)]
+      .map((match) => match[0].replace(/[.,;:]$/, ""))
+      .filter(Boolean),
+  ));
+}
+
+function buildClipNotes(summary) {
+  const lines = [
+    "# Recording Suite Run Clip Notes",
+    "",
+    `Status: ${summary.status}`,
+    `Created: ${summary.createdAt}`,
+    `Base URL: ${summary.baseUrl}`,
+    `Duration: ${Math.round(summary.durationMs / 1000)}s`,
+    "",
+    "## Steps",
+    "",
+  ];
+
+  for (const step of summary.steps) {
+    lines.push(`- ${step.status === "passed" ? "PASS" : "FAIL"} · ${step.label} · ${Math.round(step.durationMs / 1000)}s`);
+    for (const outputPath of step.outputPaths) {
+      lines.push(`  - ${outputPath}`);
+    }
+  }
+
+  if (summary.failureMessage) {
+    lines.push("", "## Failure", "", summary.failureMessage);
+  }
+
+  lines.push(
+    "",
+    "## Voiceover",
+    "",
+    "- One recording-suite command now creates product footage, walkthrough footage, bridge proof, archive index, and index QA evidence.",
+    "- The suite manifest is the top-level receipt for the whole recording run.",
+    "",
+  );
+
+  return `${lines.join("\n")}\n`;
 }
 
 main().catch((error) => {
