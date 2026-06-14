@@ -199,6 +199,8 @@ const candidateHandoffCommand = "npm run check:lens-candidate-handoff";
 const recordingIndexCommand = "npm run check:recording-index";
 const dreamVisualProofCommand = "npm run check:dream-visuals";
 const studioVisualProofCommand = "npm run check:studio-visuals";
+const proofStoryScriptPath = "docs/recording/proof-story-demo-script.md";
+const proofStoryScriptCue = "证据时间线 → 四行讲解稿预览 → 复制讲解稿";
 const recordingWorkflowSteps = [
   {
     step: "1",
@@ -534,6 +536,7 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
   const [recordingCommandCopyState, setRecordingCommandCopyState] = useState<"idle" | "copied" | "error">("idle");
   const [candidateCommandCopyState, setCandidateCommandCopyState] = useState<"idle" | "copied" | "error">("idle");
   const [proofStoryCopyState, setProofStoryCopyState] = useState<"idle" | "copied" | "error">("idle");
+  const [proofScriptCopyState, setProofScriptCopyState] = useState<"idle" | "copied" | "error">("idle");
   const [proofCueIndex, setProofCueIndex] = useState(0);
   const [proofCuePlaying, setProofCuePlaying] = useState(false);
 
@@ -700,6 +703,15 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
       setProofStoryCopyState("copied");
     } catch {
       setProofStoryCopyState("error");
+    }
+  }
+
+  async function copyProofStoryScriptPath() {
+    try {
+      await navigator.clipboard.writeText(proofStoryScriptPath);
+      setProofScriptCopyState("copied");
+    } catch {
+      setProofScriptCopyState("error");
     }
   }
 
@@ -1015,6 +1027,16 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
                           {proofStoryLines.map((line) => (
                             <p key={line}>{line}</p>
                           ))}
+                        </div>
+                        <div className="studio-proof-script-card" aria-label="Proof Story 脚本素材">
+                          <small>脚本素材</small>
+                          <strong>Proof Story Demo Script</strong>
+                          <code>{proofStoryScriptPath}</code>
+                          <p>{proofStoryScriptCue}</p>
+                          <button type="button" onClick={copyProofStoryScriptPath}>
+                            <Copy size={13} />
+                            {proofScriptCopyState === "copied" ? "脚本路径已复制" : proofScriptCopyState === "error" ? "手动复制路径" : "复制脚本路径"}
+                          </button>
                         </div>
                         <button type="button" onClick={copyProofStory}>
                           <Copy size={13} />

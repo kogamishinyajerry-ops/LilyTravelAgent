@@ -199,6 +199,7 @@ npm run check:recording-suite
 - `docs/recording/goal-511-520-recap.md` summarizes copying the proof-story narration outline.
 - `docs/recording/goal-521-530-recap.md` summarizes the proof-story preview.
 - `docs/recording/goal-531-540-recap.md` summarizes the Proof Story recording-script run.
+- `docs/recording/goal-541-550-recap.md` summarizes the in-app Proof Story script-material card.
 - `docs/recording/proof-story-demo-script.md` gives a short `/studio` script for recording the evidence timeline, four-line proof-story preview, and copy action.
 - `docs/recording/studio-dream-demo-script.md` gives a shot-by-shot Studio ↔ Dream demo recording path.
 - `docs/recording/bridge-qa-evidence-script.md` gives a short Bridge QA proof clip script.

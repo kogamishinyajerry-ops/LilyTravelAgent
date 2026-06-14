@@ -201,6 +201,9 @@ describe("StudioMode demo roadbooks", () => {
     expect(storyPreview.textContent).toContain("02. Studio Proof: 已捕获 · Suite Run · 7 步 · 7 通过");
     expect(storyPreview.textContent).toContain("03. Index QA: 已验证 · Dream + Studio 双证据 · 6 条链接");
     expect(storyPreview.textContent).toContain("04. Suite Run: 已通过 · 7 步 · 7 通过");
+    const scriptCard = screen.getByLabelText("Proof Story 脚本素材");
+    expect(scriptCard.textContent).toContain("docs/recording/proof-story-demo-script.md");
+    expect(scriptCard.textContent).toContain("证据时间线 → 四行讲解稿预览 → 复制讲解稿");
     expect(within(evidenceTimeline).getByRole("link", { name: /Dream Proof/ }).getAttribute("href")).toBe(
       "/api/recording-assets/file?path=visual-checks%2Fdream-proof-latest%2Fsummary.json",
     );
@@ -575,6 +578,23 @@ describe("StudioMode demo roadbooks", () => {
     expect(writeText).toHaveBeenCalledWith(previewLines.join("\n"));
     expect(await screen.findByText("证据讲解稿已复制")).toBeTruthy();
     expect(screen.getByRole("button", { name: "讲解稿已复制" })).toBeTruthy();
+  });
+
+  it("copies the Proof Story script path without changing the proof-story copy action", async () => {
+    const writeText = vi.fn(async () => undefined);
+    Object.defineProperty(window.navigator, "clipboard", {
+      value: { writeText },
+      configurable: true,
+    });
+
+    render(<StudioMode />);
+
+    expect(await screen.findByText("15 个素材包")).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: "复制脚本路径" }));
+
+    expect(writeText).toHaveBeenCalledWith("docs/recording/proof-story-demo-script.md");
+    expect(await screen.findByText("脚本路径已复制")).toBeTruthy();
+    expect(screen.getByRole("button", { name: "复制讲解稿" })).toBeTruthy();
   });
 
   it("shows a proof story copy fallback when clipboard access fails", async () => {

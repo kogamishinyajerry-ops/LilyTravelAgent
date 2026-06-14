@@ -1730,3 +1730,14 @@ Files shown: docs/recording/proof-story-demo-script.md, README.md, docs/recordin
 Command/result: git diff --check; npm run lint && npm test && npm run build
 Voiceover note: "这条脚本把 Studio 证据时间线、讲解稿预览和复制动作串成一个 30 秒录屏段落。产品做完之后，内容素材也同步沉淀。"
 Usable for: Proof Story recording insert, Vibe Coding workflow narration, continued goal run round 534
+
+## Phase EV: v0.8.141 — In-App Proof Story Script Material
+
+Date: 2026-06-14
+Clip title: Phase EV: v0.8.141 — In-App Proof Story Script Material
+What changed: `/studio` now shows a compact `脚本素材` card next to the proof-story preview. It names `Proof Story Demo Script`, displays `docs/recording/proof-story-demo-script.md`, summarizes the timeline-preview-copy recording flow, and provides `复制脚本路径`.
+Why this matters: The recording workbench now points to the matching script without sending the creator back to README, while keeping the existing `复制讲解稿` action separate.
+Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, app/globals.css, README.md, docs/recording/dev-log.md, docs/recording/goal-541-550-recap.md
+Command/result: npm test -- components/studio-mode.test.tsx passed with 14 tests; browser check confirmed the card is visible and console errors were empty; npm run lint && npm test && npm run build
+Voiceover note: "现在 Studio 不只生成讲解稿，还告诉我这段素材应该按哪份脚本录。录屏台、脚本和复制动作都在同一个画面里。"
+Usable for: Proof Story script-material clip, creator workflow narration, continued goal run round 544
