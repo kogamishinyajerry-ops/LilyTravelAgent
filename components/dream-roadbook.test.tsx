@@ -264,6 +264,29 @@ describe("DreamRoadbook a11y polish", () => {
     expect(screen.getByText("skyline 0.90x / water 1.36x / route 0.82x")).toBeTruthy();
   });
 
+  it("shows a final-candidate cue without a dead Next link", () => {
+    render(
+      <DreamRoadbook
+        initialCandidate={{
+          rank: "4",
+          total: "4",
+          day: "3",
+          label: "喜洲村落",
+          detail: "checksum 1.4M / lit 0 / varied 1",
+        }}
+      />,
+    );
+
+    const handoff = screen.getByLabelText("Recording Candidate Handoff");
+
+    expect(handoff.textContent).toContain("#4/4 · D3 · 喜洲村落");
+    expect(handoff.textContent).toContain("Final candidate · 回看板继续挑下一轮");
+    expect(within(handoff).queryByRole("link", { name: /Next/ })).toBeNull();
+    expect(within(handoff).getByRole("link", { name: /返回镜头对比看板/ }).getAttribute("href")).toBe(
+      "/api/recording-assets/lens-comparison",
+    );
+  });
+
   it("updates the template rendering strategy when switching demo roadbooks", () => {
     render(<DreamRoadbook />);
 

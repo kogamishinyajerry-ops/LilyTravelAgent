@@ -58,6 +58,7 @@ After `npm run index:recording-assets`, the top-level recording index shows lens
 - Does the `/dream` handoff show the candidate cue in the first viewport?
 - Does the cue show current candidate count and the next candidate without needing storage?
 - Does the `Next` chip advance to the next ranked candidate when clicked?
+- Does the last candidate show `Final candidate` instead of a dead `Next` chip?
 - Does the current crop show a visible change against the previous complete batch?
 - Do `Changed` / `Subtle` badges match the visible crop differences well enough for narration?
 - Does the pure 3D crop show improvement without relying on surrounding UI?

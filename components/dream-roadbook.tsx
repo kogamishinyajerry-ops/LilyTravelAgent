@@ -1433,6 +1433,8 @@ export function DreamRoadbook({ initialDemo = "dali", initialLens = "auto", init
                 <Link className="dream-candidate-next" href={candidateHandoff.nextHref}>
                   Next #{candidateHandoff.nextRank || "?"} · {candidateHandoff.nextLens || "Lens"} · D{candidateHandoff.nextDay || "?"} · {candidateHandoff.nextLabel}
                 </Link>
+              ) : candidateHandoff.total && candidateHandoff.rank === candidateHandoff.total ? (
+                <small className="dream-candidate-final">Final candidate · 回看板继续挑下一轮</small>
               ) : null}
               <Link href={candidateHandoff.returnHref}>
                 返回镜头对比看板

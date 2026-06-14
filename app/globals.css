@@ -2249,6 +2249,17 @@ textarea {
   background: rgba(255, 255, 255, 0.42);
 }
 
+.dream-candidate-final {
+  justify-self: start;
+  border: 1px solid rgba(157, 107, 37, 0.28);
+  border-radius: 999px;
+  padding: 4px 7px;
+  color: #7a5524;
+  font-size: 0.66rem;
+  font-weight: 950;
+  background: rgba(255, 244, 218, 0.62);
+}
+
 .dream-candidate-handoff a {
   display: inline-flex;
   align-items: center;

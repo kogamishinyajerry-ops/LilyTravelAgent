@@ -1323,3 +1323,14 @@ Files shown: docs/recording/goal-221-230-recap.md, `/dream?...candidate=1`, term
 Command/result: npm run lint && npm test && npm run build (44 files, 907 tests, build passed)
 Voiceover note: "Next 候选链接也完成后，继续完整质量门。这个工作流现在可以从看板进 /dream，再在 /dream 里继续下一个候选。"
 Usable for: goal closeout clip, next-candidate stepping proof, final queue handoff, continued goal run round 227
+
+## Phase DK: v0.8.104 — Final Candidate Queue State
+
+Date: 2026-06-14
+Clip title: Phase DK: v0.8.104 — Final Candidate Queue State
+What changed: `/dream` now shows a `Final candidate` chip when a candidate handoff has rank/total but no next-candidate params. The cue keeps the stronger return-to-dashboard action and avoids rendering a dead `Next` affordance.
+Why this matters: The lightweight URL queue now has a clean ending state, so the creator knows to return to the dashboard for another batch instead of wondering why there is no next step.
+Files shown: components/dream-roadbook.tsx, app/globals.css, components/dream-roadbook.test.tsx
+Command/result: npm test -- components/dream-roadbook.test.tsx; npm run lint; Browser check confirmed final candidate chip, 0 Next links, and return path.
+Voiceover note: "最后一个候选也要有明确状态：不是按钮消失得莫名其妙，而是告诉我 Final candidate，然后引导我回看板继续挑下一轮。"
+Usable for: final-candidate queue clip, no-dead-end workflow proof, continued goal run round 234
