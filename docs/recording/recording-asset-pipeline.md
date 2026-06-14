@@ -11,17 +11,23 @@ Purpose: turn every visual QA run into usable creator material: screenshots, loc
 5. Point to `Bridge QA 证据状态`.
 6. Open `打开总索引`.
 
-Optional lens-specific run:
+Optional all-lens product run:
 
 ```bash
-DREAM_LENS=low-skyline npm run check:dream-visuals
+npm run check:dream-lenses
+```
+
+Optional lens-specific subset:
+
+```bash
+DREAM_LENSES=low-skyline,isometric-atlas npm run check:dream-lenses
 ```
 
 ## What The Suite Creates
 
 - `/dream` Dali QA pack: product footage for the default dream roadbook.
 - `/dream` coastal QA pack: product footage for the coastal preset.
-- `/dream` Skyline Lens QA pack: camera-direction proof for the Dali roadbook with `DREAM_LENS=low-skyline`.
+- `/dream` Director Lens QA packs: camera-direction proof for Water, Skyline, Atlas, and Detail on the Dali roadbook.
 - Each Dream QA pack includes D1-D4 screenshots, Scene Inspector text, Composition profile, Director Lens status, Proof Stack status, WebGL pixel checks, and micro-motion evidence.
 - `/studio` QA pack: walkthrough footage for the 16:9 creator workbench.
 - Studio-Dream Bridge QA pack: handoff proof for the two-way recording circuit.
@@ -34,7 +40,7 @@ DREAM_LENS=low-skyline npm run check:dream-visuals
 - Recent three QA packs.
 - Dream QA / Studio QA / Bridge QA badges.
 - `产品画面` / `讲解画面` / `桥接验证` usage hints.
-- A Skyline Lens Dream QA pack in the local index after `npm run check:recording-suite`.
+- Lens-aware Dream QA packs in the local index after `npm run check:recording-suite`.
 - `Bridge QA 证据状态` in script mode.
 - In `/dream`, `Agent Visual Contract`, `Director Lens`, `Scene Inspector`, and `Proof Stack` show why the cinematic page is structured, not only decorative.
 - `打开总索引` leading to `/api/recording-assets/index`.
@@ -55,6 +61,7 @@ Run it, return to `/studio`, then click `刷新`.
 - "The Agent workflow has two outputs: the product screen and the creator material archive."
 - "Dream QA is product footage. Studio QA is walkthrough footage. Bridge QA proves the handoff."
 - "In Dream QA, the screenshot is paired with a visual contract: prompt strategy, director lens, scene proof, asset state, and motion evidence."
+- "The lens batch lets me compare five camera directions before I tune or record the final clip."
 
 ## Verification
 
