@@ -50,6 +50,7 @@ type RecordingAssetsState =
       latestDreamVisualProof: RecordingDreamVisualProofSummary | null;
       latestRecordingIndexCheck: RecordingIndexCheckSummary | null;
       latestRecordingSuiteRun: RecordingSuiteRunSummary | null;
+      latestStudioProofPlayback: RecordingStudioProofPlaybackSummary | null;
     }
   | { status: "error"; message: string };
 
@@ -98,6 +99,19 @@ type RecordingSuiteRunSummary = {
   notesPath?: string;
 };
 
+type RecordingStudioProofPlaybackSummary = {
+  id: string;
+  createdAt: string;
+  finalCueLabel: string;
+  finalCueState: string;
+  finalCueDetail: string;
+  buttonTextAfterPlayback: string;
+  cueLabels: string[];
+  screenshotPath: string;
+  summaryPath: string;
+  notesPath?: string;
+};
+
 type RecordingAssetSummaryPack = {
   type: RecordingAssetType;
   id: string;
@@ -125,6 +139,7 @@ type RecordingAssetsApiResponse = {
   latestDreamVisualProof?: RecordingDreamVisualProofSummary | null;
   latestRecordingIndexCheck?: RecordingIndexCheckSummary | null;
   latestRecordingSuiteRun?: RecordingSuiteRunSummary | null;
+  latestStudioProofPlayback?: RecordingStudioProofPlaybackSummary | null;
   message?: string;
 };
 
@@ -457,6 +472,7 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
           latestDreamVisualProof: data.latestDreamVisualProof || null,
           latestRecordingIndexCheck: data.latestRecordingIndexCheck || null,
           latestRecordingSuiteRun: data.latestRecordingSuiteRun || null,
+          latestStudioProofPlayback: data.latestStudioProofPlayback || null,
         });
         setRecordingAssetsReadAt(new Date().toISOString());
       } catch (caught) {
@@ -999,6 +1015,43 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
                         <small>Suite Run</small>
                         <strong>等待 full suite</strong>
                         <span>运行 npm run check:recording-suite 后显示全链路验证状态。</span>
+                      </>
+                    )}
+                  </div>
+                  <div className={`studio-proof-playback-status ${recordingAssets.latestStudioProofPlayback ? "ready" : "missing"}`} aria-label="Studio proof playback QA 状态">
+                    {recordingAssets.latestStudioProofPlayback ? (
+                      <>
+                        <small>Studio Proof · {formatRecordingAssetTime(recordingAssets.latestStudioProofPlayback.createdAt)}</small>
+                        <strong>证据播放已捕获</strong>
+                        <span>
+                          {recordingAssets.latestStudioProofPlayback.finalCueLabel} · {recordingAssets.latestStudioProofPlayback.finalCueDetail} · {recordingAssets.latestStudioProofPlayback.screenshotPath}
+                        </span>
+                        <div className="studio-dream-proof-links">
+                          {recordingAssets.latestStudioProofPlayback.screenshotPath ? (
+                            <a href={buildRecordingEvidenceUrl(recordingAssets.latestStudioProofPlayback.screenshotPath)} target="_blank" rel="noreferrer">
+                              播放截图
+                              <ExternalLink size={12} />
+                            </a>
+                          ) : null}
+                          {recordingAssets.latestStudioProofPlayback.summaryPath ? (
+                            <a href={buildRecordingEvidenceUrl(recordingAssets.latestStudioProofPlayback.summaryPath)} target="_blank" rel="noreferrer">
+                              summary
+                              <ExternalLink size={12} />
+                            </a>
+                          ) : null}
+                          {recordingAssets.latestStudioProofPlayback.notesPath ? (
+                            <a href={buildRecordingEvidenceUrl(recordingAssets.latestStudioProofPlayback.notesPath)} target="_blank" rel="noreferrer">
+                              notes
+                              <ExternalLink size={12} />
+                            </a>
+                          ) : null}
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <small>Studio Proof</small>
+                        <strong>等待 Studio QA 捕获</strong>
+                        <span>运行 npm run check:studio-visuals 后显示 Suite Run 播放状态。</span>
                       </>
                     )}
                   </div>

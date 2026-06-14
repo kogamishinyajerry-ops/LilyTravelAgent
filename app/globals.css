@@ -1792,7 +1792,8 @@ textarea {
 .studio-candidate-handoff-status,
 .studio-dream-proof-status,
 .studio-recording-index-check-status,
-.studio-suite-run-status {
+.studio-suite-run-status,
+.studio-proof-playback-status {
   display: grid;
   gap: 3px;
   border: 1px solid rgba(38, 59, 49, 0.12);
@@ -1804,7 +1805,8 @@ textarea {
 .studio-candidate-handoff-status.ready,
 .studio-dream-proof-status.ready,
 .studio-recording-index-check-status.ready,
-.studio-suite-run-status.ready {
+.studio-suite-run-status.ready,
+.studio-proof-playback-status.ready {
   border-color: rgba(79, 143, 122, 0.26);
   background: rgba(79, 143, 122, 0.13);
 }
@@ -1812,7 +1814,8 @@ textarea {
 .studio-candidate-handoff-status.missing,
 .studio-dream-proof-status.missing,
 .studio-recording-index-check-status.missing,
-.studio-suite-run-status.missing {
+.studio-suite-run-status.missing,
+.studio-proof-playback-status.missing {
   border-color: rgba(191, 128, 85, 0.22);
   background: rgba(191, 128, 85, 0.1);
 }
@@ -1825,7 +1828,8 @@ textarea {
 .studio-candidate-handoff-status small,
 .studio-dream-proof-status small,
 .studio-recording-index-check-status small,
-.studio-suite-run-status small {
+.studio-suite-run-status small,
+.studio-proof-playback-status small {
   color: var(--sage);
   font-size: 0.68rem;
   font-weight: 950;
@@ -1834,7 +1838,8 @@ textarea {
 .studio-recording-assets .studio-candidate-handoff-status strong,
 .studio-recording-assets .studio-dream-proof-status strong,
 .studio-recording-assets .studio-recording-index-check-status strong,
-.studio-recording-assets .studio-suite-run-status strong {
+.studio-recording-assets .studio-suite-run-status strong,
+.studio-recording-assets .studio-proof-playback-status strong {
   overflow: hidden;
   color: var(--moss);
   font-size: 0.86rem;
@@ -1845,7 +1850,8 @@ textarea {
 .studio-recording-assets .studio-candidate-handoff-status span,
 .studio-recording-assets .studio-dream-proof-status span,
 .studio-recording-assets .studio-recording-index-check-status span,
-.studio-recording-assets .studio-suite-run-status span {
+.studio-recording-assets .studio-suite-run-status span,
+.studio-recording-assets .studio-proof-playback-status span {
   overflow: hidden;
   font-size: 0.72rem;
   text-overflow: ellipsis;

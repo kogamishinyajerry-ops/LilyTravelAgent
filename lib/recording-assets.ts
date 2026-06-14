@@ -27,6 +27,7 @@ export type RecordingAssetsSummary = {
   latestDreamVisualProof: RecordingDreamVisualProofSummary | null;
   latestRecordingIndexCheck: RecordingIndexCheckSummary | null;
   latestRecordingSuiteRun: RecordingSuiteRunSummary | null;
+  latestStudioProofPlayback: RecordingStudioProofPlaybackSummary | null;
   indexAvailable: boolean;
   indexPath: string;
   clipIndexAvailable: boolean;
@@ -78,6 +79,19 @@ export type RecordingSuiteRunSummary = {
   notesPath: string;
 };
 
+export type RecordingStudioProofPlaybackSummary = {
+  id: string;
+  createdAt: string;
+  finalCueLabel: string;
+  finalCueState: string;
+  finalCueDetail: string;
+  buttonTextAfterPlayback: string;
+  cueLabels: string[];
+  screenshotPath: string;
+  summaryPath: string;
+  notesPath: string;
+};
+
 const sources = [
   { type: "dream" as const, dir: "visual-checks", label: "/dream visual QA" },
   { type: "studio" as const, dir: "studio-checks", label: "/studio recording QA" },
@@ -90,6 +104,7 @@ export async function readRecordingAssetsSummary(recordingsRoot = process.env.RE
   const latestDreamVisualProof = await readLatestDreamVisualProof(recordingsRoot);
   const latestRecordingIndexCheck = await readLatestRecordingIndexCheck(recordingsRoot);
   const latestRecordingSuiteRun = await readLatestRecordingSuiteRun(recordingsRoot);
+  const latestStudioProofPlayback = await readLatestStudioProofPlayback(recordingsRoot);
   const latestPack = packs[0] || null;
   const indexPath = path.join(recordingsRoot, "index.html");
   const clipIndexPath = path.join(recordingsRoot, "clip-index.md");
@@ -104,6 +119,7 @@ export async function readRecordingAssetsSummary(recordingsRoot = process.env.RE
     latestDreamVisualProof,
     latestRecordingIndexCheck,
     latestRecordingSuiteRun,
+    latestStudioProofPlayback,
     indexAvailable: existsSync(indexPath),
     indexPath,
     clipIndexAvailable: existsSync(clipIndexPath),
@@ -122,6 +138,59 @@ function countPacksByType(packs: RecordingAssetPack[]): Record<RecordingAssetTyp
 export async function listRecordingAssetPacks(recordingsRoot = process.env.RECORDINGS_DIR || "recordings"): Promise<RecordingAssetPack[]> {
   const packs = (await Promise.all(sources.map((source) => readSource(recordingsRoot, source)))).flat();
   return packs.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+}
+
+async function readLatestStudioProofPlayback(recordingsRoot: string): Promise<RecordingStudioProofPlaybackSummary | null> {
+  const sourceRoot = path.join(recordingsRoot, "studio-checks");
+  if (!existsSync(sourceRoot)) {
+    return null;
+  }
+
+  const entries = await readdir(sourceRoot);
+  const runs: RecordingStudioProofPlaybackSummary[] = [];
+
+  for (const entry of entries) {
+    const packDir = path.join(sourceRoot, entry);
+    const info = await stat(packDir).catch(() => null);
+    if (!info?.isDirectory()) {
+      continue;
+    }
+
+    const summaryPath = path.join(packDir, "summary.json");
+    if (!existsSync(summaryPath)) {
+      continue;
+    }
+
+    const summary = JSON.parse(await readFile(summaryPath, "utf8")) as Record<string, unknown>;
+    const proofPlayback = typeof summary.proofPlayback === "object" && summary.proofPlayback
+      ? summary.proofPlayback as Record<string, unknown>
+      : null;
+    const finalCue = typeof proofPlayback?.finalActiveCue === "object" && proofPlayback.finalActiveCue
+      ? proofPlayback.finalActiveCue as Record<string, unknown>
+      : null;
+    if (!proofPlayback || !finalCue) {
+      continue;
+    }
+
+    const initialCues = Array.isArray(proofPlayback.initialCues) ? proofPlayback.initialCues : [];
+    const screenshotFile = path.basename(readString(proofPlayback.screenshotPath));
+    runs.push({
+      id: entry,
+      createdAt: readString(summary.createdAt) || entry,
+      finalCueLabel: readString(finalCue.label),
+      finalCueState: readString(finalCue.state),
+      finalCueDetail: readString(finalCue.detail),
+      buttonTextAfterPlayback: readString(proofPlayback.buttonTextAfterPlayback),
+      cueLabels: initialCues
+        .map((item) => readString((item as Record<string, unknown>).label))
+        .filter(Boolean),
+      screenshotPath: screenshotFile ? toRecordingLink(path.join("studio-checks", entry, screenshotFile)) : "",
+      summaryPath: toRecordingLink(path.join("studio-checks", entry, "summary.json")),
+      notesPath: existsSync(path.join(packDir, "clip-notes.md")) ? toRecordingLink(path.join("studio-checks", entry, "clip-notes.md")) : "",
+    });
+  }
+
+  return runs.sort((a, b) => b.createdAt.localeCompare(a.createdAt))[0] || null;
 }
 
 async function readLatestRecordingSuiteRun(recordingsRoot: string): Promise<RecordingSuiteRunSummary | null> {

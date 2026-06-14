@@ -69,6 +69,20 @@ function recordingAssetsResponse(packCount: number, title = "Studio 16:9 demo pa
           notesPath: "suite-runs/suite-run-latest/clip-notes.md",
         }
       : null,
+    latestStudioProofPlayback: packCount
+      ? {
+          id: "studio-proof-latest",
+          createdAt: "2026-06-13T05:51:00.000Z",
+          finalCueLabel: "Suite Run",
+          finalCueState: "已通过",
+          finalCueDetail: "7 步 · 7 通过",
+          buttonTextAfterPlayback: "播放证据线",
+          cueLabels: ["Bridge QA", "Candidate QA", "Lens Compare", "Asset Index", "Index QA", "Suite Run"],
+          screenshotPath: "studio-checks/studio-proof-latest/studio-suite-run-proof.png",
+          summaryPath: "studio-checks/studio-proof-latest/summary.json",
+          notesPath: "studio-checks/studio-proof-latest/clip-notes.md",
+        }
+      : null,
     recentPacks: packCount
       ? [
           {
@@ -189,6 +203,18 @@ describe("StudioMode demo roadbooks", () => {
     expect(within(screen.getByLabelText("Recording Suite 状态")).getByRole("link", { name: /notes/ }).getAttribute("href")).toBe(
       "/api/recording-assets/file?path=suite-runs%2Fsuite-run-latest%2Fclip-notes.md",
     );
+    expect(screen.getByLabelText("Studio proof playback QA 状态").textContent).toContain("证据播放已捕获");
+    expect(screen.getByLabelText("Studio proof playback QA 状态").textContent).toContain("Suite Run · 7 步 · 7 通过");
+    expect(screen.getByLabelText("Studio proof playback QA 状态").textContent).toContain("studio-checks/studio-proof-latest/studio-suite-run-proof.png");
+    expect(within(screen.getByLabelText("Studio proof playback QA 状态")).getByRole("link", { name: /播放截图/ }).getAttribute("href")).toBe(
+      "/api/recording-assets/file?path=studio-checks%2Fstudio-proof-latest%2Fstudio-suite-run-proof.png",
+    );
+    expect(within(screen.getByLabelText("Studio proof playback QA 状态")).getByRole("link", { name: /summary/ }).getAttribute("href")).toBe(
+      "/api/recording-assets/file?path=studio-checks%2Fstudio-proof-latest%2Fsummary.json",
+    );
+    expect(within(screen.getByLabelText("Studio proof playback QA 状态")).getByRole("link", { name: /notes/ }).getAttribute("href")).toBe(
+      "/api/recording-assets/file?path=studio-checks%2Fstudio-proof-latest%2Fclip-notes.md",
+    );
     expect(screen.getAllByText("Dream low-skyline lens visual pack")[0]).toBeTruthy();
     expect(screen.getAllByText("low-skyline lens").length).toBeGreaterThanOrEqual(1);
     expect(screen.getByRole("button", { name: "复制命令" })).toBeTruthy();
@@ -301,6 +327,8 @@ describe("StudioMode demo roadbooks", () => {
     expect(screen.getByLabelText("Recording Index QA 状态").textContent).toContain("npm run check:recording-index");
     expect(screen.getByLabelText("Recording Suite 状态").textContent).toContain("等待 full suite");
     expect(screen.getByLabelText("Recording Suite 状态").textContent).toContain("npm run check:recording-suite");
+    expect(screen.getByLabelText("Studio proof playback QA 状态").textContent).toContain("等待 Studio QA 捕获");
+    expect(screen.getByLabelText("Studio proof playback QA 状态").textContent).toContain("npm run check:studio-visuals");
     expect(screen.getByText("Dream 0")).toBeTruthy();
     expect(screen.getByText("Studio 0")).toBeTruthy();
     expect(screen.getByText("生成本地素材索引")).toBeTruthy();

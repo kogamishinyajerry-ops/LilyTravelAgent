@@ -48,6 +48,7 @@ describe("recording assets", () => {
     expect(summary.latestDreamVisualProof).toBeNull();
     expect(summary.latestRecordingIndexCheck).toBeNull();
     expect(summary.latestRecordingSuiteRun).toBeNull();
+    expect(summary.latestStudioProofPlayback).toBeNull();
     expect(summary.indexAvailable).toBe(false);
     expect(summary.clipIndexAvailable).toBe(false);
   });
@@ -264,6 +265,51 @@ describe("recording assets", () => {
       failureMessage: "",
       summaryPath: "suite-runs/new-suite/summary.json",
       notesPath: "suite-runs/new-suite/clip-notes.md",
+    });
+  });
+
+  it("reports the latest Studio proof playback evidence when available", async () => {
+    await writeSummary("studio-checks/old-studio", {
+      createdAt: "2026-06-13T04:00:00.000Z",
+      captures: [],
+    });
+    await writeSummary("studio-checks/new-studio", {
+      createdAt: "2026-06-13T05:00:00.000Z",
+      captures: [],
+      proofPlayback: {
+        finalActiveCue: {
+          label: "Suite Run",
+          state: "已通过",
+          detail: "7 步 · 7 通过",
+          cue: "用 full suite 总收据为整条证据链收口。",
+          active: true,
+        },
+        buttonTextAfterPlayback: "播放证据线",
+        screenshotPath: path.join(tempRoot, "studio-checks", "new-studio", "studio-suite-run-proof.png"),
+        initialCues: [
+          { label: "Bridge QA" },
+          { label: "Candidate QA" },
+          { label: "Lens Compare" },
+          { label: "Asset Index" },
+          { label: "Index QA" },
+          { label: "Suite Run" },
+        ],
+      },
+    });
+
+    const summary = await readRecordingAssetsSummary(tempRoot);
+
+    expect(summary.latestStudioProofPlayback).toMatchObject({
+      id: "new-studio",
+      createdAt: "2026-06-13T05:00:00.000Z",
+      finalCueLabel: "Suite Run",
+      finalCueState: "已通过",
+      finalCueDetail: "7 步 · 7 通过",
+      buttonTextAfterPlayback: "播放证据线",
+      cueLabels: ["Bridge QA", "Candidate QA", "Lens Compare", "Asset Index", "Index QA", "Suite Run"],
+      screenshotPath: "studio-checks/new-studio/studio-suite-run-proof.png",
+      summaryPath: "studio-checks/new-studio/summary.json",
+      notesPath: "studio-checks/new-studio/clip-notes.md",
     });
   });
 
