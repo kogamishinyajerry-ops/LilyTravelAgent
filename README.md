@@ -128,7 +128,7 @@ npm run check:recording-suite
 
 `npm run check:dream-lenses` runs the same `/dream` visual QA once per Director Lens and writes one local QA pack per lens under `recordings/visual-checks/`. Set `DREAM_LENSES=wide-water,low-skyline` to run a smaller subset.
 
-`npm run check:studio-visuals` expects `http://localhost:3000/studio` unless `STUDIO_URL` is set. It captures the Dali and coastal 16:9 recording layouts, verifies the Studio proof playback, captures the Proof Story `脚本素材` card, verifies the Proof Story Handoff and Complete Bundle copy states, records the Proof Story Complete strip, and writes `summary.json`, `index.html`, and `clip-notes.md` under `recordings/studio-checks/`.
+`npm run check:studio-visuals` expects `http://localhost:3000/studio` unless `STUDIO_URL` is set. It captures the Dali and coastal 16:9 recording layouts, verifies the Studio proof playback, captures the Proof Story `脚本素材` card, verifies the Proof Story Handoff, Complete Bundle, and Bundle Chain copy states, records the Proof Story Complete strip, and writes `summary.json`, `index.html`, and `clip-notes.md` under `recordings/studio-checks/`.
 
 `npm run check:studio-dream-handoff` expects `http://localhost:3000` unless `HANDOFF_BASE_URL` is set. It verifies both Dali and coastal round trips between `/studio?demo=...` and `/dream?demo=...`, then writes screenshots, `summary.json`, and `clip-notes.md` under `recordings/handoff-checks/`.
 

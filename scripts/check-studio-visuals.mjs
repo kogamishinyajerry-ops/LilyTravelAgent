@@ -153,8 +153,10 @@ async function captureProofStoryScriptMaterial(page) {
   const handoffPreview = await card.getByLabel("Proof Story Handoff 预览").innerText();
   const completeLine = await card.getByLabel("Proof Story Complete 状态").innerText();
   const completeBundleLine = await card.getByLabel("Proof Story Complete Bundle 预览").innerText();
+  const bundleChainLine = await card.getByLabel("Proof Story Bundle Chain 状态").innerText();
   const handoffCopyButton = card.getByRole("button", { name: "复制 Proof Story Handoff" });
   const completeBundleCopyButton = card.getByRole("button", { name: "复制 Proof Story Complete Bundle" });
+  const bundleChainCopyButton = card.getByRole("button", { name: "复制 Proof Story Bundle Chain" });
   assert(text.includes(proofStoryScriptPath), `Proof Story script card did not include ${proofStoryScriptPath}: ${text}`);
   assert(text.includes(proofStoryScriptCue), `Proof Story script card did not include cue text: ${text}`);
   assert(handoffPreview.includes("Proof Story Handoff"), `Proof Story script card did not include handoff preview: ${handoffPreview}`);
@@ -163,6 +165,7 @@ async function captureProofStoryScriptMaterial(page) {
     `Proof Story script card did not include complete strip: ${completeLine}`,
   );
   assert(completeBundleLine.includes("Proof Story Complete Bundle"), `Proof Story script card did not include Complete Bundle: ${completeBundleLine}`);
+  assert(bundleChainLine.includes("Proof Story Bundle Chain"), `Proof Story script card did not include Bundle Chain: ${bundleChainLine}`);
 
   await handoffCopyButton.click();
   await page.waitForFunction(
@@ -198,6 +201,24 @@ async function captureProofStoryScriptMaterial(page) {
     `Proof Story Complete Bundle copy did not reach copied or fallback state: ${completeBundleCopyButtonText}`,
   );
 
+  await bundleChainCopyButton.click();
+  await page.waitForFunction(
+    () => {
+      const button = document.querySelector('[aria-label="复制 Proof Story Bundle Chain"]');
+      return button?.textContent?.includes("已复制") || button?.textContent?.includes("手动");
+    },
+    null,
+    { timeout: 5_000 },
+  );
+  const bundleChainCopyButtonText = await bundleChainCopyButton.innerText();
+  const bundleChainCopyState = bundleChainCopyButtonText.includes("已复制")
+    ? "Bundle Chain 已复制"
+    : `Bundle Chain ${bundleChainCopyButtonText.trim() || "手动"}`;
+  assert(
+    bundleChainCopyState === "Bundle Chain 已复制" || bundleChainCopyState.includes("手动"),
+    `Proof Story Bundle Chain copy did not reach copied or fallback state: ${bundleChainCopyButtonText}`,
+  );
+
   const screenshotPath = path.join(outDir, "studio-proof-story-script-material.png");
   await card.screenshot({ path: screenshotPath });
 
@@ -211,6 +232,8 @@ async function captureProofStoryScriptMaterial(page) {
     completeLine,
     completeBundleLine,
     completeBundleCopyState,
+    bundleChainLine,
+    bundleChainCopyState,
     text,
     screenshotPath,
   };
@@ -280,6 +303,8 @@ function buildHtmlReport(summary) {
             <div><dt>complete</dt><dd>${escapeHtml(summary.scriptMaterial.completeLine || "")}</dd></div>
             <div><dt>bundle line</dt><dd>${escapeHtml(summary.scriptMaterial.completeBundleLine || "")}</dd></div>
             <div><dt>bundle</dt><dd>${escapeHtml(summary.scriptMaterial.completeBundleCopyState || "")}</dd></div>
+            <div><dt>bundle chain</dt><dd>${escapeHtml(summary.scriptMaterial.bundleChainLine || "")}</dd></div>
+            <div><dt>chain copy</dt><dd>${escapeHtml(summary.scriptMaterial.bundleChainCopyState || "")}</dd></div>
           </dl>
         </div>
       </section>`
@@ -448,6 +473,8 @@ function buildClipNotes(summary) {
     `- Proof Story Complete: ${summary.scriptMaterial.completeLine}`,
     `- Proof Story Complete Bundle: ${summary.scriptMaterial.completeBundleLine}`,
     `- Complete Bundle copy state: ${summary.scriptMaterial.completeBundleCopyState}`,
+    `- Proof Story Bundle Chain: ${summary.scriptMaterial.bundleChainLine}`,
+    `- Bundle Chain copy state: ${summary.scriptMaterial.bundleChainCopyState}`,
     `- Voiceover prompt: Studio 现在把 Proof Story 脚本路径、证据时间线、四行预览和复制动作放在同一个录屏面板里。`,
     ``,
   ].join("\n");

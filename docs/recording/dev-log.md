@@ -2104,3 +2104,14 @@ Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, app/gl
 Command/result: npm test -- components/studio-mode.test.tsx passed with 32 tests; browser check against `http://localhost:3000/studio` showed the complete Bundle Chain line, 297px row width inside a 313px card, and 0 console errors.
 Voiceover note: "这里把两个技术状态压缩成一句人能讲的话：Bundle 已入库，Index Bundle 已验证，后期交付链路闭环。这个句子可以直接贴进视频 notes。"
 Usable for: final video-notes handoff clip, proof-chain teaching segment, continued goal run round 874
+
+## Phase FS: v0.8.175 — Bundle Chain In Studio QA Notes
+
+Date: 2026-06-14
+Clip title: Phase FS: v0.8.175 — Bundle Chain In Studio QA Notes
+What changed: `npm run check:studio-visuals` now captures the visible `Proof Story Bundle Chain`, clicks `复制 Chain`, and writes the chain line plus copy state into Studio QA `summary.json`, `index.html`, and `clip-notes.md`.
+Why this matters: The creator-facing video-notes sentence is now part of the automated proof pack, not only an in-page helper.
+Files shown: scripts/check-studio-visuals.mjs, recordings/studio-checks/2026-06-14T11-30-55-646Z/clip-notes.md, README.md, docs/recording/goal-881-890-recap.md
+Command/result: node --check scripts/check-studio-visuals.mjs passed; npm run check:studio-visuals passed and the newest Studio QA notes contain `Proof Story Bundle Chain` plus `Bundle Chain 已复制`.
+Voiceover note: "Chain 句子也进了 Studio QA notes。这样页面上能复制的后期说明，会自动进入素材证据包，后面剪视频不用再手动整理。"
+Usable for: Studio QA notes walkthrough, video-notes automation clip, continued goal run round 884
