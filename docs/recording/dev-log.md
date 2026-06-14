@@ -960,3 +960,14 @@ Files shown: scripts/check-dream-lenses.mjs, scripts/check-recording-suite.mjs, 
 Command/result: npm test -- lib/recording-assets.test.ts && npm run lint; RECORDINGS_DIR=<tmp> npm run index:recording-assets confirmed low-skyline lens in HTML and Markdown.
 Voiceover note: "我把五种镜头语言接进录屏素材管线。以后不是只生成一个好看的页面，而是可以批量生成不同镜头方向的 QA 素材包，再从索引里对比。"
 Usable for: lens comparison workflow clip, recording asset automation, Vibe Coding evidence pipeline, continued goal run round 105
+
+## Phase CD: v0.8.71 — Lens Capture Verification Checkpoint
+
+Date: 2026-06-14
+Clip title: Phase CD: v0.8.71 — Lens Capture Verification Checkpoint
+What changed: Ran the full local quality gate after adding all-lens Dream QA, lens-aware recording asset metadata, Studio lens chips, and the lens visual capture workflow docs.
+Why this matters: The lens capture workflow is now backed by both focused tests and the full app gate. The creator can rely on it as a repeatable recording prep step before tuning the actual 3D compositions.
+Files shown: scripts/check-dream-lenses.mjs, components/studio-mode.tsx, docs/recording/lens-visual-capture-workflow.md, docs/recording/dev-log.md
+Command/result: npm run lint && npm test && npm run build (43 files, 892 tests, build passed)
+Voiceover note: "这一步我又跑了完整质量门。现在五种镜头语言的素材捕获、索引展示和 Studio 可视化是一条稳定链路。"
+Usable for: verification checkpoint clip, lens capture workflow, Vibe Coding reliability narrative, continued goal run round 109
