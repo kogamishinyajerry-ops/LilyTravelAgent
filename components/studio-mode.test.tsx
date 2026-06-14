@@ -307,6 +307,11 @@ describe("StudioMode demo roadbooks", () => {
     expect(screen.getByText("npm run check:recording-suite")).toBeTruthy();
     expect(screen.getByRole("button", { name: "刷新" })).toBeTruthy();
     expect(screen.queryByRole("link", { name: /打开总索引/ })).toBeNull();
+
+    fireEvent.click(screen.getByRole("button", { name: /脚本模式/ }));
+    const proofChecklist = await screen.findByLabelText("录屏证据清单");
+    expect(proofChecklist.textContent).toContain("Suite Run");
+    expect(proofChecklist.textContent).toContain("npm run check:recording-suite");
   });
 
   it("toggles a compact recording script track for walkthrough capture", async () => {
@@ -341,12 +346,15 @@ describe("StudioMode demo roadbooks", () => {
     expect(proofChecklist.textContent).toContain("15 个素材包");
     expect(proofChecklist.textContent).toContain("Index QA");
     expect(proofChecklist.textContent).toContain("3 条证据链接");
+    expect(proofChecklist.textContent).toContain("Suite Run");
+    expect(proofChecklist.textContent).toContain("7 步 · 7 通过");
     expect(within(proofChecklist).getByRole("button", { name: "播放证据线" })).toBeTruthy();
     expect(within(proofChecklist).getByText("先证明 Studio 和 Dream 能互相跳转。")).toBeTruthy();
     expect(within(proofChecklist).getByRole("link", { name: /3 个入口/ }).getAttribute("href")).toBe("candidate-handoff-checks/candidate-latest/summary.json");
     expect(within(proofChecklist).getByRole("link", { name: /镜头候选对比/ }).getAttribute("href")).toBe("/api/recording-assets/lens-comparison");
     expect(within(proofChecklist).getByRole("link", { name: /15 个素材包/ }).getAttribute("href")).toBe("/api/recording-assets/index");
     expect(within(proofChecklist).getByRole("link", { name: /3 条证据链接/ }).getAttribute("href")).toBe("index-checks/index-check-latest/summary.json");
+    expect(within(proofChecklist).getByRole("link", { name: /7 步 · 7 通过/ }).getAttribute("href")).toBe("suite-runs/suite-run-latest/summary.json");
     expect(screen.getByText("讲解轨道已打开")).toBeTruthy();
     expect(screen.getByRole("button", { name: /脚本模式/ }).getAttribute("aria-pressed")).toBe("true");
   });
@@ -387,6 +395,13 @@ describe("StudioMode demo roadbooks", () => {
     });
     expect(proofChecklist.querySelector('[aria-current="step"]')?.textContent).toContain("Index QA");
     expect(proofChecklist.querySelector('[aria-current="step"]')?.textContent).toContain("确认素材总索引本身也有自动验收。");
+    expect(within(proofChecklist).getByRole("button", { name: "讲解中" }).getAttribute("aria-pressed")).toBe("true");
+
+    await act(async () => {
+      vi.advanceTimersByTime(1200);
+    });
+    expect(proofChecklist.querySelector('[aria-current="step"]')?.textContent).toContain("Suite Run");
+    expect(proofChecklist.querySelector('[aria-current="step"]')?.textContent).toContain("用 full suite 总收据为整条证据链收口。");
     expect(within(proofChecklist).getByRole("button", { name: "播放证据线" }).getAttribute("aria-pressed")).toBe("false");
   });
 

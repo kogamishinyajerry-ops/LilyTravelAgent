@@ -347,6 +347,7 @@ function getRecordingProofChecklist(recordingAssets: RecordingAssetsState) {
       { label: "Lens Compare", state: "等待读取", detail: "读取镜头对比入口。", href: "", cue: "接着比较不同视觉镜头的成片差异。" },
       { label: "Asset Index", state: "等待读取", detail: "读取总素材索引。", href: "", cue: "最后进入素材库，挑录屏片段。" },
       { label: "Index QA", state: "等待读取", detail: "读取索引 QA 证据。", href: "", cue: "确认素材总索引本身也有自动验收。" },
+      { label: "Suite Run", state: "等待读取", detail: "读取 full suite 总收据。", href: "", cue: "用 full suite 总收据为整条证据链收口。" },
     ];
   }
 
@@ -390,6 +391,19 @@ function getRecordingProofChecklist(recordingAssets: RecordingAssetsState) {
         : recordingIndexCommand,
       href: recordingAssets.latestRecordingIndexCheck?.summaryPath || "",
       cue: "确认素材总索引本身也有自动验收。",
+    },
+    {
+      label: "Suite Run",
+      state: recordingAssets.latestRecordingSuiteRun
+        ? recordingAssets.latestRecordingSuiteRun.status === "passed"
+          ? "已通过"
+          : "失败"
+        : "待运行",
+      detail: recordingAssets.latestRecordingSuiteRun
+        ? `${recordingAssets.latestRecordingSuiteRun.stepCount} 步 · ${recordingAssets.latestRecordingSuiteRun.passedStepCount} 通过`
+        : recordingSuiteCommand,
+      href: recordingAssets.latestRecordingSuiteRun?.summaryPath || "",
+      cue: "用 full suite 总收据为整条证据链收口。",
     },
   ];
 }

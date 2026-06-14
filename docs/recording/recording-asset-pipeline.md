@@ -63,6 +63,7 @@ DREAM_LENSES=low-skyline,isometric-atlas npm run check:dream-lenses
 - `Bridge QA 证据状态` in script mode.
 - `候选点击 QA 状态` in the `/studio` asset panel after `npm run check:lens-candidate-handoff`.
 - `Index QA` in the `/studio` proof checklist after `npm run check:recording-index`.
+- `Suite Run` in the `/studio` proof checklist after `npm run check:recording-suite`, used as the final playback cue.
 - `/dream` `Dream Visual Proof Cue Strip`, covering Terrain, Skyline, AI Asset, Route, and Proof over the cinematic scene.
 - `/dream` `播放视觉证据`, highlighting those five visual proof cues in recording order.
 - `npm run check:dream-visuals` captures the visual proof cue labels, final `Proof` playback state, and `dream-*-visual-proof-playback.png`.
@@ -93,6 +94,7 @@ Run it, return to `/studio`, then click `刷新`.
 - "The full recording suite now creates the index proof pack automatically, so one command prepares both assets and their archive QA."
 - "The suite manifest is the receipt for the whole run: every step, every output folder, one top-level proof."
 - "Studio now shows that top-level receipt, so recording readiness is visible without opening the terminal."
+- "The proof playback line now ends at Suite Run, which closes the whole QA story in one highlighted step."
 - "The lens batch lets me compare five camera directions before I tune or record the final clip."
 
 ## Verification
