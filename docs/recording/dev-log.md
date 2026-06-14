@@ -1389,3 +1389,14 @@ Files shown: docs/recording/goal-251-260-recap.md, `/api/recording-assets/lens-c
 Command/result: npm run lint && npm test && npm run build (44 files, 909 tests, build passed)
 Voiceover note: "缩略图候选条做完后，我继续完整质量门。现在这条队列不只是排名，也能提前看到每个镜头画面。"
 Usable for: goal closeout clip, thumbnail queue proof, next hover/focus badge handoff, continued goal run round 257
+
+## Phase DQ: v0.8.110 — Candidate Why Badge And Focus State
+
+Date: 2026-06-14
+Clip title: Phase DQ: v0.8.110 — Candidate Why Badge And Focus State
+What changed: Candidate cards now fill the existing strip height, show a compact `Why:` badge from the existing diff metric, and respond to hover/focus without changing layout height.
+Why this matters: The ranked queue reads more like a product control and less like a report table. During recording, the creator can point to the active card and explain why the shot was selected.
+Files shown: app/api/recording-assets/lens-comparison/route.ts, lib/lens-comparison.test.ts, docs/recording/lens-visual-capture-workflow.md
+Command/result: npm test -- lib/lens-comparison.test.ts; npm run lint; Browser check should confirm 4 `Why:` badges, 4 candidate thumbnails, 4 candidate links, 44 image URLs, and 0 broken images.
+Voiceover note: "这一步我没有改排序，只把已经算出来的 diff 变成一句 Why。用户看候选时，既能看到图，也能知道为什么推荐这张。"
+Usable for: candidate interaction polish clip, why-this-shot narration, continued goal run round 264

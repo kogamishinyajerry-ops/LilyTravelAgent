@@ -194,6 +194,7 @@ describe("lens comparison dashboard", () => {
       sceneScreenshotPath: "visual-checks/2026-06-13T02-00-00-000Z-lens-auto/dream-dali-d1-scene.png",
       diff: {
         state: "changed",
+        detail: "checksum 5.0M / lit 0 / varied 0",
         checksumDelta: 5_000_000,
       },
     });

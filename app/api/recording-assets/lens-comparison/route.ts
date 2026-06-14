@@ -193,17 +193,32 @@ function buildLensComparisonHtml(dashboard: LensComparisonDashboard) {
       .candidate-list {
         display: grid;
         grid-template-columns: repeat(4, minmax(0, 1fr));
+        align-items: stretch;
         gap: 1px;
       }
       .candidate-list a {
+        position: relative;
         display: grid;
         grid-template-columns: 72px minmax(0, 1fr);
         align-items: center;
         gap: 10px;
         min-height: 116px;
+        height: 100%;
+        overflow: hidden;
         padding: 12px;
         color: var(--ink);
         text-decoration: none;
+        outline: none;
+        transition:
+          background 160ms ease,
+          box-shadow 160ms ease,
+          transform 160ms ease;
+      }
+      .candidate-list a:hover,
+      .candidate-list a:focus-visible {
+        background: rgba(230,170,77,0.12);
+        box-shadow: inset 0 0 0 1px rgba(230,170,77,0.72);
+        transform: translateY(-1px);
       }
       .candidate-thumb {
         overflow: hidden;
@@ -219,6 +234,11 @@ function buildLensComparisonHtml(dashboard: LensComparisonDashboard) {
         height: 100%;
         object-fit: cover;
         filter: saturate(1.08) contrast(1.05);
+        transition: transform 180ms ease;
+      }
+      .candidate-list a:hover .candidate-thumb img,
+      .candidate-list a:focus-visible .candidate-thumb img {
+        transform: scale(1.05);
       }
       .candidate-copy {
         display: grid;
@@ -236,9 +256,29 @@ function buildLensComparisonHtml(dashboard: LensComparisonDashboard) {
         line-height: 1.08;
       }
       .candidate-list small {
+        display: -webkit-box;
+        overflow: hidden;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
         color: var(--muted);
         font-size: 0.68rem;
         line-height: 1.25;
+      }
+      .candidate-why {
+        display: inline-flex;
+        max-width: 100%;
+        width: max-content;
+        overflow: hidden;
+        border: 1px solid rgba(132,181,154,0.36);
+        border-radius: 999px;
+        padding: 3px 7px;
+        color: #0f130f;
+        background: var(--green);
+        font-size: 0.6rem;
+        font-weight: 1000;
+        line-height: 1;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
       .batch-strip {
         display: grid;
@@ -543,6 +583,7 @@ function renderCandidateStrip(candidates: LensRecordingCandidate[]) {
             <div class="candidate-copy">
               <span class="candidate-meta">#${candidate.rank} · ${escapeHtml(candidate.lensLabel)} · D${candidate.day}</span>
               <strong>${escapeHtml(candidate.dayLabel)}</strong>
+              <span class="candidate-why">${escapeHtml(formatWhyShotBadge(candidate.diff))}</span>
               <small>${escapeHtml(`${candidate.diff.detail} · ${candidate.cue || "visual beat"}`)}</small>
             </div>
           </a>`,
@@ -550,6 +591,11 @@ function renderCandidateStrip(candidates: LensRecordingCandidate[]) {
         .join("")}
     </div>
   </section>`;
+}
+
+function formatWhyShotBadge(diff: LensRecordingCandidate["diff"]) {
+  const primarySignal = diff.detail.split(" / ")[0] || diff.label;
+  return `Why: ${primarySignal}`;
 }
 
 function renderBatchStrip(currentBatch: LensComparisonBatch | null, previousBatch: LensComparisonBatch | null) {
