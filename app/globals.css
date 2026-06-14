@@ -3423,6 +3423,57 @@ textarea {
   white-space: nowrap;
 }
 
+.dream-visual-proof-strip {
+  position: absolute;
+  top: 146px;
+  left: 50%;
+  z-index: 11;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(86px, 1fr));
+  gap: 6px;
+  width: min(720px, calc(100% - 48px));
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.dream-visual-proof-strip span {
+  display: grid;
+  min-width: 0;
+  border: 1px solid rgba(255, 255, 255, 0.44);
+  border-radius: 8px;
+  padding: 7px 8px;
+  color: rgba(39, 49, 59, 0.8);
+  background: rgba(255, 255, 255, 0.24);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 14px 30px rgba(45, 58, 70, 0.1);
+}
+
+.dream-visual-proof-strip small {
+  color: rgba(39, 49, 59, 0.54);
+  font-size: 0.58rem;
+  font-weight: 950;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.dream-visual-proof-strip strong {
+  overflow: hidden;
+  font-size: 0.76rem;
+  font-weight: 950;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dream-visual-proof-strip em {
+  overflow: hidden;
+  color: rgba(39, 49, 59, 0.56);
+  font-size: 0.62rem;
+  font-style: normal;
+  font-weight: 850;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .dream-world-skyline .dream-title-block {
   left: clamp(42px, 5vw, 72px);
   bottom: clamp(120px, 12vw, 148px);

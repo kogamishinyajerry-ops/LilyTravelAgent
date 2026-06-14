@@ -206,6 +206,26 @@ const defaultRecordingConfig: RecordingConfig = {
   moods: allMoodIds,
 };
 
+function formatDreamAssetCue(stage: PreviewAssetStage, asset: PreviewAsset | null) {
+  if (stage === "ready") {
+    return asset?.source === "minimax-image" ? "AI backdrop" : "asset ready";
+  }
+
+  if (stage === "generating") {
+    return "generating";
+  }
+
+  if (stage === "fallback") {
+    return "3D fallback";
+  }
+
+  if (stage === "error") {
+    return "asset error";
+  }
+
+  return "asset pending";
+}
+
 async function fetchPreviewAssetHistory(cacheKey: string) {
   const response = await fetch(`/api/generate-preview-asset?cacheKey=${encodeURIComponent(cacheKey)}`);
   const result = (await response.json()) as PreviewAssetHistoryResponse;
@@ -419,6 +439,45 @@ export function DreamRoadbook({ initialDemo = "dali", initialLens = "auto", init
     ],
   );
   const cinematicProofReadyCount = cinematicProofItems.filter((item) => item.status === "ready").length;
+  const visualProofCues = useMemo(
+    () => [
+      {
+        label: "Terrain",
+        value: realTerrainActive ? "real terrain" : "procedural terrain",
+        detail: realTerrainActive ? "terrain data on" : "Three.js fallback",
+      },
+      {
+        label: "Skyline",
+        value: activeDirectorLens.shortLabel,
+        detail: activeDirectorLens.proofLabel,
+      },
+      {
+        label: "AI Asset",
+        value: formatDreamAssetCue(assetStage, previewAsset),
+        detail: previewAsset?.cacheStatus || assetStage,
+      },
+      {
+        label: "Route",
+        value: `D${activePlan.day}`,
+        detail: sceneInspector.routeProgress,
+      },
+      {
+        label: "Proof",
+        value: `${cinematicProofReadyCount}/5 ready`,
+        detail: "proof stack",
+      },
+    ],
+    [
+      activeDirectorLens.proofLabel,
+      activeDirectorLens.shortLabel,
+      activePlan.day,
+      assetStage,
+      cinematicProofReadyCount,
+      previewAsset,
+      realTerrainActive,
+      sceneInspector.routeProgress,
+    ],
+  );
 
   useEffect(() => {
     if (trackDemoStep === null || trackDemoStep >= demoTrackNotes.length - 1 || isBusy) {
@@ -1897,6 +1956,15 @@ export function DreamRoadbook({ initialDemo = "dali", initialLens = "auto", init
                 <span key={item}>{item}</span>
               ))}
             </div>
+          </div>
+          <div className="dream-visual-proof-strip" aria-label="Dream Visual Proof Cue Strip">
+            {visualProofCues.map((item) => (
+              <span key={item.label}>
+                <small>{item.label}</small>
+                <strong>{item.value}</strong>
+                <em>{item.detail}</em>
+              </span>
+            ))}
           </div>
         </section>
 

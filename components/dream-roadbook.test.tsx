@@ -184,6 +184,25 @@ describe("DreamRoadbook a11y polish", () => {
     expect(stack.textContent).toContain("compact route pending");
   });
 
+  it("shows a compact visual proof cue strip over the dream scene", () => {
+    render(<DreamRoadbook />);
+
+    const strip = screen.getByLabelText("Dream Visual Proof Cue Strip");
+
+    expect(strip.textContent).toContain("Terrain");
+    expect(strip.textContent).toContain("procedural terrain");
+    expect(strip.textContent).toContain("Three.js fallback");
+    expect(strip.textContent).toContain("Skyline");
+    expect(strip.textContent).toContain("Auto");
+    expect(strip.textContent).toContain("auto day lens");
+    expect(strip.textContent).toContain("AI Asset");
+    expect(strip.textContent).toContain("asset pending");
+    expect(strip.textContent).toContain("Route");
+    expect(strip.textContent).toContain("D1");
+    expect(strip.textContent).toContain("Proof");
+    expect(strip.textContent).toContain("3/5 ready");
+  });
+
   it("shows the active template rendering strategy", () => {
     render(<DreamRoadbook />);
 
