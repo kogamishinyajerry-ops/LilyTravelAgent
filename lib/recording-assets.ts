@@ -10,6 +10,7 @@ export type RecordingAssetPack = {
   createdAt: string;
   title: string;
   detail: string;
+  lens: string;
   galleryPath: string;
   notesPath: string;
   summaryPath: string;
@@ -94,6 +95,7 @@ async function readSource(recordingsRoot: string, source: (typeof sources)[numbe
       createdAt: readString(summary.createdAt) || entry,
       title: buildPackTitle(source.type, summary),
       detail: buildPackDetail(source.type, summary),
+      lens: readDreamLens(summary),
       galleryPath: toRecordingLink(path.join(source.dir, entry, "index.html")),
       notesPath: existsSync(path.join(packDir, "clip-notes.md")) ? toRecordingLink(path.join(source.dir, entry, "clip-notes.md")) : "",
       summaryPath: toRecordingLink(path.join(source.dir, entry, "summary.json")),
@@ -110,6 +112,13 @@ function buildPackTitle(type: RecordingAssetPack["type"], summary: Record<string
 
   if (type === "bridge") {
     return "Studio-Dream bridge QA pack";
+  }
+
+  if (type === "dream") {
+    const lens = readDreamLens(summary);
+    if (lens && lens !== "auto day lens") {
+      return `Dream ${lens} visual pack`;
+    }
   }
 
   return summary.demoRoadbook === "coast" ? "Dream coastal visual pack" : "Dream Dali visual pack";
@@ -130,11 +139,24 @@ function buildPackDetail(type: RecordingAssetPack["type"], summary: Record<strin
 
   const days = Array.isArray(summary.days) ? summary.days.length : 0;
   const motion = typeof summary.motion === "object" && summary.motion && "changed" in summary.motion && summary.motion.changed ? "motion verified" : "motion pending";
-  return `${readString(summary.demoRoadbook) || "dali"} · ${days} day screenshots · ${motion}`;
+  const lens = readDreamLens(summary);
+  const lensDetail = lens ? ` · ${lens}` : "";
+  return `${readString(summary.demoRoadbook) || "dali"} · ${days} day screenshots · ${motion}${lensDetail}`;
 }
 
 function readString(value: unknown) {
   return typeof value === "string" ? value : "";
+}
+
+function readDreamLens(summary: Record<string, unknown>) {
+  if (typeof summary.activeLens === "object" && summary.activeLens) {
+    const proof = readString((summary.activeLens as Record<string, unknown>).proof);
+    if (proof) {
+      return proof;
+    }
+  }
+
+  return readString(summary.directorLens);
 }
 
 function toRecordingLink(relativePath: string) {

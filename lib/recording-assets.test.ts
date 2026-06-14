@@ -58,6 +58,14 @@ describe("recording assets", () => {
     await writeSummary("visual-checks/new-coast", {
       createdAt: "2026-06-13T03:00:00.000Z",
       demoRoadbook: "coast",
+      activeLens: { proof: "auto day lens" },
+      days: [{ day: 1 }, { day: 2 }, { day: 3 }, { day: 4 }],
+      motion: { changed: true },
+    });
+    await writeSummary("visual-checks/skyline", {
+      createdAt: "2026-06-13T03:30:00.000Z",
+      demoRoadbook: "dali",
+      activeLens: { proof: "low-skyline lens" },
       days: [{ day: 1 }, { day: 2 }, { day: 3 }, { day: 4 }],
       motion: { changed: true },
     });
@@ -72,16 +80,19 @@ describe("recording assets", () => {
 
     const packs = await listRecordingAssetPacks(tempRoot);
 
-    expect(packs).toHaveLength(4);
+    expect(packs).toHaveLength(5);
     expect(packs.map((pack) => pack.title)).toEqual([
       "Studio-Dream bridge QA pack",
+      "Dream low-skyline lens visual pack",
       "Dream coastal visual pack",
       "Studio 16:9 demo pack",
       "Dream Dali visual pack",
     ]);
     expect(packs[0].detail).toBe("云南大理 / 三亚海岛 round trips");
-    expect(packs[1].detail).toBe("coast · 4 day screenshots · motion verified");
-    expect(packs[2].detail).toBe("云南大理 / 三亚海岛");
+    expect(packs[1].detail).toBe("dali · 4 day screenshots · motion verified · low-skyline lens");
+    expect(packs[1].lens).toBe("low-skyline lens");
+    expect(packs[2].detail).toBe("coast · 4 day screenshots · motion verified · auto day lens");
+    expect(packs[3].detail).toBe("云南大理 / 三亚海岛");
     expect(packs[0].notesPath).toBe("handoff-checks/latest-bridge/clip-notes.md");
   });
 
