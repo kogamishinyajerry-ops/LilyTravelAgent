@@ -11,9 +11,9 @@ This run started improving the actual Dali 3D canvas render now that the compari
 | Goal | Commit | Summary |
 | --- | --- | --- |
 | 151-154 | `d838647` | Added Dali 3D depth staging and recorded visual QA evidence. |
-| 155 | pending | Packaged this recap and README entry. |
-| 156 | pending | Final lint/test/build verification. |
-| 157 | pending | Push to GitHub. |
+| 155 | `ac38f58` | Packaged this recap and README entry. |
+| 156 | closeout | Final lint/test/build verification. |
+| 157 | closeout | Push to GitHub. |
 | 158-160 | closeout | Next-goal handoff. |
 
 ## What Changed In The Canvas
@@ -26,6 +26,7 @@ This run started improving the actual Dali 3D canvas render now that the compari
 ## Evidence
 
 - `npm run lint && npm run build`
+- `npm run lint && npm test && npm run build` passed with 44 test files, 903 tests, and a successful production build.
 - `DREAM_URL=http://127.0.0.1:3000/dream DREAM_LENSES=close-detail npm run check:dream-lenses`
 - `DREAM_URL=http://127.0.0.1:3000/dream npm run check:dream-lenses`
 - Browser check: `/api/recording-assets/lens-comparison` read the latest five-lens run, loaded 20 scene crops, and showed 0 broken images.

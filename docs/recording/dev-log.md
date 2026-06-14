@@ -1147,3 +1147,14 @@ Files shown: docs/recording/goal-151-160-recap.md, README.md, components/dream-s
 Command/result: npm run lint (passed)
 Voiceover note: "这一轮终于不是只做工具链，而是开始让 3D 画面本身更有层次。评审看板能证明改动有没有进入 canvas crop。"
 Usable for: 3D render recap clip, visual-quality progression, continued goal run round 155
+
+## Phase CU: v0.8.88 — Goals 151-160 Final Quality Gate
+
+Date: 2026-06-14
+Clip title: Phase CU: v0.8.88 — Goals 151-160 Final Quality Gate
+What changed: Ran the full local quality gate after the Dali depth-staging render pass and recap docs.
+Why this matters: The first 3D-content upgrade now passes the same full gate as the app and recording workflow.
+Files shown: terminal verification output, docs/recording/goal-151-160-recap.md, components/dream-skyline-scene.tsx
+Command/result: npm run lint && npm test && npm run build (44 files, 903 tests, build passed)
+Voiceover note: "3D depth staging 做完以后，我还是跑完整质量门。现在可以继续做更具体的地标细节，而不是怕前一层不稳。"
+Usable for: goal closeout clip, quality gate proof, next landmark-detail handoff, continued goal run round 156
