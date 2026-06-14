@@ -195,6 +195,7 @@ npm run check:recording-suite
 - `docs/recording/goal-471-480-recap.md` summarizes double-proof Recording Index QA.
 - `docs/recording/goal-481-490-recap.md` summarizes surfacing double-proof Index QA in Studio.
 - `docs/recording/goal-491-500-recap.md` summarizes Dream/Studio proof-check chips in Studio.
+- `docs/recording/goal-501-510-recap.md` summarizes the Studio evidence timeline.
 - `docs/recording/studio-dream-demo-script.md` gives a shot-by-shot Studio ↔ Dream demo recording path.
 - `docs/recording/bridge-qa-evidence-script.md` gives a short Bridge QA proof clip script.
 - `docs/recording/cinematic-visual-contract-script.md` gives a short `/dream` visual-contract recording script for template strategy, Scene Inspector, Proof Stack, and asset state.

@@ -185,6 +185,29 @@ describe("StudioMode demo roadbooks", () => {
     expect(screen.getByLabelText("素材剪辑标签").textContent).toContain("产品画面 · 12");
     expect(screen.getByLabelText("素材剪辑标签").textContent).toContain("讲解画面 · 3");
     expect(screen.getByLabelText("素材剪辑标签").textContent).toContain("桥接验证 · 1");
+    const evidenceTimeline = screen.getByLabelText("录屏证据时间线");
+    const evidenceTimelineText = evidenceTimeline.textContent || "";
+    const evidenceTimelineSteps = Array.from(evidenceTimeline.children).map((element) => element.textContent || "");
+    expect(evidenceTimelineSteps[0]).toContain("Dream Proof");
+    expect(evidenceTimelineSteps[1]).toContain("Studio Proof");
+    expect(evidenceTimelineSteps[2]).toContain("Index QA");
+    expect(evidenceTimelineSteps[3]).toContain("Suite Run");
+    expect(evidenceTimelineText).toContain("Proof · 3/5 ready");
+    expect(evidenceTimelineText).toContain("Suite Run · 7 步 · 7 通过");
+    expect(evidenceTimelineText).toContain("Dream + Studio 双证据 · 6 条链接");
+    expect(evidenceTimelineText).toContain("7 步 · 7 通过");
+    expect(within(evidenceTimeline).getByRole("link", { name: /Dream Proof/ }).getAttribute("href")).toBe(
+      "/api/recording-assets/file?path=visual-checks%2Fdream-proof-latest%2Fsummary.json",
+    );
+    expect(within(evidenceTimeline).getByRole("link", { name: /Studio Proof/ }).getAttribute("href")).toBe(
+      "/api/recording-assets/file?path=studio-checks%2Fstudio-proof-latest%2Fsummary.json",
+    );
+    expect(within(evidenceTimeline).getByRole("link", { name: /Index QA/ }).getAttribute("href")).toBe(
+      "/api/recording-assets/file?path=index-checks%2Findex-check-latest%2Fsummary.json",
+    );
+    expect(evidenceTimeline.children[3].getAttribute("href")).toBe(
+      "/api/recording-assets/file?path=suite-runs%2Fsuite-run-latest%2Fsummary.json",
+    );
     expect(screen.getByLabelText("最近素材包")).toBeTruthy();
     expect(screen.getByText("Studio QA")).toBeTruthy();
     expect(screen.getByText("Bridge QA")).toBeTruthy();
@@ -385,10 +408,14 @@ describe("StudioMode demo roadbooks", () => {
     expect(screen.getByLabelText("Recording Suite 状态").textContent).toContain("npm run check:recording-suite");
     expect(screen.getByLabelText("Studio proof playback QA 状态").textContent).toContain("等待 Studio QA 捕获");
     expect(screen.getByLabelText("Studio proof playback QA 状态").textContent).toContain("npm run check:studio-visuals");
+    expect(screen.getByLabelText("录屏证据时间线").textContent).toContain("npm run check:dream-visuals");
+    expect(screen.getByLabelText("录屏证据时间线").textContent).toContain("npm run check:studio-visuals");
+    expect(screen.getByLabelText("录屏证据时间线").textContent).toContain("npm run check:recording-index");
+    expect(screen.getByLabelText("录屏证据时间线").textContent).toContain("npm run check:recording-suite");
     expect(screen.getByText("Dream 0")).toBeTruthy();
     expect(screen.getByText("Studio 0")).toBeTruthy();
     expect(screen.getByText("生成本地素材索引")).toBeTruthy();
-    expect(screen.getByText("npm run check:recording-suite")).toBeTruthy();
+    expect(screen.getAllByText("npm run check:recording-suite").length).toBeGreaterThanOrEqual(2);
     expect(screen.getByRole("button", { name: "刷新" })).toBeTruthy();
     expect(screen.queryByRole("link", { name: /打开总索引/ })).toBeNull();
 

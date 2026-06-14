@@ -1686,3 +1686,14 @@ Files shown: lib/recording-assets.ts, components/studio-mode.tsx, components/stu
 Command/result: npm test -- lib/recording-assets.test.ts components/studio-mode.test.tsx passed with 21 tests; browser check confirmed `/studio` shows Dream 3/3 and Studio 3/3 chips with no console errors; npm run lint && npm test && npm run build passed with 44 files, 919 tests, and a successful production build.
 Voiceover note: "这一步把 summary 里的细节拉回 Studio：Dream 三条链接、Studio 三条链接，都在卡片里直接看见。"
 Usable for: proofChecks explainer clip, local API-to-UI workflow narration, continued goal run round 494
+
+## Phase ER: v0.8.137 — Studio Evidence Timeline
+
+Date: 2026-06-14
+Clip title: Phase ER: v0.8.137 — Studio Evidence Timeline
+What changed: `/studio` now shows a compact four-step evidence timeline in the recording assets panel: Dream Proof, Studio Proof, Index QA, and Suite Run. Each ready step links to its existing summary evidence, while missing steps show the command to run.
+Why this matters: The creator can narrate the proof chain as one ordered story instead of jumping between separate status cards.
+Files shown: components/studio-mode.tsx, app/globals.css, components/studio-mode.test.tsx
+Command/result: npm test -- components/studio-mode.test.tsx passed with 11 tests; browser check confirmed the live timeline order, summary links, and empty console errors; npm run lint && npm test && npm run build passed with 44 files, 919 tests, and a successful production build.
+Voiceover note: "现在 Studio 有一条证据时间线：先是 Dream 画面，再是 Studio 讲解台，再到 Index QA，最后用 Suite Run 收口。"
+Usable for: evidence-chain recording clip, Studio walkthrough narration, continued goal run round 504

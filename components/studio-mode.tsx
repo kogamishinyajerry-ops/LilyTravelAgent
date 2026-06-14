@@ -197,6 +197,8 @@ const localDemoModelLabel = "Local Demo";
 const recordingSuiteCommand = "npm run check:recording-suite";
 const candidateHandoffCommand = "npm run check:lens-candidate-handoff";
 const recordingIndexCommand = "npm run check:recording-index";
+const dreamVisualProofCommand = "npm run check:dream-visuals";
+const studioVisualProofCommand = "npm run check:studio-visuals";
 const recordingWorkflowSteps = [
   {
     step: "1",
@@ -387,6 +389,61 @@ function getRecordingIndexProofCheckLabel(proofCheck: RecordingIndexProofCheckSu
   return proofCheck.label.replace(/\s+Proof$/, "") || proofCheck.proofId;
 }
 
+function getRecordingEvidenceTimeline(recordingAssets: RecordingAssetsState) {
+  if (recordingAssets.status !== "ready") {
+    return [];
+  }
+
+  const indexCoverage = recordingAssets.latestRecordingIndexCheck
+    ? getRecordingIndexCheckCoverage(recordingAssets.latestRecordingIndexCheck)
+    : null;
+
+  return [
+    {
+      label: "Dream Proof",
+      state: recordingAssets.latestDreamVisualProof ? "已验证" : "待运行",
+      detail: recordingAssets.latestDreamVisualProof
+        ? `${recordingAssets.latestDreamVisualProof.finalCueLabel} · ${recordingAssets.latestDreamVisualProof.finalCueValue}`
+        : dreamVisualProofCommand,
+      href: recordingAssets.latestDreamVisualProof?.summaryPath || "",
+      tone: recordingAssets.latestDreamVisualProof ? "ready" : "missing",
+    },
+    {
+      label: "Studio Proof",
+      state: recordingAssets.latestStudioProofPlayback ? "已捕获" : "待运行",
+      detail: recordingAssets.latestStudioProofPlayback
+        ? `${recordingAssets.latestStudioProofPlayback.finalCueLabel} · ${recordingAssets.latestStudioProofPlayback.finalCueDetail}`
+        : studioVisualProofCommand,
+      href: recordingAssets.latestStudioProofPlayback?.summaryPath || "",
+      tone: recordingAssets.latestStudioProofPlayback ? "ready" : "missing",
+    },
+    {
+      label: "Index QA",
+      state: recordingAssets.latestRecordingIndexCheck ? "已验证" : "待运行",
+      detail: indexCoverage ? indexCoverage.checklistDetail : recordingIndexCommand,
+      href: recordingAssets.latestRecordingIndexCheck?.summaryPath || "",
+      tone: recordingAssets.latestRecordingIndexCheck ? "ready" : "missing",
+    },
+    {
+      label: "Suite Run",
+      state: recordingAssets.latestRecordingSuiteRun
+        ? recordingAssets.latestRecordingSuiteRun.status === "passed"
+          ? "已通过"
+          : "失败"
+        : "待运行",
+      detail: recordingAssets.latestRecordingSuiteRun
+        ? `${recordingAssets.latestRecordingSuiteRun.stepCount} 步 · ${recordingAssets.latestRecordingSuiteRun.passedStepCount} 通过`
+        : recordingSuiteCommand,
+      href: recordingAssets.latestRecordingSuiteRun?.summaryPath || "",
+      tone: recordingAssets.latestRecordingSuiteRun
+        ? recordingAssets.latestRecordingSuiteRun.status === "passed"
+          ? "ready"
+          : "failed"
+        : "missing",
+    },
+  ];
+}
+
 function getRecordingProofChecklist(recordingAssets: RecordingAssetsState) {
   if (recordingAssets.status !== "ready") {
     return [
@@ -483,6 +540,7 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
     recordingAssets.status === "ready" && recordingAssets.latestRecordingIndexCheck
       ? getRecordingIndexCheckCoverage(recordingAssets.latestRecordingIndexCheck)
       : null;
+  const recordingEvidenceTimeline = useMemo(() => getRecordingEvidenceTimeline(recordingAssets), [recordingAssets]);
 
   const loadRecordingAssets = useCallback(
     async ({ markRefreshing = true, isActive = () => true }: { markRefreshing?: boolean; isActive?: () => boolean } = {}) => {
@@ -912,6 +970,30 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
                     <span>{getRecordingAssetUsageHint("studio")} · {recordingAssets.countsByType.studio}</span>
                     <span>{getRecordingAssetUsageHint("bridge")} · {recordingAssets.countsByType.bridge}</span>
                   </div>
+                  {recordingEvidenceTimeline.length ? (
+                    <div className="studio-evidence-timeline" aria-label="录屏证据时间线">
+                      {recordingEvidenceTimeline.map((item, index) => {
+                        const content = (
+                          <>
+                            <small>{String(index + 1).padStart(2, "0")}</small>
+                            <strong>{item.label}</strong>
+                            <span>{item.state}</span>
+                            <p>{item.detail}</p>
+                          </>
+                        );
+
+                        return item.href ? (
+                          <a className={item.tone} href={buildRecordingEvidenceUrl(item.href)} target="_blank" rel="noreferrer" key={item.label}>
+                            {content}
+                          </a>
+                        ) : (
+                          <div className={item.tone} key={item.label}>
+                            {content}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : null}
                   <div className="studio-recording-latest" aria-label="最新素材包摘要">
                     {recordingAssets.latestPack ? (
                       <>
