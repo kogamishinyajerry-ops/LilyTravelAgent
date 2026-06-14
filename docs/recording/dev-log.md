@@ -1928,3 +1928,14 @@ Files shown: scripts/check-recording-index.mjs, recordings/index-checks/2026-06-
 Command/result: node --check scripts/check-recording-index.mjs passed; npm run check:recording-index passed and the newest clip notes contain `Proof Story Delivery`; a temporary no-script-material fixture passed and omitted the Delivery line.
 Voiceover note: "现在 Studio 里看到的最终交付行，也会被自动写进 QA proof pack。产品状态和素材收据用同一句话收口。"
 Usable for: QA receipt closeout clip, Proof Story final-delivery narration, continued goal run round 714
+
+## Phase FN: v0.8.159 — Delivery Sync Back In Studio
+
+Date: 2026-06-14
+Clip title: Phase FN: v0.8.159 — Delivery Sync Back In Studio
+What changed: `/studio` now reads the latest Recording Index QA `clip-notes.md` and shows a compact `Delivery 已入库` chip when the notes contain the same `Proof Story Delivery` line as the Studio preview.
+Why this matters: The final delivery loop is visible in both directions: Studio creates the line, Recording Index QA writes it into the proof pack, and Studio confirms the proof pack now carries it.
+Files shown: lib/recording-assets.ts, components/studio-mode.tsx, app/globals.css, docs/recording/goal-721-730-recap.md
+Command/result: npm test -- lib/recording-assets.test.ts components/studio-mode.test.tsx passed with 35 tests; browser check against `http://localhost:3000/studio` confirmed `Delivery 已入库` is visible in a 1440x900 viewport with empty console errors.
+Voiceover note: "现在这不是单向生成了：QA notes 生成了 Delivery 行以后，Studio 会读回来，用一个小 chip 告诉我这条最终交付文案已经入库。"
+Usable for: closed-loop Agent workflow clip, proof-pack sync narration, continued goal run round 724

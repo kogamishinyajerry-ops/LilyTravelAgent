@@ -90,6 +90,7 @@ type RecordingIndexCheckSummary = {
   linkCount: number;
   proofChecks?: RecordingIndexProofCheckSummary[];
   scriptMaterialCheck?: RecordingIndexScriptMaterialCheckSummary | null;
+  proofStoryDeliveryLine?: string;
   proofText: string;
   apiIndexUrl: string;
   screenshotPath: string;
@@ -503,6 +504,18 @@ function getProofStoryDeliveryLine(closeoutLine: string, productionAssetsLine: s
   return `Proof Story Delivery · ${closeoutLine} · ${productionAssetsLine} · QA receipt: ${receiptPath || "待生成"}`;
 }
 
+function getProofStoryDeliverySync(studioLine: string, notesLine: string) {
+  if (!notesLine) {
+    return { label: "Delivery 待入库", ready: false };
+  }
+
+  if (notesLine === studioLine) {
+    return { label: "Delivery 已入库", ready: true };
+  }
+
+  return { label: "Delivery 待同步", ready: false };
+}
+
 function getRecordingProofChecklist(recordingAssets: RecordingAssetsState) {
   if (recordingAssets.status !== "ready") {
     return [
@@ -637,6 +650,9 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
     () => getProofStoryDeliveryLine(proofStoryCloseoutLine, proofStoryProductionAssetsLine, proofStoryProductionReceiptPath),
     [proofStoryCloseoutLine, proofStoryProductionAssetsLine, proofStoryProductionReceiptPath],
   );
+  const proofStoryDeliveryLineFromNotes =
+    recordingAssets.status === "ready" ? recordingAssets.latestRecordingIndexCheck?.proofStoryDeliveryLine || "" : "";
+  const proofStoryDeliverySync = getProofStoryDeliverySync(proofStoryDeliveryLine, proofStoryDeliveryLineFromNotes);
 
   const loadRecordingAssets = useCallback(
     async ({ markRefreshing = true, isActive = () => true }: { markRefreshing?: boolean; isActive?: () => boolean } = {}) => {
@@ -1220,6 +1236,12 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
                             <p className="studio-proof-delivery-preview" aria-label="Proof Story Delivery 预览">
                               {proofStoryDeliveryLine}
                             </p>
+                            <span
+                              className={`studio-proof-delivery-sync ${proofStoryDeliverySync.ready ? "ready" : "missing"}`}
+                              aria-label="Proof Story Delivery QA notes 状态"
+                            >
+                              {proofStoryDeliverySync.label}
+                            </span>
                             <button
                               type="button"
                               className="studio-proof-delivery-copy"

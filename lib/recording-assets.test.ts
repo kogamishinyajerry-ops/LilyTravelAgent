@@ -9,6 +9,8 @@ import {
 } from "./recording-assets";
 
 let tempRoot = "";
+const sampleProofStoryDeliveryLine =
+  "Proof Story Delivery · Proof Story · 脚本路径: 就绪 · Studio QA: 已捕获 · 索引入库: 已入库 · Index QA: 已验证 · Production Assets · HTML + Clip 已入库 · QA receipt: index-checks/new-index-check/clip-notes.md";
 
 beforeEach(async () => {
   tempRoot = await mkdtemp(path.join(os.tmpdir(), "lily-recording-assets-"));
@@ -317,6 +319,7 @@ describe("recording assets", () => {
       },
       screenshotPath: path.join(tempRoot, "index-checks", "new-index-check", "recording-index-dream-proof.png"),
     });
+    await writeFile(path.join(tempRoot, "index-checks", "new-index-check", "clip-notes.md"), `# Notes\n\n- ${sampleProofStoryDeliveryLine}\n`);
 
     const summary = await readRecordingAssetsSummary(tempRoot);
 
@@ -350,6 +353,7 @@ describe("recording assets", () => {
         screenshotPath: "index-checks/new-index-check/recording-index-script-material-proof.png",
         summaryPath: "index-checks/new-index-check/summary.json",
       },
+      proofStoryDeliveryLine: sampleProofStoryDeliveryLine,
       proofText: "Dream Proof · Proof · 3/5 ready\nplayback screenshot\nsummary\nnotes",
       apiIndexUrl: "http://localhost:3000/api/recording-assets/index",
       screenshotPath: "index-checks/new-index-check/recording-index-dream-proof.png",
@@ -374,6 +378,7 @@ describe("recording assets", () => {
     const summary = await readRecordingAssetsSummary(tempRoot);
 
     expect(summary.latestRecordingIndexCheck?.scriptMaterialCheck).toBeNull();
+    expect(summary.latestRecordingIndexCheck?.proofStoryDeliveryLine).toBe("");
   });
 
   it("reports the latest recording suite run manifest when available", async () => {

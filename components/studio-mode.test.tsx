@@ -12,6 +12,9 @@ vi.mock("next/link", () => ({
 
 import { StudioMode } from "./studio-mode";
 
+const readyProofStoryDeliveryLine =
+  "Proof Story Delivery · Proof Story · 脚本路径: 就绪 · Studio QA: 已捕获 · 索引入库: 已入库 · Index QA: 已验证 · Production Assets · HTML + Clip 已入库 · QA receipt: index-checks/index-check-latest/clip-notes.md";
+
 function recordingAssetsResponse(
   packCount: number,
   title = "Studio 16:9 demo pack",
@@ -25,9 +28,11 @@ function recordingAssetsResponse(
       ready?: boolean;
     };
     omitIndexNotes?: boolean;
+    proofStoryDeliveryLine?: string;
   } = {},
 ) {
   const indexLinkCount = options.indexLinkCount ?? 6;
+  const defaultProofStoryDeliveryLine = packCount && indexLinkCount >= 6 && !options.omitIndexNotes ? readyProofStoryDeliveryLine : "";
   const defaultProductionAssets = {
     scriptMaterialReady: Boolean(packCount),
     htmlIndexReady: Boolean(packCount && indexAvailable),
@@ -106,6 +111,7 @@ function recordingAssetsResponse(
                   summaryPath: "index-checks/index-check-latest/summary.json",
                 }
               : null,
+          proofStoryDeliveryLine: options.proofStoryDeliveryLine ?? defaultProofStoryDeliveryLine,
           summaryPath: "index-checks/index-check-latest/summary.json",
           notesPath: options.omitIndexNotes ? undefined : "index-checks/index-check-latest/clip-notes.md",
         }
@@ -244,9 +250,8 @@ describe("StudioMode demo roadbooks", () => {
     expect(scriptCard.textContent).toContain("QA 已捕获 · 复制脚本路径");
     expect(scriptCard.textContent).toContain("Index QA 已验证脚本素材 · 3/3");
     expect(screen.getByLabelText("Proof Story Production Assets 状态").textContent).toBe("Production Assets · HTML + Clip 已入库");
-    expect(screen.getByLabelText("Proof Story Delivery 预览").textContent).toBe(
-      "Proof Story Delivery · Proof Story · 脚本路径: 就绪 · Studio QA: 已捕获 · 索引入库: 已入库 · Index QA: 已验证 · Production Assets · HTML + Clip 已入库 · QA receipt: index-checks/index-check-latest/clip-notes.md",
-    );
+    expect(screen.getByLabelText("Proof Story Delivery 预览").textContent).toBe(readyProofStoryDeliveryLine);
+    expect(screen.getByLabelText("Proof Story Delivery QA notes 状态").textContent).toBe("Delivery 已入库");
     expect(within(scriptCard).getByRole("link", { name: "Production Assets QA 收据" }).getAttribute("href")).toBe(
       "/api/recording-assets/file?path=index-checks%2Findex-check-latest%2Fclip-notes.md",
     );
@@ -407,8 +412,28 @@ describe("StudioMode demo roadbooks", () => {
 
     expect(await screen.findByLabelText("Proof Story Production Assets 状态")).toBeTruthy();
     expect(screen.getByLabelText("Proof Story Delivery 预览").textContent).toContain("QA receipt: 待生成");
+    expect(screen.getByLabelText("Proof Story Delivery QA notes 状态").textContent).toBe("Delivery 待入库");
     expect(screen.queryByRole("link", { name: "Production Assets QA 收据" })).toBeNull();
     expect(screen.queryByRole("button", { name: "复制 Production Assets QA 收据路径" })).toBeNull();
+  });
+
+  it("shows a pending Delivery notes state when the latest QA notes lack the Delivery line", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => ({
+        ok: true,
+        status: 200,
+        json: async () =>
+          recordingAssetsResponse(15, "Studio 16:9 demo pack", true, {
+            proofStoryDeliveryLine: "",
+          }),
+      })) as unknown as typeof fetch,
+    );
+
+    render(<StudioMode />);
+
+    expect((await screen.findByLabelText("Proof Story Delivery 预览")).textContent).toBe(readyProofStoryDeliveryLine);
+    expect(screen.getByLabelText("Proof Story Delivery QA notes 状态").textContent).toBe("Delivery 待入库");
   });
 
   it("keeps legacy Dream-only wording for older 3-link recording index checks", async () => {

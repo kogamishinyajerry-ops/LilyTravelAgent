@@ -71,6 +71,7 @@ export type RecordingIndexCheckSummary = {
   linkCount: number;
   proofChecks: RecordingIndexProofCheckSummary[];
   scriptMaterialCheck: RecordingIndexScriptMaterialCheckSummary | null;
+  proofStoryDeliveryLine: string;
   proofText: string;
   apiIndexUrl: string;
   screenshotPath: string;
@@ -305,6 +306,9 @@ async function readLatestRecordingIndexCheck(recordingsRoot: string): Promise<Re
     const links = Array.isArray(summary.links) ? summary.links : [];
     const proofChecks = readRecordingIndexProofChecks(summary, entry);
     const scriptMaterialCheck = readRecordingIndexScriptMaterialCheck(summary, entry);
+    const notesFilePath = path.join(packDir, "clip-notes.md");
+    const notesPath = existsSync(notesFilePath) ? toRecordingLink(path.join("index-checks", entry, "clip-notes.md")) : "";
+    const proofStoryDeliveryLine = notesPath ? await readProofStoryDeliveryLine(notesFilePath) : "";
 
     runs.push({
       id: entry,
@@ -314,15 +318,26 @@ async function readLatestRecordingIndexCheck(recordingsRoot: string): Promise<Re
       linkCount: links.length,
       proofChecks,
       scriptMaterialCheck,
+      proofStoryDeliveryLine,
       proofText: readString(summary.proofText),
       apiIndexUrl: readString(summary.apiIndexUrl),
       screenshotPath: screenshotFile ? toRecordingLink(path.join("index-checks", entry, screenshotFile)) : "",
       summaryPath: toRecordingLink(path.join("index-checks", entry, "summary.json")),
-      notesPath: existsSync(path.join(packDir, "clip-notes.md")) ? toRecordingLink(path.join("index-checks", entry, "clip-notes.md")) : "",
+      notesPath,
     });
   }
 
   return runs.sort((a, b) => b.createdAt.localeCompare(a.createdAt))[0] || null;
+}
+
+async function readProofStoryDeliveryLine(notesPath: string) {
+  const notes = await readFile(notesPath, "utf8").catch(() => "");
+  const line = notes
+    .split(/\r?\n/)
+    .map((item) => item.trim().replace(/^-\s*/, ""))
+    .find((item) => item.startsWith("Proof Story Delivery ·"));
+
+  return line || "";
 }
 
 function readRecordingIndexScriptMaterialCheck(summary: Record<string, unknown>, entry: string): RecordingIndexScriptMaterialCheckSummary | null {
