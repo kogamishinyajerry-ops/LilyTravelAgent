@@ -2005,3 +2005,14 @@ Files shown: lib/recording-assets.ts, components/studio-mode.tsx, app/globals.cs
 Command/result: npm test -- lib/recording-assets.test.ts passed with 15 tests; npm test -- components/studio-mode.test.tsx passed with 26 tests; browser check against `http://localhost:3000/studio` showed `Complete 已入库`, 297px row width, and 0 console errors.
 Voiceover note: "这里不是又做一个新按钮，而是把 QA notes 里的 Complete line 回流到产品台面上。页面现算、QA 已归档，两件事分清楚。"
 Usable for: final archive-state walkthrough, proof-loop teaching clip, continued goal run round 784
+
+## Phase FS: v0.8.166 — Complete Line In Recording Index
+
+Date: 2026-06-14
+Clip title: Phase FS: v0.8.166 — Complete Line In Recording Index
+What changed: `npm run index:recording-assets` now carries optional Studio QA `scriptMaterial.completeLine` into both `recordings/index.html` and `recordings/clip-index.md`.
+Why this matters: The final closeout proof can now be browsed from the asset archive, not only from the live Studio workbench.
+Files shown: scripts/index-recording-assets.mjs, recordings/index.html, recordings/clip-index.md, docs/recording/goal-791-800-recap.md
+Command/result: node --check scripts/index-recording-assets.mjs passed; temporary ready/legacy fixture check passed; npm run index:recording-assets indexed 78 packs and both generated indexes contain `Proof Story Complete`.
+Voiceover note: "这一步把 Complete line 从 QA summary 推进到素材总索引。后期剪辑时打开 index，也能看到最终交付闭环已经完成。"
+Usable for: archive browsing walkthrough, proof-pack editing clip, continued goal run round 794

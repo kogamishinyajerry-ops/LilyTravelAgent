@@ -143,6 +143,7 @@ function buildHtmlIndex(packs) {
                   <span>Proof Story Production Assets · Proof Story Script Material</span>
                   <b>Narration preview · ${escapeHtml(proofStoryNarrationPreview)}</b>
                   <b>Closeout status · ${escapeHtml(proofStoryCloseoutStatus)}</b>
+                  ${pack.scriptMaterial.completeLine ? `<b>${escapeHtml(pack.scriptMaterial.completeLine)}</b>` : ""}
                   ${pack.scriptMaterial.scriptPath ? `<code>Script path · ${escapeHtml(pack.scriptMaterial.scriptPath)}</code>` : ""}
                   ${pack.scriptMaterial.cue ? `<code>Script-material cue · ${escapeHtml(pack.scriptMaterial.cue)}</code>` : ""}
                   <nav>
@@ -337,6 +338,9 @@ function buildMarkdownIndex(packs) {
       lines.push("");
       lines.push(`- Narration preview: ${proofStoryNarrationPreview}`);
       lines.push(`- Closeout status: ${proofStoryCloseoutStatus}`);
+      if (pack.scriptMaterial.completeLine) {
+        lines.push(`- ${pack.scriptMaterial.completeLine}`);
+      }
       if (pack.scriptMaterial.scriptPath) {
         lines.push(`- Script path: ${pack.scriptMaterial.scriptPath}`);
       }
@@ -401,6 +405,7 @@ function readStudioScriptMaterial(entry, packDir, summary) {
     scriptPath: typeof scriptMaterial.scriptPath === "string" ? scriptMaterial.scriptPath : "",
     cue: typeof scriptMaterial.cue === "string" ? scriptMaterial.cue : "",
     buttonText: typeof scriptMaterial.buttonText === "string" ? scriptMaterial.buttonText : "",
+    completeLine: typeof scriptMaterial.completeLine === "string" ? scriptMaterial.completeLine : "",
     screenshotPath: screenshotFile ? toRecordingLink(path.join("studio-checks", entry, screenshotFile)) : "",
     summaryPath: toRecordingLink(path.join("studio-checks", entry, "summary.json")),
     notesPath: existsSync(path.join(packDir, "clip-notes.md")) ? toRecordingLink(path.join("studio-checks", entry, "clip-notes.md")) : "",
