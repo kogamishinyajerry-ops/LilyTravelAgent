@@ -1499,3 +1499,14 @@ Files shown: components/dream-roadbook.tsx, components/dream-roadbook.test.tsx, 
 Command/result: npm test -- components/dream-roadbook.test.tsx (20 Dream tests passed); Chrome browser check confirmed all five cues and no overlap with caption, asset chip, hotspots, or title; npm run lint && npm test && npm run build passed with 44 files, 913 tests, and a successful production build.
 Voiceover note: "Studio 里我证明工作流，Dream 里我证明画面。这个条把 Terrain、Skyline、AI Asset、Route、Proof 五层都摆在主视觉上。"
 Usable for: Dream visual proof clip, 3D asset-pipeline narration, continued goal run round 324
+
+## Phase EA: v0.8.120 — Dream Visual Proof Playback
+
+Date: 2026-06-14
+Clip title: Phase EA: v0.8.120 — Dream Visual Proof Playback
+What changed: `/dream` now has a `播放视觉证据` control that highlights Terrain, Skyline, AI Asset, Route, and Proof in order.
+Why this matters: The cinematic roadbook scene now has a repeatable narration rhythm, matching the Studio proof playback pattern.
+Files shown: components/dream-roadbook.tsx, components/dream-roadbook.test.tsx, app/globals.css
+Command/result: npm test -- components/dream-roadbook.test.tsx (21 Dream tests passed); Chrome browser check confirmed the sequence reaches `Proof` and avoids key scene overlap; npm run lint && npm test && npm run build passed with 44 files, 914 tests, and a successful production build.
+Voiceover note: "现在 Dream 主画面也有证据线播放。点一下，就从 Terrain 走到 Proof，直接把画面背后的资产管线讲清楚。"
+Usable for: Dream proof playback clip, visual asset-pipeline narration, continued goal run round 334
