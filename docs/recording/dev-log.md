@@ -2038,3 +2038,14 @@ Files shown: lib/recording-assets.ts, components/studio-mode.tsx, app/globals.cs
 Command/result: npm test -- lib/recording-assets.test.ts passed with 15 tests; npm test -- components/studio-mode.test.tsx passed with 27 tests; browser check against `http://localhost:3000/studio` showed `Index Complete 已验证`, 297px row width, no overlap, and 0 console errors.
 Voiceover note: "这一步是回流闭环：Index QA 验证过的 Complete line，又回到 Studio 台面上，录屏时可以一眼讲清楚。"
 Usable for: proof-loop closeout clip, Studio archive verification walkthrough, continued goal run round 814
+
+## Phase FS: v0.8.169 — Complete Bundle Handoff Copy
+
+Date: 2026-06-14
+Clip title: Phase FS: v0.8.169 — Complete Bundle Handoff Copy
+What changed: `/studio` now generates a `Proof Story Complete Bundle` line and adds a one-click `复制 Bundle` action inside the Proof Story script-material card.
+Why this matters: Delivery, Handoff, Studio Complete, and Index Complete can now be copied as one post-production handoff line for notes, captions, or later voiceover planning.
+Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, app/globals.css, docs/recording/goal-821-830-recap.md
+Command/result: npm test -- components/studio-mode.test.tsx passed with 29 tests; browser check against `http://localhost:3000/studio` showed the bundle row inside the card with 0 console errors.
+Voiceover note: "最后不是手动拼素材说明，而是一键复制 Complete Bundle。Agent 把交付证据也整理成后期可用的一句话。"
+Usable for: final handoff copy clip, post-production workflow demo, continued goal run round 824

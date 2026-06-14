@@ -284,6 +284,8 @@ describe("StudioMode demo roadbooks", () => {
     );
     expect(screen.getByLabelText("Proof Story Complete QA notes 状态").textContent).toBe("Complete 已入库");
     expect(screen.getByLabelText("Proof Story Index Complete 状态").textContent).toBe("Index Complete 已验证");
+    expect(screen.getByLabelText("Proof Story Complete Bundle 预览").textContent).toContain("Proof Story Complete Bundle");
+    expect(screen.getByLabelText("Proof Story Complete Bundle 预览").textContent).toContain("Index Complete: Index Complete 已验证");
     expect(within(scriptCard).getByRole("link", { name: "Production Assets QA 收据" }).getAttribute("href")).toBe(
       "/api/recording-assets/file?path=index-checks%2Findex-check-latest%2Fclip-notes.md",
     );
@@ -938,6 +940,27 @@ describe("StudioMode demo roadbooks", () => {
     expect(copyButton.textContent).toContain("已复制");
   });
 
+  it("copies the one-line Proof Story Complete bundle", async () => {
+    const writeText = vi.fn(async () => undefined);
+    Object.defineProperty(window.navigator, "clipboard", {
+      value: { writeText },
+      configurable: true,
+    });
+
+    render(<StudioMode />);
+
+    expect(await screen.findByText("15 个素材包")).toBeTruthy();
+    const bundlePreview = screen.getByLabelText("Proof Story Complete Bundle 预览").textContent || "";
+    const copyButton = screen.getByRole("button", { name: "复制 Proof Story Complete Bundle" });
+    await act(async () => {
+      fireEvent.click(copyButton);
+    });
+
+    expect(bundlePreview).toContain("Proof Story Complete Bundle");
+    expect(writeText).toHaveBeenCalledWith(bundlePreview);
+    expect(copyButton.textContent).toContain("已复制");
+  });
+
   it("shows a closeout copy fallback when clipboard access fails", async () => {
     const writeText = vi.fn(async () => {
       throw new Error("clipboard denied");
@@ -973,6 +996,25 @@ describe("StudioMode demo roadbooks", () => {
 
     expect(await screen.findByText("手动")).toBeTruthy();
     expect(writeText).toHaveBeenCalledWith(handoffPreview);
+  });
+
+  it("shows a Complete bundle copy fallback when clipboard access fails", async () => {
+    const writeText = vi.fn(async () => {
+      throw new Error("clipboard denied");
+    });
+    Object.defineProperty(window.navigator, "clipboard", {
+      value: { writeText },
+      configurable: true,
+    });
+
+    render(<StudioMode />);
+
+    expect(await screen.findByText("15 个素材包")).toBeTruthy();
+    const bundlePreview = screen.getByLabelText("Proof Story Complete Bundle 预览").textContent || "";
+    fireEvent.click(screen.getByRole("button", { name: "复制 Proof Story Complete Bundle" }));
+
+    expect(await screen.findByText("手动")).toBeTruthy();
+    expect(writeText).toHaveBeenCalledWith(bundlePreview);
   });
 
   it("shows a proof story copy fallback when clipboard access fails", async () => {
