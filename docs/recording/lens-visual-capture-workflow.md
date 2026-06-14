@@ -51,8 +51,18 @@ After `npm run index:recording-assets`, the top-level recording index shows lens
 - Does the map stay compact and non-distracting?
 - Does the Proof Stack show `Director` as ready?
 - Does the asset panel expose the same lens and cache key?
-- Does Scene Inspector show the expected tuning cue, for example `skyline 1.34x / water 1.08x / route 1.18x` for `low-skyline`?
+- Does Scene Inspector show the expected tuning cue?
+
+## Expected Tuning Cues
+
+| Lens | Scene Inspector Tune |
+| --- | --- |
+| Auto | `skyline 1.00x / water 1.00x / route 1.00x` |
+| Water | `skyline 0.90x / water 1.36x / route 0.82x` |
+| Skyline | `skyline 1.34x / water 1.08x / route 1.18x` |
+| Atlas | `skyline 0.72x / water 0.82x / route 1.42x` |
+| Detail | `skyline 1.18x / water 0.72x / route 0.78x` |
 
 ## Next Tuning Slice
 
-After the five packs exist, tune one lens at a time. Start with `low-skyline`, because it is the clearest path toward city-skyline visual impact. The first low-skyline tuning pass now increases skyline height, foreground water glint, route brightness, and root pitch so the QA pack has measurable evidence before visual comparison.
+After the five packs exist, tune one lens at a time. The first pass now gives every lens a measurable Scene Inspector cue. The next pass should compare the actual screenshots and tune geometry/materials when the visible difference is weaker than the cue implies.
