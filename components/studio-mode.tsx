@@ -708,6 +708,28 @@ function getProofChainSummaryLine({
   ].join(" · ");
 }
 
+function getFinalDeliverySummaryLine({
+  chainLine,
+  summaryState,
+  indexSummaryState,
+  indexQaState,
+  suiteRunState,
+}: {
+  chainLine: string;
+  summaryState: { label: string };
+  indexSummaryState: { label: string };
+  indexQaState: string;
+  suiteRunState: string;
+}) {
+  return [
+    "最终交付摘要",
+    `Chain: ${chainLine}`,
+    `Proof Chain Summary: ${summaryState.label} + ${indexSummaryState.label}`,
+    `Recording Index QA: ${indexQaState}`,
+    `Suite Run: ${suiteRunState}`,
+  ].join(" · ");
+}
+
 function getProofChainSummaryArchiveState(scriptMaterial: RecordingStudioScriptMaterialSummary | null | undefined, currentSummaryLine: string) {
   const archivedLine = scriptMaterial?.proofChainSummaryLine || "";
   const copyState = scriptMaterial?.proofChainSummaryCopyState || "";
@@ -857,6 +879,7 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
   const [proofCompleteBundleCopyState, setProofCompleteBundleCopyState] = useState<"idle" | "copied" | "error">("idle");
   const [proofBundleChainCopyState, setProofBundleChainCopyState] = useState<"idle" | "copied" | "error">("idle");
   const [proofChainSummaryCopyState, setProofChainSummaryCopyState] = useState<"idle" | "copied" | "error">("idle");
+  const [finalDeliverySummaryCopyState, setFinalDeliverySummaryCopyState] = useState<"idle" | "copied" | "error">("idle");
   const [proofCueIndex, setProofCueIndex] = useState(0);
   const [proofCuePlaying, setProofCuePlaying] = useState(false);
 
@@ -990,6 +1013,33 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
     recordingAssets.status === "ready"
       ? getProofChainIndexSummaryState(recordingAssets.latestRecordingIndexCheck, proofChainSummaryLine)
       : getProofChainIndexSummaryState(null, proofChainSummaryLine);
+  const finalDeliveryIndexQaState =
+    recordingAssets.status === "ready" && recordingAssets.latestRecordingIndexCheck
+      ? `已验证 · ${recordingIndexCoverage?.checklistDetail || `${recordingAssets.latestRecordingIndexCheck.linkCount} 条证据链接`}`
+      : "待验证";
+  const finalDeliverySuiteRunState =
+    recordingAssets.status === "ready" && recordingAssets.latestRecordingSuiteRun
+      ? recordingAssets.latestRecordingSuiteRun.status === "passed"
+        ? `已通过 · ${recordingAssets.latestRecordingSuiteRun.stepCount} 步 · ${recordingAssets.latestRecordingSuiteRun.passedStepCount} 通过`
+        : `失败 · ${recordingAssets.latestRecordingSuiteRun.stepCount} 步 · ${recordingAssets.latestRecordingSuiteRun.passedStepCount} 通过`
+      : "待运行";
+  const finalDeliverySummaryLine = useMemo(
+    () =>
+      getFinalDeliverySummaryLine({
+        chainLine: proofStoryBundleChainState.label,
+        summaryState: proofChainSummaryArchiveState,
+        indexSummaryState: proofChainIndexSummaryState,
+        indexQaState: finalDeliveryIndexQaState,
+        suiteRunState: finalDeliverySuiteRunState,
+      }),
+    [
+      proofStoryBundleChainState.label,
+      proofChainSummaryArchiveState,
+      proofChainIndexSummaryState,
+      finalDeliveryIndexQaState,
+      finalDeliverySuiteRunState,
+    ],
+  );
   const recordingProofChecklist = useMemo(
     () => getRecordingProofChecklist(recordingAssets, proofStoryIndexBundleChainState, proofChainIndexSummaryState),
     [recordingAssets, proofStoryIndexBundleChainState, proofChainIndexSummaryState],
@@ -1222,6 +1272,15 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
       setProofChainSummaryCopyState("copied");
     } catch {
       setProofChainSummaryCopyState("error");
+    }
+  }
+
+  async function copyFinalDeliverySummaryLine() {
+    try {
+      await navigator.clipboard.writeText(finalDeliverySummaryLine);
+      setFinalDeliverySummaryCopyState("copied");
+    } catch {
+      setFinalDeliverySummaryCopyState("error");
     }
   }
 
@@ -1753,6 +1812,20 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
                             >
                               <Copy size={10} />
                               {proofChainSummaryCopyState === "copied" ? "已复制" : proofChainSummaryCopyState === "error" ? "手动" : "复制 Summary"}
+                            </button>
+                          </div>
+                          <div className="studio-final-delivery-summary-row">
+                            <p className="studio-final-delivery-summary-preview" aria-label="最终交付摘要预览">
+                              {finalDeliverySummaryLine}
+                            </p>
+                            <button
+                              type="button"
+                              className="studio-final-delivery-summary-copy"
+                              onClick={copyFinalDeliverySummaryLine}
+                              aria-label="复制最终交付摘要"
+                            >
+                              <Copy size={10} />
+                              {finalDeliverySummaryCopyState === "copied" ? "已复制" : finalDeliverySummaryCopyState === "error" ? "手动" : "复制最终摘要"}
                             </button>
                           </div>
                           <button type="button" onClick={copyProofStoryCloseout}>

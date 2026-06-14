@@ -2225,3 +2225,14 @@ Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, README
 Command/result: npm test -- components/studio-mode.test.tsx passed with 38 tests; browser check against `http://localhost:3000/studio` showed `Index Summary 已验证`, no chip overflow in a 313px Recording Index card, the Index QA playback cue including `Summary 交付`, and 0 console errors. `npm run lint && npm test && npm run build` passed with 951 tests and a successful Next.js production build.
 Voiceover note: "现在主录屏轨道也能直接讲 Summary 回流：Index QA 卡片和脚本模式都显示 Index Summary 已验证，说明后期 notes 已经进入总素材验收。"
 Usable for: main recording rail proof-loop walkthrough, final post-production note teaching segment, continued goal run round 984
+
+## Phase FS: v0.8.186 — Final Delivery Summary Copy
+
+Date: 2026-06-14
+Clip title: Phase FS: v0.8.186 — Final Delivery Summary Copy
+What changed: `/studio` now shows a compact `最终交付摘要` preview and `复制最终交付摘要` action that combines Chain, Proof Chain Summary, Recording Index QA, and Suite Run states into one clip-notes sentence.
+Why this matters: The recording workflow now has a final one-line handoff for post-production notes, so the creator can copy the whole proof-loop status without stitching several chips together by hand.
+Files shown: components/studio-mode.tsx, app/globals.css, components/studio-mode.test.tsx, docs/recording/goal-991-1000-recap.md
+Command/result: npm test -- components/studio-mode.test.tsx passed with 40 tests; browser check against `http://localhost:3000/studio` showed the final summary containing Chain, Summary, Index QA, and Suite Run states, a visible copy button, 297px row width with no overflow, and 0 console errors. `npm run lint && npm test && npm run build` passed with 953 tests and a successful Next.js production build.
+Voiceover note: "最后我做了一个最终交付摘要：Chain、Summary、Index QA、Suite Run 四个状态合成一句，剪视频 notes 的时候直接复制。"
+Usable for: final handoff copy demo, post-production notes workflow clip, continued goal run round 994
