@@ -116,6 +116,7 @@ npm run build
 npm run check:dream-visuals
 DREAM_DEMO=coast npm run check:dream-visuals
 DREAM_LENS=low-skyline npm run check:dream-visuals
+npm run check:dream-lenses
 npm run check:studio-visuals
 npm run check:studio-dream-handoff
 npm run index:recording-assets
@@ -124,13 +125,15 @@ npm run check:recording-suite
 
 `npm run check:dream-visuals` expects the local dev server to be running at `http://localhost:3000/dream` unless `DREAM_URL` is set. It writes D1-D4 screenshots, `summary.json`, `index.html`, and `clip-notes.md` under `recordings/visual-checks/`, which is ignored by git and intended for recording/product review. The QA checks WebGL pixels, micro-motion, cinematic matte mounting, Scene Inspector text, Composition profile, Proof Stack readiness, the active Director Lens, and the D1-D4 director timeline. Set `DREAM_DEMO=coast` to make the script click the local coastal sample before running the same checks. Set `DREAM_LENS=low-skyline` or another Director Lens id to record a specific camera direction in the gallery and clip notes.
 
+`npm run check:dream-lenses` runs the same `/dream` visual QA once per Director Lens and writes one local QA pack per lens under `recordings/visual-checks/`. Set `DREAM_LENSES=wide-water,low-skyline` to run a smaller subset.
+
 `npm run check:studio-visuals` expects `http://localhost:3000/studio` unless `STUDIO_URL` is set. It captures the Dali and coastal 16:9 recording layouts and writes `summary.json`, `index.html`, and `clip-notes.md` under `recordings/studio-checks/`.
 
 `npm run check:studio-dream-handoff` expects `http://localhost:3000` unless `HANDOFF_BASE_URL` is set. It verifies both Dali and coastal round trips between `/studio?demo=...` and `/dream?demo=...`, then writes screenshots, `summary.json`, and `clip-notes.md` under `recordings/handoff-checks/`.
 
 `npm run index:recording-assets` scans local `recordings/visual-checks`, `recordings/studio-checks`, and `recordings/handoff-checks`, then writes `recordings/index.html` and `recordings/clip-index.md` as a local asset index.
 
-`npm run check:recording-suite` expects the local dev server to be running at `http://localhost:3000`. It runs the Dali `/dream` visual QA, coastal `/dream` visual QA, Dali `low-skyline` Director Lens QA, `/studio` visual QA, Studio-Dream handoff QA, and recording asset index in sequence. Set `RECORDING_SUITE_BASE_URL`, `DREAM_URL`, `STUDIO_URL`, or `HANDOFF_BASE_URL` to target another local server.
+`npm run check:recording-suite` expects the local dev server to be running at `http://localhost:3000`. It runs the Dali `/dream` visual QA, coastal `/dream` visual QA, Dali Director Lens QA for the four non-auto lens modes, `/studio` visual QA, Studio-Dream handoff QA, and recording asset index in sequence. Set `RECORDING_SUITE_BASE_URL`, `DREAM_URL`, `STUDIO_URL`, or `HANDOFF_BASE_URL` to target another local server.
 
 `/studio` reads `/api/recording-assets` and shows a recording asset readiness badge, the current local recording asset count, Dream/Studio/Bridge counts, product/walkthrough/bridge-validation edit tags, a latest QA pack summary card, recent QA packs with visually distinct Dream/Studio/Bridge badges and usage hints, a copyable recording-suite command, a compact copy/run/refresh/index/bridge-evidence workflow rail, a refresh control, and an "打开总索引" link. The link opens `/api/recording-assets/index`, a local HTML overview with the same pack type, usage labels, and Dream/Studio/Bridge counts. If the local index is missing, `/studio` shows the exact command: `npm run check:recording-suite`.
 
