@@ -1895,3 +1895,14 @@ Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, app/gl
 Command/result: npm test -- components/studio-mode.test.tsx passed with 18 tests; browser check confirmed the `Production Assets QA 收据` link is visible, compact, points to `clip-notes.md`, and console errors are empty.
 Voiceover note: "现在 Studio 这张卡不只告诉我 Production Assets 已入库，还能一键打开刚刚的 QA 收据。"
 Usable for: Studio QA receipt loop, production-assets closeout narration, continued goal run round 684
+
+## Phase FK: v0.8.156 — Copy Production Assets QA Receipt Path
+
+Date: 2026-06-14
+Clip title: Phase FK: v0.8.156 — Copy Production Assets QA Receipt Path
+What changed: `/studio` now shows a compact `复制` action beside the Production Assets QA receipt link. It copies the raw `index-checks/.../clip-notes.md` path, not the safe file API URL.
+Why this matters: The creator can paste the exact proof-pack note path into editing notes, captions, or future voiceover drafts without opening the receipt first.
+Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, app/globals.css, docs/recording/goal-691-700-recap.md
+Command/result: npm test -- components/studio-mode.test.tsx passed with 19 tests; browser check confirmed the copy action is visible, compact, and console errors are empty.
+Voiceover note: "现在 QA 收据不仅能打开，还能直接复制路径，后期剪辑备注可以一键贴上证据位置。"
+Usable for: editing-notes workflow, QA receipt copy narration, continued goal run round 694

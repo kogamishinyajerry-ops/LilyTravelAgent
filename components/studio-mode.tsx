@@ -587,6 +587,7 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
   const [proofStoryCopyState, setProofStoryCopyState] = useState<"idle" | "copied" | "error">("idle");
   const [proofScriptCopyState, setProofScriptCopyState] = useState<"idle" | "copied" | "error">("idle");
   const [proofCloseoutCopyState, setProofCloseoutCopyState] = useState<"idle" | "copied" | "error">("idle");
+  const [productionReceiptCopyState, setProductionReceiptCopyState] = useState<"idle" | "copied" | "error">("idle");
   const [proofCueIndex, setProofCueIndex] = useState(0);
   const [proofCuePlaying, setProofCuePlaying] = useState(false);
 
@@ -625,6 +626,8 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
     () => getProofStoryProductionAssetsLine(proofStoryProductionAssets),
     [proofStoryProductionAssets],
   );
+  const proofStoryProductionReceiptPath =
+    recordingAssets.status === "ready" && proofStoryProductionAssets.ready ? recordingAssets.latestRecordingIndexCheck?.notesPath || "" : "";
 
   const loadRecordingAssets = useCallback(
     async ({ markRefreshing = true, isActive = () => true }: { markRefreshing?: boolean; isActive?: () => boolean } = {}) => {
@@ -797,6 +800,17 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
       setProofCloseoutCopyState("copied");
     } catch {
       setProofCloseoutCopyState("error");
+    }
+  }
+
+  async function copyProofStoryProductionReceiptPath() {
+    if (!proofStoryProductionReceiptPath) return;
+
+    try {
+      await navigator.clipboard.writeText(proofStoryProductionReceiptPath);
+      setProductionReceiptCopyState("copied");
+    } catch {
+      setProductionReceiptCopyState("error");
     }
   }
 
@@ -1150,16 +1164,27 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
                             >
                               {proofStoryProductionAssetsLine}
                             </span>
-                            {proofStoryProductionAssets.ready && recordingAssets.status === "ready" && recordingAssets.latestRecordingIndexCheck?.notesPath ? (
+                            {proofStoryProductionReceiptPath ? (
                               <a
                                 className="studio-proof-script-status studio-proof-production-receipt ready"
-                                href={buildRecordingEvidenceUrl(recordingAssets.latestRecordingIndexCheck.notesPath)}
+                                href={buildRecordingEvidenceUrl(proofStoryProductionReceiptPath)}
                                 target="_blank"
                                 rel="noreferrer"
                                 aria-label="Production Assets QA 收据"
                               >
                                 QA 收据
                               </a>
+                            ) : null}
+                            {proofStoryProductionReceiptPath ? (
+                              <button
+                                type="button"
+                                className="studio-proof-production-copy"
+                                onClick={copyProofStoryProductionReceiptPath}
+                                aria-label="复制 Production Assets QA 收据路径"
+                              >
+                                <Copy size={10} />
+                                {productionReceiptCopyState === "copied" ? "已复制" : productionReceiptCopyState === "error" ? "手动" : "复制"}
+                              </button>
                             ) : null}
                           </div>
                           <div className="studio-proof-closeout" aria-label="Proof Story 收口清单">

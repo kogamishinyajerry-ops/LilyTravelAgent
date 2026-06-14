@@ -384,6 +384,7 @@ describe("StudioMode demo roadbooks", () => {
       "Production Assets · HTML 已入库 · Clip 待入库",
     );
     expect(screen.queryByRole("link", { name: "Production Assets QA 收据" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "复制 Production Assets QA 收据路径" })).toBeNull();
   });
 
   it("hides the Production Assets QA receipt link when the latest index check has no clip notes", async () => {
@@ -403,6 +404,7 @@ describe("StudioMode demo roadbooks", () => {
 
     expect(await screen.findByLabelText("Proof Story Production Assets 状态")).toBeTruthy();
     expect(screen.queryByRole("link", { name: "Production Assets QA 收据" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "复制 Production Assets QA 收据路径" })).toBeNull();
   });
 
   it("keeps legacy Dream-only wording for older 3-link recording index checks", async () => {
@@ -530,6 +532,7 @@ describe("StudioMode demo roadbooks", () => {
     expect(screen.getByLabelText("Proof Story 脚本素材").textContent).toContain("Index QA 待验证脚本素材 · npm run check:recording-index");
     expect(screen.getByLabelText("Proof Story Production Assets 状态").textContent).toBe("Production Assets · 等待脚本素材");
     expect(screen.queryByRole("link", { name: "Production Assets QA 收据" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "复制 Production Assets QA 收据路径" })).toBeNull();
     const closeout = screen.getByLabelText("Proof Story 收口清单");
     expect(closeout.textContent).toContain("脚本路径就绪");
     expect(closeout.textContent).toContain("Studio QA待捕获");
@@ -728,6 +731,25 @@ describe("StudioMode demo roadbooks", () => {
     expect(await screen.findByText("收口状态已复制")).toBeTruthy();
     expect(screen.getByRole("button", { name: "复制脚本路径" })).toBeTruthy();
     expect(screen.getByRole("button", { name: "复制讲解稿" })).toBeTruthy();
+  });
+
+  it("copies the Production Assets QA receipt path", async () => {
+    const writeText = vi.fn(async () => undefined);
+    Object.defineProperty(window.navigator, "clipboard", {
+      value: { writeText },
+      configurable: true,
+    });
+
+    render(<StudioMode />);
+
+    expect(await screen.findByText("15 个素材包")).toBeTruthy();
+    const copyButton = screen.getByRole("button", { name: "复制 Production Assets QA 收据路径" });
+    await act(async () => {
+      fireEvent.click(copyButton);
+    });
+
+    expect(writeText).toHaveBeenCalledWith("index-checks/index-check-latest/clip-notes.md");
+    expect(copyButton.textContent).toContain("已复制");
   });
 
   it("shows a closeout copy fallback when clipboard access fails", async () => {
