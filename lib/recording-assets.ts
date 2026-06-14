@@ -26,6 +26,7 @@ export type RecordingAssetsSummary = {
   latestCandidateHandoff: RecordingCandidateHandoffSummary | null;
   latestDreamVisualProof: RecordingDreamVisualProofSummary | null;
   latestRecordingIndexCheck: RecordingIndexCheckSummary | null;
+  latestRecordingSuiteRun: RecordingSuiteRunSummary | null;
   indexAvailable: boolean;
   indexPath: string;
   clipIndexAvailable: boolean;
@@ -65,6 +66,18 @@ export type RecordingIndexCheckSummary = {
   notesPath: string;
 };
 
+export type RecordingSuiteRunSummary = {
+  id: string;
+  createdAt: string;
+  status: "passed" | "failed";
+  stepCount: number;
+  passedStepCount: number;
+  durationMs: number;
+  failureMessage: string;
+  summaryPath: string;
+  notesPath: string;
+};
+
 const sources = [
   { type: "dream" as const, dir: "visual-checks", label: "/dream visual QA" },
   { type: "studio" as const, dir: "studio-checks", label: "/studio recording QA" },
@@ -76,6 +89,7 @@ export async function readRecordingAssetsSummary(recordingsRoot = process.env.RE
   const latestCandidateHandoff = await readLatestCandidateHandoff(recordingsRoot);
   const latestDreamVisualProof = await readLatestDreamVisualProof(recordingsRoot);
   const latestRecordingIndexCheck = await readLatestRecordingIndexCheck(recordingsRoot);
+  const latestRecordingSuiteRun = await readLatestRecordingSuiteRun(recordingsRoot);
   const latestPack = packs[0] || null;
   const indexPath = path.join(recordingsRoot, "index.html");
   const clipIndexPath = path.join(recordingsRoot, "clip-index.md");
@@ -89,6 +103,7 @@ export async function readRecordingAssetsSummary(recordingsRoot = process.env.RE
     latestCandidateHandoff,
     latestDreamVisualProof,
     latestRecordingIndexCheck,
+    latestRecordingSuiteRun,
     indexAvailable: existsSync(indexPath),
     indexPath,
     clipIndexAvailable: existsSync(clipIndexPath),
@@ -107,6 +122,45 @@ function countPacksByType(packs: RecordingAssetPack[]): Record<RecordingAssetTyp
 export async function listRecordingAssetPacks(recordingsRoot = process.env.RECORDINGS_DIR || "recordings"): Promise<RecordingAssetPack[]> {
   const packs = (await Promise.all(sources.map((source) => readSource(recordingsRoot, source)))).flat();
   return packs.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+}
+
+async function readLatestRecordingSuiteRun(recordingsRoot: string): Promise<RecordingSuiteRunSummary | null> {
+  const sourceRoot = path.join(recordingsRoot, "suite-runs");
+  if (!existsSync(sourceRoot)) {
+    return null;
+  }
+
+  const entries = await readdir(sourceRoot);
+  const runs: RecordingSuiteRunSummary[] = [];
+
+  for (const entry of entries) {
+    const packDir = path.join(sourceRoot, entry);
+    const info = await stat(packDir).catch(() => null);
+    if (!info?.isDirectory()) {
+      continue;
+    }
+
+    const summaryPath = path.join(packDir, "summary.json");
+    if (!existsSync(summaryPath)) {
+      continue;
+    }
+
+    const summary = JSON.parse(await readFile(summaryPath, "utf8")) as Record<string, unknown>;
+    const steps = Array.isArray(summary.steps) ? summary.steps : [];
+    runs.push({
+      id: entry,
+      createdAt: readString(summary.createdAt) || readString(summary.finishedAt) || entry,
+      status: readString(summary.status) === "failed" ? "failed" : "passed",
+      stepCount: readNumber(summary.stepCount) || steps.length,
+      passedStepCount: steps.filter((step) => readString((step as Record<string, unknown>).status) === "passed").length,
+      durationMs: readNumber(summary.durationMs),
+      failureMessage: readString(summary.failureMessage),
+      summaryPath: toRecordingLink(path.join("suite-runs", entry, "summary.json")),
+      notesPath: existsSync(path.join(packDir, "clip-notes.md")) ? toRecordingLink(path.join("suite-runs", entry, "clip-notes.md")) : "",
+    });
+  }
+
+  return runs.sort((a, b) => b.createdAt.localeCompare(a.createdAt))[0] || null;
 }
 
 async function readLatestRecordingIndexCheck(recordingsRoot: string): Promise<RecordingIndexCheckSummary | null> {
@@ -329,6 +383,10 @@ function buildPackDetail(type: RecordingAssetPack["type"], summary: Record<strin
 
 function readString(value: unknown) {
   return typeof value === "string" ? value : "";
+}
+
+function readNumber(value: unknown) {
+  return typeof value === "number" && Number.isFinite(value) ? value : 0;
 }
 
 function readDreamLens(summary: Record<string, unknown>) {

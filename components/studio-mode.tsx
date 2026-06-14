@@ -49,6 +49,7 @@ type RecordingAssetsState =
       latestCandidateHandoff: RecordingCandidateHandoffSummary | null;
       latestDreamVisualProof: RecordingDreamVisualProofSummary | null;
       latestRecordingIndexCheck: RecordingIndexCheckSummary | null;
+      latestRecordingSuiteRun: RecordingSuiteRunSummary | null;
     }
   | { status: "error"; message: string };
 
@@ -85,6 +86,18 @@ type RecordingIndexCheckSummary = {
   notesPath?: string;
 };
 
+type RecordingSuiteRunSummary = {
+  id: string;
+  createdAt: string;
+  status: "passed" | "failed";
+  stepCount: number;
+  passedStepCount: number;
+  durationMs: number;
+  failureMessage: string;
+  summaryPath: string;
+  notesPath?: string;
+};
+
 type RecordingAssetSummaryPack = {
   type: RecordingAssetType;
   id: string;
@@ -111,6 +124,7 @@ type RecordingAssetsApiResponse = {
   latestCandidateHandoff?: RecordingCandidateHandoffSummary | null;
   latestDreamVisualProof?: RecordingDreamVisualProofSummary | null;
   latestRecordingIndexCheck?: RecordingIndexCheckSummary | null;
+  latestRecordingSuiteRun?: RecordingSuiteRunSummary | null;
   message?: string;
 };
 
@@ -261,6 +275,19 @@ function formatRecordingAssetTime(value: string) {
 
 function buildRecordingEvidenceUrl(relativePath?: string) {
   return relativePath ? `/api/recording-assets/file?path=${encodeURIComponent(relativePath)}` : "";
+}
+
+function formatDurationMs(durationMs: number) {
+  if (!Number.isFinite(durationMs) || durationMs <= 0) {
+    return "0s";
+  }
+
+  const seconds = Math.round(durationMs / 1000);
+  if (seconds < 60) {
+    return `${seconds}s`;
+  }
+
+  return `${Math.floor(seconds / 60)}m ${seconds % 60}s`;
 }
 
 function getRecordingAssetReadiness(summary: Extract<RecordingAssetsState, { status: "ready" }>) {
@@ -415,6 +442,7 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
           latestCandidateHandoff: data.latestCandidateHandoff || null,
           latestDreamVisualProof: data.latestDreamVisualProof || null,
           latestRecordingIndexCheck: data.latestRecordingIndexCheck || null,
+          latestRecordingSuiteRun: data.latestRecordingSuiteRun || null,
         });
         setRecordingAssetsReadAt(new Date().toISOString());
       } catch (caught) {
@@ -917,6 +945,46 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
                         <small>Index QA</small>
                         <strong>等待素材索引 QA</strong>
                         <span>运行 npm run check:recording-index 后显示总索引验证状态。</span>
+                      </>
+                    )}
+                  </div>
+                  <div
+                    className={`studio-suite-run-status ${
+                      recordingAssets.latestRecordingSuiteRun
+                        ? recordingAssets.latestRecordingSuiteRun.status === "passed"
+                          ? "ready"
+                          : "failed"
+                        : "missing"
+                    }`}
+                    aria-label="Recording Suite 状态"
+                  >
+                    {recordingAssets.latestRecordingSuiteRun ? (
+                      <>
+                        <small>Suite Run · {formatRecordingAssetTime(recordingAssets.latestRecordingSuiteRun.createdAt)}</small>
+                        <strong>{recordingAssets.latestRecordingSuiteRun.status === "passed" ? "Full suite 已通过" : "Full suite 失败"}</strong>
+                        <span>
+                          {recordingAssets.latestRecordingSuiteRun.stepCount} 步 · {recordingAssets.latestRecordingSuiteRun.passedStepCount} 通过 · {formatDurationMs(recordingAssets.latestRecordingSuiteRun.durationMs)}
+                        </span>
+                        <div className="studio-dream-proof-links">
+                          {recordingAssets.latestRecordingSuiteRun.summaryPath ? (
+                            <a href={buildRecordingEvidenceUrl(recordingAssets.latestRecordingSuiteRun.summaryPath)} target="_blank" rel="noreferrer">
+                              suite summary
+                              <ExternalLink size={12} />
+                            </a>
+                          ) : null}
+                          {recordingAssets.latestRecordingSuiteRun.notesPath ? (
+                            <a href={buildRecordingEvidenceUrl(recordingAssets.latestRecordingSuiteRun.notesPath)} target="_blank" rel="noreferrer">
+                              notes
+                              <ExternalLink size={12} />
+                            </a>
+                          ) : null}
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <small>Suite Run</small>
+                        <strong>等待 full suite</strong>
+                        <span>运行 npm run check:recording-suite 后显示全链路验证状态。</span>
                       </>
                     )}
                   </div>

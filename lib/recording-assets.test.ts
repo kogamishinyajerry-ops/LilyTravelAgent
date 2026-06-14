@@ -47,6 +47,7 @@ describe("recording assets", () => {
     expect(summary.latestCandidateHandoff).toBeNull();
     expect(summary.latestDreamVisualProof).toBeNull();
     expect(summary.latestRecordingIndexCheck).toBeNull();
+    expect(summary.latestRecordingSuiteRun).toBeNull();
     expect(summary.indexAvailable).toBe(false);
     expect(summary.clipIndexAvailable).toBe(false);
   });
@@ -222,6 +223,47 @@ describe("recording assets", () => {
       screenshotPath: "index-checks/new-index-check/recording-index-dream-proof.png",
       summaryPath: "index-checks/new-index-check/summary.json",
       notesPath: "index-checks/new-index-check/clip-notes.md",
+    });
+  });
+
+  it("reports the latest recording suite run manifest when available", async () => {
+    await writeSummary("suite-runs/old-suite", {
+      status: "failed",
+      createdAt: "2026-06-13T04:00:00.000Z",
+      durationMs: 15000,
+      stepCount: 2,
+      failureMessage: "old failure",
+      steps: [{ label: "Dream", status: "passed" }, { label: "Studio", status: "failed" }],
+    });
+    await writeSummary("suite-runs/new-suite", {
+      status: "passed",
+      createdAt: "2026-06-13T05:00:00.000Z",
+      durationMs: 107000,
+      stepCount: 7,
+      failureMessage: "",
+      steps: [
+        { label: "Dream Dali visual QA", status: "passed" },
+        { label: "Dream coastal visual QA", status: "passed" },
+        { label: "Dream all director lenses visual QA", status: "passed" },
+        { label: "Studio recording QA", status: "passed" },
+        { label: "Studio-Dream handoff QA", status: "passed" },
+        { label: "Recording asset index", status: "passed" },
+        { label: "Recording index proof QA", status: "passed" },
+      ],
+    });
+
+    const summary = await readRecordingAssetsSummary(tempRoot);
+
+    expect(summary.latestRecordingSuiteRun).toMatchObject({
+      id: "new-suite",
+      createdAt: "2026-06-13T05:00:00.000Z",
+      status: "passed",
+      stepCount: 7,
+      passedStepCount: 7,
+      durationMs: 107000,
+      failureMessage: "",
+      summaryPath: "suite-runs/new-suite/summary.json",
+      notesPath: "suite-runs/new-suite/clip-notes.md",
     });
   });
 

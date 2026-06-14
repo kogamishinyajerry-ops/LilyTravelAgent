@@ -56,6 +56,19 @@ function recordingAssetsResponse(packCount: number, title = "Studio 16:9 demo pa
           notesPath: "index-checks/index-check-latest/clip-notes.md",
         }
       : null,
+    latestRecordingSuiteRun: packCount
+      ? {
+          id: "suite-run-latest",
+          createdAt: "2026-06-13T05:50:00.000Z",
+          status: "passed",
+          stepCount: 7,
+          passedStepCount: 7,
+          durationMs: 107000,
+          failureMessage: "",
+          summaryPath: "suite-runs/suite-run-latest/summary.json",
+          notesPath: "suite-runs/suite-run-latest/clip-notes.md",
+        }
+      : null,
     recentPacks: packCount
       ? [
           {
@@ -168,6 +181,14 @@ describe("StudioMode demo roadbooks", () => {
     expect(within(screen.getByLabelText("Recording Index QA 状态")).getByRole("link", { name: /notes/ }).getAttribute("href")).toBe(
       "/api/recording-assets/file?path=index-checks%2Findex-check-latest%2Fclip-notes.md",
     );
+    expect(screen.getByLabelText("Recording Suite 状态").textContent).toContain("Full suite 已通过");
+    expect(screen.getByLabelText("Recording Suite 状态").textContent).toContain("7 步 · 7 通过 · 1m 47s");
+    expect(within(screen.getByLabelText("Recording Suite 状态")).getByRole("link", { name: /suite summary/ }).getAttribute("href")).toBe(
+      "/api/recording-assets/file?path=suite-runs%2Fsuite-run-latest%2Fsummary.json",
+    );
+    expect(within(screen.getByLabelText("Recording Suite 状态")).getByRole("link", { name: /notes/ }).getAttribute("href")).toBe(
+      "/api/recording-assets/file?path=suite-runs%2Fsuite-run-latest%2Fclip-notes.md",
+    );
     expect(screen.getAllByText("Dream low-skyline lens visual pack")[0]).toBeTruthy();
     expect(screen.getAllByText("low-skyline lens").length).toBeGreaterThanOrEqual(1);
     expect(screen.getByRole("button", { name: "复制命令" })).toBeTruthy();
@@ -278,6 +299,8 @@ describe("StudioMode demo roadbooks", () => {
     expect(screen.getByLabelText("Dream visual proof QA 状态").textContent).toContain("npm run check:dream-visuals");
     expect(screen.getByLabelText("Recording Index QA 状态").textContent).toContain("等待素材索引 QA");
     expect(screen.getByLabelText("Recording Index QA 状态").textContent).toContain("npm run check:recording-index");
+    expect(screen.getByLabelText("Recording Suite 状态").textContent).toContain("等待 full suite");
+    expect(screen.getByLabelText("Recording Suite 状态").textContent).toContain("npm run check:recording-suite");
     expect(screen.getByText("Dream 0")).toBeTruthy();
     expect(screen.getByText("Studio 0")).toBeTruthy();
     expect(screen.getByText("生成本地素材索引")).toBeTruthy();

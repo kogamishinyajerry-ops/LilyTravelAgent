@@ -59,6 +59,7 @@ DREAM_LENSES=low-skyline,isometric-atlas npm run check:dream-lenses
 - `Dream Proof` evidence links in `/studio`: playback screenshot, summary, and clip notes.
 - `Dream Proof` evidence in `/api/recording-assets/index` and `recordings/index.html`: final cue, readiness value, playback screenshot, summary, and notes.
 - `Recording Index QA` status in `/studio`: proof-card screenshot, summary, and notes from the latest `index-checks` run.
+- `Recording Suite` status in `/studio`: full-suite pass/fail state, step count, duration, summary, and notes from the latest `suite-runs` manifest.
 - `Bridge QA 证据状态` in script mode.
 - `候选点击 QA 状态` in the `/studio` asset panel after `npm run check:lens-candidate-handoff`.
 - `Index QA` in the `/studio` proof checklist after `npm run check:recording-index`.
@@ -91,6 +92,7 @@ Run it, return to `/studio`, then click `刷新`.
 - "The Studio panel now shows that the archive itself was checked: screenshot, summary, and notes are all linked from Index QA."
 - "The full recording suite now creates the index proof pack automatically, so one command prepares both assets and their archive QA."
 - "The suite manifest is the receipt for the whole run: every step, every output folder, one top-level proof."
+- "Studio now shows that top-level receipt, so recording readiness is visible without opening the terminal."
 - "The lens batch lets me compare five camera directions before I tune or record the final clip."
 
 ## Verification
