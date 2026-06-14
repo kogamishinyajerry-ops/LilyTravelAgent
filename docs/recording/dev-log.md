@@ -2093,3 +2093,14 @@ Files shown: lib/recording-assets.ts, components/studio-mode.tsx, app/globals.cs
 Command/result: npm test -- lib/recording-assets.test.ts passed with 15 tests; npm test -- components/studio-mode.test.tsx passed with 31 tests; browser check against `http://localhost:3000/studio` showed `Bundle 已入库`, `Index Bundle 已验证`, 297px row width inside a 313px card, and 0 console errors.
 Voiceover note: "这就是回流闭环：Studio 捕获 Bundle，Index QA 验证 Bundle，然后 Studio 又显示 Index Bundle 已验证。录屏时可以一眼讲清这条证据链。"
 Usable for: Studio proof-loop closeout clip, index-to-studio verification walkthrough, continued goal run round 864
+
+## Phase FS: v0.8.174 — Bundle Chain Copy In Studio
+
+Date: 2026-06-14
+Clip title: Phase FS: v0.8.174 — Bundle Chain Copy In Studio
+What changed: `/studio` now adds a compact `Proof Story Bundle Chain` status line and `复制 Chain` action below the Complete Bundle proof row.
+Why this matters: The creator can copy one sentence that explains the final handoff chain: Studio Bundle archived, Index Bundle verified, and post-production delivery closed.
+Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, app/globals.css, docs/recording/goal-871-880-recap.md
+Command/result: npm test -- components/studio-mode.test.tsx passed with 32 tests; browser check against `http://localhost:3000/studio` showed the complete Bundle Chain line, 297px row width inside a 313px card, and 0 console errors.
+Voiceover note: "这里把两个技术状态压缩成一句人能讲的话：Bundle 已入库，Index Bundle 已验证，后期交付链路闭环。这个句子可以直接贴进视频 notes。"
+Usable for: final video-notes handoff clip, proof-chain teaching segment, continued goal run round 874

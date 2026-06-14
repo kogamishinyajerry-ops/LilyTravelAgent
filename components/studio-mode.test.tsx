@@ -302,6 +302,9 @@ describe("StudioMode demo roadbooks", () => {
     expect(screen.getByLabelText("Proof Story Complete Bundle 预览").textContent).toContain("Index Complete: Index Complete 已验证");
     expect(screen.getByLabelText("Proof Story Complete Bundle QA 状态").textContent).toBe("Bundle 已入库");
     expect(screen.getByLabelText("Proof Story Index Bundle 状态").textContent).toBe("Index Bundle 已验证");
+    expect(screen.getByLabelText("Proof Story Bundle Chain 状态").textContent).toBe(
+      "Proof Story Bundle Chain · Bundle 已入库 · Index Bundle 已验证 · 后期交付链路闭环",
+    );
     expect(within(scriptCard).getByRole("link", { name: "Production Assets QA 收据" }).getAttribute("href")).toBe(
       "/api/recording-assets/file?path=index-checks%2Findex-check-latest%2Fclip-notes.md",
     );
@@ -589,6 +592,8 @@ describe("StudioMode demo roadbooks", () => {
     expect(await screen.findByLabelText("Proof Story Complete Bundle 预览")).toBeTruthy();
     expect(screen.getByLabelText("Proof Story Complete Bundle QA 状态").textContent).toBe("Bundle 待入库");
     expect(screen.getByLabelText("Proof Story Index Bundle 状态").textContent).toBe("Index Bundle 已验证");
+    expect(screen.getByLabelText("Proof Story Bundle Chain 状态").textContent).toContain("Bundle 待入库");
+    expect(screen.getByLabelText("Proof Story Bundle Chain 状态").textContent).toContain("后期交付链路待补齐");
   });
 
   it("shows a pending Index Bundle state for older index QA packs", async () => {
@@ -609,6 +614,8 @@ describe("StudioMode demo roadbooks", () => {
     expect(await screen.findByLabelText("Proof Story Complete Bundle 预览")).toBeTruthy();
     expect(screen.getByLabelText("Proof Story Complete Bundle QA 状态").textContent).toBe("Bundle 已入库");
     expect(screen.getByLabelText("Proof Story Index Bundle 状态").textContent).toBe("Index Bundle 待验证");
+    expect(screen.getByLabelText("Proof Story Bundle Chain 状态").textContent).toContain("Index Bundle 待验证");
+    expect(screen.getByLabelText("Proof Story Bundle Chain 状态").textContent).toContain("后期交付链路待补齐");
   });
 
   it("keeps legacy Dream-only wording for older 3-link recording index checks", async () => {
@@ -1014,6 +1021,27 @@ describe("StudioMode demo roadbooks", () => {
 
     expect(bundlePreview).toContain("Proof Story Complete Bundle");
     expect(writeText).toHaveBeenCalledWith(bundlePreview);
+    expect(copyButton.textContent).toContain("已复制");
+  });
+
+  it("copies the one-line Proof Story Bundle Chain status", async () => {
+    const writeText = vi.fn(async () => undefined);
+    Object.defineProperty(window.navigator, "clipboard", {
+      value: { writeText },
+      configurable: true,
+    });
+
+    render(<StudioMode />);
+
+    expect(await screen.findByText("15 个素材包")).toBeTruthy();
+    const chainPreview = screen.getByLabelText("Proof Story Bundle Chain 状态").textContent || "";
+    const copyButton = screen.getByRole("button", { name: "复制 Proof Story Bundle Chain" });
+    await act(async () => {
+      fireEvent.click(copyButton);
+    });
+
+    expect(chainPreview).toContain("Proof Story Bundle Chain");
+    expect(writeText).toHaveBeenCalledWith(chainPreview);
     expect(copyButton.textContent).toContain("已复制");
   });
 

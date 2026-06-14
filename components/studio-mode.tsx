@@ -630,6 +630,27 @@ function getProofStoryIndexCompleteBundleState(indexCheck: RecordingIndexCheckSu
   return { label: "Index Bundle 已验证", ready: true };
 }
 
+function getProofStoryBundleChainState({
+  bundleState,
+  indexBundleState,
+}: {
+  bundleState: { label: string; ready: boolean };
+  indexBundleState: { label: string; ready: boolean };
+}) {
+  if (bundleState.ready && indexBundleState.ready) {
+    return {
+      label: "Proof Story Bundle Chain · Bundle 已入库 · Index Bundle 已验证 · 后期交付链路闭环",
+      ready: true,
+    };
+  }
+
+  const pending = [bundleState.ready ? "" : bundleState.label, indexBundleState.ready ? "" : indexBundleState.label].filter(Boolean);
+  return {
+    label: `Proof Story Bundle Chain · ${pending.join(" · ")} · 后期交付链路待补齐`,
+    ready: false,
+  };
+}
+
 function getProofStoryDeliverySync(studioLine: string, notesLine: string) {
   if (!notesLine) {
     return { label: "Delivery 待入库", ready: false };
@@ -734,6 +755,7 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
   const [proofDeliveryCopyState, setProofDeliveryCopyState] = useState<"idle" | "copied" | "error">("idle");
   const [proofHandoffCopyState, setProofHandoffCopyState] = useState<"idle" | "copied" | "error">("idle");
   const [proofCompleteBundleCopyState, setProofCompleteBundleCopyState] = useState<"idle" | "copied" | "error">("idle");
+  const [proofBundleChainCopyState, setProofBundleChainCopyState] = useState<"idle" | "copied" | "error">("idle");
   const [proofCueIndex, setProofCueIndex] = useState(0);
   const [proofCuePlaying, setProofCuePlaying] = useState(false);
 
@@ -828,6 +850,10 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
     recordingAssets.status === "ready"
       ? getProofStoryIndexCompleteBundleState(recordingAssets.latestRecordingIndexCheck, proofStoryCompleteBundleLine)
       : getProofStoryIndexCompleteBundleState(null, proofStoryCompleteBundleLine);
+  const proofStoryBundleChainState = getProofStoryBundleChainState({
+    bundleState: proofStoryCompleteBundleArchiveState,
+    indexBundleState: proofStoryIndexCompleteBundleState,
+  });
 
   const loadRecordingAssets = useCallback(
     async ({ markRefreshing = true, isActive = () => true }: { markRefreshing?: boolean; isActive?: () => boolean } = {}) => {
@@ -1038,6 +1064,15 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
       setProofCompleteBundleCopyState("copied");
     } catch {
       setProofCompleteBundleCopyState("error");
+    }
+  }
+
+  async function copyProofStoryBundleChainLine() {
+    try {
+      await navigator.clipboard.writeText(proofStoryBundleChainState.label);
+      setProofBundleChainCopyState("copied");
+    } catch {
+      setProofBundleChainCopyState("error");
     }
   }
 
@@ -1515,6 +1550,23 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
                                 {proofCompleteBundleCopyState === "copied" ? "已复制" : proofCompleteBundleCopyState === "error" ? "手动" : "复制 Bundle"}
                               </button>
                             </div>
+                          </div>
+                          <div className="studio-proof-bundle-chain-row">
+                            <p
+                              className={`studio-proof-bundle-chain-preview ${proofStoryBundleChainState.ready ? "ready" : "missing"}`}
+                              aria-label="Proof Story Bundle Chain 状态"
+                            >
+                              {proofStoryBundleChainState.label}
+                            </p>
+                            <button
+                              type="button"
+                              className="studio-proof-bundle-chain-copy"
+                              onClick={copyProofStoryBundleChainLine}
+                              aria-label="复制 Proof Story Bundle Chain"
+                            >
+                              <Copy size={10} />
+                              {proofBundleChainCopyState === "copied" ? "已复制" : proofBundleChainCopyState === "error" ? "手动" : "复制 Chain"}
+                            </button>
                           </div>
                           <button type="button" onClick={copyProofStoryCloseout}>
                             <Copy size={13} />
