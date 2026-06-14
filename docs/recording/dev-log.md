@@ -1334,3 +1334,14 @@ Files shown: components/dream-roadbook.tsx, app/globals.css, components/dream-ro
 Command/result: npm test -- components/dream-roadbook.test.tsx; npm run lint; Browser check confirmed final candidate chip, 0 Next links, and return path.
 Voiceover note: "最后一个候选也要有明确状态：不是按钮消失得莫名其妙，而是告诉我 Final candidate，然后引导我回看板继续挑下一轮。"
 Usable for: final-candidate queue clip, no-dead-end workflow proof, continued goal run round 234
+
+## Phase DL: v0.8.105 — Goals 231-240 Final Quality Gate
+
+Date: 2026-06-14
+Clip title: Phase DL: v0.8.105 — Goals 231-240 Final Quality Gate
+What changed: Closed the final-candidate queue state run with the full local lint, test, and production-build gate after browser visual inspection.
+Why this matters: The lightweight recording queue now has a clean start, next-step behavior, and ending state, all verified without adding persistence or auth.
+Files shown: docs/recording/goal-231-240-recap.md, `/dream?...candidateRank=4`, terminal verification output
+Command/result: npm run lint && npm test && npm run build (44 files, 908 tests, build passed)
+Voiceover note: "最后候选状态也收口后，质量门继续全绿。这个队列还是轻量 URL 方案，但已经有开始、下一步和结束。"
+Usable for: goal closeout clip, queue end-state proof, next dashboard candidate-strip refinement, continued goal run round 237

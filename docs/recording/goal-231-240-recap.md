@@ -10,11 +10,10 @@ This run made the lightweight recording queue end cleanly. When `/dream` receive
 
 | Goal | Commit | Summary |
 | --- | --- | --- |
-| 231-234 | pending | Added final-candidate cue and no-dead-Next behavior. |
-| 235 | pending | Added focused tests and recording docs. |
-| 236 | pending | Browser visual handoff check. |
-| 237 | pending | Final lint/test/build verification. |
-| 238 | pending | Push to GitHub. |
+| 231-235 | `e52c2d5` | Added final-candidate cue, no-dead-Next behavior, focused tests, and recording docs. |
+| 236 | `e52c2d5` | Browser check confirmed final chip, 0 Next links, active Atlas lens, and return path. |
+| 237 | closeout | Final lint/test/build verification: 44 files, 908 tests, build passed. |
+| 238 | closeout | Push to GitHub after final closeout commit. |
 | 239-240 | closeout | Next-goal handoff. |
 
 ## What Changed In The Creator Loop
@@ -29,6 +28,7 @@ This run made the lightweight recording queue end cleanly. When `/dream` receive
 - `npm test -- components/dream-roadbook.test.tsx` (19 tests passed)
 - `npm run lint` (passed)
 - Browser check: final candidate showed `#4/4`, `Final candidate`, 0 Next links, active Atlas lens, and return path.
+- `npm run lint && npm test && npm run build` (44 files, 908 tests, build passed)
 
 ## Recording Angle
 
