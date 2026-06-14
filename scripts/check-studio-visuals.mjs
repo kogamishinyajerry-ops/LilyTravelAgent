@@ -8,6 +8,8 @@ const runStamp = new Date().toISOString().replace(/[:.]/g, "-");
 const outDir = process.env.STUDIO_VISUAL_OUT_DIR || path.join("recordings", "studio-checks", runStamp);
 const systemChromePath = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
 const executablePath = process.env.PLAYWRIGHT_CHROME_EXECUTABLE || (existsSync(systemChromePath) ? systemChromePath : undefined);
+const proofStoryScriptPath = "docs/recording/proof-story-demo-script.md";
+const proofStoryScriptCue = "证据时间线 → 四行讲解稿预览 → 复制讲解稿";
 
 const demos = [
   {
@@ -78,7 +80,7 @@ async function main() {
     });
   }
 
-  const proofPlayback = await captureProofPlayback(page);
+  const { proofPlayback, scriptMaterial } = await captureProofPlayback(page);
 
   await browser.close();
 
@@ -89,6 +91,7 @@ async function main() {
     outDir,
     captures,
     proofPlayback,
+    scriptMaterial,
     consoleMessages,
   };
   const summaryPath = path.join(outDir, "summary.json");
@@ -128,10 +131,37 @@ async function captureProofPlayback(page) {
   const buttonTextAfterPlayback = await checklist.locator("button").innerText();
   assert(buttonTextAfterPlayback.includes("播放证据线"), `Proof playback button did not reset: ${buttonTextAfterPlayback}`);
 
+  const scriptMaterial = await captureProofStoryScriptMaterial(page);
+
   return {
-    initialCues,
-    finalActiveCue,
-    buttonTextAfterPlayback,
+    proofPlayback: {
+      initialCues,
+      finalActiveCue,
+      buttonTextAfterPlayback,
+      screenshotPath,
+    },
+    scriptMaterial,
+  };
+}
+
+async function captureProofStoryScriptMaterial(page) {
+  const card = page.getByLabel("Proof Story 脚本素材");
+  await card.waitFor({ state: "visible", timeout: 30_000 });
+
+  const text = ((await card.textContent()) || "").replace(/\s+/g, " ").trim();
+  const buttonText = await card.getByRole("button").innerText();
+  assert(text.includes(proofStoryScriptPath), `Proof Story script card did not include ${proofStoryScriptPath}: ${text}`);
+  assert(text.includes(proofStoryScriptCue), `Proof Story script card did not include cue text: ${text}`);
+
+  const screenshotPath = path.join(outDir, "studio-proof-story-script-material.png");
+  await card.screenshot({ path: screenshotPath });
+
+  return {
+    visible: true,
+    scriptPath: proofStoryScriptPath,
+    cue: proofStoryScriptCue,
+    buttonText,
+    text,
     screenshotPath,
   };
 }
@@ -181,6 +211,21 @@ function buildHtmlReport(summary) {
             <div><dt>state</dt><dd>${escapeHtml(summary.proofPlayback.finalActiveCue?.state || "")}</dd></div>
             <div><dt>detail</dt><dd>${escapeHtml(summary.proofPlayback.finalActiveCue?.detail || "")}</dd></div>
             <div><dt>button</dt><dd>${escapeHtml(summary.proofPlayback.buttonTextAfterPlayback)}</dd></div>
+          </dl>
+        </div>
+      </section>`
+    : "";
+  const scriptMaterial = summary.scriptMaterial
+    ? `
+      <section class="proof script-material">
+        <img src="${escapeHtml(path.basename(summary.scriptMaterial.screenshotPath))}" alt="Proof Story script material card" />
+        <div>
+          <p>script material</p>
+          <h2>Proof Story Demo Script</h2>
+          <dl>
+            <div><dt>path</dt><dd>${escapeHtml(summary.scriptMaterial.scriptPath)}</dd></div>
+            <div><dt>cue</dt><dd>${escapeHtml(summary.scriptMaterial.cue)}</dd></div>
+            <div><dt>button</dt><dd>${escapeHtml(summary.scriptMaterial.buttonText)}</dd></div>
           </dl>
         </div>
       </section>`
@@ -293,6 +338,7 @@ function buildHtmlReport(summary) {
       </header>
       <section class="grid">${cards}</section>
       ${proof}
+      ${scriptMaterial}
     </main>
   </body>
 </html>
@@ -336,6 +382,14 @@ function buildClipNotes(summary) {
     `- Detail: ${summary.proofPlayback.finalActiveCue?.detail || ""}`,
     `- Button after playback: ${summary.proofPlayback.buttonTextAfterPlayback}`,
     `- Voiceover prompt: 播放证据线最后停在 Suite Run，用 full suite 总收据给 Studio 录屏证据链收口。`,
+    ``,
+    `## Proof Story Script Material`,
+    ``,
+    `- Screenshot: ${path.basename(summary.scriptMaterial.screenshotPath)}`,
+    `- Script path: ${summary.scriptMaterial.scriptPath}`,
+    `- Cue: ${summary.scriptMaterial.cue}`,
+    `- Button: ${summary.scriptMaterial.buttonText}`,
+    `- Voiceover prompt: Studio 现在把 Proof Story 脚本路径、证据时间线、四行预览和复制动作放在同一个录屏面板里。`,
     ``,
   ].join("\n");
 }

@@ -1741,3 +1741,14 @@ Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, app/gl
 Command/result: npm test -- components/studio-mode.test.tsx passed with 14 tests; browser check confirmed the card is visible and console errors were empty; npm run lint && npm test && npm run build
 Voiceover note: "现在 Studio 不只生成讲解稿，还告诉我这段素材应该按哪份脚本录。录屏台、脚本和复制动作都在同一个画面里。"
 Usable for: Proof Story script-material clip, creator workflow narration, continued goal run round 544
+
+## Phase EW: v0.8.142 — Studio QA Captures Script Material
+
+Date: 2026-06-14
+Clip title: Phase EW: v0.8.142 — Studio QA Captures Script Material
+What changed: `npm run check:studio-visuals` now verifies the `Proof Story 脚本素材` card, captures `studio-proof-story-script-material.png`, and writes script path, cue text, and copy-button text into `summary.json`, `index.html`, and `clip-notes.md`.
+Why this matters: The script-material card is now part of the same local evidence pack as the Studio Dali/coastal screenshots and Suite Run proof playback.
+Files shown: scripts/check-studio-visuals.mjs, recordings/studio-checks/2026-06-14T09-14-23-083Z/summary.json, recordings/studio-checks/2026-06-14T09-14-23-083Z/clip-notes.md, docs/recording/goal-551-560-recap.md
+Command/result: node --check scripts/check-studio-visuals.mjs passed; npm run check:studio-visuals passed and wrote the script-material evidence pack; npm run lint && npm test && npm run build
+Voiceover note: "现在连脚本素材卡也被 QA 捕获了。也就是说，Studio 里的讲解脚本入口不是只靠我肉眼看，它会进入 summary、HTML 和 clip notes。"
+Usable for: Studio QA evidence clip, script-material proof narration, continued goal run round 554
