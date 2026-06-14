@@ -128,7 +128,7 @@ npm run check:recording-suite
 
 `npm run check:dream-lenses` runs the same `/dream` visual QA once per Director Lens and writes one local QA pack per lens under `recordings/visual-checks/`. Set `DREAM_LENSES=wide-water,low-skyline` to run a smaller subset.
 
-`npm run check:studio-visuals` expects `http://localhost:3000/studio` unless `STUDIO_URL` is set. It captures the Dali and coastal 16:9 recording layouts, verifies the Studio proof playback, captures the Proof Story `脚本素材` card, verifies the Proof Story Handoff copy state, records the Proof Story Complete strip, and writes `summary.json`, `index.html`, and `clip-notes.md` under `recordings/studio-checks/`.
+`npm run check:studio-visuals` expects `http://localhost:3000/studio` unless `STUDIO_URL` is set. It captures the Dali and coastal 16:9 recording layouts, verifies the Studio proof playback, captures the Proof Story `脚本素材` card, verifies the Proof Story Handoff and Complete Bundle copy states, records the Proof Story Complete strip, and writes `summary.json`, `index.html`, and `clip-notes.md` under `recordings/studio-checks/`.
 
 `npm run check:studio-dream-handoff` expects `http://localhost:3000` unless `HANDOFF_BASE_URL` is set. It verifies both Dali and coastal round trips between `/studio?demo=...` and `/dream?demo=...`, then writes screenshots, `summary.json`, and `clip-notes.md` under `recordings/handoff-checks/`.
 
@@ -228,6 +228,7 @@ npm run check:recording-suite
 - `docs/recording/goal-801-810-recap.md` summarizes mirroring the Complete archive line into the dynamic API index and index QA.
 - `docs/recording/goal-811-820-recap.md` summarizes surfacing the Index Complete verification state back in `/studio`.
 - `docs/recording/goal-821-830-recap.md` summarizes adding the one-click Complete Bundle handoff line in `/studio`.
+- `docs/recording/goal-831-840-recap.md` summarizes capturing the Complete Bundle line in Studio QA notes.
 - `docs/recording/proof-story-demo-script.md` gives a short `/studio` script for recording the evidence timeline, four-line proof-story preview, and copy action.
 - `docs/recording/studio-dream-demo-script.md` gives a shot-by-shot Studio ↔ Dream demo recording path.
 - `docs/recording/bridge-qa-evidence-script.md` gives a short Bridge QA proof clip script.

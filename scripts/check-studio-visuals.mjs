@@ -152,7 +152,9 @@ async function captureProofStoryScriptMaterial(page) {
   const buttonText = await card.getByRole("button", { name: "复制脚本路径" }).innerText();
   const handoffPreview = await card.getByLabel("Proof Story Handoff 预览").innerText();
   const completeLine = await card.getByLabel("Proof Story Complete 状态").innerText();
+  const completeBundleLine = await card.getByLabel("Proof Story Complete Bundle 预览").innerText();
   const handoffCopyButton = card.getByRole("button", { name: "复制 Proof Story Handoff" });
+  const completeBundleCopyButton = card.getByRole("button", { name: "复制 Proof Story Complete Bundle" });
   assert(text.includes(proofStoryScriptPath), `Proof Story script card did not include ${proofStoryScriptPath}: ${text}`);
   assert(text.includes(proofStoryScriptCue), `Proof Story script card did not include cue text: ${text}`);
   assert(handoffPreview.includes("Proof Story Handoff"), `Proof Story script card did not include handoff preview: ${handoffPreview}`);
@@ -160,6 +162,7 @@ async function captureProofStoryScriptMaterial(page) {
     completeLine.includes("Proof Story Complete") || completeLine.includes("Proof Story Pending"),
     `Proof Story script card did not include complete strip: ${completeLine}`,
   );
+  assert(completeBundleLine.includes("Proof Story Complete Bundle"), `Proof Story script card did not include Complete Bundle: ${completeBundleLine}`);
 
   await handoffCopyButton.click();
   await page.waitForFunction(
@@ -177,6 +180,24 @@ async function captureProofStoryScriptMaterial(page) {
     `Proof Story handoff copy did not reach copied or fallback state: ${handoffCopyButtonText}`,
   );
 
+  await completeBundleCopyButton.click();
+  await page.waitForFunction(
+    () => {
+      const button = document.querySelector('[aria-label="复制 Proof Story Complete Bundle"]');
+      return button?.textContent?.includes("已复制") || button?.textContent?.includes("手动");
+    },
+    null,
+    { timeout: 5_000 },
+  );
+  const completeBundleCopyButtonText = await completeBundleCopyButton.innerText();
+  const completeBundleCopyState = completeBundleCopyButtonText.includes("已复制")
+    ? "Complete Bundle 已复制"
+    : `Complete Bundle ${completeBundleCopyButtonText.trim() || "手动"}`;
+  assert(
+    completeBundleCopyState === "Complete Bundle 已复制" || completeBundleCopyState.includes("手动"),
+    `Proof Story Complete Bundle copy did not reach copied or fallback state: ${completeBundleCopyButtonText}`,
+  );
+
   const screenshotPath = path.join(outDir, "studio-proof-story-script-material.png");
   await card.screenshot({ path: screenshotPath });
 
@@ -188,6 +209,8 @@ async function captureProofStoryScriptMaterial(page) {
     handoffPreview,
     handoffCopyState,
     completeLine,
+    completeBundleLine,
+    completeBundleCopyState,
     text,
     screenshotPath,
   };
@@ -255,6 +278,8 @@ function buildHtmlReport(summary) {
             <div><dt>button</dt><dd>${escapeHtml(summary.scriptMaterial.buttonText)}</dd></div>
             <div><dt>handoff</dt><dd>${escapeHtml(summary.scriptMaterial.handoffCopyState || "")}</dd></div>
             <div><dt>complete</dt><dd>${escapeHtml(summary.scriptMaterial.completeLine || "")}</dd></div>
+            <div><dt>bundle line</dt><dd>${escapeHtml(summary.scriptMaterial.completeBundleLine || "")}</dd></div>
+            <div><dt>bundle</dt><dd>${escapeHtml(summary.scriptMaterial.completeBundleCopyState || "")}</dd></div>
           </dl>
         </div>
       </section>`
@@ -421,6 +446,8 @@ function buildClipNotes(summary) {
     `- Proof Story Handoff: ${summary.scriptMaterial.handoffPreview}`,
     `- Handoff copy state: ${summary.scriptMaterial.handoffCopyState}`,
     `- Proof Story Complete: ${summary.scriptMaterial.completeLine}`,
+    `- Proof Story Complete Bundle: ${summary.scriptMaterial.completeBundleLine}`,
+    `- Complete Bundle copy state: ${summary.scriptMaterial.completeBundleCopyState}`,
     `- Voiceover prompt: Studio 现在把 Proof Story 脚本路径、证据时间线、四行预览和复制动作放在同一个录屏面板里。`,
     ``,
   ].join("\n");

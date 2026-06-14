@@ -2049,3 +2049,14 @@ Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, app/gl
 Command/result: npm test -- components/studio-mode.test.tsx passed with 29 tests; browser check against `http://localhost:3000/studio` showed the bundle row inside the card with 0 console errors.
 Voiceover note: "最后不是手动拼素材说明，而是一键复制 Complete Bundle。Agent 把交付证据也整理成后期可用的一句话。"
 Usable for: final handoff copy clip, post-production workflow demo, continued goal run round 824
+
+## Phase FS: v0.8.170 — Complete Bundle In Studio QA Notes
+
+Date: 2026-06-14
+Clip title: Phase FS: v0.8.170 — Complete Bundle In Studio QA Notes
+What changed: `npm run check:studio-visuals` now captures the visible `Proof Story Complete Bundle`, clicks `复制 Bundle`, and writes the bundle line plus copy state into Studio QA `summary.json`, `index.html`, and `clip-notes.md`.
+Why this matters: The post-production handoff line is now part of the automated proof pack, not only an in-page copy action.
+Files shown: scripts/check-studio-visuals.mjs, recordings/studio-checks/2026-06-14T10-59-12-061Z/clip-notes.md, README.md, docs/recording/goal-831-840-recap.md
+Command/result: node --check scripts/check-studio-visuals.mjs passed; npm run check:studio-visuals passed and the newest Studio QA notes contain `Proof Story Complete Bundle`.
+Voiceover note: "Bundle line 也进入 Studio QA notes。这样录屏素材、后期说明和自动验证又闭合了一层。"
+Usable for: Studio QA receipt clip, proof bundle handoff narration, continued goal run round 834
