@@ -52,6 +52,7 @@ async function readSource(source) {
       createdAt: summary.createdAt || entry,
       title: buildPackTitle(source.type, summary),
       detail: buildPackDetail(source.type, summary),
+      lens: readDreamLens(summary),
       galleryPath: toRecordingLink(path.join(source.dir, entry, "index.html")),
       notesPath: existsSync(path.join(packDir, "clip-notes.md")) ? toRecordingLink(path.join(source.dir, entry, "clip-notes.md")) : "",
       summaryPath: toRecordingLink(path.join(source.dir, entry, "summary.json")),
@@ -70,6 +71,13 @@ function buildPackTitle(type, summary) {
     return "Studio-Dream bridge QA pack";
   }
 
+  if (type === "dream") {
+    const lens = readDreamLens(summary);
+    if (lens && lens !== "auto day lens") {
+      return `Dream ${lens} visual pack`;
+    }
+  }
+
   return summary.demoRoadbook === "coast" ? "Dream coastal visual pack" : "Dream Dali visual pack";
 }
 
@@ -86,7 +94,9 @@ function buildPackDetail(type, summary) {
 
   const days = (summary.days || []).length;
   const motion = summary.motion?.changed ? "motion verified" : "motion pending";
-  return `${summary.demoRoadbook || "dali"} · ${days} day screenshots · ${motion}`;
+  const lens = readDreamLens(summary);
+  const lensDetail = lens ? ` · ${lens}` : "";
+  return `${summary.demoRoadbook || "dali"} · ${days} day screenshots · ${motion}${lensDetail}`;
 }
 
 function buildHtmlIndex(packs) {
@@ -99,6 +109,7 @@ function buildHtmlIndex(packs) {
               <h2>${escapeHtml(pack.title)}</h2>
               <small>${escapeHtml(pack.createdAt)}</small>
               <strong>${escapeHtml(pack.detail)}</strong>
+              ${pack.lens ? `<em>${escapeHtml(pack.lens)}</em>` : ""}
               <nav>
                 <a href="${escapeHtml(pack.galleryPath)}">gallery</a>
                 <a href="${escapeHtml(pack.summaryPath)}">summary</a>
@@ -150,6 +161,17 @@ function buildHtmlIndex(packs) {
       article p, small { color: #66806f; font-size: 0.76rem; font-weight: 900; text-transform: uppercase; }
       h2 { font-size: 1.35rem; }
       strong { color: #34443c; }
+      em {
+        width: fit-content;
+        border: 1px solid rgba(47, 64, 56, 0.12);
+        border-radius: 999px;
+        padding: 5px 9px;
+        color: #38584d;
+        background: rgba(231, 240, 235, 0.72);
+        font-size: 0.78rem;
+        font-style: normal;
+        font-weight: 900;
+      }
       nav { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
       a {
         border: 1px solid rgba(47, 64, 56, 0.16);
@@ -199,6 +221,9 @@ function buildMarkdownIndex(packs) {
     lines.push(`- Type: ${pack.label}`);
     lines.push(`- Created: ${pack.createdAt}`);
     lines.push(`- Detail: ${pack.detail}`);
+    if (pack.lens) {
+      lines.push(`- Director Lens: ${pack.lens}`);
+    }
     lines.push(`- Gallery: ${pack.galleryPath}`);
     lines.push(`- Summary: ${pack.summaryPath}`);
     if (pack.notesPath) {
@@ -212,6 +237,14 @@ function buildMarkdownIndex(packs) {
 
 function toRecordingLink(relativePath) {
   return relativePath.split(path.sep).join("/");
+}
+
+function readDreamLens(summary) {
+  if (summary.activeLens && typeof summary.activeLens === "object" && typeof summary.activeLens.proof === "string") {
+    return summary.activeLens.proof;
+  }
+
+  return typeof summary.directorLens === "string" ? summary.directorLens : "";
 }
 
 function escapeHtml(value) {
