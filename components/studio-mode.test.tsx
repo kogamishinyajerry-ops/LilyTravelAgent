@@ -80,6 +80,17 @@ function recordingAssetsResponse(
               : "Dream Proof · Proof · 3/5 ready",
           apiIndexUrl: "http://localhost:3000/api/recording-assets/index",
           screenshotPath: "index-checks/index-check-latest/recording-index-dream-proof.png",
+          scriptMaterialCheck:
+            indexLinkCount >= 6
+              ? {
+                  proofId: "script-material",
+                  label: "Proof Story Script Material",
+                  checkedLinkCount: 3,
+                  expectedLinkCount: 3,
+                  screenshotPath: "index-checks/index-check-latest/recording-index-script-material-proof.png",
+                  summaryPath: "index-checks/index-check-latest/summary.json",
+                }
+              : null,
           summaryPath: "index-checks/index-check-latest/summary.json",
           notesPath: "index-checks/index-check-latest/clip-notes.md",
         }
@@ -212,8 +223,12 @@ describe("StudioMode demo roadbooks", () => {
     expect(scriptCard.textContent).toContain("docs/recording/proof-story-demo-script.md");
     expect(scriptCard.textContent).toContain("证据时间线 → 四行讲解稿预览 → 复制讲解稿");
     expect(scriptCard.textContent).toContain("QA 已捕获 · 复制脚本路径");
+    expect(scriptCard.textContent).toContain("Index QA 已验证脚本素材 · 3/3");
     expect(within(scriptCard).getByRole("link", { name: "QA 已捕获 · 复制脚本路径" }).getAttribute("href")).toBe(
       "/api/recording-assets/file?path=studio-checks%2Fstudio-proof-latest%2Fstudio-proof-story-script-material.png",
+    );
+    expect(within(scriptCard).getByRole("link", { name: "Index QA 已验证脚本素材 · 3/3" }).getAttribute("href")).toBe(
+      "/api/recording-assets/file?path=index-checks%2Findex-check-latest%2Frecording-index-script-material-proof.png",
     );
     expect(within(evidenceTimeline).getByRole("link", { name: /Dream Proof/ }).getAttribute("href")).toBe(
       "/api/recording-assets/file?path=visual-checks%2Fdream-proof-latest%2Fsummary.json",
@@ -436,6 +451,7 @@ describe("StudioMode demo roadbooks", () => {
     expect(screen.getByLabelText("证据讲解稿预览").textContent).toContain("03. Index QA: 待运行 · npm run check:recording-index");
     expect(screen.getByLabelText("证据讲解稿预览").textContent).toContain("04. Suite Run: 待运行 · npm run check:recording-suite");
     expect(screen.getByLabelText("Proof Story 脚本素材").textContent).toContain("QA 待捕获 · npm run check:studio-visuals");
+    expect(screen.getByLabelText("Proof Story 脚本素材").textContent).toContain("Index QA 待验证脚本素材 · npm run check:recording-index");
     expect(screen.getByText("Dream 0")).toBeTruthy();
     expect(screen.getByText("Studio 0")).toBeTruthy();
     expect(screen.getByText("生成本地素材索引")).toBeTruthy();

@@ -229,6 +229,16 @@ describe("recording assets", () => {
           screenshotPath: path.join(tempRoot, "index-checks", "new-index-check", "recording-index-studio-proof.png"),
         },
       ],
+      scriptMaterialCheck: {
+        proofId: "script-material",
+        label: "Proof Story Script Material",
+        links: [
+          { id: "screenshot", status: 200 },
+          { id: "summary", status: 200 },
+          { id: "notes", status: 200 },
+        ],
+        screenshotPath: path.join(tempRoot, "index-checks", "new-index-check", "recording-index-script-material-proof.png"),
+      },
       screenshotPath: path.join(tempRoot, "index-checks", "new-index-check", "recording-index-dream-proof.png"),
     });
 
@@ -256,12 +266,38 @@ describe("recording assets", () => {
           screenshotPath: "index-checks/new-index-check/recording-index-studio-proof.png",
         },
       ],
+      scriptMaterialCheck: {
+        proofId: "script-material",
+        label: "Proof Story Script Material",
+        checkedLinkCount: 3,
+        expectedLinkCount: 3,
+        screenshotPath: "index-checks/new-index-check/recording-index-script-material-proof.png",
+        summaryPath: "index-checks/new-index-check/summary.json",
+      },
       proofText: "Dream Proof · Proof · 3/5 ready\nplayback screenshot\nsummary\nnotes",
       apiIndexUrl: "http://localhost:3000/api/recording-assets/index",
       screenshotPath: "index-checks/new-index-check/recording-index-dream-proof.png",
       summaryPath: "index-checks/new-index-check/summary.json",
       notesPath: "index-checks/new-index-check/clip-notes.md",
     });
+  });
+
+  it("keeps recording index script-material check null for older index QA summaries", async () => {
+    await writeSummary("index-checks/index-without-script-material", {
+      createdAt: "2026-06-13T05:00:00.000Z",
+      proofText: "Dream Proof · Proof · 3/5 ready\nStudio Proof · Suite Run · 7 步 · 7 通过",
+      apiIndexUrl: "http://localhost:3000/api/recording-assets/index",
+      localProof: {
+        finalCueLabel: "Proof",
+        finalCueValue: "3/5 ready",
+      },
+      links: [{ id: "dream-screenshot" }, { id: "studio-screenshot" }],
+      screenshotPath: path.join(tempRoot, "index-checks", "index-without-script-material", "recording-index-dream-proof.png"),
+    });
+
+    const summary = await readRecordingAssetsSummary(tempRoot);
+
+    expect(summary.latestRecordingIndexCheck?.scriptMaterialCheck).toBeNull();
   });
 
   it("reports the latest recording suite run manifest when available", async () => {

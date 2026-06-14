@@ -1785,3 +1785,14 @@ Files shown: scripts/check-recording-index.mjs, recordings/index-checks/2026-06-
 Command/result: node --check scripts/check-recording-index.mjs passed; npm run check:recording-index passed with 6 baseline links plus optional scriptMaterialCheck; npm run lint && npm test && npm run build
 Voiceover note: "现在 Index QA 仍然把 Dream 和 Studio 作为必检基线，但如果发现脚本素材证据，它会额外检查三条链接，并把结果单独写成 scriptMaterialCheck。"
 Usable for: optional proof QA clip, archive evidence rigor narration, continued goal run round 584
+
+## Phase FA: v0.8.146 — Studio Shows Script Material Index QA
+
+Date: 2026-06-14
+Clip title: Phase FA: v0.8.146 — Studio Shows Script Material Index QA
+What changed: `/api/recording-assets` now parses optional `summary.scriptMaterialCheck` from Recording Index QA packs. `/studio` shows `Index QA 已验证脚本素材 · 3/3` on the Proof Story `脚本素材` card and links to the index proof-card screenshot; missing state shows `npm run check:recording-index`.
+Why this matters: The script-material evidence loop now returns all the way to Studio: card capture, archive entry, index QA, and Studio status are visible in one recording panel.
+Files shown: lib/recording-assets.ts, lib/recording-assets.test.ts, components/studio-mode.tsx, components/studio-mode.test.tsx, docs/recording/goal-591-600-recap.md
+Command/result: npm test -- lib/recording-assets.test.ts components/studio-mode.test.tsx passed with 26 tests; browser check confirmed the Index QA script-material link returned 200; npm run lint && npm test && npm run build
+Voiceover note: "现在 Studio 脚本素材卡上有两层证据：它先被 Studio QA 捕获，再被 Index QA 验证进素材总索引。"
+Usable for: Studio proof-loop closeout, script-material archive status narration, continued goal run round 594

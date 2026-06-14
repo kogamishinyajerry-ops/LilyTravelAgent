@@ -81,6 +81,7 @@ type RecordingIndexCheckSummary = {
   finalCueValue: string;
   linkCount: number;
   proofChecks?: RecordingIndexProofCheckSummary[];
+  scriptMaterialCheck?: RecordingIndexScriptMaterialCheckSummary | null;
   proofText: string;
   apiIndexUrl: string;
   screenshotPath: string;
@@ -94,6 +95,15 @@ type RecordingIndexProofCheckSummary = {
   checkedLinkCount: number;
   expectedLinkCount: number;
   screenshotPath?: string;
+};
+
+type RecordingIndexScriptMaterialCheckSummary = {
+  proofId: string;
+  label: string;
+  checkedLinkCount: number;
+  expectedLinkCount: number;
+  screenshotPath?: string;
+  summaryPath?: string;
 };
 
 type RecordingSuiteRunSummary = {
@@ -1053,6 +1063,19 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
                             </a>
                           ) : (
                             <span className="studio-proof-script-status missing">QA 待捕获 · {studioVisualProofCommand}</span>
+                          )}
+                          {recordingAssets.status === "ready" && recordingAssets.latestRecordingIndexCheck?.scriptMaterialCheck ? (
+                            <a
+                              className="studio-proof-script-status ready"
+                              href={buildRecordingEvidenceUrl(recordingAssets.latestRecordingIndexCheck.scriptMaterialCheck.screenshotPath)}
+                              target="_blank"
+                              rel="noreferrer"
+                            >
+                              Index QA 已验证脚本素材 · {recordingAssets.latestRecordingIndexCheck.scriptMaterialCheck.checkedLinkCount}/
+                              {recordingAssets.latestRecordingIndexCheck.scriptMaterialCheck.expectedLinkCount}
+                            </a>
+                          ) : (
+                            <span className="studio-proof-script-status missing">Index QA 待验证脚本素材 · {recordingIndexCommand}</span>
                           )}
                           <button type="button" onClick={copyProofStoryScriptPath}>
                             <Copy size={13} />

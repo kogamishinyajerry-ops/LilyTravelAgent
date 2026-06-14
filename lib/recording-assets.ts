@@ -62,6 +62,7 @@ export type RecordingIndexCheckSummary = {
   finalCueValue: string;
   linkCount: number;
   proofChecks: RecordingIndexProofCheckSummary[];
+  scriptMaterialCheck: RecordingIndexScriptMaterialCheckSummary | null;
   proofText: string;
   apiIndexUrl: string;
   screenshotPath: string;
@@ -75,6 +76,15 @@ export type RecordingIndexProofCheckSummary = {
   checkedLinkCount: number;
   expectedLinkCount: number;
   screenshotPath: string;
+};
+
+export type RecordingIndexScriptMaterialCheckSummary = {
+  proofId: string;
+  label: string;
+  checkedLinkCount: number;
+  expectedLinkCount: number;
+  screenshotPath: string;
+  summaryPath: string;
 };
 
 export type RecordingSuiteRunSummary = {
@@ -259,6 +269,7 @@ async function readLatestRecordingIndexCheck(recordingsRoot: string): Promise<Re
     const screenshotFile = path.basename(readString(summary.screenshotPath));
     const links = Array.isArray(summary.links) ? summary.links : [];
     const proofChecks = readRecordingIndexProofChecks(summary, entry);
+    const scriptMaterialCheck = readRecordingIndexScriptMaterialCheck(summary, entry);
 
     runs.push({
       id: entry,
@@ -267,6 +278,7 @@ async function readLatestRecordingIndexCheck(recordingsRoot: string): Promise<Re
       finalCueValue: readString(localProof?.finalCueValue),
       linkCount: links.length,
       proofChecks,
+      scriptMaterialCheck,
       proofText: readString(summary.proofText),
       apiIndexUrl: readString(summary.apiIndexUrl),
       screenshotPath: screenshotFile ? toRecordingLink(path.join("index-checks", entry, screenshotFile)) : "",
@@ -276,6 +288,26 @@ async function readLatestRecordingIndexCheck(recordingsRoot: string): Promise<Re
   }
 
   return runs.sort((a, b) => b.createdAt.localeCompare(a.createdAt))[0] || null;
+}
+
+function readRecordingIndexScriptMaterialCheck(summary: Record<string, unknown>, entry: string): RecordingIndexScriptMaterialCheckSummary | null {
+  const scriptMaterialCheck = typeof summary.scriptMaterialCheck === "object" && summary.scriptMaterialCheck
+    ? summary.scriptMaterialCheck as Record<string, unknown>
+    : null;
+  if (!scriptMaterialCheck) {
+    return null;
+  }
+
+  const links = Array.isArray(scriptMaterialCheck.links) ? scriptMaterialCheck.links : [];
+  const screenshotFile = path.basename(readString(scriptMaterialCheck.screenshotPath));
+  return {
+    proofId: readString(scriptMaterialCheck.proofId),
+    label: readString(scriptMaterialCheck.label),
+    checkedLinkCount: links.length,
+    expectedLinkCount: 3,
+    screenshotPath: screenshotFile ? toRecordingLink(path.join("index-checks", entry, screenshotFile)) : "",
+    summaryPath: toRecordingLink(path.join("index-checks", entry, "summary.json")),
+  };
 }
 
 function readRecordingIndexProofChecks(summary: Record<string, unknown>, entry: string): RecordingIndexProofCheckSummary[] {
