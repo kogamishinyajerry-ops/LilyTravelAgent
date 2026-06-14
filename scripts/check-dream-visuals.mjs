@@ -73,6 +73,12 @@ async function readCanvasStats(page) {
   });
 }
 
+async function saveCanvasPng(page, filePath) {
+  const dataUrl = await page.locator(".dream-skyline-canvas").evaluate((canvas) => canvas.toDataURL("image/png"));
+  const base64 = dataUrl.replace(/^data:image\/png;base64,/, "");
+  await writeFile(filePath, Buffer.from(base64, "base64"));
+}
+
 async function readDirectorTimeline(page) {
   return page.locator(".dream-scene-timeline button").evaluateAll((buttons) =>
     buttons.map((button) => ({
@@ -171,7 +177,9 @@ async function main() {
     const proofStack = await readProofStack(page);
     const canvasStats = await readCanvasStats(page);
     const screenshotPath = path.join(outDir, `dream-${demoRoadbook}-d${day}.png`);
+    const sceneScreenshotPath = path.join(outDir, `dream-${demoRoadbook}-d${day}-scene.png`);
     await page.screenshot({ path: screenshotPath, fullPage: false });
+    await saveCanvasPng(page, sceneScreenshotPath);
 
     assert(inspectorText.includes(`D${day}`), `Scene Inspector did not mention D${day}.`);
     assert(timeline.length === 4, `Director timeline should have 4 items for D${day}; got ${timeline.length}.`);
@@ -220,6 +228,7 @@ async function main() {
       directorLens: activeLens,
       canvasStats,
       screenshotPath,
+      sceneScreenshotPath,
     });
   }
 
@@ -310,12 +319,14 @@ function buildHtmlReport(summary) {
             </li>`,
         )
         .join("");
+      const primaryImage = day.sceneScreenshotPath || day.screenshotPath;
       return `
         <article class="day-card">
-          <img src="${escapeHtml(path.basename(day.screenshotPath))}" alt="D${day.day} /dream screenshot" />
+          <img src="${escapeHtml(path.basename(primaryImage))}" alt="D${day.day} /dream cinematic scene crop" />
           <div class="day-body">
             <p class="eyebrow">D${day.day} Visual Check</p>
             <h2>${escapeHtml(shotLine)}</h2>
+            <p class="asset-pair">Scene crop: ${escapeHtml(path.basename(primaryImage))} · Page: ${escapeHtml(path.basename(day.screenshotPath))}</p>
             <pre>${escapeHtml(day.inspectorText)}</pre>
             <ul class="timeline">${timelineItems}</ul>
             <ul class="proof-list">${inspectorItems}</ul>
@@ -428,6 +439,13 @@ function buildHtmlReport(summary) {
       h2 {
         margin-top: 5px;
         font-size: 1.3rem;
+      }
+
+      .asset-pair {
+        margin-top: 8px;
+        color: var(--muted);
+        font-size: 0.76rem;
+        font-weight: 800;
       }
 
       pre {
@@ -610,6 +628,7 @@ function buildClipNotes(summary) {
         `## D${day.day} ${active?.label || "未命名镜头"}`,
         ``,
         `- Screenshot: ${path.basename(day.screenshotPath)}`,
+        `- 3D scene crop: ${path.basename(day.sceneScreenshotPath || day.screenshotPath)}`,
         `- Director cue: ${active?.cue || "无 cue"}`,
         `- Director Lens: ${day.directorLens?.proof || "auto"}`,
         `- Lens tuning: ${day.inspectorGrid.find((item) => item.label === "Tune")?.value || "无"}`,

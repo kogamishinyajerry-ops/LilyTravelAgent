@@ -1092,3 +1092,14 @@ Files shown: terminal verification output, docs/recording/goal-131-140-recap.md,
 Command/result: npm run lint && npm test && npm run build (44 files, 903 tests, build passed)
 Voiceover note: "对比看板和同 lens 跳转都做完以后，我又跑完整质量门。下一步要把对比图从整页截图推进到真正的 3D 画面裁切。"
 Usable for: goal closeout clip, quality gate proof, next visual-crop handoff, continued goal run round 138
+
+## Phase CP: v0.8.83 — Pure 3D Scene Crop QA
+
+Date: 2026-06-14
+Clip title: Phase CP: v0.8.83 — Pure 3D Scene Crop QA
+What changed: Dream visual QA now exports a pure WebGL canvas PNG for each D1-D4 shot as `*-scene.png`, records it in `summary.json`, includes it in `clip-notes.md`, and the Director Lens comparison dashboard uses those scene crops instead of full-page screenshots.
+Why this matters: The review surface now judges the actual 3D render, not the surrounding product UI. This directly supports the next visual-quality pass toward more cinematic destination previews.
+Files shown: scripts/check-dream-visuals.mjs, lib/lens-comparison.ts, app/api/recording-assets/lens-comparison/route.ts, docs/recording/lens-visual-capture-workflow.md
+Command/result: npm test -- lib/lens-comparison.test.ts && npm run lint; DREAM_URL=http://127.0.0.1:3000/dream npm run check:dream-lenses; Browser check confirmed 5 lens cards, 20 `*-scene.png` images, and 0 broken images.
+Voiceover note: "我发现整页截图还是会把 UI 带进来，所以改成直接从 WebGL canvas 导出 PNG。现在对比看板看的就是 3D 本体。"
+Usable for: 3D visual QA clip, comparison dashboard upgrade, Vibe Coding visual-quality narrative, continued goal run round 144

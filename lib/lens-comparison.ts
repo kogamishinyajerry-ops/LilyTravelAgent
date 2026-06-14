@@ -9,6 +9,9 @@ export type LensComparisonDay = {
   cue: string;
   screenshotPath: string;
   screenshotUrl: string;
+  sceneScreenshotPath: string;
+  sceneScreenshotUrl: string;
+  hasSceneCrop: boolean;
   tuneCue: string;
   compositionProof: string;
   lit: number;
@@ -129,6 +132,7 @@ function buildLensComparisonPack(recordingsRoot: string, summary: DreamVisualSum
   const tuningCue = days.find((day) => day.tuneCue)?.tuneCue || formatDirectorLensSceneCue(lens.id);
   const motionVerified = readBoolean(readRecord(summary.raw.motion)?.changed);
   const demoRoadbook = readString(summary.raw.demoRoadbook) || "dali";
+  const sceneCropCount = days.filter((day) => day.hasSceneCrop).length;
 
   return {
     id: summary.id,
@@ -157,6 +161,11 @@ function buildLensComparisonPack(recordingsRoot: string, summary: DreamVisualSum
         detail: tuningCue || "missing cue",
       },
       {
+        label: "3D crop",
+        state: sceneCropCount === days.length && days.length > 0 ? "ready" : "needs-review",
+        detail: sceneCropCount === days.length && days.length > 0 ? "scene frames" : `${sceneCropCount}/${days.length} crops`,
+      },
+      {
         label: "Motion",
         state: motionVerified ? "ready" : "needs-review",
         detail: motionVerified ? "micro-motion verified" : "motion pending",
@@ -178,6 +187,8 @@ function readDays(recordingsRoot: string, summary: DreamVisualSummary): LensComp
       const proofStack = readGrid(item.proofStack);
       const canvasStats = readRecord(item.canvasStats) || {};
       const screenshotPath = readScreenshotPath(recordingsRoot, summary.packDir, item, day, summary.raw);
+      const sceneScreenshotPath = readSceneScreenshotPath(recordingsRoot, item, screenshotPath);
+      const hasSceneCrop = sceneScreenshotPath !== screenshotPath;
 
       return {
         day,
@@ -185,6 +196,9 @@ function readDays(recordingsRoot: string, summary: DreamVisualSummary): LensComp
         cue: timeline.cue,
         screenshotPath,
         screenshotUrl: buildRecordingFileUrl(screenshotPath),
+        sceneScreenshotPath,
+        sceneScreenshotUrl: buildRecordingFileUrl(sceneScreenshotPath),
+        hasSceneCrop,
         tuneCue: readGridValue(inspectorGrid, "Tune"),
         compositionProof: readGridValue(proofStack, "Composition"),
         lit: readNumber(canvasStats.lit),
@@ -221,6 +235,11 @@ function readScreenshotPath(
 
   const demoRoadbook = readString(summary.demoRoadbook) || "dali";
   return toRecordingRelativePath(recordingsRoot, path.join(packDir, `dream-${demoRoadbook}-d${day}.png`));
+}
+
+function readSceneScreenshotPath(recordingsRoot: string, dayRecord: Record<string, unknown>, screenshotPath: string) {
+  const rawPath = readString(dayRecord.sceneScreenshotPath);
+  return rawPath ? toRecordingRelativePath(recordingsRoot, rawPath) : screenshotPath;
 }
 
 function toRecordingRelativePath(recordingsRoot: string, assetPath: string) {

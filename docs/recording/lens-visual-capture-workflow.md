@@ -28,6 +28,7 @@ npm run check:recording-suite
 Each lens run writes a folder under `recordings/visual-checks/` with:
 
 - D1-D4 screenshots
+- D1-D4 pure WebGL `*-scene.png` crops for visual comparison
 - `summary.json`
 - `index.html`
 - `clip-notes.md`
@@ -36,7 +37,7 @@ Each lens run writes a folder under `recordings/visual-checks/` with:
 
 After `npm run index:recording-assets`, the top-level recording index shows lens-aware titles such as `Dream low-skyline lens visual pack`, and `/studio` recent asset cards show a lens chip.
 
-`/studio` also links to `/api/recording-assets/lens-comparison`, a local Director Lens comparison dashboard. It reads the newest Dream QA pack for each lens, shows D1-D4 thumbnails side-by-side, surfaces the Scene Inspector tuning cue plus a compact review checklist, and links back to `/dream?lens=...` for same-lens recording.
+`/studio` also links to `/api/recording-assets/lens-comparison`, a local Director Lens comparison dashboard. It reads the newest Dream QA pack for each lens, shows D1-D4 pure 3D thumbnails side-by-side, surfaces the Scene Inspector tuning cue plus a compact review checklist, and links back to `/dream?lens=...` for same-lens recording.
 
 ## Review Loop
 
@@ -51,6 +52,7 @@ After `npm run index:recording-assets`, the top-level recording index shows lens
 ## What To Judge
 
 - Does the selected lens create a visibly different composition?
+- Does the pure 3D crop show improvement without relying on surrounding UI?
 - Does the D1-D4 director timeline still read clearly?
 - Does the map stay compact and non-distracting?
 - Does the Proof Stack show `Director` as ready?

@@ -269,11 +269,11 @@ function renderLensCard(pack: LensComparisonPack) {
 
       return `
         <figure>
-          <img src="${escapeHtml(shot.screenshotUrl)}" alt="${escapeHtml(`${pack.lensProof} D${day}`)}" loading="lazy" />
+          <img src="${escapeHtml(shot.sceneScreenshotUrl)}" alt="${escapeHtml(`${pack.lensProof} D${day} 3D scene crop`)}" loading="lazy" />
           <figcaption>
             <span>D${day}</span>
             <strong>${escapeHtml(shot.label)}</strong>
-            <small>${escapeHtml(shot.cue || shot.compositionProof || "visual beat")}</small>
+            <small>${escapeHtml(`${shot.hasSceneCrop ? "3D crop" : "page frame"} · ${shot.cue || shot.compositionProof || "visual beat"}`)}</small>
           </figcaption>
         </figure>`;
     })

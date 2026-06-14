@@ -45,6 +45,7 @@ function makeSummary(lensId: string, createdAt: string, tuneCue = "skyline 1.00x
       proofStack: [{ label: "Composition", value: `D${day} composition` }],
       canvasStats: { lit: 2000 + day, varied: 50 + day, checksum: 100 + day },
       screenshotPath: path.join(tempRoot, "visual-checks", `${createdAt}-lens-${lensId}`, `dream-dali-d${day}.png`),
+      sceneScreenshotPath: path.join(tempRoot, "visual-checks", `${createdAt}-lens-${lensId}`, `dream-dali-d${day}-scene.png`),
     })),
   };
 }
@@ -80,7 +81,12 @@ describe("lens comparison dashboard", () => {
     expect(dashboard.packs[2].days[0].screenshotUrl).toBe(
       buildRecordingFileUrl("visual-checks/2026-06-13T04:00:00.000Z-lens-low-skyline/dream-dali-d1.png"),
     );
-    expect(dashboard.packs[2].checklist.map((item) => item.state)).toEqual(["ready", "ready", "ready"]);
+    expect(dashboard.packs[2].days[0].sceneScreenshotPath).toBe("visual-checks/2026-06-13T04:00:00.000Z-lens-low-skyline/dream-dali-d1-scene.png");
+    expect(dashboard.packs[2].days[0].sceneScreenshotUrl).toBe(
+      buildRecordingFileUrl("visual-checks/2026-06-13T04:00:00.000Z-lens-low-skyline/dream-dali-d1-scene.png"),
+    );
+    expect(dashboard.packs[2].days[0].hasSceneCrop).toBe(true);
+    expect(dashboard.packs[2].checklist.map((item) => item.state)).toEqual(["ready", "ready", "ready", "ready"]);
   });
 
   it("uses lens tuning fallback and checklist warnings when a pack is incomplete", async () => {
@@ -100,6 +106,7 @@ describe("lens comparison dashboard", () => {
     expect(detail.checklist).toEqual([
       { label: "D1-D4", state: "needs-review", detail: "1 shots" },
       { label: "Tune", state: "ready", detail: "skyline 1.18x / water 0.72x / route 0.78x" },
+      { label: "3D crop", state: "needs-review", detail: "0/1 crops" },
       { label: "Motion", state: "needs-review", detail: "motion pending" },
     ]);
   });
