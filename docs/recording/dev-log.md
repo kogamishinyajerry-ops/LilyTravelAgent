@@ -1807,3 +1807,14 @@ Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, app/gl
 Command/result: npm test -- components/studio-mode.test.tsx passed with 14 tests; browser check confirmed the checklist fits inside the card and console errors were empty; npm run lint && npm test && npm run build
 Voiceover note: "这一行就是 Proof Story 的收口：脚本路径就绪，Studio QA 已捕获，素材已入库，Index QA 已验证。"
 Usable for: Studio proof-loop closeout clip, compact recording-status narration, continued goal run round 604
+
+## Phase FC: v0.8.148 — Copy Proof Story Closeout Status
+
+Date: 2026-06-14
+Clip title: Phase FC: v0.8.148 — Copy Proof Story Closeout Status
+What changed: `/studio` now has `复制收口状态` inside the Proof Story `脚本素材` card. It copies one line: `Proof Story · 脚本路径: 就绪 · Studio QA: 已捕获 · 索引入库: 已入库 · Index QA: 已验证`.
+Why this matters: The creator can paste the whole production-status line into clip notes, captions, or later voiceover drafts without rewriting the checklist after recording.
+Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, docs/recording/goal-611-620-recap.md
+Command/result: npm test -- components/studio-mode.test.tsx passed with 16 tests; browser check confirmed `复制收口状态` is visible and console errors were empty; npm run lint && npm test && npm run build
+Voiceover note: "现在这条 Proof Story 收口不只是能看，还能一键复制成剪辑备注：脚本、Studio QA、入库、Index QA 四件事一行带走。"
+Usable for: caption workflow clip, proof-loop closeout narration, continued goal run round 614

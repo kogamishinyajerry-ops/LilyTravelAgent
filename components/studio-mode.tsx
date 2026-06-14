@@ -556,6 +556,7 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
   const [candidateCommandCopyState, setCandidateCommandCopyState] = useState<"idle" | "copied" | "error">("idle");
   const [proofStoryCopyState, setProofStoryCopyState] = useState<"idle" | "copied" | "error">("idle");
   const [proofScriptCopyState, setProofScriptCopyState] = useState<"idle" | "copied" | "error">("idle");
+  const [proofCloseoutCopyState, setProofCloseoutCopyState] = useState<"idle" | "copied" | "error">("idle");
   const [proofCueIndex, setProofCueIndex] = useState(0);
   const [proofCuePlaying, setProofCuePlaying] = useState(false);
 
@@ -584,6 +585,10 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
       { label: "Index QA", status: scriptMaterialIndexVerified ? "已验证" : "待验证", ready: scriptMaterialIndexVerified },
     ];
   }, [recordingAssets]);
+  const proofStoryCloseoutLine = useMemo(
+    () => `Proof Story · ${proofStoryCloseoutItems.map((item) => `${item.label}: ${item.status}`).join(" · ")}`,
+    [proofStoryCloseoutItems],
+  );
 
   const loadRecordingAssets = useCallback(
     async ({ markRefreshing = true, isActive = () => true }: { markRefreshing?: boolean; isActive?: () => boolean } = {}) => {
@@ -746,6 +751,15 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
       setProofScriptCopyState("copied");
     } catch {
       setProofScriptCopyState("error");
+    }
+  }
+
+  async function copyProofStoryCloseout() {
+    try {
+      await navigator.clipboard.writeText(proofStoryCloseoutLine);
+      setProofCloseoutCopyState("copied");
+    } catch {
+      setProofCloseoutCopyState("error");
     }
   }
 
@@ -1100,6 +1114,10 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
                               </span>
                             ))}
                           </div>
+                          <button type="button" onClick={copyProofStoryCloseout}>
+                            <Copy size={13} />
+                            {proofCloseoutCopyState === "copied" ? "收口状态已复制" : proofCloseoutCopyState === "error" ? "手动复制收口状态" : "复制收口状态"}
+                          </button>
                           <button type="button" onClick={copyProofStoryScriptPath}>
                             <Copy size={13} />
                             {proofScriptCopyState === "copied" ? "脚本路径已复制" : proofScriptCopyState === "error" ? "手动复制路径" : "复制脚本路径"}

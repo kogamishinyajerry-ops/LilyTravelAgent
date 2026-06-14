@@ -635,6 +635,42 @@ describe("StudioMode demo roadbooks", () => {
     expect(screen.getByRole("button", { name: "复制讲解稿" })).toBeTruthy();
   });
 
+  it("copies the one-line Proof Story closeout status", async () => {
+    const writeText = vi.fn(async () => undefined);
+    Object.defineProperty(window.navigator, "clipboard", {
+      value: { writeText },
+      configurable: true,
+    });
+
+    render(<StudioMode />);
+
+    expect(await screen.findByText("15 个素材包")).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: "复制收口状态" }));
+
+    expect(writeText).toHaveBeenCalledWith("Proof Story · 脚本路径: 就绪 · Studio QA: 已捕获 · 索引入库: 已入库 · Index QA: 已验证");
+    expect(await screen.findByText("收口状态已复制")).toBeTruthy();
+    expect(screen.getByRole("button", { name: "复制脚本路径" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "复制讲解稿" })).toBeTruthy();
+  });
+
+  it("shows a closeout copy fallback when clipboard access fails", async () => {
+    const writeText = vi.fn(async () => {
+      throw new Error("clipboard denied");
+    });
+    Object.defineProperty(window.navigator, "clipboard", {
+      value: { writeText },
+      configurable: true,
+    });
+
+    render(<StudioMode />);
+
+    expect(await screen.findByText("15 个素材包")).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: "复制收口状态" }));
+
+    expect(await screen.findByText("手动复制收口状态")).toBeTruthy();
+    expect(writeText).toHaveBeenCalledWith("Proof Story · 脚本路径: 就绪 · Studio QA: 已捕获 · 索引入库: 已入库 · Index QA: 已验证");
+  });
+
   it("shows a proof story copy fallback when clipboard access fails", async () => {
     const writeText = vi.fn(async () => {
       throw new Error("clipboard denied");
