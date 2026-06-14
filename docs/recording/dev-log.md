@@ -2126,3 +2126,14 @@ Files shown: lib/recording-assets.ts, components/studio-mode.tsx, app/globals.cs
 Command/result: npm test -- lib/recording-assets.test.ts passed with 15 tests; npm test -- components/studio-mode.test.tsx passed with 33 tests; browser check against `http://localhost:3000/studio` showed `Chain 已入库`, 297px row width inside a 313px card, and 0 console errors.
 Voiceover note: "Chain 句子不只是页面里的便捷复制按钮。它已经进入 Studio QA notes，现在又回到 Studio 里显示 Chain 已入库。"
 Usable for: final video-notes archive clip, Studio proof-loop teaching segment, continued goal run round 894
+
+## Phase FS: v0.8.177 — Bundle Chain In Recording Index QA
+
+Date: 2026-06-14
+Clip title: Phase FS: v0.8.177 — Bundle Chain In Recording Index QA
+What changed: `npm run index:recording-assets`, `/api/recording-assets/index`, and `npm run check:recording-index` now carry and verify the optional `Proof Story Bundle Chain` line from the latest Studio QA proof pack.
+Why this matters: The creator-facing video-notes sentence is now archived in the local asset index and asserted by Recording Index QA, not only visible in `/studio` or Studio QA notes.
+Files shown: scripts/index-recording-assets.mjs, app/api/recording-assets/index/route.ts, scripts/check-recording-index.mjs, docs/recording/goal-901-910-recap.md
+Command/result: node --check scripts/index-recording-assets.mjs passed; node --check scripts/check-recording-index.mjs passed; npm run index:recording-assets indexed 80 packs; npm run check:recording-index passed and generated `recordings/index-checks/2026-06-14T11-42-02-005Z/clip-notes.md` with `Proof Story Bundle Chain`.
+Voiceover note: "Chain 句子进入 Recording Index QA，说明视频 notes 不只是页面文案，而是被素材库和自动验收一起追踪。"
+Usable for: Recording Index chain archive walkthrough, final proof-chain QA clip, continued goal run round 904

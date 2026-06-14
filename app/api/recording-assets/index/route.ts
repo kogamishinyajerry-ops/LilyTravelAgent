@@ -69,6 +69,7 @@ function buildRecordingIndexHtml(
                   <b>Closeout status · ${escapeHtml(proofStoryCloseoutStatus)}</b>
                   ${pack.studioProof.scriptMaterial.completeLine ? `<b>${escapeHtml(pack.studioProof.scriptMaterial.completeLine)}</b>` : ""}
                   ${pack.studioProof.scriptMaterial.completeBundleLine ? `<b>${escapeHtml(pack.studioProof.scriptMaterial.completeBundleLine)}</b>` : ""}
+                  ${pack.studioProof.scriptMaterial.bundleChainLine ? `<b>${escapeHtml(pack.studioProof.scriptMaterial.bundleChainLine)}</b>` : ""}
                   ${pack.studioProof.scriptMaterial.scriptPath ? `<code>Script path · ${escapeHtml(pack.studioProof.scriptMaterial.scriptPath)}</code>` : ""}
                   ${pack.studioProof.scriptMaterial.cue ? `<code>Script-material cue · ${escapeHtml(pack.studioProof.scriptMaterial.cue)}</code>` : ""}
                   <nav>

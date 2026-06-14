@@ -243,6 +243,7 @@ function readStudioScriptMaterial(entry, packDir, summary) {
     cue: typeof scriptMaterial.cue === "string" ? scriptMaterial.cue : "",
     completeLine: typeof scriptMaterial.completeLine === "string" ? scriptMaterial.completeLine : "",
     completeBundleLine: typeof scriptMaterial.completeBundleLine === "string" ? scriptMaterial.completeBundleLine : "",
+    bundleChainLine: typeof scriptMaterial.bundleChainLine === "string" ? scriptMaterial.bundleChainLine : "",
     screenshotPath: screenshotFile ? toRecordingLink(path.join("studio-checks", entry, screenshotFile)) : "",
     summaryPath: toRecordingLink(path.join("studio-checks", entry, "summary.json")),
     notesPath: existsSync(path.join(packDir, "clip-notes.md")) ? toRecordingLink(path.join("studio-checks", entry, "clip-notes.md")) : "",
@@ -275,6 +276,9 @@ function assertStaticScriptMaterial(staticIndex, staticIndexPath, scriptMaterial
   if (scriptMaterial.completeBundleLine) {
     assert(staticIndex.includes(scriptMaterial.completeBundleLine), `${staticIndexPath} does not include the ${scriptMaterial.label} Complete Bundle line.`);
   }
+  if (scriptMaterial.bundleChainLine) {
+    assert(staticIndex.includes(scriptMaterial.bundleChainLine), `${staticIndexPath} does not include the ${scriptMaterial.label} Bundle Chain line.`);
+  }
   assert(scriptMaterial.screenshotPath, `${scriptMaterial.label} local proof is missing a screenshot path.`);
   assert(scriptMaterial.summaryPath, `${scriptMaterial.label} local proof is missing a summary path.`);
   assert(scriptMaterial.notesPath, `${scriptMaterial.label} local proof is missing a notes path.`);
@@ -300,6 +304,9 @@ function assertScriptMaterialText(scriptMaterial, proofText) {
   }
   if (scriptMaterial.completeBundleLine) {
     assert(proofText.includes(scriptMaterial.completeBundleLine), `API index script-material block missing Complete Bundle line: ${proofText}`);
+  }
+  if (scriptMaterial.bundleChainLine) {
+    assert(proofText.includes(scriptMaterial.bundleChainLine), `API index script-material block missing Bundle Chain line: ${proofText}`);
   }
 }
 
@@ -502,6 +509,7 @@ function buildClipNotes(summary) {
       `- Production Assets QA: ${proofStoryProductionAssetsLabel}; narration preview; closeout status; cue text; ${summary.scriptMaterialCheck.links.length}/3 evidence links checked.`,
       summary.localStudioProof.scriptMaterial.completeLine ? `- ${summary.localStudioProof.scriptMaterial.completeLine}` : "",
       summary.localStudioProof.scriptMaterial.completeBundleLine ? `- ${summary.localStudioProof.scriptMaterial.completeBundleLine}` : "",
+      summary.localStudioProof.scriptMaterial.bundleChainLine ? `- ${summary.localStudioProof.scriptMaterial.bundleChainLine}` : "",
       `- ${buildProofStoryDeliveryLine(summary)}`,
     );
 
@@ -517,7 +525,7 @@ function buildClipNotes(summary) {
     "- The local archive now carries Dream Proof and Studio Proof evidence.",
     "- The index check verifies both proof cues plus six screenshot, summary, and notes links.",
     summary.scriptMaterialCheck
-      ? "- When present, the same check also verifies the Proof Story Production Assets title, narration preview, closeout status, Complete Bundle line, delivery line, and three evidence links."
+      ? "- When present, the same check also verifies the Proof Story Production Assets title, narration preview, closeout status, Complete Bundle line, Bundle Chain line, delivery line, and three evidence links."
       : "",
     "",
   );
