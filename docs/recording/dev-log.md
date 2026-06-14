@@ -1466,3 +1466,14 @@ Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, docs/r
 Command/result: npm test -- components/studio-mode.test.tsx (9 Studio tests passed); browser check confirmed `/studio` shows `复制候选 QA`, `候选 QA`, and the candidate QA status card; npm run lint && npm test && npm run build passed with 44 files, 911 tests, and a successful production build.
 Voiceover note: "我把候选 QA 命令也放进 Studio。现在这个面板不仅显示状态，还告诉我下一步怎么验证。"
 Usable for: Studio command rail clip, creator workflow proof, continued goal run round 294
+
+## Phase DX: v0.8.117 — Studio Recording Proof Checklist
+
+Date: 2026-06-14
+Clip title: Phase DX: v0.8.117 — Studio Recording Proof Checklist
+What changed: `/studio` script mode now includes a `Proof Stack / 录屏证据清单` that combines Bridge QA, Candidate QA, Lens Compare, and Asset Index.
+Why this matters: The creator can explain the Agent workflow from one compact evidence stack instead of jumping between separate panels and links.
+Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, app/globals.css
+Command/result: npm test -- components/studio-mode.test.tsx (9 Studio tests passed); Chrome browser check confirmed `/studio` shows all four proof rows and links; npm run lint && npm test && npm run build passed with 44 files, 911 tests, and a successful production build.
+Voiceover note: "我把这些验证结果做成一个 Proof Stack。录屏时不用解释一堆散点，直接从 Bridge 到 Candidate，到 Lens Compare，再到 Asset Index。"
+Usable for: Studio proof-stack clip, workflow evidence narration, continued goal run round 304

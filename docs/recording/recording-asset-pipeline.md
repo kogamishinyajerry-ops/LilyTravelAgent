@@ -8,10 +8,12 @@ Purpose: turn every visual QA run into usable creator material: screenshots, loc
 2. Run `npm run check:recording-suite`.
 3. Open `/studio`.
 4. Click `刷新` in the `素材资产` panel.
-5. Point to `Bridge QA 证据状态`.
-6. Point to `候选点击 QA 状态`.
-7. Open `打开总索引`.
-8. Open `镜头对比`.
+5. Turn on `脚本模式`.
+6. Point to `录屏证据清单`.
+7. Point to `Bridge QA 证据状态`.
+8. Point to `候选点击 QA 状态`.
+9. Open `打开总索引`.
+10. Open `镜头对比`.
 
 Optional all-lens product run:
 
@@ -46,6 +48,7 @@ DREAM_LENSES=low-skyline,isometric-atlas npm run check:dream-lenses
 - Dream QA / Studio QA / Bridge QA badges.
 - `产品画面` / `讲解画面` / `桥接验证` usage hints.
 - Lens-aware Dream QA packs in the local index after `npm run check:recording-suite`.
+- `录屏证据清单` in script mode, covering Bridge QA, Candidate QA, Lens Compare, and Asset Index.
 - `Bridge QA 证据状态` in script mode.
 - `候选点击 QA 状态` in the `/studio` asset panel after `npm run check:lens-candidate-handoff`.
 - In `/dream`, `Agent Visual Contract`, `Director Lens`, `Scene Inspector`, and `Proof Stack` show why the cinematic page is structured, not only decorative.
