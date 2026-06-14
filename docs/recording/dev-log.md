@@ -2258,3 +2258,14 @@ Files shown: components/studio-mode.tsx, app/globals.css, components/studio-mode
 Command/result: npm test -- components/studio-mode.test.tsx passed with 41 tests; browser check against `http://localhost:3000/studio` showed the script-mode copy affordance, 337px cue card with no overflow, copied state changing to `已复制`, copied value matching `最终交付摘要`, and 0 console errors. `npm test -- components/studio-mode.test.tsx && npm run lint && npm test && npm run build` passed with 954 full-suite tests and a successful Next.js production build.
 Voiceover note: "现在录屏最后一张画面不只显示最终摘要，还能在同一张画面点击复制。结尾和后期交付动作合在一起了。"
 Usable for: final handoff copy closeout, script-mode recording ending, continued goal run round 1014
+
+## Phase FS: v0.8.189 — Script Mode Notes Badge
+
+Date: 2026-06-14
+Clip title: Phase FS: v0.8.189 — Script Mode Notes Badge
+What changed: Script mode now shows a compact topbar `后期 notes` badge that starts as pending and changes to `已复制到后期 notes` after the final handoff summary copy succeeds.
+Why this matters: The copied state is visible in the main recording rail, so the final handoff no longer depends on the viewer noticing the small button label inside the closing cue.
+Files shown: components/studio-mode.tsx, app/globals.css, components/studio-mode.test.tsx, docs/recording/goal-1021-1030-recap.md
+Command/result: npm test -- components/studio-mode.test.tsx passed with 41 tests; browser check against `http://localhost:3000/studio` showed the badge changing from `后期 notes 待复制` to `已复制到后期 notes`, copied text containing `最终交付摘要`, no topbar overflow, and 0 console errors.
+Voiceover note: "复制动作现在有主视角反馈：点完最终交付摘要，顶部直接变成已复制到后期 notes。观众不用猜剪贴板发生了什么。"
+Usable for: script-mode closing state clip, post-production notes handoff demo, continued goal run round 1024

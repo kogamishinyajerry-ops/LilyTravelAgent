@@ -876,6 +876,7 @@ describe("StudioMode demo roadbooks", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "脚本模式" }));
     const proofChecklist = await screen.findByLabelText("录屏证据清单");
+    expect(screen.getByLabelText("脚本模式后期 notes 状态").textContent).toBe("后期 notes 待补齐");
     expect(proofChecklist.textContent).toContain("Suite Run");
     expect(proofChecklist.textContent).toContain("npm run check:recording-suite");
     expect(proofChecklist.textContent).toContain("Final Handoff");
@@ -937,6 +938,7 @@ describe("StudioMode demo roadbooks", () => {
     expect(within(proofChecklist).getByRole("link", { name: /Dream \+ Studio 双证据 · 6 条链接/ }).getAttribute("href")).toBe("index-checks/index-check-latest/summary.json");
     expect(within(proofChecklist).getByRole("link", { name: /7 步 · 7 通过/ }).getAttribute("href")).toBe("suite-runs/suite-run-latest/summary.json");
     expect(screen.getByText("讲解轨道已打开")).toBeTruthy();
+    expect(screen.getByLabelText("脚本模式后期 notes 状态").textContent).toBe("后期 notes 待复制");
     expect(screen.getByRole("button", { name: "脚本模式" }).getAttribute("aria-pressed")).toBe("true");
   });
 
@@ -1250,6 +1252,7 @@ describe("StudioMode demo roadbooks", () => {
     expect(writeText).toHaveBeenCalledWith(finalSummaryPreview);
     expect(copyButton.textContent).toContain("已复制");
     expect(screen.getByRole("button", { name: "复制最终交付摘要" }).textContent).toContain("已复制");
+    expect(screen.getByLabelText("脚本模式后期 notes 状态").textContent).toBe("已复制到后期 notes");
   });
 
   it("copies a pending Proof Chain Summary when evidence is missing", async () => {

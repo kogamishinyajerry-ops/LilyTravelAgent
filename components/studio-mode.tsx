@@ -1046,6 +1046,26 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
     proofChainIndexSummaryState.ready &&
     finalDeliveryIndexQaState.startsWith("已验证") &&
     finalDeliverySuiteRunState.startsWith("已通过");
+  const finalDeliveryNotesBadgeState =
+    finalDeliverySummaryCopyState === "copied"
+      ? "copied"
+      : finalDeliverySummaryCopyState === "error"
+        ? "error"
+        : finalDeliverySummaryReady
+          ? "ready"
+          : "missing";
+  const finalDeliveryNotesBadgeLabel =
+    finalDeliverySummaryCopyState === "copied"
+      ? "已复制到后期 notes"
+      : finalDeliverySummaryCopyState === "error"
+        ? "需手动复制到 notes"
+        : finalDeliverySummaryReady
+          ? "后期 notes 待复制"
+          : "后期 notes 待补齐";
+  const finalDeliveryNotesBadge = {
+    state: finalDeliveryNotesBadgeState,
+    label: finalDeliveryNotesBadgeLabel,
+  };
   const recordingProofChecklist = useMemo(
     () => getRecordingProofChecklist(recordingAssets, proofStoryIndexBundleChainState, proofChainIndexSummaryState),
     [recordingAssets, proofStoryIndexBundleChainState, proofChainIndexSummaryState],
@@ -1335,6 +1355,11 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
             <span>{demoRoadbookId ? `${roadbook.destination} 本地演示` : roadbook.destination}</span>
             <span>{studioStageText(stage)}</span>
             {scriptMode ? <span className="studio-presenter-cue">讲解轨道已打开</span> : null}
+            {scriptMode ? (
+              <span className={`studio-final-handoff-badge ${finalDeliveryNotesBadge.state}`} aria-label="脚本模式后期 notes 状态">
+                {finalDeliveryNotesBadge.label}
+              </span>
+            ) : null}
             <button
               type="button"
               className={`studio-mode-toggle ${scriptMode ? "active" : ""}`}
@@ -1538,23 +1563,23 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
                         <p>{item.detail}</p>
                       )}
                       {index === proofCueIndex ? <em>{item.cue}</em> : null}
-	                    </div>
-	                  ))}
-	                </div>
-	                <div className={`studio-script-final-delivery ${finalDeliverySummaryReady ? "ready" : "missing"}`} aria-label="脚本模式最终交付摘要">
-	                  <div className="studio-script-final-delivery-header">
-	                    <div>
-	                      <span>Final Handoff</span>
-	                      <strong>{finalDeliverySummaryReady ? "最终交付摘要可复制" : "最终交付摘要待补齐"}</strong>
-	                    </div>
-	                    <button type="button" onClick={copyFinalDeliverySummaryLine} aria-label="复制脚本模式最终交付摘要">
-	                      <Copy size={10} />
-	                      {finalDeliverySummaryCopyState === "copied" ? "已复制" : finalDeliverySummaryCopyState === "error" ? "手动" : "复制摘要"}
-	                    </button>
-	                  </div>
-	                  <p>{finalDeliverySummaryLine}</p>
-	                </div>
-	                <div className="studio-shot-cue" aria-label="当前镜头建议">
+                    </div>
+                  ))}
+                </div>
+                <div className={`studio-script-final-delivery ${finalDeliverySummaryReady ? "ready" : "missing"}`} aria-label="脚本模式最终交付摘要">
+                  <div className="studio-script-final-delivery-header">
+                    <div>
+                      <span>Final Handoff</span>
+                      <strong>{finalDeliverySummaryReady ? "最终交付摘要可复制" : "最终交付摘要待补齐"}</strong>
+                    </div>
+                    <button type="button" onClick={copyFinalDeliverySummaryLine} aria-label="复制脚本模式最终交付摘要">
+                      <Copy size={10} />
+                      {finalDeliverySummaryCopyState === "copied" ? "已复制" : finalDeliverySummaryCopyState === "error" ? "手动" : "复制摘要"}
+                    </button>
+                  </div>
+                  <p>{finalDeliverySummaryLine}</p>
+                </div>
+                <div className="studio-shot-cue" aria-label="当前镜头建议">
                   <span>{studioShotCue.title}</span>
                   <strong>{studioShotCue.primary}</strong>
                   <p>{studioShotCue.note}</p>

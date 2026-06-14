@@ -1003,6 +1003,33 @@ textarea {
   background: linear-gradient(135deg, #bf8055, #d66b3d);
 }
 
+.studio-top-actions > .studio-final-handoff-badge {
+  max-width: 154px;
+  min-height: 34px;
+  overflow: hidden;
+  border: 1px solid rgba(79, 143, 122, 0.24);
+  padding: 9px 10px;
+  color: #244f42;
+  background: rgba(79, 143, 122, 0.1);
+  font-size: 0.68rem;
+  line-height: 1.1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.studio-top-actions > .studio-final-handoff-badge.copied {
+  border-color: rgba(79, 143, 122, 0.38);
+  color: #143f32;
+  background: rgba(79, 143, 122, 0.18);
+}
+
+.studio-top-actions > .studio-final-handoff-badge.missing,
+.studio-top-actions > .studio-final-handoff-badge.error {
+  border-color: rgba(191, 128, 85, 0.26);
+  color: #684025;
+  background: rgba(191, 128, 85, 0.12);
+}
+
 .ghost-link {
   gap: 6px;
   border: 1px solid var(--line);
