@@ -18,8 +18,8 @@ This run started the next visual-quality layer: making Director Lens modes visib
 | 116 | `03b7f89` | Logged the full lint/test/build verification checkpoint. |
 | 117 | `5c25a08` | Logged live browser visual QA for `DREAM_LENS=low-skyline`. |
 | 118 | `ba359ef` | Updated the Director Lens shot matrix with tuning proof. |
-| 119 | pending | Packaged this recap for the content archive. |
-| 120 | pending | Final verification, push, and next-goal handoff. |
+| 119 | `8b9516a` | Packaged this recap for the content archive. |
+| 120 | closeout | Final verification, push, and next-goal handoff. |
 
 ## Low-Skyline Tuning
 
