@@ -1642,3 +1642,14 @@ Files shown: lib/recording-assets.ts, components/studio-mode.tsx, app/globals.cs
 Command/result: npm test -- lib/recording-assets.test.ts components/studio-mode.test.tsx passed with 20 tests; Chrome browser check confirmed `/studio` shows `证据播放已捕获` and three 200 evidence links; npm run lint && npm test && npm run build passed with 44 files, 918 tests, and a successful production build.
 Voiceover note: "现在 Studio 能读回自己的 QA 结果：证据播放已经被捕获，最后停在 Suite Run，截图、summary、notes 都能直接打开。"
 Usable for: Studio self-proof status clip, QA loop narration, continued goal run round 454
+
+## Phase EN: v0.8.133 — Studio Proof Evidence In Recording Index
+
+Date: 2026-06-14
+Clip title: Phase EN: v0.8.133 — Studio Proof Evidence In Recording Index
+What changed: `recordings/index.html`, `recordings/clip-index.md`, and `/api/recording-assets/index` now surface Studio Proof playback evidence when a Studio QA pack contains `summary.proofPlayback`.
+Why this matters: The local archive now carries both product-screen proof (`Dream Proof`) and creator-workbench proof (`Studio Proof`).
+Files shown: lib/recording-assets.ts, scripts/index-recording-assets.mjs, app/api/recording-assets/index/route.ts, recordings/index.html, recordings/clip-index.md
+Command/result: node --check scripts/index-recording-assets.mjs passed; npm test -- lib/recording-assets.test.ts passed; npm run index:recording-assets wrote Studio Proof entries; Chrome browser check confirmed three API evidence links returned 200; npm run lint && npm test && npm run build passed with 44 files, 918 tests, and a successful production build.
+Voiceover note: "素材总索引现在不只记录 Dream Proof，也记录 Studio Proof。产品画面和录屏台的证据都沉淀进 archive。"
+Usable for: archive proof comparison clip, creator asset pipeline narration, continued goal run round 464
