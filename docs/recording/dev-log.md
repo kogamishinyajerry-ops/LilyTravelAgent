@@ -1180,3 +1180,14 @@ Files shown: docs/recording/goal-161-170-recap.md, README.md, components/dream-s
 Command/result: npm run lint (passed)
 Voiceover note: "这轮把大理地标从抽象体块推进到可识别符号：城门、屋檐、暗部和院落细节。"
 Usable for: goal recap clip, Dali landmark detail chapter, continued goal run round 165
+
+## Phase CX: v0.8.91 — Goals 161-170 Final Quality Gate
+
+Date: 2026-06-14
+Clip title: Phase CX: v0.8.91 — Goals 161-170 Final Quality Gate
+What changed: Closed the Dali landmark-detail goal with the full lint, test, and production-build gate after the canvas detail pass and dashboard visual checks.
+Why this matters: The landmark-detail upgrade is now tied to the same evidence trail as the earlier depth and lens-dashboard work: code change, visual crop proof, recap, and final build verification.
+Files shown: docs/recording/goal-161-170-recap.md, docs/recording/dev-log.md, components/dream-skyline-scene.tsx
+Command/result: npm run lint && npm test && npm run build (44 files, 903 tests, build passed)
+Voiceover note: "这一步不是只看画面好不好看，而是把整条 Vibe Coding 链路收口：地标细节、截图证据、复盘文档、lint、903 个测试和生产构建都通过。"
+Usable for: goal closeout clip, Dali landmark-detail proof, before/after dashboard handoff, continued goal run round 166

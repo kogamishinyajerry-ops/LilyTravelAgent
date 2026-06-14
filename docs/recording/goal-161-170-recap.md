@@ -11,9 +11,9 @@ This run made the Dali old-town gate and courtyard marker family more recognizab
 | Goal | Commit | Summary |
 | --- | --- | --- |
 | 161-164 | `1be41c0` | Added old-town gate and courtyard roof tiers, arch shadows, plinths, eaves, and light accents. |
-| 165 | pending | Packaged this recap and README entry. |
-| 166 | pending | Final lint/test/build verification. |
-| 167 | pending | Push to GitHub. |
+| 165 | `93c92f4` | Packaged this recap and README entry. |
+| 166 | closeout | Verified lint, 44 test files / 903 tests, and production build. |
+| 167 | closeout | Push to GitHub after final closeout commit. |
 | 168-170 | closeout | Next-goal handoff. |
 
 ## What Changed In The Canvas
@@ -25,6 +25,7 @@ This run made the Dali old-town gate and courtyard marker family more recognizab
 ## Evidence
 
 - `npm run lint && npm run build`
+- `npm run lint && npm test && npm run build` (44 files, 903 tests, build passed)
 - `DREAM_URL=http://127.0.0.1:3000/dream DREAM_LENSES=low-skyline npm run check:dream-lenses`
 - `DREAM_URL=http://127.0.0.1:3000/dream npm run check:dream-lenses`
 - Browser check: `/api/recording-assets/lens-comparison` read the latest five-lens batch, loaded 20 scene crops, and showed 0 broken images.
