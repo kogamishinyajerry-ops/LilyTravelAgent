@@ -1103,3 +1103,14 @@ Files shown: scripts/check-dream-visuals.mjs, lib/lens-comparison.ts, app/api/re
 Command/result: npm test -- lib/lens-comparison.test.ts && npm run lint; DREAM_URL=http://127.0.0.1:3000/dream npm run check:dream-lenses; Browser check confirmed 5 lens cards, 20 `*-scene.png` images, and 0 broken images.
 Voiceover note: "我发现整页截图还是会把 UI 带进来，所以改成直接从 WebGL canvas 导出 PNG。现在对比看板看的就是 3D 本体。"
 Usable for: 3D visual QA clip, comparison dashboard upgrade, Vibe Coding visual-quality narrative, continued goal run round 144
+
+## Phase CQ: v0.8.84 — Goals 141-150 Scene Crop Recap
+
+Date: 2026-06-14
+Clip title: Phase CQ: v0.8.84 — Goals 141-150 Scene Crop Recap
+What changed: Added the 141-150 recap and README entry for the pure 3D scene-crop QA run.
+Why this matters: This chapter makes the product-learning point explicit: before improving visual quality, the Agent needs a clean review surface that isolates the render itself.
+Files shown: docs/recording/goal-141-150-recap.md, README.md, `/api/recording-assets/lens-comparison`
+Command/result: npm run lint (passed)
+Voiceover note: "这轮不是继续堆页面，而是先把评审对象变干净：看板只看 3D 渲染帧。下一轮才开始真正调 3D 内容。"
+Usable for: goal recap clip, visual QA philosophy, next 3D render-quality handoff, continued goal run round 146
