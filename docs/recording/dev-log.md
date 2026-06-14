@@ -1719,3 +1719,14 @@ Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, app/gl
 Command/result: npm test -- components/studio-mode.test.tsx passed with 13 tests; browser check confirmed the four preview lines and empty console errors; npm run lint && npm test && npm run build passed with 44 files, 921 tests, and a successful production build.
 Voiceover note: "现在复制讲解稿之前，Studio 会先把四行文案展示出来。录屏时观众能看到这条证据链怎么变成旁白。"
 Usable for: proof-story preview clip, caption workflow narration, continued goal run round 524
+
+## Phase EU: v0.8.140 — Proof Story Recording Script
+
+Date: 2026-06-14
+Clip title: Phase EU: v0.8.140 — Proof Story Recording Script
+What changed: Added `docs/recording/proof-story-demo-script.md`, a concise `/studio` recording script for showing the evidence timeline, four-line proof-story preview, and `复制讲解稿` action in one 16:9 clip.
+Why this matters: The product now has both the UI feature and the exact creator recording path for explaining how Agent proof becomes reusable narration.
+Files shown: docs/recording/proof-story-demo-script.md, README.md, docs/recording/dev-log.md, docs/recording/goal-531-540-recap.md
+Command/result: git diff --check; npm run lint && npm test && npm run build
+Voiceover note: "这条脚本把 Studio 证据时间线、讲解稿预览和复制动作串成一个 30 秒录屏段落。产品做完之后，内容素材也同步沉淀。"
+Usable for: Proof Story recording insert, Vibe Coding workflow narration, continued goal run round 534
