@@ -207,7 +207,28 @@ describe("recording assets", () => {
         finalCueLabel: "Proof",
         finalCueValue: "3/5 ready",
       },
-      links: [{ id: "screenshot" }, { id: "summary" }, { id: "notes" }],
+      links: [
+        { id: "dream-screenshot" },
+        { id: "dream-summary" },
+        { id: "dream-notes" },
+        { id: "studio-screenshot" },
+        { id: "studio-summary" },
+        { id: "studio-notes" },
+      ],
+      proofChecks: [
+        {
+          proofId: "dream",
+          label: "Dream Proof",
+          links: [{ id: "screenshot" }, { id: "summary" }, { id: "notes" }],
+          screenshotPath: path.join(tempRoot, "index-checks", "new-index-check", "recording-index-dream-proof.png"),
+        },
+        {
+          proofId: "studio",
+          label: "Studio Proof",
+          links: [{ id: "screenshot" }, { id: "summary" }, { id: "notes" }],
+          screenshotPath: path.join(tempRoot, "index-checks", "new-index-check", "recording-index-studio-proof.png"),
+        },
+      ],
       screenshotPath: path.join(tempRoot, "index-checks", "new-index-check", "recording-index-dream-proof.png"),
     });
 
@@ -218,7 +239,23 @@ describe("recording assets", () => {
       createdAt: "2026-06-13T05:00:00.000Z",
       finalCueLabel: "Proof",
       finalCueValue: "3/5 ready",
-      linkCount: 3,
+      linkCount: 6,
+      proofChecks: [
+        {
+          proofId: "dream",
+          label: "Dream Proof",
+          checkedLinkCount: 3,
+          expectedLinkCount: 3,
+          screenshotPath: "index-checks/new-index-check/recording-index-dream-proof.png",
+        },
+        {
+          proofId: "studio",
+          label: "Studio Proof",
+          checkedLinkCount: 3,
+          expectedLinkCount: 3,
+          screenshotPath: "index-checks/new-index-check/recording-index-studio-proof.png",
+        },
+      ],
       proofText: "Dream Proof · Proof · 3/5 ready\nplayback screenshot\nsummary\nnotes",
       apiIndexUrl: "http://localhost:3000/api/recording-assets/index",
       screenshotPath: "index-checks/new-index-check/recording-index-dream-proof.png",

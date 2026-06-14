@@ -1675,3 +1675,14 @@ Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, record
 Command/result: npm test -- components/studio-mode.test.tsx passed with 11 tests; browser check confirmed `/studio` shows `Dream + Studio 双证据 · Proof · 3/5 ready · 6 条证据链接`, script mode shows `Dream + Studio 双证据 · 6 条链接`, and console errors were empty; npm run lint && npm test && npm run build passed with 44 files, 919 tests, and a successful production build.
 Voiceover note: "现在 Studio 不是只告诉我索引 QA 通过了，而是明确告诉我：这个 QA 覆盖 Dream 和 Studio 两条证据链。"
 Usable for: Studio evidence-card narration, double-proof QA walkthrough, continued goal run round 484
+
+## Phase EQ: v0.8.136 — Studio Index QA Proof Chips
+
+Date: 2026-06-14
+Clip title: Phase EQ: v0.8.136 — Studio Index QA Proof Chips
+What changed: `/api/recording-assets` now exposes compact `proofChecks` data for the latest Recording Index QA summary, and `/studio` shows `Dream 3/3` plus `Studio 3/3` chips inside the Index QA card when those checks are available.
+Why this matters: The creator can see the two checked evidence lanes without opening `summary.json`, which makes the Agent asset pipeline easier to explain during recording.
+Files shown: lib/recording-assets.ts, components/studio-mode.tsx, components/studio-mode.test.tsx, lib/recording-assets.test.ts
+Command/result: npm test -- lib/recording-assets.test.ts components/studio-mode.test.tsx passed with 21 tests; browser check confirmed `/studio` shows Dream 3/3 and Studio 3/3 chips with no console errors; npm run lint && npm test && npm run build passed with 44 files, 919 tests, and a successful production build.
+Voiceover note: "这一步把 summary 里的细节拉回 Studio：Dream 三条链接、Studio 三条链接，都在卡片里直接看见。"
+Usable for: proofChecks explainer clip, local API-to-UI workflow narration, continued goal run round 494

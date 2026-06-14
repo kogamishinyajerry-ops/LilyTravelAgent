@@ -55,6 +55,25 @@ function recordingAssetsResponse(
           finalCueLabel: "Proof",
           finalCueValue: "3/5 ready",
           linkCount: indexLinkCount,
+          proofChecks:
+            indexLinkCount >= 6
+              ? [
+                  {
+                    proofId: "dream",
+                    label: "Dream Proof",
+                    checkedLinkCount: 3,
+                    expectedLinkCount: 3,
+                    screenshotPath: "index-checks/index-check-latest/recording-index-dream-proof.png",
+                  },
+                  {
+                    proofId: "studio",
+                    label: "Studio Proof",
+                    checkedLinkCount: 3,
+                    expectedLinkCount: 3,
+                    screenshotPath: "index-checks/index-check-latest/recording-index-studio-proof.png",
+                  },
+                ]
+              : [],
           proofText:
             indexLinkCount >= 6
               ? "Dream Proof · Proof · 3/5 ready\nStudio Proof · Suite Run · 7 步 · 7 通过"
@@ -194,6 +213,8 @@ describe("StudioMode demo roadbooks", () => {
     );
     expect(screen.getByLabelText("Recording Index QA 状态").textContent).toContain("素材总索引已验证");
     expect(screen.getByLabelText("Recording Index QA 状态").textContent).toContain("Dream + Studio 双证据 · Proof · 3/5 ready · 6 条证据链接");
+    expect(within(screen.getByLabelText("Recording Index QA 状态")).getByLabelText("Index QA proof checks").textContent).toContain("Dream 3/3");
+    expect(within(screen.getByLabelText("Recording Index QA 状态")).getByLabelText("Index QA proof checks").textContent).toContain("Studio 3/3");
     expect(screen.getByLabelText("Recording Index QA 状态").textContent).toContain("Index QA");
     expect(within(screen.getByLabelText("Recording Index QA 状态")).getByRole("link", { name: /索引截图/ }).getAttribute("href")).toBe(
       "/api/recording-assets/file?path=index-checks%2Findex-check-latest%2Frecording-index-dream-proof.png",
@@ -266,6 +287,7 @@ describe("StudioMode demo roadbooks", () => {
     const indexCard = await screen.findByLabelText("Recording Index QA 状态");
     expect(indexCard.textContent).toContain("Dream 单证据 · Proof · 3/5 ready · 3 条证据链接");
     expect(indexCard.textContent).not.toContain("Dream + Studio 双证据");
+    expect(within(indexCard).queryByLabelText("Index QA proof checks")).toBeNull();
 
     fireEvent.click(screen.getByRole("button", { name: /脚本模式/ }));
     const proofChecklist = await screen.findByLabelText("录屏证据清单");

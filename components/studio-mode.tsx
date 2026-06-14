@@ -80,11 +80,20 @@ type RecordingIndexCheckSummary = {
   finalCueLabel: string;
   finalCueValue: string;
   linkCount: number;
+  proofChecks?: RecordingIndexProofCheckSummary[];
   proofText: string;
   apiIndexUrl: string;
   screenshotPath: string;
   summaryPath: string;
   notesPath?: string;
+};
+
+type RecordingIndexProofCheckSummary = {
+  proofId: string;
+  label: string;
+  checkedLinkCount: number;
+  expectedLinkCount: number;
+  screenshotPath?: string;
 };
 
 type RecordingSuiteRunSummary = {
@@ -366,6 +375,16 @@ function getRecordingIndexCheckCoverage(indexCheck: RecordingIndexCheckSummary) 
     cardDetail: `${label} · ${indexCheck.finalCueLabel} · ${indexCheck.finalCueValue} · ${indexCheck.linkCount} 条证据链接`,
     cue: isDoubleProof ? "确认总索引同时验收 Dream 和 Studio 两条证据链。" : "确认素材总索引本身也有自动验收。",
   };
+}
+
+function getRecordingIndexProofCheckLabel(proofCheck: RecordingIndexProofCheckSummary) {
+  if (proofCheck.proofId === "dream") {
+    return "Dream";
+  }
+  if (proofCheck.proofId === "studio") {
+    return "Studio";
+  }
+  return proofCheck.label.replace(/\s+Proof$/, "") || proofCheck.proofId;
 }
 
 function getRecordingProofChecklist(recordingAssets: RecordingAssetsState) {
@@ -966,6 +985,15 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
                         <small>Index QA · {formatRecordingAssetTime(recordingAssets.latestRecordingIndexCheck.createdAt)}</small>
                         <strong>素材总索引已验证</strong>
                         <span>{recordingIndexCoverage?.cardDetail}</span>
+                        {recordingAssets.latestRecordingIndexCheck.proofChecks?.length ? (
+                          <div className="studio-index-proof-checks" aria-label="Index QA proof checks">
+                            {recordingAssets.latestRecordingIndexCheck.proofChecks.map((proofCheck) => (
+                              <span key={`${proofCheck.proofId}-${proofCheck.label}`}>
+                                {getRecordingIndexProofCheckLabel(proofCheck)} {proofCheck.checkedLinkCount}/{proofCheck.expectedLinkCount}
+                              </span>
+                            ))}
+                          </div>
+                        ) : null}
                         <div className="studio-dream-proof-links">
                           {recordingAssets.latestRecordingIndexCheck.screenshotPath ? (
                             <a href={buildRecordingEvidenceUrl(recordingAssets.latestRecordingIndexCheck.screenshotPath)} target="_blank" rel="noreferrer">

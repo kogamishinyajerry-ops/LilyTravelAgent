@@ -1858,6 +1858,24 @@ textarea {
   white-space: nowrap;
 }
 
+.studio-index-proof-checks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.studio-recording-assets .studio-index-proof-checks span {
+  width: fit-content;
+  border: 1px solid rgba(79, 143, 122, 0.18);
+  border-radius: 999px;
+  padding: 2px 6px;
+  color: var(--moss);
+  font-size: 0.66rem;
+  font-weight: 950;
+  background: rgba(255, 255, 255, 0.62);
+  white-space: nowrap;
+}
+
 .studio-dream-proof-links {
   display: flex;
   flex-wrap: wrap;

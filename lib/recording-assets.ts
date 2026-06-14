@@ -61,11 +61,20 @@ export type RecordingIndexCheckSummary = {
   finalCueLabel: string;
   finalCueValue: string;
   linkCount: number;
+  proofChecks: RecordingIndexProofCheckSummary[];
   proofText: string;
   apiIndexUrl: string;
   screenshotPath: string;
   summaryPath: string;
   notesPath: string;
+};
+
+export type RecordingIndexProofCheckSummary = {
+  proofId: string;
+  label: string;
+  checkedLinkCount: number;
+  expectedLinkCount: number;
+  screenshotPath: string;
 };
 
 export type RecordingSuiteRunSummary = {
@@ -240,6 +249,7 @@ async function readLatestRecordingIndexCheck(recordingsRoot: string): Promise<Re
       : null;
     const screenshotFile = path.basename(readString(summary.screenshotPath));
     const links = Array.isArray(summary.links) ? summary.links : [];
+    const proofChecks = readRecordingIndexProofChecks(summary, entry);
 
     runs.push({
       id: entry,
@@ -247,6 +257,7 @@ async function readLatestRecordingIndexCheck(recordingsRoot: string): Promise<Re
       finalCueLabel: readString(localProof?.finalCueLabel),
       finalCueValue: readString(localProof?.finalCueValue),
       linkCount: links.length,
+      proofChecks,
       proofText: readString(summary.proofText),
       apiIndexUrl: readString(summary.apiIndexUrl),
       screenshotPath: screenshotFile ? toRecordingLink(path.join("index-checks", entry, screenshotFile)) : "",
@@ -256,6 +267,29 @@ async function readLatestRecordingIndexCheck(recordingsRoot: string): Promise<Re
   }
 
   return runs.sort((a, b) => b.createdAt.localeCompare(a.createdAt))[0] || null;
+}
+
+function readRecordingIndexProofChecks(summary: Record<string, unknown>, entry: string): RecordingIndexProofCheckSummary[] {
+  const proofChecks = Array.isArray(summary.proofChecks) ? summary.proofChecks : [];
+
+  return proofChecks
+    .map((item) => {
+      const proofCheck = typeof item === "object" && item ? item as Record<string, unknown> : null;
+      if (!proofCheck) {
+        return null;
+      }
+
+      const links = Array.isArray(proofCheck.links) ? proofCheck.links : [];
+      const screenshotFile = path.basename(readString(proofCheck.screenshotPath));
+      return {
+        proofId: readString(proofCheck.proofId),
+        label: readString(proofCheck.label),
+        checkedLinkCount: links.length,
+        expectedLinkCount: 3,
+        screenshotPath: screenshotFile ? toRecordingLink(path.join("index-checks", entry, screenshotFile)) : "",
+      };
+    })
+    .filter((item): item is RecordingIndexProofCheckSummary => Boolean(item?.proofId && item.label));
 }
 
 async function readLatestDreamVisualProof(recordingsRoot: string): Promise<RecordingDreamVisualProofSummary | null> {
