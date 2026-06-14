@@ -2236,3 +2236,14 @@ Files shown: components/studio-mode.tsx, app/globals.css, components/studio-mode
 Command/result: npm test -- components/studio-mode.test.tsx passed with 40 tests; browser check against `http://localhost:3000/studio` showed the final summary containing Chain, Summary, Index QA, and Suite Run states, a visible copy button, 297px row width with no overflow, and 0 console errors. `npm run lint && npm test && npm run build` passed with 953 tests and a successful Next.js production build.
 Voiceover note: "最后我做了一个最终交付摘要：Chain、Summary、Index QA、Suite Run 四个状态合成一句，剪视频 notes 的时候直接复制。"
 Usable for: final handoff copy demo, post-production notes workflow clip, continued goal run round 994
+
+## Phase FS: v0.8.187 — Script Mode Final Handoff Cue
+
+Date: 2026-06-14
+Clip title: Phase FS: v0.8.187 — Script Mode Final Handoff Cue
+What changed: Script mode now adds a `Final Handoff` proof-checklist step and a fixed `脚本模式最终交付摘要` cue that reuse the current final delivery summary line.
+Why this matters: The screen-recorded proof playback can now end on the same sentence that gets copied into clip notes, making the Vibe Coding workflow easier to narrate and edit.
+Files shown: components/studio-mode.tsx, app/globals.css, components/studio-mode.test.tsx, docs/recording/goal-1001-1010-recap.md
+Command/result: npm test -- components/studio-mode.test.tsx passed with 40 tests; browser check against `http://localhost:3000/studio` showed the script final summary cue, no overflow in a 337px cue card, playback ending on `Final Handoff`, and 0 console errors. `npm test -- components/studio-mode.test.tsx && npm run lint && npm test && npm run build` passed with 953 full-suite tests and a successful Next.js production build.
+Voiceover note: "脚本模式最后一拍停在 Final Handoff。也就是说，录屏结尾和后期 notes 复制的是同一句最终交付摘要。"
+Usable for: script-mode closing shot demo, final handoff walkthrough, continued goal run round 1004

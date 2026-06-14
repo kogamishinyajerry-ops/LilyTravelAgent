@@ -878,6 +878,11 @@ describe("StudioMode demo roadbooks", () => {
     const proofChecklist = await screen.findByLabelText("录屏证据清单");
     expect(proofChecklist.textContent).toContain("Suite Run");
     expect(proofChecklist.textContent).toContain("npm run check:recording-suite");
+    expect(proofChecklist.textContent).toContain("Final Handoff");
+    const finalScriptCue = screen.getByLabelText("脚本模式最终交付摘要");
+    expect(finalScriptCue.textContent).toContain("最终交付摘要待补齐");
+    expect(finalScriptCue.textContent).toContain("Recording Index QA: 待验证");
+    expect(finalScriptCue.textContent).toContain("Suite Run: 待运行");
   });
 
   it("toggles a compact recording script track for walkthrough capture", async () => {
@@ -916,6 +921,12 @@ describe("StudioMode demo roadbooks", () => {
     expect(proofChecklist.textContent).toContain("Index Summary 已验证");
     expect(proofChecklist.textContent).toContain("Suite Run");
     expect(proofChecklist.textContent).toContain("7 步 · 7 通过");
+    expect(proofChecklist.textContent).toContain("Final Handoff");
+    expect(proofChecklist.textContent).toContain("最终交付摘要");
+    expect(proofChecklist.textContent).toContain("Proof Chain Summary: Summary 已入库 + Index Summary 已验证");
+    const finalScriptCue = screen.getByLabelText("脚本模式最终交付摘要");
+    expect(finalScriptCue.textContent).toContain("最终交付摘要可复制");
+    expect(finalScriptCue.textContent).toContain("Suite Run: 已通过 · 7 步 · 7 通过");
     expect(within(proofChecklist).getByRole("button", { name: "播放证据线" })).toBeTruthy();
     expect(within(proofChecklist).getByText("先证明 Studio 和 Dream 能互相跳转。")).toBeTruthy();
     expect(within(proofChecklist).getByRole("link", { name: /3 个入口/ }).getAttribute("href")).toBe("candidate-handoff-checks/candidate-latest/summary.json");
@@ -970,6 +981,14 @@ describe("StudioMode demo roadbooks", () => {
     });
     expect(proofChecklist.querySelector('[aria-current="step"]')?.textContent).toContain("Suite Run");
     expect(proofChecklist.querySelector('[aria-current="step"]')?.textContent).toContain("用 full suite 总收据为整条证据链收口。");
+    expect(within(proofChecklist).getByRole("button", { name: "讲解中" }).getAttribute("aria-pressed")).toBe("true");
+
+    await act(async () => {
+      vi.advanceTimersByTime(1200);
+    });
+    expect(proofChecklist.querySelector('[aria-current="step"]')?.textContent).toContain("Final Handoff");
+    expect(proofChecklist.querySelector('[aria-current="step"]')?.textContent).toContain("最终交付摘要");
+    expect(proofChecklist.querySelector('[aria-current="step"]')?.textContent).toContain("收尾镜头停在最终交付摘要，再复制到 clip notes。");
     expect(within(proofChecklist).getByRole("button", { name: "播放证据线" }).getAttribute("aria-pressed")).toBe("false");
   });
 

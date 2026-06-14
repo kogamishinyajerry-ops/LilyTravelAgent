@@ -1040,9 +1040,30 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
       finalDeliverySuiteRunState,
     ],
   );
+  const finalDeliverySummaryReady =
+    proofStoryBundleChainState.ready &&
+    proofChainSummaryArchiveState.ready &&
+    proofChainIndexSummaryState.ready &&
+    finalDeliveryIndexQaState.startsWith("已验证") &&
+    finalDeliverySuiteRunState.startsWith("已通过");
   const recordingProofChecklist = useMemo(
     () => getRecordingProofChecklist(recordingAssets, proofStoryIndexBundleChainState, proofChainIndexSummaryState),
     [recordingAssets, proofStoryIndexBundleChainState, proofChainIndexSummaryState],
+  );
+  const scriptProofChecklist = useMemo(
+    () => [
+      ...recordingProofChecklist,
+      {
+        label: "Final Handoff",
+        state: finalDeliverySummaryReady ? "可复制" : "待补齐",
+        detail: finalDeliverySummaryLine,
+        href: "",
+        cue: finalDeliverySummaryReady
+          ? "收尾镜头停在最终交付摘要，再复制到 clip notes。"
+          : "收尾镜头说明哪些证据仍待补齐，再复制 pending 摘要。",
+      },
+    ],
+    [recordingProofChecklist, finalDeliverySummaryLine, finalDeliverySummaryReady],
   );
 
   const loadRecordingAssets = useCallback(
@@ -1104,15 +1125,15 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
     }
 
     const timer = window.setTimeout(() => {
-      const nextIndex = Math.min(proofCueIndex + 1, recordingProofChecklist.length - 1);
+      const nextIndex = Math.min(proofCueIndex + 1, scriptProofChecklist.length - 1);
       setProofCueIndex(nextIndex);
-      if (nextIndex >= recordingProofChecklist.length - 1) {
+      if (nextIndex >= scriptProofChecklist.length - 1) {
         setProofCuePlaying(false);
       }
     }, 1200);
 
     return () => window.clearTimeout(timer);
-  }, [proofCueIndex, proofCuePlaying, recordingProofChecklist.length, scriptMode]);
+  }, [proofCueIndex, proofCuePlaying, scriptMode, scriptProofChecklist.length]);
 
   function updateBrief<K extends keyof TravelBrief>(key: K, value: TravelBrief[K]) {
     setBrief((current) => ({ ...current, [key]: value }));
@@ -1500,7 +1521,7 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
                       {proofCuePlaying ? "讲解中" : "播放证据线"}
                     </button>
                   </div>
-                  {recordingProofChecklist.map((item, index) => (
+                  {scriptProofChecklist.map((item, index) => (
                     <div
                       className={`studio-proof-checklist-item ${index === proofCueIndex ? "active" : ""}`}
                       key={item.label}
@@ -1517,10 +1538,15 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
                         <p>{item.detail}</p>
                       )}
                       {index === proofCueIndex ? <em>{item.cue}</em> : null}
-                    </div>
-                  ))}
-                </div>
-                <div className="studio-shot-cue" aria-label="当前镜头建议">
+	                    </div>
+	                  ))}
+	                </div>
+	                <div className={`studio-script-final-delivery ${finalDeliverySummaryReady ? "ready" : "missing"}`} aria-label="脚本模式最终交付摘要">
+	                  <span>Final Handoff</span>
+	                  <strong>{finalDeliverySummaryReady ? "最终交付摘要可复制" : "最终交付摘要待补齐"}</strong>
+	                  <p>{finalDeliverySummaryLine}</p>
+	                </div>
+	                <div className="studio-shot-cue" aria-label="当前镜头建议">
                   <span>{studioShotCue.title}</span>
                   <strong>{studioShotCue.primary}</strong>
                   <p>{studioShotCue.note}</p>

@@ -1496,6 +1496,45 @@ textarea {
   line-height: 1.25;
 }
 
+.studio-script-final-delivery {
+  display: grid;
+  gap: 4px;
+  overflow: hidden;
+  min-width: 0;
+  border: 1px solid rgba(79, 143, 122, 0.2);
+  border-radius: 8px;
+  padding: 8px;
+  background: rgba(79, 143, 122, 0.1);
+}
+
+.studio-script-final-delivery.missing {
+  border-color: rgba(191, 128, 85, 0.24);
+  background: rgba(191, 128, 85, 0.1);
+}
+
+.studio-script-final-delivery span {
+  color: var(--sage);
+  font-size: 0.68rem;
+  font-weight: 950;
+}
+
+.studio-script-final-delivery strong {
+  color: var(--moss);
+  font-size: 0.84rem;
+  line-height: 1.1;
+}
+
+.studio-script-final-delivery p {
+  overflow: hidden;
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.64rem;
+  font-weight: 850;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .studio-shot-cue {
   display: grid;
   gap: 5px;
