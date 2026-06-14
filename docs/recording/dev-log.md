@@ -1829,3 +1829,14 @@ Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, app/gl
 Command/result: npm test -- components/studio-mode.test.tsx passed with 16 tests; browser check confirmed the preview line fits inside the card and console errors were empty; npm run lint && npm test && npm run build
 Voiceover note: "现在复制收口状态之前，也能先看到那一行最终文案。录屏时观众能看到状态从产品里直接变成剪辑备注。"
 Usable for: closeout preview clip, caption workflow narration, continued goal run round 624
+
+## Phase FE: v0.8.150 — Proof Story Production Assets In Clip Index
+
+Date: 2026-06-14
+Clip title: Phase FE: v0.8.150 — Proof Story Production Assets In Clip Index
+What changed: `recordings/clip-index.md` now gives Studio packs with `summary.scriptMaterial` a compact `Proof Story Production Assets` mini-section. It groups the narration preview, closeout status, script path, script-material cue, screenshot, and clip-notes link after the core Gallery/Summary/Clip notes links.
+Why this matters: The local Markdown index now reads like an editing checklist for creator content, not only a QA artifact list.
+Files shown: scripts/index-recording-assets.mjs, recordings/clip-index.md, README.md, docs/recording/goal-631-640-recap.md
+Command/result: node --check scripts/index-recording-assets.mjs passed; npm run index:recording-assets indexed 76 packs and wrote `### Proof Story Production Assets` into `recordings/clip-index.md`.
+Voiceover note: "现在 clip-index 里不是只有截图证据，还会直接给剪辑用的 Proof Story 素材包：口播预览、收口状态、脚本路径和截图都在一起。"
+Usable for: clip-index editing workflow, Proof Story production asset narration, continued goal run round 634

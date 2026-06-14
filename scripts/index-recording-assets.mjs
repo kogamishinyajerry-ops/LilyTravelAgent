@@ -3,6 +3,8 @@ import { mkdir, readFile, readdir, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 const recordingsRoot = process.env.RECORDINGS_DIR || "recordings";
+const proofStoryNarrationPreview = "Studio 现在把 Proof Story 脚本路径、证据时间线、四行预览和复制动作放在同一个录屏面板里。";
+const proofStoryCloseoutStatus = "Proof Story · 脚本路径: 就绪 · Studio QA: 已捕获 · 索引入库: 已入库";
 const sources = [
   { type: "dream", dir: "visual-checks", label: "/dream visual QA" },
   { type: "studio", dir: "studio-checks", label: "/studio recording QA" },
@@ -303,16 +305,29 @@ function buildMarkdownIndex(packs) {
         lines.push(`- Studio Proof screenshot: ${pack.studioProof.screenshotPath}`);
       }
     }
-    if (pack.scriptMaterial) {
-      lines.push(`- Proof Story Script Material: ${pack.scriptMaterial.cue}`);
-      if (pack.scriptMaterial.screenshotPath) {
-        lines.push(`- Proof Story Script Material screenshot: ${pack.scriptMaterial.screenshotPath}`);
-      }
-    }
     lines.push(`- Gallery: ${pack.galleryPath}`);
     lines.push(`- Summary: ${pack.summaryPath}`);
     if (pack.notesPath) {
       lines.push(`- Clip notes: ${pack.notesPath}`);
+    }
+    if (pack.scriptMaterial) {
+      lines.push("");
+      lines.push("### Proof Story Production Assets");
+      lines.push("");
+      lines.push(`- Narration preview: ${proofStoryNarrationPreview}`);
+      lines.push(`- Closeout status: ${proofStoryCloseoutStatus}`);
+      if (pack.scriptMaterial.scriptPath) {
+        lines.push(`- Script path: ${pack.scriptMaterial.scriptPath}`);
+      }
+      if (pack.scriptMaterial.cue) {
+        lines.push(`- Script-material cue: ${pack.scriptMaterial.cue}`);
+      }
+      if (pack.scriptMaterial.screenshotPath) {
+        lines.push(`- Script-material screenshot: ${pack.scriptMaterial.screenshotPath}`);
+      }
+      if (pack.notesPath) {
+        lines.push(`- Clip notes: ${pack.notesPath}`);
+      }
     }
     lines.push("");
   }

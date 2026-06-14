@@ -134,7 +134,7 @@ npm run check:recording-suite
 
 `npm run check:lens-candidate-handoff` expects `http://localhost:3000` unless `LENS_CANDIDATE_BASE_URL` is set. It verifies the Director Lens comparison dashboard candidate actions by clicking `Open first candidate`, the first candidate card, and one queue chip, then checking that `/dream` receives the expected candidate rank, day, and lens context.
 
-`npm run index:recording-assets` scans local `recordings/visual-checks`, `recordings/studio-checks`, and `recordings/handoff-checks`, then writes `recordings/index.html` and `recordings/clip-index.md` as a local asset index. When Dream or Studio QA packs include playback proof evidence, the index also shows Dream Proof and Studio Proof cues plus links to playback screenshots, summaries, and notes. Studio packs with Proof Story script-material evidence also show a `Proof Story Script Material` entry that links to the captured script-card screenshot.
+`npm run index:recording-assets` scans local `recordings/visual-checks`, `recordings/studio-checks`, and `recordings/handoff-checks`, then writes `recordings/index.html` and `recordings/clip-index.md` as a local asset index. When Dream or Studio QA packs include playback proof evidence, the index also shows Dream Proof and Studio Proof cues plus links to playback screenshots, summaries, and notes. Studio packs with Proof Story script-material evidence also add a compact `Proof Story Production Assets` section to `clip-index.md`, grouping narration preview, closeout status, script path, screenshot, and clip-notes links for editing.
 
 `npm run check:recording-index` expects the local dev server to be running at `http://localhost:3000` unless `RECORDING_INDEX_BASE_URL` is set. It regenerates the local asset index, opens `/api/recording-assets/index`, verifies Dream Proof and Studio Proof text plus all six screenshot/summary/notes links, then writes a small proof pack under `recordings/index-checks/`. If the latest Studio QA pack contains Proof Story script-material evidence, it also verifies that card and its three links as an optional `scriptMaterialCheck`. If no local Dream or Studio proof pack exists yet, it exits with a clear skipped-precondition message and tells you to run `npm run check:recording-suite`.
 
@@ -208,6 +208,7 @@ npm run check:recording-suite
 - `docs/recording/goal-601-610-recap.md` summarizes the Proof Story closeout checklist in `/studio`.
 - `docs/recording/goal-611-620-recap.md` summarizes the one-line Proof Story closeout copy action.
 - `docs/recording/goal-621-630-recap.md` summarizes the Proof Story closeout status preview.
+- `docs/recording/goal-631-640-recap.md` summarizes the Proof Story production-assets section in `clip-index.md`.
 - `docs/recording/proof-story-demo-script.md` gives a short `/studio` script for recording the evidence timeline, four-line proof-story preview, and copy action.
 - `docs/recording/studio-dream-demo-script.md` gives a shot-by-shot Studio ↔ Dream demo recording path.
 - `docs/recording/bridge-qa-evidence-script.md` gives a short Bridge QA proof clip script.
