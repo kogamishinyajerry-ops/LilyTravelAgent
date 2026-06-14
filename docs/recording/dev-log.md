@@ -2192,3 +2192,14 @@ Files shown: lib/recording-assets.ts, components/studio-mode.tsx, app/globals.cs
 Command/result: npm test -- lib/recording-assets.test.ts components/studio-mode.test.tsx passed with 52 tests; browser check against `http://localhost:3000/studio` showed `Summary 已入库`, 297px row width inside a 313px card, and 0 console errors.
 Voiceover note: "Summary notes 也有归档状态了。这里用归档优先显示，避免每次新 QA 截图路径让刚入库的 Summary 立刻待同步。"
 Usable for: Summary archive walkthrough, post-production proof-loop teaching segment, continued goal run round 954
+
+## Phase FS: v0.8.183 — Proof Chain Summary In Recording Index QA
+
+Date: 2026-06-14
+Clip title: Phase FS: v0.8.183 — Proof Chain Summary In Recording Index QA
+What changed: `npm run index:recording-assets`, `/api/recording-assets/index`, and `npm run check:recording-index` now carry and verify the optional `Proof Chain Summary` line from the latest Studio QA proof pack.
+Why this matters: The post-production notes line is now archived in the local asset index and asserted by Recording Index QA, not only visible in `/studio` or Studio QA notes.
+Files shown: scripts/index-recording-assets.mjs, app/api/recording-assets/index/route.ts, scripts/check-recording-index.mjs, docs/recording/goal-961-970-recap.md
+Command/result: node --check scripts/index-recording-assets.mjs passed; node --check scripts/check-recording-index.mjs passed; npm run index:recording-assets indexed 81 packs; npm run check:recording-index passed and generated `recordings/index-checks/2026-06-14T12-04-40-698Z/clip-notes.md` with `Proof Chain Summary`.
+Voiceover note: "Summary line 进入 Recording Index QA，说明后期 notes 不只是 Studio 卡片里的文案，而是被总素材库和自动验收一起追踪。"
+Usable for: Recording Index Summary archive walkthrough, post-production notes QA clip, continued goal run round 964

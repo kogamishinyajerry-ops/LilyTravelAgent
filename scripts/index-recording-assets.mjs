@@ -146,6 +146,7 @@ function buildHtmlIndex(packs) {
                   ${pack.scriptMaterial.completeLine ? `<b>${escapeHtml(pack.scriptMaterial.completeLine)}</b>` : ""}
                   ${pack.scriptMaterial.completeBundleLine ? `<b>${escapeHtml(pack.scriptMaterial.completeBundleLine)}</b>` : ""}
                   ${pack.scriptMaterial.bundleChainLine ? `<b>${escapeHtml(pack.scriptMaterial.bundleChainLine)}</b>` : ""}
+                  ${pack.scriptMaterial.proofChainSummaryLine ? `<b>${escapeHtml(pack.scriptMaterial.proofChainSummaryLine)}</b>` : ""}
                   ${pack.scriptMaterial.scriptPath ? `<code>Script path · ${escapeHtml(pack.scriptMaterial.scriptPath)}</code>` : ""}
                   ${pack.scriptMaterial.cue ? `<code>Script-material cue · ${escapeHtml(pack.scriptMaterial.cue)}</code>` : ""}
                   <nav>
@@ -349,6 +350,9 @@ function buildMarkdownIndex(packs) {
       if (pack.scriptMaterial.bundleChainLine) {
         lines.push(`- ${pack.scriptMaterial.bundleChainLine}`);
       }
+      if (pack.scriptMaterial.proofChainSummaryLine) {
+        lines.push(`- ${pack.scriptMaterial.proofChainSummaryLine}`);
+      }
       if (pack.scriptMaterial.scriptPath) {
         lines.push(`- Script path: ${pack.scriptMaterial.scriptPath}`);
       }
@@ -416,6 +420,7 @@ function readStudioScriptMaterial(entry, packDir, summary) {
     completeLine: typeof scriptMaterial.completeLine === "string" ? scriptMaterial.completeLine : "",
     completeBundleLine: typeof scriptMaterial.completeBundleLine === "string" ? scriptMaterial.completeBundleLine : "",
     bundleChainLine: typeof scriptMaterial.bundleChainLine === "string" ? scriptMaterial.bundleChainLine : "",
+    proofChainSummaryLine: typeof scriptMaterial.proofChainSummaryLine === "string" ? scriptMaterial.proofChainSummaryLine : "",
     screenshotPath: screenshotFile ? toRecordingLink(path.join("studio-checks", entry, screenshotFile)) : "",
     summaryPath: toRecordingLink(path.join("studio-checks", entry, "summary.json")),
     notesPath: existsSync(path.join(packDir, "clip-notes.md")) ? toRecordingLink(path.join("studio-checks", entry, "clip-notes.md")) : "",
