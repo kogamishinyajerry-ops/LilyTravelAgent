@@ -129,6 +129,7 @@ export type RecordingStudioScriptMaterialSummary = {
   buttonText: string;
   handoffPreview: string;
   handoffCopyState: string;
+  completeLine?: string;
   screenshotPath: string;
 };
 
@@ -559,6 +560,7 @@ function readStudioScriptMaterialFromSummary(entry: string, summary: Record<stri
   }
 
   const screenshotFile = path.basename(readString(scriptMaterial.screenshotPath));
+  const completeLine = readString(scriptMaterial.completeLine);
   return {
     visible: Boolean(scriptMaterial.visible),
     scriptPath: readString(scriptMaterial.scriptPath),
@@ -566,6 +568,7 @@ function readStudioScriptMaterialFromSummary(entry: string, summary: Record<stri
     buttonText: readString(scriptMaterial.buttonText),
     handoffPreview: readString(scriptMaterial.handoffPreview),
     handoffCopyState: readString(scriptMaterial.handoffCopyState),
+    ...(completeLine ? { completeLine } : {}),
     screenshotPath: screenshotFile ? toRecordingLink(path.join("studio-checks", entry, screenshotFile)) : "",
   };
 }

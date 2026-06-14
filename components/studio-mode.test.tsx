@@ -17,6 +17,8 @@ const readyProofStoryDeliveryLine =
 const proofStoryHandoffCaption = "Vibe Coding 不是只生成页面，而是把路书、QA 证据和后期素材交付打成闭环。";
 const readyProofStoryHandoffLine =
   `Proof Story Handoff · ${readyProofStoryDeliveryLine} · QA notes: index-checks/index-check-latest/clip-notes.md · Caption: ${proofStoryHandoffCaption}`;
+const readyProofStoryCompleteLine =
+  "Proof Story Complete · Delivery 已入库 · Handoff 已复制 · QA 收据就绪";
 
 function recordingAssetsResponse(
   packCount: number,
@@ -34,6 +36,8 @@ function recordingAssetsResponse(
     proofStoryDeliveryLine?: string;
     omitHandoffQa?: boolean;
     handoffCopyState?: string;
+    omitCompleteQa?: boolean;
+    completeLine?: string;
   } = {},
 ) {
   const indexLinkCount = options.indexLinkCount ?? 6;
@@ -157,6 +161,11 @@ function recordingAssetsResponse(
                   handoffPreview: readyProofStoryHandoffLine,
                   handoffCopyState: options.handoffCopyState || "Handoff 已复制",
                 }),
+            ...(options.omitCompleteQa
+              ? {}
+              : {
+                  completeLine: options.completeLine || readyProofStoryCompleteLine,
+                }),
             screenshotPath: "studio-checks/studio-proof-latest/studio-proof-story-script-material.png",
           },
         }
@@ -268,6 +277,7 @@ describe("StudioMode demo roadbooks", () => {
     expect(screen.getByLabelText("Proof Story Complete 状态").textContent).toContain(
       "Proof Story Complete · Delivery 已入库 · Handoff 已复制 · QA 收据就绪",
     );
+    expect(screen.getByLabelText("Proof Story Complete QA notes 状态").textContent).toBe("Complete 已入库");
     expect(within(scriptCard).getByRole("link", { name: "Production Assets QA 收据" }).getAttribute("href")).toBe(
       "/api/recording-assets/file?path=index-checks%2Findex-check-latest%2Fclip-notes.md",
     );
@@ -493,6 +503,26 @@ describe("StudioMode demo roadbooks", () => {
     expect(completeStrip.textContent).toContain("Delivery 待入库");
     expect(completeStrip.textContent).toContain("Handoff 待验证");
     expect(completeStrip.textContent).toContain("QA 收据待生成");
+    expect(screen.getByLabelText("Proof Story Complete QA notes 状态").textContent).toBe("Complete 待同步");
+  });
+
+  it("shows a pending Complete archive state for older Studio QA packs", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => ({
+        ok: true,
+        status: 200,
+        json: async () =>
+          recordingAssetsResponse(15, "Studio 16:9 demo pack", true, {
+            omitCompleteQa: true,
+          }),
+      })) as unknown as typeof fetch,
+    );
+
+    render(<StudioMode />);
+
+    expect(await screen.findByLabelText("Proof Story Complete 状态")).toBeTruthy();
+    expect(screen.getByLabelText("Proof Story Complete QA notes 状态").textContent).toBe("Complete 待入库");
   });
 
   it("keeps legacy Dream-only wording for older 3-link recording index checks", async () => {

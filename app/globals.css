@@ -2189,6 +2189,14 @@ textarea {
   line-height: 1.1;
 }
 
+.studio-proof-complete-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+}
+
 .studio-proof-complete-strip {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
@@ -2217,6 +2225,34 @@ textarea {
 }
 
 .studio-proof-complete-strip.missing {
+  color: #7a3c24;
+  border-color: rgba(191, 128, 85, 0.22);
+  background: rgba(191, 128, 85, 0.1);
+}
+
+.studio-proof-complete-archive {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  justify-self: end;
+  min-width: max-content;
+  height: 22px;
+  border: 1px solid rgba(38, 59, 49, 0.12);
+  border-radius: 7px;
+  padding: 2px 6px;
+  font-size: 0.58rem;
+  font-weight: 950;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+.studio-proof-complete-archive.ready {
+  color: #275f4c;
+  border-color: rgba(79, 143, 122, 0.26);
+  background: rgba(79, 143, 122, 0.14);
+}
+
+.studio-proof-complete-archive.missing {
   color: #7a3c24;
   border-color: rgba(191, 128, 85, 0.22);
   background: rgba(191, 128, 85, 0.1);

@@ -13,6 +13,8 @@ const sampleProofStoryDeliveryLine =
   "Proof Story Delivery · Proof Story · 脚本路径: 就绪 · Studio QA: 已捕获 · 索引入库: 已入库 · Index QA: 已验证 · Production Assets · HTML + Clip 已入库 · QA receipt: index-checks/new-index-check/clip-notes.md";
 const sampleProofStoryHandoffLine =
   `Proof Story Handoff · ${sampleProofStoryDeliveryLine} · QA notes: index-checks/new-index-check/clip-notes.md · Caption: Vibe Coding 不是只生成页面，而是把路书、QA 证据和后期素材交付打成闭环。`;
+const sampleProofStoryCompleteLine =
+  "Proof Story Complete · Delivery 已入库 · Handoff 已复制 · QA 收据就绪";
 
 beforeEach(async () => {
   tempRoot = await mkdtemp(path.join(os.tmpdir(), "lily-recording-assets-"));
@@ -151,6 +153,7 @@ describe("recording assets", () => {
         buttonText: "复制脚本路径",
         handoffPreview: sampleProofStoryHandoffLine,
         handoffCopyState: "Handoff 已复制",
+        completeLine: sampleProofStoryCompleteLine,
         screenshotPath: path.join(tempRoot, "studio-checks", "new-studio", "studio-proof-story-script-material.png"),
       },
     });
@@ -188,6 +191,7 @@ describe("recording assets", () => {
         buttonText: "复制脚本路径",
         handoffPreview: sampleProofStoryHandoffLine,
         handoffCopyState: "Handoff 已复制",
+        completeLine: sampleProofStoryCompleteLine,
         screenshotPath: path.join(tempRoot, "studio-checks", "new-studio", "studio-proof-story-script-material.png"),
       },
     });
@@ -462,6 +466,7 @@ describe("recording assets", () => {
         buttonText: "复制脚本路径",
         handoffPreview: sampleProofStoryHandoffLine,
         handoffCopyState: "Handoff 已复制",
+        completeLine: sampleProofStoryCompleteLine,
         screenshotPath: path.join(tempRoot, "studio-checks", "new-studio", "studio-proof-story-script-material.png"),
       },
     });
@@ -486,12 +491,13 @@ describe("recording assets", () => {
         buttonText: "复制脚本路径",
         handoffPreview: sampleProofStoryHandoffLine,
         handoffCopyState: "Handoff 已复制",
+        completeLine: sampleProofStoryCompleteLine,
         screenshotPath: "studio-checks/new-studio/studio-proof-story-script-material.png",
       },
     });
   });
 
-  it("keeps Studio Handoff fields empty for older script-material QA packs", async () => {
+  it("keeps Studio Handoff and Complete fields empty for older script-material QA packs", async () => {
     await writeSummary("studio-checks/older-script-material", {
       createdAt: "2026-06-13T05:00:00.000Z",
       captures: [],
@@ -518,6 +524,7 @@ describe("recording assets", () => {
 
     expect(summary.latestStudioProofPlayback?.scriptMaterial?.handoffPreview).toBe("");
     expect(summary.latestStudioProofPlayback?.scriptMaterial?.handoffCopyState).toBe("");
+    expect(summary.latestStudioProofPlayback?.scriptMaterial?.completeLine).toBeUndefined();
   });
 
   it("keeps Studio proof script material null when older QA packs do not contain it", async () => {

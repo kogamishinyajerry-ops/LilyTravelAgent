@@ -1994,3 +1994,14 @@ Files shown: scripts/check-studio-visuals.mjs, recordings/studio-checks/2026-06-
 Command/result: node --check scripts/check-studio-visuals.mjs passed; npm run check:studio-visuals passed and the newest Studio clip notes contain `Proof Story Complete`.
 Voiceover note: "Complete strip 现在也会写进 Studio QA notes。产品里的最终收口信号，自动进入素材证据包。"
 Usable for: proof-pack closeout narration, final recording receipt clip, continued goal run round 774
+
+## Phase FS: v0.8.165 — Complete Archive Chip In Studio
+
+Date: 2026-06-14
+Clip title: Phase FS: v0.8.165 — Complete Archive Chip In Studio
+What changed: `/studio` now reads the latest Studio QA `scriptMaterial.completeLine` and shows a compact `Complete 已入库` chip beside the live `Proof Story Complete` strip.
+Why this matters: The workbench now distinguishes the live closeout state from the archived QA proof, making the two-stage proof loop easier to explain on screen.
+Files shown: lib/recording-assets.ts, components/studio-mode.tsx, app/globals.css, docs/recording/goal-781-790-recap.md
+Command/result: npm test -- lib/recording-assets.test.ts passed with 15 tests; npm test -- components/studio-mode.test.tsx passed with 26 tests; browser check against `http://localhost:3000/studio` showed `Complete 已入库`, 297px row width, and 0 console errors.
+Voiceover note: "这里不是又做一个新按钮，而是把 QA notes 里的 Complete line 回流到产品台面上。页面现算、QA 已归档，两件事分清楚。"
+Usable for: final archive-state walkthrough, proof-loop teaching clip, continued goal run round 784

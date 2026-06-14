@@ -148,6 +148,7 @@ type RecordingStudioScriptMaterialSummary = {
   buttonText: string;
   handoffPreview?: string;
   handoffCopyState?: string;
+  completeLine?: string;
   screenshotPath?: string;
 };
 
@@ -548,6 +549,23 @@ function getProofStoryCompleteState({
   };
 }
 
+function getProofStoryCompleteArchiveState(scriptMaterial: RecordingStudioScriptMaterialSummary | null | undefined, currentCompleteLine: string) {
+  const archivedLine = scriptMaterial?.completeLine || "";
+  if (!archivedLine) {
+    return { label: "Complete 待入库", ready: false };
+  }
+
+  if (archivedLine !== currentCompleteLine) {
+    return { label: "Complete 待同步", ready: false };
+  }
+
+  if (!archivedLine.includes("Proof Story Complete")) {
+    return { label: "Complete 待验证", ready: false };
+  }
+
+  return { label: "Complete 已入库", ready: true };
+}
+
 function getProofStoryDeliverySync(studioLine: string, notesLine: string) {
   if (!notesLine) {
     return { label: "Delivery 待入库", ready: false };
@@ -709,6 +727,10 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
     handoffReady: proofStoryHandoffQaState.ready,
     receiptReady: Boolean(proofStoryProductionReceiptPath),
   });
+  const proofStoryCompleteArchiveState =
+    recordingAssets.status === "ready"
+      ? getProofStoryCompleteArchiveState(recordingAssets.latestStudioProofPlayback?.scriptMaterial, proofStoryCompleteState.label)
+      : getProofStoryCompleteArchiveState(null, proofStoryCompleteState.label);
 
   const loadRecordingAssets = useCallback(
     async ({ markRefreshing = true, isActive = () => true }: { markRefreshing?: boolean; isActive?: () => boolean } = {}) => {
@@ -1337,12 +1359,20 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
                               {proofHandoffCopyState === "copied" ? "已复制" : proofHandoffCopyState === "error" ? "手动" : "复制"}
                             </button>
                           </div>
-                          <div
-                            className={`studio-proof-complete-strip ${proofStoryCompleteState.ready ? "ready" : "missing"}`}
-                            aria-label="Proof Story Complete 状态"
-                          >
-                            <CheckCircle2 size={11} />
-                            <span>{proofStoryCompleteState.label}</span>
+                          <div className="studio-proof-complete-row">
+                            <div
+                              className={`studio-proof-complete-strip ${proofStoryCompleteState.ready ? "ready" : "missing"}`}
+                              aria-label="Proof Story Complete 状态"
+                            >
+                              <CheckCircle2 size={11} />
+                              <span>{proofStoryCompleteState.label}</span>
+                            </div>
+                            <span
+                              className={`studio-proof-complete-archive ${proofStoryCompleteArchiveState.ready ? "ready" : "missing"}`}
+                              aria-label="Proof Story Complete QA notes 状态"
+                            >
+                              {proofStoryCompleteArchiveState.label}
+                            </span>
                           </div>
                           <button type="button" onClick={copyProofStoryCloseout}>
                             <Copy size={13} />
