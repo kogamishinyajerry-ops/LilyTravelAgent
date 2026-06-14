@@ -162,6 +162,7 @@ npm run check:recording-suite
 - `docs/recording/goal-191-200-recap.md` summarizes the Best Recording Candidates strip for changed scene crops.
 - `docs/recording/goal-201-210-recap.md` summarizes the candidate-to-Dream handoff cue and return path.
 - `docs/recording/goal-211-220-recap.md` summarizes the lightweight recording queue handoff copy.
+- `docs/recording/goal-221-230-recap.md` summarizes the interactive next-candidate link in `/dream`.
 - `docs/recording/studio-dream-demo-script.md` gives a shot-by-shot Studio ↔ Dream demo recording path.
 - `docs/recording/bridge-qa-evidence-script.md` gives a short Bridge QA proof clip script.
 - `docs/recording/cinematic-visual-contract-script.md` gives a short `/dream` visual-contract recording script for template strategy, Scene Inspector, Proof Stack, and asset state.

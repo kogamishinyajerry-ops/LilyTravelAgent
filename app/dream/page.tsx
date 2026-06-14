@@ -18,8 +18,10 @@ export default async function DreamPage({ searchParams }: DreamPageProps) {
         detail: readParam(params.candidateDetail),
         nextRank: readParam(params.nextCandidateRank),
         nextLens: readParam(params.nextCandidateLens),
+        nextLensId: readParam(params.nextCandidateLensId),
         nextDay: readParam(params.nextCandidateDay),
         nextLabel: readParam(params.nextCandidateLabel),
+        nextDetail: readParam(params.nextCandidateDetail),
         returnHref: "/api/recording-assets/lens-comparison",
       }
     : undefined;

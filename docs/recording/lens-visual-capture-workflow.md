@@ -47,7 +47,7 @@ After `npm run index:recording-assets`, the top-level recording index shows lens
 4. Use `Best Recording Candidates` to pick the strongest changed shot.
 5. Compare `Auto`, `Water`, `Skyline`, `Atlas`, and `Detail` with the Current row above the Previous row.
 6. Pick one lens that best supports the clip thesis.
-7. Click a candidate to open `/dream` with the same lens, active candidate day, visible candidate cue, next-candidate copy, and return link to the comparison dashboard.
+7. Click a candidate to open `/dream` with the same lens, active candidate day, visible candidate cue, clickable next-candidate chip, and return link to the comparison dashboard.
 8. Open its `clip-notes.md` when you need the QA notes.
 9. Record `/dream` with the same lens selected.
 
@@ -57,6 +57,7 @@ After `npm run index:recording-assets`, the top-level recording index shows lens
 - Does the `Best Recording Candidates` strip surface the shot you would actually record?
 - Does the `/dream` handoff show the candidate cue in the first viewport?
 - Does the cue show current candidate count and the next candidate without needing storage?
+- Does the `Next` chip advance to the next ranked candidate when clicked?
 - Does the current crop show a visible change against the previous complete batch?
 - Do `Changed` / `Subtle` badges match the visible crop differences well enough for narration?
 - Does the pure 3D crop show improvement without relying on surrounding UI?

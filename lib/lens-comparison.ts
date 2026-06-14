@@ -299,8 +299,10 @@ function buildCandidateDreamUrl(
   if (nextCandidate) {
     params.set("nextCandidateRank", String(rank + 1));
     params.set("nextCandidateLens", nextCandidate.lensLabel);
+    params.set("nextCandidateLensId", nextCandidate.lensId);
     params.set("nextCandidateDay", String(nextCandidate.day));
     params.set("nextCandidateLabel", nextCandidate.dayLabel);
+    params.set("nextCandidateDetail", nextCandidate.diff.detail);
   }
 
   return `/dream?${params.toString()}`;

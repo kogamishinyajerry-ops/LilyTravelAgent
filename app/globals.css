@@ -2237,6 +2237,7 @@ textarea {
 }
 
 .dream-candidate-next {
+  display: inline-flex;
   justify-self: start;
   border: 1px solid rgba(255, 255, 255, 0.48);
   border-radius: 999px;
@@ -2244,6 +2245,7 @@ textarea {
   color: rgba(39, 49, 59, 0.72);
   font-size: 0.66rem;
   font-weight: 900;
+  text-decoration: none;
   background: rgba(255, 255, 255, 0.42);
 }
 

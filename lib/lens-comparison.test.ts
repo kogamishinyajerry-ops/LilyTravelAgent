@@ -203,7 +203,9 @@ describe("lens comparison dashboard", () => {
     expect(dashboard.bestRecordingCandidates[0].dreamUrl).toContain("candidateDay=1");
     expect(dashboard.bestRecordingCandidates[0].dreamUrl).toContain("nextCandidateRank=2");
     expect(dashboard.bestRecordingCandidates[0].dreamUrl).toContain("nextCandidateLens=Water");
+    expect(dashboard.bestRecordingCandidates[0].dreamUrl).toContain("nextCandidateLensId=wide-water");
     expect(dashboard.bestRecordingCandidates[0].dreamUrl).toContain("nextCandidateDay=3");
+    expect(dashboard.bestRecordingCandidates[0].dreamUrl).toContain("nextCandidateDetail=");
   });
 
   it("resolves only image files inside the recordings root", () => {

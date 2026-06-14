@@ -96,8 +96,10 @@ type CandidateHandoff = {
   detail?: string;
   nextRank?: string;
   nextLens?: string;
+  nextLensId?: string;
   nextDay?: string;
   nextLabel?: string;
+  nextDetail?: string;
   returnHref?: string;
 };
 
@@ -158,6 +160,26 @@ function getDemoRoadbookOption(value?: string) {
 function normalizeCandidateDay(value?: string) {
   const day = Number(value);
   return Number.isInteger(day) && day >= 1 && day <= 4 ? day : 1;
+}
+
+function buildNextCandidateHref(demoId: DemoRoadbookId | null, candidate?: CandidateHandoff) {
+  if (!candidate?.nextRank || !candidate.nextDay || !candidate.nextLabel) {
+    return "";
+  }
+
+  const nextLens = resolveDirectorLens(candidate.nextLensId);
+  const params = new URLSearchParams({
+    demo: demoId || "dali",
+    lens: nextLens.id,
+    candidate: "1",
+    candidateRank: candidate.nextRank,
+    candidateTotal: candidate.total || "",
+    candidateDay: candidate.nextDay,
+    candidateLabel: candidate.nextLabel,
+    candidateDetail: candidate.nextDetail || "来自轻量录屏队列",
+  });
+
+  return `/dream?${params.toString()}`;
 }
 
 const generationModes: Array<{ id: GenerationMode; label: string; note: string }> = [
@@ -265,8 +287,11 @@ export function DreamRoadbook({ initialDemo = "dali", initialLens = "auto", init
         detail: initialCandidate.detail || "来自镜头对比看板",
         nextRank: initialCandidate.nextRank || "",
         nextLens: initialCandidate.nextLens || "",
+        nextLensId: initialCandidate.nextLensId || "",
         nextDay: initialCandidate.nextDay || "",
         nextLabel: initialCandidate.nextLabel || "",
+        nextDetail: initialCandidate.nextDetail || "",
+        nextHref: buildNextCandidateHref(demoRoadbookId, initialCandidate),
         returnHref: initialCandidate.returnHref || "/api/recording-assets/lens-comparison",
       }
     : null;
@@ -1404,10 +1429,10 @@ export function DreamRoadbook({ initialDemo = "dali", initialLens = "auto", init
                 #{candidateHandoff.rank}{candidateHandoff.total ? `/${candidateHandoff.total}` : ""} · D{candidateHandoff.day} · {candidateHandoff.label}
               </strong>
               <p>{candidateHandoff.detail}</p>
-              {candidateHandoff.nextLabel ? (
-                <small className="dream-candidate-next">
+              {candidateHandoff.nextLabel && candidateHandoff.nextHref ? (
+                <Link className="dream-candidate-next" href={candidateHandoff.nextHref}>
                   Next #{candidateHandoff.nextRank || "?"} · {candidateHandoff.nextLens || "Lens"} · D{candidateHandoff.nextDay || "?"} · {candidateHandoff.nextLabel}
-                </small>
+                </Link>
               ) : null}
               <Link href={candidateHandoff.returnHref}>
                 返回镜头对比看板

@@ -239,8 +239,10 @@ describe("DreamRoadbook a11y polish", () => {
           detail: "checksum 1.5M / lit 0 / varied 3",
           nextRank: "4",
           nextLens: "Atlas",
+          nextLensId: "isometric-atlas",
           nextDay: "3",
           nextLabel: "喜洲村落",
+          nextDetail: "checksum 1.4M / lit 0 / varied 1",
           returnHref: "/api/recording-assets/lens-comparison",
         }}
       />,
@@ -251,6 +253,10 @@ describe("DreamRoadbook a11y polish", () => {
     expect(handoff.textContent).toContain("#3/4 · D2 · 洱海西线");
     expect(handoff.textContent).toContain("Next #4 · Atlas · D3 · 喜洲村落");
     expect(handoff.textContent).toContain("checksum 1.5M / lit 0 / varied 3");
+    const nextLink = within(handoff).getByRole("link", { name: /Next #4/ });
+    expect(nextLink.getAttribute("href")).toContain("/dream?demo=dali&lens=isometric-atlas");
+    expect(nextLink.getAttribute("href")).toContain("candidateRank=4");
+    expect(nextLink.getAttribute("href")).toContain("candidateDay=3");
     expect(within(handoff).getByRole("link", { name: /返回镜头对比看板/ }).getAttribute("href")).toBe(
       "/api/recording-assets/lens-comparison",
     );

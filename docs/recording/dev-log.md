@@ -1301,3 +1301,14 @@ Files shown: docs/recording/goal-211-220-recap.md, `/api/recording-assets/lens-c
 Command/result: npm run lint && npm test && npm run build (44 files, 907 tests, build passed)
 Voiceover note: "轻量队列也按同一套质量门收口。没有数据库、没有账号，先用 URL 把录屏队列串起来，而且测试和构建都通过。"
 Usable for: goal closeout clip, no-storage queue proof, next candidate-step goal, continued goal run round 217
+
+## Phase DI: v0.8.102 — Interactive Next Candidate Link
+
+Date: 2026-06-14
+Clip title: Phase DI: v0.8.102 — Interactive Next Candidate Link
+What changed: The `/dream` Recording Candidate cue now turns the `Next` chip into a real link when next-candidate params exist. It advances to the next ranked candidate with the correct lens, day, label, and diff detail while preserving the return-to-dashboard path.
+Why this matters: A creator can step through the ranked shots directly from `/dream` instead of bouncing back to the dashboard after every clip.
+Files shown: lib/lens-comparison.ts, app/dream/page.tsx, components/dream-roadbook.tsx, docs/recording/lens-visual-capture-workflow.md
+Command/result: npm test -- lib/lens-comparison.test.ts components/dream-roadbook.test.tsx; npm run lint; Browser check confirmed Next opens #2/4 with close-detail active and the return path intact.
+Voiceover note: "轻量队列现在可以往前走一步了：点 Next，不用回看板，就进入下一个候选镜头。还是没有数据库，只是 URL handoff。"
+Usable for: next-candidate stepping clip, no-storage workflow proof, continued goal run round 224
