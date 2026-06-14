@@ -1518,9 +1518,40 @@ textarea {
   font-weight: 950;
 }
 
+.studio-script-final-delivery-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.studio-script-final-delivery-header div {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
 .studio-script-final-delivery strong {
   color: var(--moss);
   font-size: 0.84rem;
+  line-height: 1.1;
+}
+
+.studio-script-final-delivery button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  width: max-content;
+  min-height: 22px;
+  border: 1px solid rgba(79, 143, 122, 0.24);
+  border-radius: 7px;
+  padding: 2px 6px;
+  color: #214d3f;
+  background: rgba(255, 255, 255, 0.72);
+  font-size: 0.58rem;
+  font-weight: 950;
   line-height: 1.1;
 }
 

@@ -1542,8 +1542,16 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
 	                  ))}
 	                </div>
 	                <div className={`studio-script-final-delivery ${finalDeliverySummaryReady ? "ready" : "missing"}`} aria-label="脚本模式最终交付摘要">
-	                  <span>Final Handoff</span>
-	                  <strong>{finalDeliverySummaryReady ? "最终交付摘要可复制" : "最终交付摘要待补齐"}</strong>
+	                  <div className="studio-script-final-delivery-header">
+	                    <div>
+	                      <span>Final Handoff</span>
+	                      <strong>{finalDeliverySummaryReady ? "最终交付摘要可复制" : "最终交付摘要待补齐"}</strong>
+	                    </div>
+	                    <button type="button" onClick={copyFinalDeliverySummaryLine} aria-label="复制脚本模式最终交付摘要">
+	                      <Copy size={10} />
+	                      {finalDeliverySummaryCopyState === "copied" ? "已复制" : finalDeliverySummaryCopyState === "error" ? "手动" : "复制摘要"}
+	                    </button>
+	                  </div>
 	                  <p>{finalDeliverySummaryLine}</p>
 	                </div>
 	                <div className="studio-shot-cue" aria-label="当前镜头建议">

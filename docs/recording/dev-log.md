@@ -2247,3 +2247,14 @@ Files shown: components/studio-mode.tsx, app/globals.css, components/studio-mode
 Command/result: npm test -- components/studio-mode.test.tsx passed with 40 tests; browser check against `http://localhost:3000/studio` showed the script final summary cue, no overflow in a 337px cue card, playback ending on `Final Handoff`, and 0 console errors. `npm test -- components/studio-mode.test.tsx && npm run lint && npm test && npm run build` passed with 953 full-suite tests and a successful Next.js production build.
 Voiceover note: "脚本模式最后一拍停在 Final Handoff。也就是说，录屏结尾和后期 notes 复制的是同一句最终交付摘要。"
 Usable for: script-mode closing shot demo, final handoff walkthrough, continued goal run round 1004
+
+## Phase FS: v0.8.188 — Script Mode Final Handoff Copy
+
+Date: 2026-06-14
+Clip title: Phase FS: v0.8.188 — Script Mode Final Handoff Copy
+What changed: The script-mode `Final Handoff` cue now has a compact copy button that reuses the same final delivery summary line and copy state as the Proof Story card.
+Why this matters: The visible closing shot and copy action now live together, so a screen recording can end with the exact handoff sentence and action without scrolling back down.
+Files shown: components/studio-mode.tsx, app/globals.css, components/studio-mode.test.tsx, docs/recording/goal-1011-1020-recap.md
+Command/result: npm test -- components/studio-mode.test.tsx passed with 41 tests; browser check against `http://localhost:3000/studio` showed the script-mode copy affordance, 337px cue card with no overflow, copied state changing to `已复制`, copied value matching `最终交付摘要`, and 0 console errors. `npm test -- components/studio-mode.test.tsx && npm run lint && npm test && npm run build` passed with 954 full-suite tests and a successful Next.js production build.
+Voiceover note: "现在录屏最后一张画面不只显示最终摘要，还能在同一张画面点击复制。结尾和后期交付动作合在一起了。"
+Usable for: final handoff copy closeout, script-mode recording ending, continued goal run round 1014

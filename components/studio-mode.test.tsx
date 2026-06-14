@@ -285,7 +285,7 @@ describe("StudioMode demo roadbooks", () => {
     expect(screen.getByText("云南大理 本地演示")).toBeTruthy();
     expect(screen.getByText("大理 4 天松弛路书")).toBeTruthy();
     expect(screen.getByDisplayValue("云南大理")).toBeTruthy();
-    expect(await screen.findByText("15 个素材包")).toBeTruthy();
+    expect((await screen.findAllByText("15 个素材包")).length).toBeGreaterThanOrEqual(1);
     expect(screen.getByLabelText("录屏素材状态").textContent).toContain("素材已准备");
     expect(screen.getByLabelText("录屏素材状态").textContent).toContain("可以直接打开索引挑选片段");
     expect(screen.getByLabelText("素材包类型统计")).toBeTruthy();
@@ -704,7 +704,7 @@ describe("StudioMode demo roadbooks", () => {
     expect(screen.getByLabelText("Proof Story Index Chain 状态").textContent).toBe("Index Chain 待验证");
     expect(screen.getByLabelText("Recording Index Chain 状态").textContent).toBe("Index Chain 待验证");
 
-    fireEvent.click(screen.getByRole("button", { name: /脚本模式/ }));
+    fireEvent.click(screen.getByRole("button", { name: "脚本模式" }));
     expect(screen.getByLabelText("录屏证据清单").textContent).toContain("Index Chain 待验证");
     expect(screen.getByLabelText("录屏证据清单").textContent).toContain("Index Summary 已验证");
   });
@@ -729,7 +729,7 @@ describe("StudioMode demo roadbooks", () => {
     expect(screen.getByLabelText("Proof Chain Index Summary 状态").textContent).toBe("Index Summary 待验证");
     expect(screen.getByLabelText("Recording Index Summary 状态").textContent).toBe("Index Summary 待验证");
 
-    fireEvent.click(screen.getByRole("button", { name: /脚本模式/ }));
+    fireEvent.click(screen.getByRole("button", { name: "脚本模式" }));
     expect(screen.getByLabelText("录屏证据清单").textContent).toContain("Index Summary 待验证");
   });
 
@@ -750,7 +750,7 @@ describe("StudioMode demo roadbooks", () => {
     expect(indexCard.textContent).not.toContain("Dream + Studio 双证据");
     expect(within(indexCard).queryByLabelText("Index QA proof checks")).toBeNull();
 
-    fireEvent.click(screen.getByRole("button", { name: /脚本模式/ }));
+    fireEvent.click(screen.getByRole("button", { name: "脚本模式" }));
     const proofChecklist = await screen.findByLabelText("录屏证据清单");
     expect(proofChecklist.textContent).toContain("Dream 单证据 · 3 条证据链接");
     expect(proofChecklist.textContent).not.toContain("Dream + Studio 双证据 · 6 条链接");
@@ -771,7 +771,7 @@ describe("StudioMode demo roadbooks", () => {
     expect(screen.getByRole("link", { name: /梦境路书/ }).getAttribute("href")).toBe("/dream?demo=coast");
     expect(screen.getByLabelText("Demo Bridge").textContent).toContain("三亚海岛 → Dream");
     expect(within(screen.getByLabelText("Demo Bridge")).getByRole("link", { name: /打开同款梦境预览/ }).getAttribute("href")).toBe("/dream?demo=coast");
-    expect(await screen.findByText("15 个素材包")).toBeTruthy();
+    expect((await screen.findAllByText("15 个素材包")).length).toBeGreaterThanOrEqual(1);
   });
 
   it("can initialize directly into the coastal demo from the dream handoff", async () => {
@@ -874,7 +874,7 @@ describe("StudioMode demo roadbooks", () => {
     expect(screen.getByRole("button", { name: "刷新" })).toBeTruthy();
     expect(screen.queryByRole("link", { name: /打开总索引/ })).toBeNull();
 
-    fireEvent.click(screen.getByRole("button", { name: /脚本模式/ }));
+    fireEvent.click(screen.getByRole("button", { name: "脚本模式" }));
     const proofChecklist = await screen.findByLabelText("录屏证据清单");
     expect(proofChecklist.textContent).toContain("Suite Run");
     expect(proofChecklist.textContent).toContain("npm run check:recording-suite");
@@ -883,12 +883,13 @@ describe("StudioMode demo roadbooks", () => {
     expect(finalScriptCue.textContent).toContain("最终交付摘要待补齐");
     expect(finalScriptCue.textContent).toContain("Recording Index QA: 待验证");
     expect(finalScriptCue.textContent).toContain("Suite Run: 待运行");
+    expect(within(finalScriptCue).getByRole("button", { name: "复制脚本模式最终交付摘要" })).toBeTruthy();
   });
 
   it("toggles a compact recording script track for walkthrough capture", async () => {
     render(<StudioMode />);
 
-    fireEvent.click(screen.getByRole("button", { name: /脚本模式/ }));
+    fireEvent.click(screen.getByRole("button", { name: "脚本模式" }));
 
     expect(await screen.findByLabelText("录屏讲解轨道")).toBeTruthy();
     expect(screen.getByLabelText("当前镜头建议").textContent).toContain("输入区 → 路书预览 → 素材资产 → 桥接证据");
@@ -927,6 +928,7 @@ describe("StudioMode demo roadbooks", () => {
     const finalScriptCue = screen.getByLabelText("脚本模式最终交付摘要");
     expect(finalScriptCue.textContent).toContain("最终交付摘要可复制");
     expect(finalScriptCue.textContent).toContain("Suite Run: 已通过 · 7 步 · 7 通过");
+    expect(within(finalScriptCue).getByRole("button", { name: "复制脚本模式最终交付摘要" })).toBeTruthy();
     expect(within(proofChecklist).getByRole("button", { name: "播放证据线" })).toBeTruthy();
     expect(within(proofChecklist).getByText("先证明 Studio 和 Dream 能互相跳转。")).toBeTruthy();
     expect(within(proofChecklist).getByRole("link", { name: /3 个入口/ }).getAttribute("href")).toBe("candidate-handoff-checks/candidate-latest/summary.json");
@@ -935,13 +937,13 @@ describe("StudioMode demo roadbooks", () => {
     expect(within(proofChecklist).getByRole("link", { name: /Dream \+ Studio 双证据 · 6 条链接/ }).getAttribute("href")).toBe("index-checks/index-check-latest/summary.json");
     expect(within(proofChecklist).getByRole("link", { name: /7 步 · 7 通过/ }).getAttribute("href")).toBe("suite-runs/suite-run-latest/summary.json");
     expect(screen.getByText("讲解轨道已打开")).toBeTruthy();
-    expect(screen.getByRole("button", { name: /脚本模式/ }).getAttribute("aria-pressed")).toBe("true");
+    expect(screen.getByRole("button", { name: "脚本模式" }).getAttribute("aria-pressed")).toBe("true");
   });
 
   it("plays the proof checklist cue sequence for screen recording", async () => {
     render(<StudioMode />);
 
-    fireEvent.click(screen.getByRole("button", { name: /脚本模式/ }));
+    fireEvent.click(screen.getByRole("button", { name: "脚本模式" }));
 
     const proofChecklist = await screen.findByLabelText("录屏证据清单");
     expect(proofChecklist.querySelector('[aria-current="step"]')?.textContent).toContain("Bridge QA");
@@ -1225,6 +1227,29 @@ describe("StudioMode demo roadbooks", () => {
     expect(finalSummaryPreview).toContain("Suite Run: 已通过 · 7 步 · 7 通过");
     expect(writeText).toHaveBeenCalledWith(finalSummaryPreview);
     expect(copyButton.textContent).toContain("已复制");
+  });
+
+  it("copies the script-mode final handoff summary from the closing cue", async () => {
+    const writeText = vi.fn(async () => undefined);
+    Object.defineProperty(window.navigator, "clipboard", {
+      value: { writeText },
+      configurable: true,
+    });
+
+    render(<StudioMode />);
+
+    fireEvent.click(screen.getByRole("button", { name: "脚本模式" }));
+    expect((await screen.findAllByText("15 个素材包")).length).toBeGreaterThanOrEqual(1);
+    const finalSummaryPreview = screen.getByLabelText("最终交付摘要预览").textContent || "";
+    const finalScriptCue = screen.getByLabelText("脚本模式最终交付摘要");
+    const copyButton = within(finalScriptCue).getByRole("button", { name: "复制脚本模式最终交付摘要" });
+    await act(async () => {
+      fireEvent.click(copyButton);
+    });
+
+    expect(writeText).toHaveBeenCalledWith(finalSummaryPreview);
+    expect(copyButton.textContent).toContain("已复制");
+    expect(screen.getByRole("button", { name: "复制最终交付摘要" }).textContent).toContain("已复制");
   });
 
   it("copies a pending Proof Chain Summary when evidence is missing", async () => {
