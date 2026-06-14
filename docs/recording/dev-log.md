@@ -1059,3 +1059,14 @@ Files shown: lib/lens-comparison.ts, app/api/recording-assets/lens-comparison/ro
 Command/result: npm test -- lib/lens-comparison.test.ts components/studio-mode.test.tsx; npm run lint && npm run build; DREAM_URL=http://127.0.0.1:3000/dream npm run check:dream-lenses; Browser check confirmed 5 lens cards, 20 images, and 0 broken images.
 Voiceover note: "我把五个 lens 的 QA 素材做成一个横向对比看板。现在不是凭感觉挑镜头，而是 Auto、Water、Skyline、Atlas、Detail 都能一眼对比 D1 到 D4。"
 Usable for: lens comparison clip, visual review workflow, Vibe Coding product evidence narrative, continued goal run round 134
+
+## Phase CM: v0.8.80 — Lens Comparison To Dream Handoff
+
+Date: 2026-06-14
+Clip title: Phase CM: v0.8.80 — Lens Comparison To Dream Handoff
+What changed: `/dream` now accepts a `lens` query parameter, and the lens comparison dashboard adds an `Open Dream` action for each lens. The selected lens is active when the Dream page opens.
+Why this matters: The creator can compare five lens QA packs, pick one, then jump directly back into the product page with the same visual direction ready for recording.
+Files shown: app/dream/page.tsx, components/dream-roadbook.tsx, app/api/recording-assets/lens-comparison/route.ts, docs/recording/lens-visual-capture-workflow.md
+Command/result: npm test -- components/dream-roadbook.test.tsx lib/lens-comparison.test.ts; npm run lint && npm run build; Browser check confirmed `/dream?demo=dali&lens=wide-water` opens with Water active and the expected Tune cue.
+Voiceover note: "这个看板不是一个孤立报告。点 Open Dream，就能带着同一个 lens 回到产品页继续录制。"
+Usable for: lens handoff clip, comparison-to-recording workflow, Vibe Coding product loop narrative, continued goal run round 136

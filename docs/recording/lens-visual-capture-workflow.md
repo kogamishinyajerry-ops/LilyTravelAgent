@@ -36,7 +36,7 @@ Each lens run writes a folder under `recordings/visual-checks/` with:
 
 After `npm run index:recording-assets`, the top-level recording index shows lens-aware titles such as `Dream low-skyline lens visual pack`, and `/studio` recent asset cards show a lens chip.
 
-`/studio` also links to `/api/recording-assets/lens-comparison`, a local Director Lens comparison dashboard. It reads the newest Dream QA pack for each lens, shows D1-D4 thumbnails side-by-side, and surfaces the Scene Inspector tuning cue plus a compact review checklist.
+`/studio` also links to `/api/recording-assets/lens-comparison`, a local Director Lens comparison dashboard. It reads the newest Dream QA pack for each lens, shows D1-D4 thumbnails side-by-side, surfaces the Scene Inspector tuning cue plus a compact review checklist, and links back to `/dream?lens=...` for same-lens recording.
 
 ## Review Loop
 
@@ -44,8 +44,9 @@ After `npm run index:recording-assets`, the top-level recording index shows lens
 2. Click `镜头对比`.
 3. Compare `Auto`, `Water`, `Skyline`, `Atlas`, and `Detail`.
 4. Pick one lens that best supports the clip thesis.
-5. Open its `clip-notes.md`.
-6. Record `/dream` with the same lens selected.
+5. Click `Open Dream` to return with the same lens selected.
+6. Open its `clip-notes.md` when you need the QA notes.
+7. Record `/dream` with the same lens selected.
 
 ## What To Judge
 

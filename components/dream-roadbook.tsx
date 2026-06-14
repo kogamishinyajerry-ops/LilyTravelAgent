@@ -90,6 +90,7 @@ const dreamBriefDefaults: TravelBrief = {
 type DemoRoadbookId = "dali" | "coast";
 type DreamRoadbookProps = {
   initialDemo?: string;
+  initialLens?: string;
 };
 
 const coastalDreamBriefDefaults: TravelBrief = {
@@ -175,8 +176,9 @@ async function fetchPreviewAssetHistory(cacheKey: string) {
   return result.items;
 }
 
-export function DreamRoadbook({ initialDemo = "dali" }: DreamRoadbookProps = {}) {
+export function DreamRoadbook({ initialDemo = "dali", initialLens = "auto" }: DreamRoadbookProps = {}) {
   const initialDemoOption = getDemoRoadbookOption(initialDemo);
+  const initialDirectorLens = resolveDirectorLens(initialLens);
   const runIdRef = useRef(0);
   const recordingControllerRef = useRef<RecordingController | null>(null);
   const recordingConfigRef = useRef<RecordingConfig>(defaultRecordingConfig);
@@ -195,7 +197,7 @@ export function DreamRoadbook({ initialDemo = "dali" }: DreamRoadbookProps = {})
   const [activeDay, setActiveDay] = useState(1);
   const [mood, setMood] = useState<DreamMood>(initialDemoOption.mood);
   const [template, setTemplate] = useState<DreamTemplate>(initialDemoOption.template);
-  const [directorLens, setDirectorLens] = useState<DirectorLensId>("auto");
+  const [directorLens, setDirectorLens] = useState<DirectorLensId>(initialDirectorLens.id);
   const [generationMode, setGenerationMode] = useState<GenerationMode>("speed");
   const [lastModel, setLastModel] = useState("");
   const [points, setPoints] = useState<GeocodePoint[]>([]);

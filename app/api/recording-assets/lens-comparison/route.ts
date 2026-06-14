@@ -146,6 +146,25 @@ function buildLensComparisonHtml(dashboard: LensComparisonDashboard) {
       }
       .checklist .ready { color: var(--green); }
       .checklist .needs-review { color: var(--coral); }
+      .lens-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
+      }
+      .lens-links a, .lens-links code {
+        border: 1px solid rgba(255,255,255,0.12);
+        border-radius: 999px;
+        padding: 6px 8px;
+        color: var(--ink);
+        background: rgba(255,255,255,0.07);
+        font-size: 0.72rem;
+        font-weight: 900;
+        text-decoration: none;
+      }
+      .lens-links a:first-child {
+        color: #0f130f;
+        background: var(--green);
+      }
       .shots {
         display: grid;
         grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -271,6 +290,11 @@ function renderLensCard(pack: LensComparisonPack) {
         <div class="checklist">
           ${pack.checklist.map((item) => `<span class="${escapeHtml(item.state)}">${escapeHtml(item.label)} · ${escapeHtml(item.detail)}</span>`).join("")}
           <span>${pack.sourcePackCount} pack${pack.sourcePackCount > 1 ? "s" : ""}</span>
+        </div>
+        <div class="lens-links">
+          <a href="/dream?demo=${escapeHtml(pack.demoRoadbook)}&amp;lens=${escapeHtml(pack.lensId)}">Open Dream</a>
+          <code>${escapeHtml(pack.summaryPath)}</code>
+          ${pack.notesPath ? `<code>${escapeHtml(pack.notesPath)}</code>` : ""}
         </div>
       </div>
       <div class="shots">${shots}</div>

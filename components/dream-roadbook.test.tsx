@@ -214,6 +214,18 @@ describe("DreamRoadbook a11y polish", () => {
     expect(screen.getByLabelText("预览资产管理面板").textContent).toContain("low-skyline lens");
   });
 
+  it("can start with a Director Lens selected from the route", () => {
+    render(<DreamRoadbook initialLens="wide-water" />);
+
+    const lensGroup = screen.getByLabelText("Director Lens");
+    const waterButton = within(lensGroup).getByRole("button", { name: /Water.*wide-water lens/ });
+    const autoButton = within(lensGroup).getByRole("button", { name: /Auto.*auto day lens/ });
+
+    expect(waterButton.getAttribute("aria-pressed")).toBe("true");
+    expect(autoButton.getAttribute("aria-pressed")).toBe("false");
+    expect(screen.getByText("skyline 0.90x / water 1.36x / route 0.82x")).toBeTruthy();
+  });
+
   it("updates the template rendering strategy when switching demo roadbooks", () => {
     render(<DreamRoadbook />);
 

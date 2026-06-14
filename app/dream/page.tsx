@@ -7,7 +7,9 @@ type DreamPageProps = {
 export default async function DreamPage({ searchParams }: DreamPageProps) {
   const params = searchParams ? await searchParams : {};
   const demoParam = params.demo;
+  const lensParam = params.lens;
   const initialDemo = Array.isArray(demoParam) ? demoParam[0] : demoParam;
+  const initialLens = Array.isArray(lensParam) ? lensParam[0] : lensParam;
 
-  return <DreamRoadbook initialDemo={initialDemo} />;
+  return <DreamRoadbook initialDemo={initialDemo} initialLens={initialLens} />;
 }
