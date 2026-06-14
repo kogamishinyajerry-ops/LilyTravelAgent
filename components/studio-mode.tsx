@@ -150,6 +150,8 @@ type RecordingStudioScriptMaterialSummary = {
   handoffPreview?: string;
   handoffCopyState?: string;
   completeLine?: string;
+  completeBundleLine?: string;
+  completeBundleCopyState?: string;
   screenshotPath?: string;
 };
 
@@ -596,6 +598,24 @@ function getProofStoryIndexCompleteState(indexCheck: RecordingIndexCheckSummary 
   return { label: "Index Complete 已验证", ready: true };
 }
 
+function getProofStoryCompleteBundleArchiveState(scriptMaterial: RecordingStudioScriptMaterialSummary | null | undefined, currentBundleLine: string) {
+  const archivedLine = scriptMaterial?.completeBundleLine || "";
+  const copyState = scriptMaterial?.completeBundleCopyState || "";
+  if (!archivedLine) {
+    return { label: "Bundle 待入库", ready: false };
+  }
+
+  if (archivedLine !== currentBundleLine) {
+    return { label: "Bundle 待同步", ready: false };
+  }
+
+  if (!copyState.includes("已复制")) {
+    return { label: "Bundle 待验证", ready: false };
+  }
+
+  return { label: "Bundle 已入库", ready: true };
+}
+
 function getProofStoryDeliverySync(studioLine: string, notesLine: string) {
   if (!notesLine) {
     return { label: "Delivery 待入库", ready: false };
@@ -783,6 +803,10 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
       proofStoryProductionReceiptPath,
     ],
   );
+  const proofStoryCompleteBundleArchiveState =
+    recordingAssets.status === "ready"
+      ? getProofStoryCompleteBundleArchiveState(recordingAssets.latestStudioProofPlayback?.scriptMaterial, proofStoryCompleteBundleLine)
+      : getProofStoryCompleteBundleArchiveState(null, proofStoryCompleteBundleLine);
 
   const loadRecordingAssets = useCallback(
     async ({ markRefreshing = true, isActive = () => true }: { markRefreshing?: boolean; isActive?: () => boolean } = {}) => {
@@ -1447,15 +1471,23 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
                             <p className="studio-proof-complete-bundle-preview" aria-label="Proof Story Complete Bundle 预览">
                               {proofStoryCompleteBundleLine}
                             </p>
-                            <button
-                              type="button"
-                              className="studio-proof-complete-bundle-copy"
-                              onClick={copyProofStoryCompleteBundleLine}
-                              aria-label="复制 Proof Story Complete Bundle"
-                            >
-                              <Copy size={10} />
-                              {proofCompleteBundleCopyState === "copied" ? "已复制" : proofCompleteBundleCopyState === "error" ? "手动" : "复制 Bundle"}
-                            </button>
+                            <div className="studio-proof-complete-bundle-actions">
+                              <span
+                                className={`studio-proof-complete-bundle-archive ${proofStoryCompleteBundleArchiveState.ready ? "ready" : "missing"}`}
+                                aria-label="Proof Story Complete Bundle QA 状态"
+                              >
+                                {proofStoryCompleteBundleArchiveState.label}
+                              </span>
+                              <button
+                                type="button"
+                                className="studio-proof-complete-bundle-copy"
+                                onClick={copyProofStoryCompleteBundleLine}
+                                aria-label="复制 Proof Story Complete Bundle"
+                              >
+                                <Copy size={10} />
+                                {proofCompleteBundleCopyState === "copied" ? "已复制" : proofCompleteBundleCopyState === "error" ? "手动" : "复制 Bundle"}
+                              </button>
+                            </div>
                           </div>
                           <button type="button" onClick={copyProofStoryCloseout}>
                             <Copy size={13} />

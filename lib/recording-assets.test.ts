@@ -15,6 +15,8 @@ const sampleProofStoryHandoffLine =
   `Proof Story Handoff · ${sampleProofStoryDeliveryLine} · QA notes: index-checks/new-index-check/clip-notes.md · Caption: Vibe Coding 不是只生成页面，而是把路书、QA 证据和后期素材交付打成闭环。`;
 const sampleProofStoryCompleteLine =
   "Proof Story Complete · Delivery 已入库 · Handoff 已复制 · QA 收据就绪";
+const sampleProofStoryCompleteBundleLine =
+  "Proof Story Complete Bundle · Delivery: Delivery 已入库 · Handoff: Handoff 已复制 · Studio Complete: Complete 已入库 · Index Complete: Index Complete 已验证 · QA receipt: index-checks/new-index-check/clip-notes.md";
 
 beforeEach(async () => {
   tempRoot = await mkdtemp(path.join(os.tmpdir(), "lily-recording-assets-"));
@@ -154,6 +156,8 @@ describe("recording assets", () => {
         handoffPreview: sampleProofStoryHandoffLine,
         handoffCopyState: "Handoff 已复制",
         completeLine: sampleProofStoryCompleteLine,
+        completeBundleLine: sampleProofStoryCompleteBundleLine,
+        completeBundleCopyState: "Complete Bundle 已复制",
         screenshotPath: path.join(tempRoot, "studio-checks", "new-studio", "studio-proof-story-script-material.png"),
       },
     });
@@ -192,6 +196,8 @@ describe("recording assets", () => {
         handoffPreview: sampleProofStoryHandoffLine,
         handoffCopyState: "Handoff 已复制",
         completeLine: sampleProofStoryCompleteLine,
+        completeBundleLine: sampleProofStoryCompleteBundleLine,
+        completeBundleCopyState: "Complete Bundle 已复制",
         screenshotPath: path.join(tempRoot, "studio-checks", "new-studio", "studio-proof-story-script-material.png"),
       },
     });
@@ -473,6 +479,8 @@ describe("recording assets", () => {
         handoffPreview: sampleProofStoryHandoffLine,
         handoffCopyState: "Handoff 已复制",
         completeLine: sampleProofStoryCompleteLine,
+        completeBundleLine: sampleProofStoryCompleteBundleLine,
+        completeBundleCopyState: "Complete Bundle 已复制",
         screenshotPath: path.join(tempRoot, "studio-checks", "new-studio", "studio-proof-story-script-material.png"),
       },
     });
@@ -498,6 +506,8 @@ describe("recording assets", () => {
         handoffPreview: sampleProofStoryHandoffLine,
         handoffCopyState: "Handoff 已复制",
         completeLine: sampleProofStoryCompleteLine,
+        completeBundleLine: sampleProofStoryCompleteBundleLine,
+        completeBundleCopyState: "Complete Bundle 已复制",
         screenshotPath: "studio-checks/new-studio/studio-proof-story-script-material.png",
       },
     });
@@ -531,6 +541,8 @@ describe("recording assets", () => {
     expect(summary.latestStudioProofPlayback?.scriptMaterial?.handoffPreview).toBe("");
     expect(summary.latestStudioProofPlayback?.scriptMaterial?.handoffCopyState).toBe("");
     expect(summary.latestStudioProofPlayback?.scriptMaterial?.completeLine).toBeUndefined();
+    expect(summary.latestStudioProofPlayback?.scriptMaterial?.completeBundleLine).toBeUndefined();
+    expect(summary.latestStudioProofPlayback?.scriptMaterial?.completeBundleCopyState).toBeUndefined();
   });
 
   it("keeps Studio proof script material null when older QA packs do not contain it", async () => {

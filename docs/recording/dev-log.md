@@ -2060,3 +2060,14 @@ Files shown: scripts/check-studio-visuals.mjs, recordings/studio-checks/2026-06-
 Command/result: node --check scripts/check-studio-visuals.mjs passed; npm run check:studio-visuals passed and the newest Studio QA notes contain `Proof Story Complete Bundle`.
 Voiceover note: "Bundle line 也进入 Studio QA notes。这样录屏素材、后期说明和自动验证又闭合了一层。"
 Usable for: Studio QA receipt clip, proof bundle handoff narration, continued goal run round 834
+
+## Phase FS: v0.8.171 — Complete Bundle Archive Chip In Studio
+
+Date: 2026-06-14
+Clip title: Phase FS: v0.8.171 — Complete Bundle Archive Chip In Studio
+What changed: `/studio` now reads the latest Studio QA `scriptMaterial.completeBundleLine` and `completeBundleCopyState`, then shows a compact `Bundle 已入库` chip beside the `复制 Bundle` action.
+Why this matters: The post-production handoff line now completes the same loop as Delivery and Complete: generated in Studio, captured into QA notes, then surfaced back in Studio as archived proof.
+Files shown: lib/recording-assets.ts, components/studio-mode.tsx, app/globals.css, docs/recording/goal-841-850-recap.md
+Command/result: npm test -- lib/recording-assets.test.ts passed with 15 tests; npm test -- components/studio-mode.test.tsx passed with 30 tests; browser check against `http://localhost:3000/studio` showed `Bundle 已入库`, 297px row width inside a 313px card, and 0 console errors; npm run lint && npm test && npm run build passed with 44 test files and 943 tests.
+Voiceover note: "Bundle line 不是只停留在复制按钮。Studio QA 已经采集过这条后期交付线，现在又回到产品台面上，显示 Bundle 已入库。"
+Usable for: proof bundle archive walkthrough, final post-production handoff clip, continued goal run round 844
