@@ -46,6 +46,7 @@ export type LensComparisonDashboard = {
   createdAt: string;
   totalDreamPacks: number;
   comparedLensCount: number;
+  sceneCropCount: number;
   missingLensIds: DirectorLensId[];
   packs: LensComparisonPack[];
 };
@@ -121,6 +122,7 @@ export function buildLensComparisonDashboard(recordingsRoot: string, summaries: 
     createdAt: new Date().toISOString(),
     totalDreamPacks: summaries.length,
     comparedLensCount: packs.length,
+    sceneCropCount: packs.reduce((total, pack) => total + pack.days.filter((day) => day.hasSceneCrop).length, 0),
     missingLensIds: directorLenses.map((lens) => lens.id).filter((lensId) => !newestByLens.has(lensId)),
     packs,
   };

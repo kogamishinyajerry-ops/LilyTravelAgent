@@ -62,6 +62,7 @@ describe("lens comparison dashboard", () => {
 
     expect(dashboard.totalDreamPacks).toBe(5);
     expect(dashboard.comparedLensCount).toBe(4);
+    expect(dashboard.sceneCropCount).toBe(16);
     expect(dashboard.missingLensIds).toEqual(["close-detail"]);
     expect(dashboard.packs.map((pack) => pack.lensId)).toEqual(["auto", "wide-water", "low-skyline", "isometric-atlas"]);
     expect(dashboard.packs[0].id).toBe("new-auto");
@@ -101,6 +102,7 @@ describe("lens comparison dashboard", () => {
     const dashboard = await readLensComparisonDashboard(tempRoot);
     const detail = dashboard.packs[0];
 
+    expect(dashboard.sceneCropCount).toBe(0);
     expect(detail.lensId).toBe("close-detail");
     expect(detail.tuningCue).toBe("skyline 1.18x / water 0.72x / route 0.78x");
     expect(detail.checklist).toEqual([

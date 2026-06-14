@@ -242,6 +242,7 @@ function buildLensComparisonHtml(dashboard: LensComparisonDashboard) {
         <div class="stats">
           <span>${dashboard.totalDreamPacks} Dream packs</span>
           <span>${dashboard.comparedLensCount}/${directorLenses.length} lenses</span>
+          <span>${dashboard.sceneCropCount} scene crops</span>
         </div>
       </header>
       ${missing}
