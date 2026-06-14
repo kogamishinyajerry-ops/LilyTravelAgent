@@ -2027,3 +2027,14 @@ Files shown: app/api/recording-assets/index/route.ts, scripts/check-recording-in
 Command/result: node --check scripts/check-recording-index.mjs passed; npm run check:recording-index passed and the newest index-check notes contain `Proof Story Complete`.
 Voiceover note: "这里完成的是 archive alignment。静态 index、API index、自动 QA notes 三个地方都出现同一条 Complete proof。"
 Usable for: index QA walkthrough, proof alignment clip, continued goal run round 804
+
+## Phase FS: v0.8.168 — Index Complete Chip In Studio
+
+Date: 2026-06-14
+Clip title: Phase FS: v0.8.168 — Index Complete Chip In Studio
+What changed: `/studio` now reads the latest Recording Index QA `Proof Story Complete` line and shows `Index Complete 已验证` beside the Studio QA Complete archive state.
+Why this matters: The workbench now closes the loop from Studio to Index QA and back to Studio, making the proof pipeline visible in one recording panel.
+Files shown: lib/recording-assets.ts, components/studio-mode.tsx, app/globals.css, docs/recording/goal-811-820-recap.md
+Command/result: npm test -- lib/recording-assets.test.ts passed with 15 tests; npm test -- components/studio-mode.test.tsx passed with 27 tests; browser check against `http://localhost:3000/studio` showed `Index Complete 已验证`, 297px row width, no overlap, and 0 console errors.
+Voiceover note: "这一步是回流闭环：Index QA 验证过的 Complete line，又回到 Studio 台面上，录屏时可以一眼讲清楚。"
+Usable for: proof-loop closeout clip, Studio archive verification walkthrough, continued goal run round 814

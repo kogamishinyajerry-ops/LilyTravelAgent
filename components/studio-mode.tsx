@@ -91,6 +91,7 @@ type RecordingIndexCheckSummary = {
   proofChecks?: RecordingIndexProofCheckSummary[];
   scriptMaterialCheck?: RecordingIndexScriptMaterialCheckSummary | null;
   proofStoryDeliveryLine?: string;
+  proofStoryCompleteLine?: string;
   proofText: string;
   apiIndexUrl: string;
   screenshotPath: string;
@@ -566,6 +567,19 @@ function getProofStoryCompleteArchiveState(scriptMaterial: RecordingStudioScript
   return { label: "Complete 已入库", ready: true };
 }
 
+function getProofStoryIndexCompleteState(indexCheck: RecordingIndexCheckSummary | null | undefined, currentCompleteLine: string) {
+  const indexedLine = indexCheck?.proofStoryCompleteLine || "";
+  if (!indexedLine) {
+    return { label: "Index Complete 待验证", ready: false };
+  }
+
+  if (indexedLine !== currentCompleteLine) {
+    return { label: "Index Complete 待同步", ready: false };
+  }
+
+  return { label: "Index Complete 已验证", ready: true };
+}
+
 function getProofStoryDeliverySync(studioLine: string, notesLine: string) {
   if (!notesLine) {
     return { label: "Delivery 待入库", ready: false };
@@ -731,6 +745,10 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
     recordingAssets.status === "ready"
       ? getProofStoryCompleteArchiveState(recordingAssets.latestStudioProofPlayback?.scriptMaterial, proofStoryCompleteState.label)
       : getProofStoryCompleteArchiveState(null, proofStoryCompleteState.label);
+  const proofStoryIndexCompleteState =
+    recordingAssets.status === "ready"
+      ? getProofStoryIndexCompleteState(recordingAssets.latestRecordingIndexCheck, proofStoryCompleteState.label)
+      : getProofStoryIndexCompleteState(null, proofStoryCompleteState.label);
 
   const loadRecordingAssets = useCallback(
     async ({ markRefreshing = true, isActive = () => true }: { markRefreshing?: boolean; isActive?: () => boolean } = {}) => {
@@ -1367,12 +1385,20 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
                               <CheckCircle2 size={11} />
                               <span>{proofStoryCompleteState.label}</span>
                             </div>
-                            <span
-                              className={`studio-proof-complete-archive ${proofStoryCompleteArchiveState.ready ? "ready" : "missing"}`}
-                              aria-label="Proof Story Complete QA notes 状态"
-                            >
-                              {proofStoryCompleteArchiveState.label}
-                            </span>
+                            <div className="studio-proof-complete-archive-group">
+                              <span
+                                className={`studio-proof-complete-archive ${proofStoryCompleteArchiveState.ready ? "ready" : "missing"}`}
+                                aria-label="Proof Story Complete QA notes 状态"
+                              >
+                                {proofStoryCompleteArchiveState.label}
+                              </span>
+                              <span
+                                className={`studio-proof-complete-archive ${proofStoryIndexCompleteState.ready ? "ready" : "missing"}`}
+                                aria-label="Proof Story Index Complete 状态"
+                              >
+                                {proofStoryIndexCompleteState.label}
+                              </span>
+                            </div>
                           </div>
                           <button type="button" onClick={copyProofStoryCloseout}>
                             <Copy size={13} />

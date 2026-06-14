@@ -72,6 +72,7 @@ export type RecordingIndexCheckSummary = {
   proofChecks: RecordingIndexProofCheckSummary[];
   scriptMaterialCheck: RecordingIndexScriptMaterialCheckSummary | null;
   proofStoryDeliveryLine: string;
+  proofStoryCompleteLine: string;
   proofText: string;
   apiIndexUrl: string;
   screenshotPath: string;
@@ -312,6 +313,7 @@ async function readLatestRecordingIndexCheck(recordingsRoot: string): Promise<Re
     const notesFilePath = path.join(packDir, "clip-notes.md");
     const notesPath = existsSync(notesFilePath) ? toRecordingLink(path.join("index-checks", entry, "clip-notes.md")) : "";
     const proofStoryDeliveryLine = notesPath ? await readProofStoryDeliveryLine(notesFilePath) : "";
+    const proofStoryCompleteLine = await readProofStoryCompleteLine(notesPath ? notesFilePath : "", summary);
 
     runs.push({
       id: entry,
@@ -322,6 +324,7 @@ async function readLatestRecordingIndexCheck(recordingsRoot: string): Promise<Re
       proofChecks,
       scriptMaterialCheck,
       proofStoryDeliveryLine,
+      proofStoryCompleteLine,
       proofText: readString(summary.proofText),
       apiIndexUrl: readString(summary.apiIndexUrl),
       screenshotPath: screenshotFile ? toRecordingLink(path.join("index-checks", entry, screenshotFile)) : "",
@@ -335,12 +338,41 @@ async function readLatestRecordingIndexCheck(recordingsRoot: string): Promise<Re
 
 async function readProofStoryDeliveryLine(notesPath: string) {
   const notes = await readFile(notesPath, "utf8").catch(() => "");
-  const line = notes
-    .split(/\r?\n/)
-    .map((item) => item.trim().replace(/^-\s*/, ""))
-    .find((item) => item.startsWith("Proof Story Delivery ·"));
+  const line = readProofStoryLine(notes, "Proof Story Delivery ·");
 
   return line || "";
+}
+
+async function readProofStoryCompleteLine(notesPath: string, summary: Record<string, unknown>) {
+  const notes = notesPath ? await readFile(notesPath, "utf8").catch(() => "") : "";
+  const notesLine = readProofStoryLine(notes, "Proof Story Complete ·");
+  if (notesLine) {
+    return notesLine;
+  }
+
+  const scriptMaterialCheck = typeof summary.scriptMaterialCheck === "object" && summary.scriptMaterialCheck
+    ? summary.scriptMaterialCheck as Record<string, unknown>
+    : null;
+  const proofTextLine = readProofStoryLine(readString(scriptMaterialCheck?.proofText), "Proof Story Complete ·");
+  if (proofTextLine) {
+    return proofTextLine;
+  }
+
+  const localStudioProof = typeof summary.localStudioProof === "object" && summary.localStudioProof
+    ? summary.localStudioProof as Record<string, unknown>
+    : null;
+  const scriptMaterial = typeof localStudioProof?.scriptMaterial === "object" && localStudioProof.scriptMaterial
+    ? localStudioProof.scriptMaterial as Record<string, unknown>
+    : null;
+
+  return readString(scriptMaterial?.completeLine);
+}
+
+function readProofStoryLine(text: string, prefix: string) {
+  return text
+    .split(/\r?\n/)
+    .map((item) => item.trim().replace(/^-\s*/, ""))
+    .find((item) => item.startsWith(prefix)) || "";
 }
 
 function readRecordingIndexScriptMaterialCheck(summary: Record<string, unknown>, entry: string): RecordingIndexScriptMaterialCheckSummary | null {

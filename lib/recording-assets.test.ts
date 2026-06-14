@@ -320,6 +320,7 @@ describe("recording assets", () => {
       scriptMaterialCheck: {
         proofId: "script-material",
         label: "Proof Story Script Material",
+        proofText: `Proof Story Production Assets\n${sampleProofStoryCompleteLine}`,
         links: [
           { id: "screenshot", status: 200 },
           { id: "summary", status: 200 },
@@ -329,7 +330,10 @@ describe("recording assets", () => {
       },
       screenshotPath: path.join(tempRoot, "index-checks", "new-index-check", "recording-index-dream-proof.png"),
     });
-    await writeFile(path.join(tempRoot, "index-checks", "new-index-check", "clip-notes.md"), `# Notes\n\n- ${sampleProofStoryDeliveryLine}\n`);
+    await writeFile(
+      path.join(tempRoot, "index-checks", "new-index-check", "clip-notes.md"),
+      `# Notes\n\n- ${sampleProofStoryCompleteLine}\n- ${sampleProofStoryDeliveryLine}\n`,
+    );
 
     const summary = await readRecordingAssetsSummary(tempRoot);
 
@@ -364,6 +368,7 @@ describe("recording assets", () => {
         summaryPath: "index-checks/new-index-check/summary.json",
       },
       proofStoryDeliveryLine: sampleProofStoryDeliveryLine,
+      proofStoryCompleteLine: sampleProofStoryCompleteLine,
       proofText: "Dream Proof · Proof · 3/5 ready\nplayback screenshot\nsummary\nnotes",
       apiIndexUrl: "http://localhost:3000/api/recording-assets/index",
       screenshotPath: "index-checks/new-index-check/recording-index-dream-proof.png",
@@ -389,6 +394,7 @@ describe("recording assets", () => {
 
     expect(summary.latestRecordingIndexCheck?.scriptMaterialCheck).toBeNull();
     expect(summary.latestRecordingIndexCheck?.proofStoryDeliveryLine).toBe("");
+    expect(summary.latestRecordingIndexCheck?.proofStoryCompleteLine).toBe("");
   });
 
   it("reports the latest recording suite run manifest when available", async () => {

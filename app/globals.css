@@ -2191,9 +2191,7 @@ textarea {
 
 .studio-proof-complete-row {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 5px;
+  gap: 4px;
   min-width: 0;
 }
 
@@ -2230,20 +2228,26 @@ textarea {
   background: rgba(191, 128, 85, 0.1);
 }
 
+.studio-proof-complete-archive-group {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 5px;
+  min-width: 0;
+}
+
 .studio-proof-complete-archive {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  justify-self: end;
-  min-width: max-content;
-  height: 22px;
+  min-width: 0;
+  min-height: 22px;
   border: 1px solid rgba(38, 59, 49, 0.12);
   border-radius: 7px;
   padding: 2px 6px;
   font-size: 0.58rem;
   font-weight: 950;
   line-height: 1.1;
-  white-space: nowrap;
+  text-align: center;
 }
 
 .studio-proof-complete-archive.ready {
