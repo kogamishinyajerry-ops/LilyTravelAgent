@@ -1477,3 +1477,14 @@ Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, app/gl
 Command/result: npm test -- components/studio-mode.test.tsx (9 Studio tests passed); Chrome browser check confirmed `/studio` shows all four proof rows and links; npm run lint && npm test && npm run build passed with 44 files, 911 tests, and a successful production build.
 Voiceover note: "我把这些验证结果做成一个 Proof Stack。录屏时不用解释一堆散点，直接从 Bridge 到 Candidate，到 Lens Compare，再到 Asset Index。"
 Usable for: Studio proof-stack clip, workflow evidence narration, continued goal run round 304
+
+## Phase DY: v0.8.118 — Studio Proof Cue Playback
+
+Date: 2026-06-14
+Clip title: Phase DY: v0.8.118 — Studio Proof Cue Playback
+What changed: `/studio` script mode now has a `播放证据线` control that highlights Bridge QA, Candidate QA, Lens Compare, and Asset Index in order.
+Why this matters: The evidence stack now has a recording rhythm, so the creator can narrate the Agent workflow without manually pointing around the screen.
+Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, app/globals.css
+Command/result: npm test -- components/studio-mode.test.tsx (10 Studio tests passed); Chrome browser check confirmed the sequence reaches `Asset Index`; npm run lint && npm test && npm run build passed with 44 files, 912 tests, and a successful production build.
+Voiceover note: "现在我点播放证据线，它会从 Bridge QA 走到 Candidate，再到 Lens Compare 和素材索引。这个就是录屏时的讲解节奏。"
+Usable for: Studio proof playback clip, evidence narration sequence, continued goal run round 314
