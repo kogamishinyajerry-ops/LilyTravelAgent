@@ -1620,3 +1620,14 @@ Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, docs/r
 Command/result: npm test -- components/studio-mode.test.tsx passed; Chrome browser check confirmed playback final active step is `Suite Run`; npm run lint && npm test && npm run build passed with 44 files, 917 tests, and a successful production build.
 Voiceover note: "现在证据线最后会停在 Suite Run。也就是从单项 QA 讲到 full suite 总收据，最后一步把整条链路收住。"
 Usable for: proof playback closeout clip, full-suite receipt narration, continued goal run round 434
+
+## Phase EL: v0.8.131 — Studio QA Captures Suite Run Proof
+
+Date: 2026-06-14
+Clip title: Phase EL: v0.8.131 — Studio QA Captures Suite Run Proof
+What changed: `npm run check:studio-visuals` now opens script mode, plays the proof cue sequence through `Suite Run`, saves `studio-suite-run-proof.png`, and writes proof playback data into summary/html/clip-notes.
+Why this matters: The Studio proof playback is now captured as QA evidence, not only verified manually in the browser.
+Files shown: scripts/check-studio-visuals.mjs, recordings/studio-checks/2026-06-14T08-22-39-120Z/summary.json, recordings/studio-checks/2026-06-14T08-22-39-120Z/index.html, recordings/studio-checks/2026-06-14T08-22-39-120Z/clip-notes.md
+Command/result: node --check scripts/check-studio-visuals.mjs passed; npm run check:studio-visuals passed; summary/html/notes spot checks confirmed `Suite Run`; npm run lint && npm test && npm run build passed with 44 files, 917 tests, and a successful production build.
+Voiceover note: "Studio QA 现在会自己打开脚本模式，播放证据线，最后截下 Suite Run。这就把录屏台自己的讲解闭环也沉淀成了素材。"
+Usable for: Studio QA proof clip, self-verifying creator workbench narration, continued goal run round 444
