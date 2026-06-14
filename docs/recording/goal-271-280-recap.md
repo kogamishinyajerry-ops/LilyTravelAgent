@@ -10,11 +10,11 @@ This run added a local QA check for the candidate queue handoff. The script clic
 
 | Goal | Commit | Summary |
 | --- | --- | --- |
-| 271-275 | pending | Added `check:lens-candidate-handoff`, Playwright click-through validation, and recording docs. |
-| 276 | pending | Local QA should confirm all three candidate entry points land on `/dream` with matching context. |
-| 277 | pending | Final lint/test/build verification. |
-| 278 | pending | Push to GitHub after closeout commit. |
-| 279-280 | pending | Next-goal handoff. |
+| 271-275 | `b8ceea7` | Added `check:lens-candidate-handoff`, Playwright click-through validation, and recording docs. |
+| 276 | `b8ceea7` | Local QA confirmed all three candidate entry points land on `/dream` with matching context. |
+| 277 | closeout | Final lint/test/build verification: 44 files, 909 tests, build passed. |
+| 278 | closeout | Push to GitHub after final closeout commit. |
+| 279-280 | closeout | Next-goal handoff. |
 
 ## What Changed In The Creator Loop
 
@@ -23,11 +23,11 @@ This run added a local QA check for the candidate queue handoff. The script clic
 - The script verifies active `/dream` lens and active day, not just URL text.
 - Screenshots, `summary.json`, and `clip-notes.md` are written under `recordings/candidate-handoff-checks/`.
 
-## Evidence To Capture
+## Evidence
 
-- `npm run check:lens-candidate-handoff`
-- `npm run lint`
-- `npm run lint && npm test && npm run build`
+- `npm run check:lens-candidate-handoff` (passed; wrote `recordings/candidate-handoff-checks/2026-06-14T07-13-44-317Z/summary.json`)
+- `npm run lint` (passed)
+- `npm run lint && npm test && npm run build` (44 files, 909 tests, build passed)
 
 ## Recording Angle
 

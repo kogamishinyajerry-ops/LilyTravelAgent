@@ -1419,6 +1419,17 @@ Clip title: Phase DS: v0.8.112 — Candidate Click-Through QA
 What changed: Added `npm run check:lens-candidate-handoff`, a local Playwright QA script that clicks the candidate primary action, first candidate card, and one queue chip, then verifies `/dream` rank/day/lens context.
 Why this matters: The candidate queue is now mechanically checked as a real workflow, not just a visual strip.
 Files shown: scripts/check-lens-candidate-handoff.mjs, package.json, docs/recording/lens-visual-capture-workflow.md
-Command/result: npm run check:lens-candidate-handoff should write screenshots, summary.json, and clip-notes.md under recordings/candidate-handoff-checks.
+Command/result: npm run check:lens-candidate-handoff passed and wrote screenshots, summary.json, and clip-notes.md under recordings/candidate-handoff-checks/2026-06-14T07-13-44-317Z.
 Voiceover note: "这里我把录屏链路也做成 QA：脚本真的去点三个入口，再确认 /dream 的候选 cue、镜头和 D 几都对。"
 Usable for: click-through QA proof clip, dashboard-to-Dream workflow evidence, continued goal run round 274
+
+## Phase DT: v0.8.113 — Goals 271-280 Final Quality Gate
+
+Date: 2026-06-14
+Clip title: Phase DT: v0.8.113 — Goals 271-280 Final Quality Gate
+What changed: Closed the candidate click-through QA run with the full local lint, test, and production-build gate after the new Playwright workflow check passed.
+Why this matters: The candidate queue now has a repeatable workflow test proving the dashboard-to-`/dream` recording context survives real clicks.
+Files shown: docs/recording/goal-271-280-recap.md, scripts/check-lens-candidate-handoff.mjs, terminal verification output
+Command/result: npm run lint && npm test && npm run build (44 files, 909 tests, build passed)
+Voiceover note: "候选点击 QA 做完后，我继续完整质量门。现在这个路书 Agent 的录屏链路，从视觉候选到 /dream 场景，是脚本验证过的。"
+Usable for: goal closeout clip, workflow QA proof, studio asset status handoff, continued goal run round 277
