@@ -93,6 +93,7 @@ type RecordingIndexCheckSummary = {
   proofStoryDeliveryLine?: string;
   proofStoryCompleteLine?: string;
   proofStoryCompleteBundleLine?: string;
+  proofStoryBundleChainLine?: string;
   proofText: string;
   apiIndexUrl: string;
   screenshotPath: string;
@@ -671,6 +672,19 @@ function getProofStoryBundleChainArchiveState(scriptMaterial: RecordingStudioScr
   return { label: "Chain 已入库", ready: true };
 }
 
+function getProofStoryIndexBundleChainState(indexCheck: RecordingIndexCheckSummary | null | undefined, currentChainLine: string) {
+  const indexedLine = indexCheck?.proofStoryBundleChainLine || "";
+  if (!indexedLine) {
+    return { label: "Index Chain 待验证", ready: false };
+  }
+
+  if (indexedLine !== currentChainLine) {
+    return { label: "Index Chain 待同步", ready: false };
+  }
+
+  return { label: "Index Chain 已验证", ready: true };
+}
+
 function getProofStoryDeliverySync(studioLine: string, notesLine: string) {
   if (!notesLine) {
     return { label: "Delivery 待入库", ready: false };
@@ -878,6 +892,10 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
     recordingAssets.status === "ready"
       ? getProofStoryBundleChainArchiveState(recordingAssets.latestStudioProofPlayback?.scriptMaterial, proofStoryBundleChainState.label)
       : getProofStoryBundleChainArchiveState(null, proofStoryBundleChainState.label);
+  const proofStoryIndexBundleChainState =
+    recordingAssets.status === "ready"
+      ? getProofStoryIndexBundleChainState(recordingAssets.latestRecordingIndexCheck, proofStoryBundleChainState.label)
+      : getProofStoryIndexBundleChainState(null, proofStoryBundleChainState.label);
 
   const loadRecordingAssets = useCallback(
     async ({ markRefreshing = true, isActive = () => true }: { markRefreshing?: boolean; isActive?: () => boolean } = {}) => {
@@ -1587,6 +1605,12 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
                               aria-label="Proof Story Bundle Chain QA 状态"
                             >
                               {proofStoryBundleChainArchiveState.label}
+                            </span>
+                            <span
+                              className={`studio-proof-bundle-chain-archive ${proofStoryIndexBundleChainState.ready ? "ready" : "missing"}`}
+                              aria-label="Proof Story Index Chain 状态"
+                            >
+                              {proofStoryIndexBundleChainState.label}
                             </span>
                             <button
                               type="button"

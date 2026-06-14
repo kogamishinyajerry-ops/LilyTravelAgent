@@ -46,6 +46,8 @@ function recordingAssetsResponse(
     indexCompleteLine?: string;
     omitIndexBundleQa?: boolean;
     indexBundleLine?: string;
+    omitIndexChainQa?: boolean;
+    indexChainLine?: string;
     omitCompleteBundleQa?: boolean;
     completeBundleLine?: string;
     completeBundleCopyState?: string;
@@ -139,6 +141,7 @@ function recordingAssetsResponse(
           proofStoryDeliveryLine: options.proofStoryDeliveryLine ?? defaultProofStoryDeliveryLine,
           proofStoryCompleteLine: defaultProofStoryCompleteLine,
           proofStoryCompleteBundleLine: options.omitIndexBundleQa ? "" : options.indexBundleLine || readyProofStoryCompleteBundleLine,
+          proofStoryBundleChainLine: options.omitIndexChainQa ? "" : options.indexChainLine || readyProofStoryBundleChainLine,
           summaryPath: "index-checks/index-check-latest/summary.json",
           notesPath: options.omitIndexNotes ? undefined : "index-checks/index-check-latest/clip-notes.md",
         }
@@ -315,6 +318,7 @@ describe("StudioMode demo roadbooks", () => {
     expect(screen.getByLabelText("Proof Story Index Bundle 状态").textContent).toBe("Index Bundle 已验证");
     expect(screen.getByLabelText("Proof Story Bundle Chain 状态").textContent).toBe(readyProofStoryBundleChainLine);
     expect(screen.getByLabelText("Proof Story Bundle Chain QA 状态").textContent).toBe("Chain 已入库");
+    expect(screen.getByLabelText("Proof Story Index Chain 状态").textContent).toBe("Index Chain 已验证");
     expect(within(scriptCard).getByRole("link", { name: "Production Assets QA 收据" }).getAttribute("href")).toBe(
       "/api/recording-assets/file?path=index-checks%2Findex-check-latest%2Fclip-notes.md",
     );
@@ -645,6 +649,27 @@ describe("StudioMode demo roadbooks", () => {
 
     expect(await screen.findByLabelText("Proof Story Bundle Chain 状态")).toBeTruthy();
     expect(screen.getByLabelText("Proof Story Bundle Chain QA 状态").textContent).toBe("Chain 待入库");
+    expect(screen.getByLabelText("Proof Story Index Chain 状态").textContent).toBe("Index Chain 已验证");
+  });
+
+  it("shows a pending Index Chain state for older index QA packs", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => ({
+        ok: true,
+        status: 200,
+        json: async () =>
+          recordingAssetsResponse(15, "Studio 16:9 demo pack", true, {
+            omitIndexChainQa: true,
+          }),
+      })) as unknown as typeof fetch,
+    );
+
+    render(<StudioMode />);
+
+    expect(await screen.findByLabelText("Proof Story Bundle Chain 状态")).toBeTruthy();
+    expect(screen.getByLabelText("Proof Story Bundle Chain QA 状态").textContent).toBe("Chain 已入库");
+    expect(screen.getByLabelText("Proof Story Index Chain 状态").textContent).toBe("Index Chain 待验证");
   });
 
   it("keeps legacy Dream-only wording for older 3-link recording index checks", async () => {

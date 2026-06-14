@@ -74,6 +74,7 @@ export type RecordingIndexCheckSummary = {
   proofStoryDeliveryLine: string;
   proofStoryCompleteLine: string;
   proofStoryCompleteBundleLine: string;
+  proofStoryBundleChainLine: string;
   proofText: string;
   apiIndexUrl: string;
   screenshotPath: string;
@@ -320,6 +321,7 @@ async function readLatestRecordingIndexCheck(recordingsRoot: string): Promise<Re
     const proofStoryDeliveryLine = notesPath ? await readProofStoryDeliveryLine(notesFilePath) : "";
     const proofStoryCompleteLine = await readProofStoryCompleteLine(notesPath ? notesFilePath : "", summary);
     const proofStoryCompleteBundleLine = await readProofStoryCompleteBundleLine(notesPath ? notesFilePath : "", summary);
+    const proofStoryBundleChainLine = await readProofStoryBundleChainLine(notesPath ? notesFilePath : "", summary);
 
     runs.push({
       id: entry,
@@ -332,6 +334,7 @@ async function readLatestRecordingIndexCheck(recordingsRoot: string): Promise<Re
       proofStoryDeliveryLine,
       proofStoryCompleteLine,
       proofStoryCompleteBundleLine,
+      proofStoryBundleChainLine,
       proofText: readString(summary.proofText),
       apiIndexUrl: readString(summary.apiIndexUrl),
       screenshotPath: screenshotFile ? toRecordingLink(path.join("index-checks", entry, screenshotFile)) : "",
@@ -398,6 +401,31 @@ async function readProofStoryCompleteBundleLine(notesPath: string, summary: Reco
     : null;
 
   return readString(scriptMaterial?.completeBundleLine);
+}
+
+async function readProofStoryBundleChainLine(notesPath: string, summary: Record<string, unknown>) {
+  const notes = notesPath ? await readFile(notesPath, "utf8").catch(() => "") : "";
+  const notesLine = readProofStoryLine(notes, "Proof Story Bundle Chain ·");
+  if (notesLine) {
+    return notesLine;
+  }
+
+  const scriptMaterialCheck = typeof summary.scriptMaterialCheck === "object" && summary.scriptMaterialCheck
+    ? summary.scriptMaterialCheck as Record<string, unknown>
+    : null;
+  const proofTextLine = readProofStoryLine(readString(scriptMaterialCheck?.proofText), "Proof Story Bundle Chain ·");
+  if (proofTextLine) {
+    return proofTextLine;
+  }
+
+  const localStudioProof = typeof summary.localStudioProof === "object" && summary.localStudioProof
+    ? summary.localStudioProof as Record<string, unknown>
+    : null;
+  const scriptMaterial = typeof localStudioProof?.scriptMaterial === "object" && localStudioProof.scriptMaterial
+    ? localStudioProof.scriptMaterial as Record<string, unknown>
+    : null;
+
+  return readString(scriptMaterial?.bundleChainLine);
 }
 
 function readProofStoryLine(text: string, prefix: string) {

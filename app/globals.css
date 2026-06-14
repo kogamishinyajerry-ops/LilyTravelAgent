@@ -2334,7 +2334,7 @@ textarea {
 
 .studio-proof-bundle-chain-row {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto auto;
+  grid-template-columns: minmax(0, 1fr) auto auto auto;
   align-items: center;
   gap: 5px;
   min-width: 0;
@@ -2368,7 +2368,7 @@ textarea {
 .studio-proof-bundle-chain-archive {
   overflow: hidden;
   width: max-content;
-  max-width: 82px;
+  max-width: 104px;
   border: 1px solid rgba(38, 59, 49, 0.12);
   border-radius: 999px;
   padding: 4px 7px;

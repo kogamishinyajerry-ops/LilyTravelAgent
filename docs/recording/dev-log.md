@@ -2137,3 +2137,14 @@ Files shown: scripts/index-recording-assets.mjs, app/api/recording-assets/index/
 Command/result: node --check scripts/index-recording-assets.mjs passed; node --check scripts/check-recording-index.mjs passed; npm run index:recording-assets indexed 80 packs; npm run check:recording-index passed and generated `recordings/index-checks/2026-06-14T11-42-02-005Z/clip-notes.md` with `Proof Story Bundle Chain`.
 Voiceover note: "Chain 句子进入 Recording Index QA，说明视频 notes 不只是页面文案，而是被素材库和自动验收一起追踪。"
 Usable for: Recording Index chain archive walkthrough, final proof-chain QA clip, continued goal run round 904
+
+## Phase FS: v0.8.178 — Index Chain Chip In Studio
+
+Date: 2026-06-14
+Clip title: Phase FS: v0.8.178 — Index Chain Chip In Studio
+What changed: `/studio` now reads the latest Recording Index QA `Proof Story Bundle Chain` line and shows `Index Chain 已验证` beside the Studio `Chain 已入库` chip.
+Why this matters: The final video-notes sentence now completes the same return loop as Bundle: Studio QA captures it, Recording Index QA verifies it, and Studio shows both archive states in one compact line.
+Files shown: lib/recording-assets.ts, components/studio-mode.tsx, app/globals.css, docs/recording/goal-911-920-recap.md
+Command/result: npm test -- lib/recording-assets.test.ts components/studio-mode.test.tsx passed with 49 tests; browser check against `http://localhost:3000/studio` showed `Chain 已入库`, `Index Chain 已验证`, 297px row width inside a 313px card, and 0 console errors.
+Voiceover note: "现在 Chain 也完成回流闭环：Studio 捕获，Index QA 验证，然后 Studio 显示 Index Chain 已验证。录屏时可以一眼讲清最终视频 notes 也被验收。"
+Usable for: Studio final proof-chain closeout clip, index-to-studio Chain verification walkthrough, continued goal run round 914
