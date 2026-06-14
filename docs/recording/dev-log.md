@@ -1015,3 +1015,14 @@ Files shown: lib/director-lens.ts, scripts/check-dream-visuals.mjs, /tmp remaini
 Command/result: DREAM_URL=http://127.0.0.1:3000/dream DREAM_LENSES=wide-water,isometric-atlas,close-detail DREAM_LENS_VISUAL_OUT_ROOT=<tmp> npm run check:dream-lenses && rg <three tuning cues> <tmp> (passed)
 Voiceover note: "我把剩下三个镜头也跑了一遍真实浏览器 QA。现在 Water、Atlas、Detail 都不是抽象标签，而是有各自的 Scene Inspector 数值和素材包。"
 Usable for: all-lens comparison clip, visual direction system proof, Vibe Coding batch QA narrative, continued goal run round 124
+
+## Phase CI: v0.8.76 — All-Lens Tuning Verification Checkpoint
+
+Date: 2026-06-14
+Clip title: Phase CI: v0.8.76 — All-Lens Tuning Verification Checkpoint
+What changed: Ran the full local quality gate after tuning Water, Skyline, Atlas, and Detail scene parameters, adding all-lens tuning assertions, and updating the recording docs.
+Why this matters: The Director Lens system now has five distinct measured tuning cues, live QA evidence for the non-auto modes, and the production build still passes.
+Files shown: lib/director-lens.ts, scripts/check-dream-visuals.mjs, docs/recording/director-lens-shot-matrix.md, docs/recording/dev-log.md
+Command/result: npm run lint && npm test && npm run build (43 files, 899 tests, build passed)
+Voiceover note: "五个镜头现在都有自己的 tuning cue，并且所有测试和 build 都过了。下一步就可以从参数证据走向截图对比和视觉细调。"
+Usable for: all-lens tuning checkpoint, QA evidence clip, Vibe Coding visual system narrative, continued goal run round 127
