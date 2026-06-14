@@ -1972,3 +1972,14 @@ Files shown: lib/recording-assets.ts, components/studio-mode.tsx, app/globals.cs
 Command/result: npm test -- lib/recording-assets.test.ts components/studio-mode.test.tsx passed with 39 tests; browser check against `http://localhost:3000/studio` confirmed `Handoff 已复制` is visible in the Proof Story card with empty console errors.
 Voiceover note: "现在 QA notes 记录 Handoff 已复制以后，Studio 会读回来显示同一个状态。最终交付动作也形成了产品闭环。"
 Usable for: handoff proof-loop narration, final content workflow closeout, continued goal run round 754
+
+## Phase FR: v0.8.163 — Proof Story Complete Strip
+
+Date: 2026-06-14
+Clip title: Phase FR: v0.8.163 — Proof Story Complete Strip
+What changed: `/studio` now shows a compact `Proof Story Complete` strip in the Proof Story `脚本素材` card. It combines Delivery sync, Handoff copy state, and QA receipt readiness into one final recording closeout line.
+Why this matters: The creator gets a single last signal for the whole proof-story workflow: Delivery is in QA notes, Handoff was copied, and the QA receipt path is ready.
+Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, app/globals.css, docs/recording/goal-761-770-recap.md
+Command/result: npm test -- components/studio-mode.test.tsx passed with 25 tests; browser check against `http://localhost:3000/studio` confirmed the Complete strip is compact, styled, and visible with empty console errors.
+Voiceover note: "这一条 Complete strip 就是最后的收口：Delivery 入库、Handoff 已复制、QA 收据就绪。录屏讲到这里，整条 Agent 工作流闭环了。"
+Usable for: final closeout clip, proof-story workflow summary, continued goal run round 764

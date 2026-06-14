@@ -265,6 +265,9 @@ describe("StudioMode demo roadbooks", () => {
     expect(screen.getByLabelText("Proof Story Delivery QA notes 状态").textContent).toBe("Delivery 已入库");
     expect(screen.getByLabelText("Proof Story Handoff 预览").textContent).toBe(readyProofStoryHandoffLine);
     expect(screen.getByLabelText("Proof Story Handoff QA 状态").textContent).toBe("Handoff 已复制");
+    expect(screen.getByLabelText("Proof Story Complete 状态").textContent).toContain(
+      "Proof Story Complete · Delivery 已入库 · Handoff 已复制 · QA 收据就绪",
+    );
     expect(within(scriptCard).getByRole("link", { name: "Production Assets QA 收据" }).getAttribute("href")).toBe(
       "/api/recording-assets/file?path=index-checks%2Findex-check-latest%2Fclip-notes.md",
     );
@@ -467,6 +470,29 @@ describe("StudioMode demo roadbooks", () => {
 
     expect(await screen.findByLabelText("Proof Story Handoff 预览")).toBeTruthy();
     expect(screen.getByLabelText("Proof Story Handoff QA 状态").textContent).toBe("Handoff 待验证");
+  });
+
+  it("shows a pending Proof Story Complete strip when final proof pieces are missing", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => ({
+        ok: true,
+        status: 200,
+        json: async () =>
+          recordingAssetsResponse(15, "Studio 16:9 demo pack", true, {
+            omitIndexNotes: true,
+            omitHandoffQa: true,
+          }),
+      })) as unknown as typeof fetch,
+    );
+
+    render(<StudioMode />);
+
+    const completeStrip = await screen.findByLabelText("Proof Story Complete 状态");
+    expect(completeStrip.textContent).toContain("Proof Story Pending");
+    expect(completeStrip.textContent).toContain("Delivery 待入库");
+    expect(completeStrip.textContent).toContain("Handoff 待验证");
+    expect(completeStrip.textContent).toContain("QA 收据待生成");
   });
 
   it("keeps legacy Dream-only wording for older 3-link recording index checks", async () => {

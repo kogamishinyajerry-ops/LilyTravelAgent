@@ -520,6 +520,34 @@ function getProofStoryHandoffQaState(scriptMaterial?: RecordingStudioScriptMater
   return { label: state, ready: state.includes("已复制") };
 }
 
+function getProofStoryCompleteState({
+  deliveryReady,
+  handoffReady,
+  receiptReady,
+}: {
+  deliveryReady: boolean;
+  handoffReady: boolean;
+  receiptReady: boolean;
+}) {
+  if (deliveryReady && handoffReady && receiptReady) {
+    return {
+      label: "Proof Story Complete · Delivery 已入库 · Handoff 已复制 · QA 收据就绪",
+      ready: true,
+    };
+  }
+
+  const pending = [
+    deliveryReady ? "" : "Delivery 待入库",
+    handoffReady ? "" : "Handoff 待验证",
+    receiptReady ? "" : "QA 收据待生成",
+  ].filter(Boolean);
+
+  return {
+    label: `Proof Story Pending · ${pending.join(" · ")}`,
+    ready: false,
+  };
+}
+
 function getProofStoryDeliverySync(studioLine: string, notesLine: string) {
   if (!notesLine) {
     return { label: "Delivery 待入库", ready: false };
@@ -676,6 +704,11 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
   );
   const proofStoryHandoffQaState =
     recordingAssets.status === "ready" ? getProofStoryHandoffQaState(recordingAssets.latestStudioProofPlayback?.scriptMaterial) : getProofStoryHandoffQaState(null);
+  const proofStoryCompleteState = getProofStoryCompleteState({
+    deliveryReady: proofStoryDeliverySync.ready,
+    handoffReady: proofStoryHandoffQaState.ready,
+    receiptReady: Boolean(proofStoryProductionReceiptPath),
+  });
 
   const loadRecordingAssets = useCallback(
     async ({ markRefreshing = true, isActive = () => true }: { markRefreshing?: boolean; isActive?: () => boolean } = {}) => {
@@ -1303,6 +1336,13 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
                               <Copy size={10} />
                               {proofHandoffCopyState === "copied" ? "已复制" : proofHandoffCopyState === "error" ? "手动" : "复制"}
                             </button>
+                          </div>
+                          <div
+                            className={`studio-proof-complete-strip ${proofStoryCompleteState.ready ? "ready" : "missing"}`}
+                            aria-label="Proof Story Complete 状态"
+                          >
+                            <CheckCircle2 size={11} />
+                            <span>{proofStoryCompleteState.label}</span>
                           </div>
                           <button type="button" onClick={copyProofStoryCloseout}>
                             <Copy size={13} />
