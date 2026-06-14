@@ -118,6 +118,38 @@ async function readProofStack(page) {
   );
 }
 
+async function readVisualProofCues(page) {
+  return page.locator(".dream-visual-proof-strip span").evaluateAll((items) =>
+    items.map((item) => ({
+      label: item.querySelector("small")?.textContent?.trim() || "",
+      value: item.querySelector("strong")?.textContent?.trim() || "",
+      detail: item.querySelector("em")?.textContent?.trim() || "",
+      active: item.getAttribute("aria-current") === "step",
+    })),
+  );
+}
+
+async function captureVisualProofPlayback(page, filePath) {
+  const strip = page.getByLabel("Dream Visual Proof Cue Strip");
+  await strip.waitFor({ state: "visible", timeout: 10_000 });
+
+  const initialCues = await readVisualProofCues(page);
+  await strip.getByRole("button", { name: "播放视觉证据" }).click();
+  await page.waitForTimeout(5_000);
+
+  const finalCues = await readVisualProofCues(page);
+  const buttonText = (await strip.locator("button").textContent())?.trim() || "";
+  await page.screenshot({ path: filePath, fullPage: false });
+
+  return {
+    initialCues,
+    finalCues,
+    finalActiveCue: finalCues.find((item) => item.active) || null,
+    buttonTextAfterPlayback: buttonText,
+    screenshotPath: filePath,
+  };
+}
+
 async function readDirectorLens(page) {
   return page.locator(".dream-director-lens button").evaluateAll((buttons) =>
     buttons.map((button) => ({
@@ -165,6 +197,22 @@ async function main() {
   assert(lensItems.length === 5, `Director Lens selector should have 5 items; got ${lensItems.length}.`);
   assert(activeLens?.id === directorLens, `Active Director Lens should be ${directorLens}; got ${activeLens?.id}.`);
 
+  const visualProofPlaybackPath = path.join(outDir, `dream-${demoRoadbook}-visual-proof-playback.png`);
+  const visualProof = await captureVisualProofPlayback(page, visualProofPlaybackPath);
+  const visualCueLabels = visualProof.initialCues.map((item) => item.label).join("|");
+  assert(
+    visualCueLabels === "Terrain|Skyline|AI Asset|Route|Proof",
+    `Visual proof cue labels did not match: ${visualCueLabels}`,
+  );
+  assert(
+    visualProof.finalActiveCue?.label === "Proof",
+    `Visual proof playback should finish on Proof; got ${visualProof.finalActiveCue?.label || "none"}.`,
+  );
+  assert(
+    visualProof.buttonTextAfterPlayback === "播放视觉证据",
+    `Visual proof playback button should reset; got ${visualProof.buttonTextAfterPlayback}.`,
+  );
+
   const days = [];
   for (const day of [1, 2, 3, 4]) {
     await page.getByRole("button", { name: new RegExp(`D${day}`) }).first().click();
@@ -175,6 +223,7 @@ async function main() {
     const inspectorGrid = await readSceneInspectorGrid(page);
     const composition = await readCompositionProfile(page);
     const proofStack = await readProofStack(page);
+    const visualProofCues = await readVisualProofCues(page);
     const canvasStats = await readCanvasStats(page);
     const screenshotPath = path.join(outDir, `dream-${demoRoadbook}-d${day}.png`);
     const sceneScreenshotPath = path.join(outDir, `dream-${demoRoadbook}-d${day}-scene.png`);
@@ -186,6 +235,7 @@ async function main() {
     assert(composition.length === 4, `Composition profile should have 4 items for D${day}; got ${composition.length}.`);
     assert(inspectorGrid.some((item) => item.label === "Tune"), `Scene Inspector should expose lens tuning for D${day}.`);
     assert(proofStack.length === 5, `Proof stack should have 5 items for D${day}; got ${proofStack.length}.`);
+    assert(visualProofCues.length === 5, `Visual proof cue strip should have 5 items for D${day}; got ${visualProofCues.length}.`);
     const activeTimelineItem = timeline.find((item) => item.active);
     assert(activeTimelineItem?.day === day, `Director timeline active item should be D${day}.`);
     const expectedLabels = expectedTimelineLabels[demoRoadbook] || expectedTimelineLabels.dali;
@@ -225,6 +275,7 @@ async function main() {
       inspectorGrid,
       composition,
       proofStack,
+      visualProofCues,
       directorLens: activeLens,
       canvasStats,
       screenshotPath,
@@ -251,6 +302,7 @@ async function main() {
     viewport: { width: 1280, height: 800 },
     outDir,
     days,
+    visualProof,
     motion: {
       day: 2,
       start: motionStart,
@@ -319,6 +371,16 @@ function buildHtmlReport(summary) {
             </li>`,
         )
         .join("");
+      const visualProofItems = day.visualProofCues
+        .map(
+          (item) => `
+            <li class="${item.active ? "active" : ""}">
+              <span>${escapeHtml(item.label)}</span>
+              <strong>${escapeHtml(item.value)}</strong>
+              <small>${escapeHtml(item.detail)}</small>
+            </li>`,
+        )
+        .join("");
       const primaryImage = day.sceneScreenshotPath || day.screenshotPath;
       return `
         <article class="day-card">
@@ -332,6 +394,7 @@ function buildHtmlReport(summary) {
             <ul class="proof-list">${inspectorItems}</ul>
             <ul class="proof-list">${compositionItems}</ul>
             <ul class="proof-list">${proofItems}</ul>
+            <ul class="visual-proof-list">${visualProofItems}</ul>
             <dl>
               <div><dt>lit</dt><dd>${day.canvasStats.lit}</dd></div>
               <div><dt>varied</dt><dd>${day.canvasStats.varied}</dd></div>
@@ -488,6 +551,29 @@ function buildHtmlReport(summary) {
         list-style: none;
       }
 
+      .visual-proof-list {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 6px;
+        margin: 0 0 12px;
+        padding: 0;
+        list-style: none;
+      }
+
+      .visual-proof-list li {
+        display: grid;
+        gap: 2px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 7px;
+        background: rgba(235, 242, 239, 0.64);
+      }
+
+      .visual-proof-list li.active {
+        color: #fff;
+        background: linear-gradient(135deg, #4b8589, #cc8a5f);
+      }
+
       .proof-list li {
         display: grid;
         gap: 2px;
@@ -526,6 +612,21 @@ function buildHtmlReport(summary) {
         color: var(--muted);
         font-size: 0.7rem;
         font-weight: 900;
+      }
+
+      .visual-proof-list span,
+      .visual-proof-list small {
+        color: inherit;
+        font-size: 0.66rem;
+        font-weight: 900;
+        opacity: 0.78;
+      }
+
+      .visual-proof-list strong {
+        overflow: hidden;
+        font-size: 0.74rem;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
 
       .proof-list strong {
@@ -601,6 +702,12 @@ function buildHtmlReport(summary) {
       </header>
       <section class="grid">${dayCards}</section>
       <section class="motion-card">
+        <p class="eyebrow">Visual Proof Playback</p>
+        <h2>${escapeHtml(summary.visualProof.finalActiveCue?.label || "Missing")} · ${escapeHtml(summary.visualProof.buttonTextAfterPlayback)}</h2>
+        <p class="asset-pair">Screenshot: ${escapeHtml(path.basename(summary.visualProof.screenshotPath))}</p>
+        <pre>${escapeHtml(JSON.stringify(summary.visualProof.finalCues, null, 2))}</pre>
+      </section>
+      <section class="motion-card">
         <p class="eyebrow">Motion Evidence</p>
         <h2 class="${summary.motion.changed ? "motion-ok" : ""}">
           D${summary.motion.day} checksum ${summary.motion.changed ? "changed" : "did not change"}
@@ -634,6 +741,7 @@ function buildClipNotes(summary) {
         `- Lens tuning: ${day.inspectorGrid.find((item) => item.label === "Tune")?.value || "无"}`,
         `- Composition proof: ${day.proofStack.find((item) => item.label === "Composition")?.value || "无"}`,
         `- Proof stack: ${day.proofStack.map((item) => `${item.label}=${item.value}`).join(" / ")}`,
+        `- Visual proof strip: ${day.visualProofCues.map((item) => `${item.label}=${item.value}${item.active ? "*" : ""}`).join(" / ")}`,
         `- Canvas lit pixels: ${day.canvasStats.lit}`,
         `- Canvas checksum: ${day.canvasStats.checksum}`,
         `- Voiceover prompt: 展示 D${day.day} 如何从路书文本变成 ${active?.label || "当天镜头"}，重点讲 ${active?.cue || "视觉线索"}。`,
@@ -650,6 +758,7 @@ function buildClipNotes(summary) {
     `- Viewport: ${summary.viewport.width}x${summary.viewport.height}`,
     `- Director Lens: ${summary.activeLens?.label || summary.directorLens} / ${summary.activeLens?.proof || "auto"}`,
     `- Route director line: ${routeLine}`,
+    `- Visual proof playback: ${summary.visualProof.finalActiveCue?.label || "missing"} / ${summary.visualProof.buttonTextAfterPlayback}`,
     `- Motion evidence: D${summary.motion.day} checksum ${summary.motion.changed ? "changed" : "did not change"} (${summary.motion.start.checksum} -> ${summary.motion.end.checksum})`,
     ``,
     `## Short Voiceover`,
