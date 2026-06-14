@@ -23,6 +23,8 @@ const readyProofStoryCompleteBundleLine =
   "Proof Story Complete Bundle · Delivery: Delivery 已入库 · Handoff: Handoff 已复制 · Studio Complete: Complete 已入库 · Index Complete: Index Complete 已验证 · QA receipt: index-checks/index-check-latest/clip-notes.md";
 const readyProofStoryBundleChainLine =
   "Proof Story Bundle Chain · Bundle 已入库 · Index Bundle 已验证 · 后期交付链路闭环";
+const readyProofChainSummaryLine =
+  `Proof Chain Summary · Chain: ${readyProofStoryBundleChainLine} · Index Chain: Index Chain 已验证 · Index QA notes: index-checks/index-check-latest/clip-notes.md · Studio script screenshot: studio-checks/studio-proof-latest/studio-proof-story-script-material.png`;
 
 function recordingAssetsResponse(
   packCount: number,
@@ -54,6 +56,9 @@ function recordingAssetsResponse(
     omitBundleChainQa?: boolean;
     bundleChainLine?: string;
     bundleChainCopyState?: string;
+    omitProofChainSummaryQa?: boolean;
+    proofChainSummaryLine?: string;
+    proofChainSummaryCopyState?: string;
   } = {},
 ) {
   const indexLinkCount = options.indexLinkCount ?? 6;
@@ -199,6 +204,12 @@ function recordingAssetsResponse(
                   bundleChainLine: options.bundleChainLine || readyProofStoryBundleChainLine,
                   bundleChainCopyState: options.bundleChainCopyState || "Bundle Chain 已复制",
                 }),
+            ...(options.omitProofChainSummaryQa
+              ? {}
+              : {
+                  proofChainSummaryLine: options.proofChainSummaryLine || readyProofChainSummaryLine,
+                  proofChainSummaryCopyState: options.proofChainSummaryCopyState || "Proof Chain Summary 已复制",
+                }),
             screenshotPath: "studio-checks/studio-proof-latest/studio-proof-story-script-material.png",
           },
         }
@@ -326,6 +337,7 @@ describe("StudioMode demo roadbooks", () => {
     expect(proofChainSummary).toContain("Index Chain: Index Chain 已验证");
     expect(proofChainSummary).toContain("Index QA notes: index-checks/index-check-latest/clip-notes.md");
     expect(proofChainSummary).toContain("Studio script screenshot: studio-checks/studio-proof-latest/studio-proof-story-script-material.png");
+    expect(screen.getByLabelText("Proof Chain Summary QA 状态").textContent).toBe("Summary 已入库");
     expect(within(scriptCard).getByRole("link", { name: "Production Assets QA 收据" }).getAttribute("href")).toBe(
       "/api/recording-assets/file?path=index-checks%2Findex-check-latest%2Fclip-notes.md",
     );
@@ -1162,6 +1174,25 @@ describe("StudioMode demo roadbooks", () => {
     expect(summaryPreview).toContain("Index QA notes: 待生成");
     expect(summaryPreview).toContain("Studio script screenshot: 待捕获");
     expect(writeText).toHaveBeenCalledWith(summaryPreview);
+  });
+
+  it("shows a pending Proof Chain Summary archive state for older Studio QA packs", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => ({
+        ok: true,
+        status: 200,
+        json: async () =>
+          recordingAssetsResponse(15, "Studio 16:9 demo pack", true, {
+            omitProofChainSummaryQa: true,
+          }),
+      })) as unknown as typeof fetch,
+    );
+
+    render(<StudioMode />);
+
+    expect(await screen.findByLabelText("Proof Chain Summary 预览")).toBeTruthy();
+    expect(screen.getByLabelText("Proof Chain Summary QA 状态").textContent).toBe("Summary 待入库");
   });
 
   it("shows a closeout copy fallback when clipboard access fails", async () => {

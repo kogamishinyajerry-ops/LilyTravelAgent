@@ -19,6 +19,8 @@ const sampleProofStoryCompleteBundleLine =
   "Proof Story Complete Bundle · Delivery: Delivery 已入库 · Handoff: Handoff 已复制 · Studio Complete: Complete 已入库 · Index Complete: Index Complete 已验证 · QA receipt: index-checks/new-index-check/clip-notes.md";
 const sampleProofStoryBundleChainLine =
   "Proof Story Bundle Chain · Bundle 已入库 · Index Bundle 已验证 · 后期交付链路闭环";
+const sampleProofChainSummaryLine =
+  `Proof Chain Summary · Chain: ${sampleProofStoryBundleChainLine} · Index Chain: Index Chain 已验证 · Index QA notes: index-checks/new-index-check/clip-notes.md · Studio script screenshot: studio-checks/new-studio/studio-proof-story-script-material.png`;
 
 beforeEach(async () => {
   tempRoot = await mkdtemp(path.join(os.tmpdir(), "lily-recording-assets-"));
@@ -162,6 +164,8 @@ describe("recording assets", () => {
         completeBundleCopyState: "Complete Bundle 已复制",
         bundleChainLine: sampleProofStoryBundleChainLine,
         bundleChainCopyState: "Bundle Chain 已复制",
+        proofChainSummaryLine: sampleProofChainSummaryLine,
+        proofChainSummaryCopyState: "Proof Chain Summary 已复制",
         screenshotPath: path.join(tempRoot, "studio-checks", "new-studio", "studio-proof-story-script-material.png"),
       },
     });
@@ -204,6 +208,8 @@ describe("recording assets", () => {
         completeBundleCopyState: "Complete Bundle 已复制",
         bundleChainLine: sampleProofStoryBundleChainLine,
         bundleChainCopyState: "Bundle Chain 已复制",
+        proofChainSummaryLine: sampleProofChainSummaryLine,
+        proofChainSummaryCopyState: "Proof Chain Summary 已复制",
         screenshotPath: path.join(tempRoot, "studio-checks", "new-studio", "studio-proof-story-script-material.png"),
       },
     });
@@ -493,6 +499,8 @@ describe("recording assets", () => {
         completeBundleCopyState: "Complete Bundle 已复制",
         bundleChainLine: sampleProofStoryBundleChainLine,
         bundleChainCopyState: "Bundle Chain 已复制",
+        proofChainSummaryLine: sampleProofChainSummaryLine,
+        proofChainSummaryCopyState: "Proof Chain Summary 已复制",
         screenshotPath: path.join(tempRoot, "studio-checks", "new-studio", "studio-proof-story-script-material.png"),
       },
     });
@@ -522,6 +530,8 @@ describe("recording assets", () => {
         completeBundleCopyState: "Complete Bundle 已复制",
         bundleChainLine: sampleProofStoryBundleChainLine,
         bundleChainCopyState: "Bundle Chain 已复制",
+        proofChainSummaryLine: sampleProofChainSummaryLine,
+        proofChainSummaryCopyState: "Proof Chain Summary 已复制",
         screenshotPath: "studio-checks/new-studio/studio-proof-story-script-material.png",
       },
     });
@@ -559,6 +569,8 @@ describe("recording assets", () => {
     expect(summary.latestStudioProofPlayback?.scriptMaterial?.completeBundleCopyState).toBeUndefined();
     expect(summary.latestStudioProofPlayback?.scriptMaterial?.bundleChainLine).toBeUndefined();
     expect(summary.latestStudioProofPlayback?.scriptMaterial?.bundleChainCopyState).toBeUndefined();
+    expect(summary.latestStudioProofPlayback?.scriptMaterial?.proofChainSummaryLine).toBeUndefined();
+    expect(summary.latestStudioProofPlayback?.scriptMaterial?.proofChainSummaryCopyState).toBeUndefined();
   });
 
   it("keeps Studio proof script material null when older QA packs do not contain it", async () => {

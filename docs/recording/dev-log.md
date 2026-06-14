@@ -2181,3 +2181,14 @@ Files shown: scripts/check-studio-visuals.mjs, recordings/studio-checks/2026-06-
 Command/result: node --check scripts/check-studio-visuals.mjs passed; npm run check:studio-visuals passed and generated `recordings/studio-checks/2026-06-14T11-57-33-774Z/clip-notes.md` with `Proof Chain Summary` and `Proof Chain Summary 已复制`.
 Voiceover note: "Summary 也进入 Studio QA。页面上一键复制的后期 notes，现在会自动出现在证据包里，剪辑时不再靠手动记录。"
 Usable for: Studio QA post-production note clip, proof-chain summary automation demo, continued goal run round 944
+
+## Phase FS: v0.8.182 — Summary Archive Chip In Studio
+
+Date: 2026-06-14
+Clip title: Phase FS: v0.8.182 — Summary Archive Chip In Studio
+What changed: `/studio` now reads the latest Studio QA `proofChainSummaryLine` and `proofChainSummaryCopyState`, then shows a compact `Summary 已入库` chip beside `复制 Summary`.
+Why this matters: The post-production note now completes the same loop as Chain: visible in Studio, captured by Studio QA, and surfaced back in Studio as archived proof. The Summary preview uses the archived line first so the evidence path does not chase a newly generated screenshot path.
+Files shown: lib/recording-assets.ts, components/studio-mode.tsx, app/globals.css, docs/recording/goal-951-960-recap.md
+Command/result: npm test -- lib/recording-assets.test.ts components/studio-mode.test.tsx passed with 52 tests; browser check against `http://localhost:3000/studio` showed `Summary 已入库`, 297px row width inside a 313px card, and 0 console errors.
+Voiceover note: "Summary notes 也有归档状态了。这里用归档优先显示，避免每次新 QA 截图路径让刚入库的 Summary 立刻待同步。"
+Usable for: Summary archive walkthrough, post-production proof-loop teaching segment, continued goal run round 954

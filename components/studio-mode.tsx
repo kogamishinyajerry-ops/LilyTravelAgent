@@ -156,6 +156,8 @@ type RecordingStudioScriptMaterialSummary = {
   completeBundleCopyState?: string;
   bundleChainLine?: string;
   bundleChainCopyState?: string;
+  proofChainSummaryLine?: string;
+  proofChainSummaryCopyState?: string;
   screenshotPath?: string;
 };
 
@@ -705,6 +707,24 @@ function getProofChainSummaryLine({
   ].join(" · ");
 }
 
+function getProofChainSummaryArchiveState(scriptMaterial: RecordingStudioScriptMaterialSummary | null | undefined, currentSummaryLine: string) {
+  const archivedLine = scriptMaterial?.proofChainSummaryLine || "";
+  const copyState = scriptMaterial?.proofChainSummaryCopyState || "";
+  if (!archivedLine) {
+    return { label: "Summary 待入库", ready: false };
+  }
+
+  if (archivedLine !== currentSummaryLine) {
+    return { label: "Summary 待同步", ready: false };
+  }
+
+  if (!copyState.includes("已复制")) {
+    return { label: "Summary 待验证", ready: false };
+  }
+
+  return { label: "Summary 已入库", ready: true };
+}
+
 function getProofStoryDeliverySync(studioLine: string, notesLine: string) {
   if (!notesLine) {
     return { label: "Delivery 待入库", ready: false };
@@ -926,7 +946,7 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
       : getProofStoryIndexBundleChainState(null, proofStoryBundleChainState.label);
   const proofStoryScriptScreenshotPath =
     recordingAssets.status === "ready" ? recordingAssets.latestStudioProofPlayback?.scriptMaterial?.screenshotPath || "" : "";
-  const proofChainSummaryLine = useMemo(
+  const computedProofChainSummaryLine = useMemo(
     () =>
       getProofChainSummaryLine({
         chainState: proofStoryBundleChainState,
@@ -941,6 +961,13 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
       proofStoryScriptScreenshotPath,
     ],
   );
+  const archivedProofChainSummaryLine =
+    recordingAssets.status === "ready" ? recordingAssets.latestStudioProofPlayback?.scriptMaterial?.proofChainSummaryLine || "" : "";
+  const proofChainSummaryLine = archivedProofChainSummaryLine || computedProofChainSummaryLine;
+  const proofChainSummaryArchiveState =
+    recordingAssets.status === "ready"
+      ? getProofChainSummaryArchiveState(recordingAssets.latestStudioProofPlayback?.scriptMaterial, proofChainSummaryLine)
+      : getProofChainSummaryArchiveState(null, proofChainSummaryLine);
   const recordingProofChecklist = useMemo(
     () => getRecordingProofChecklist(recordingAssets, proofStoryIndexBundleChainState),
     [recordingAssets, proofStoryIndexBundleChainState],
@@ -1684,6 +1711,12 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
                             <p className="studio-proof-chain-summary-preview" aria-label="Proof Chain Summary 预览">
                               {proofChainSummaryLine}
                             </p>
+                            <span
+                              className={`studio-proof-chain-summary-archive ${proofChainSummaryArchiveState.ready ? "ready" : "missing"}`}
+                              aria-label="Proof Chain Summary QA 状态"
+                            >
+                              {proofChainSummaryArchiveState.label}
+                            </span>
                             <button
                               type="button"
                               className="studio-proof-chain-summary-copy"
