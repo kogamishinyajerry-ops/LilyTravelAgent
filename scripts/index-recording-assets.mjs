@@ -57,6 +57,7 @@ async function readSource(source) {
       notesPath: existsSync(path.join(packDir, "clip-notes.md")) ? toRecordingLink(path.join(source.dir, entry, "clip-notes.md")) : "",
       summaryPath: toRecordingLink(path.join(source.dir, entry, "summary.json")),
       visualProof: source.type === "dream" ? readDreamVisualProof(entry, packDir, summary) : null,
+      studioProof: source.type === "studio" ? readStudioProofPlayback(entry, packDir, summary) : null,
     });
   }
 
@@ -123,6 +124,15 @@ function buildHtmlIndex(packs) {
                     ${pack.visualProof.screenshotPath ? `<a href="${escapeHtml(pack.visualProof.screenshotPath)}">playback screenshot</a>` : ""}
                     <a href="${escapeHtml(pack.visualProof.summaryPath)}">summary</a>
                     ${pack.visualProof.notesPath ? `<a href="${escapeHtml(pack.visualProof.notesPath)}">clip notes</a>` : ""}
+                  </nav>
+                </div>` : ""}
+              ${pack.studioProof ? `
+                <div class="visual-proof studio-proof">
+                  <span>Studio Proof · ${escapeHtml(pack.studioProof.finalCueLabel)} · ${escapeHtml(pack.studioProof.finalCueDetail)}</span>
+                  <nav>
+                    ${pack.studioProof.screenshotPath ? `<a href="${escapeHtml(pack.studioProof.screenshotPath)}">playback screenshot</a>` : ""}
+                    <a href="${escapeHtml(pack.studioProof.summaryPath)}">summary</a>
+                    ${pack.studioProof.notesPath ? `<a href="${escapeHtml(pack.studioProof.notesPath)}">clip notes</a>` : ""}
                   </nav>
                 </div>` : ""}
             </article>`,
@@ -209,6 +219,16 @@ function buildHtmlIndex(packs) {
         color: #fff;
         background: #4f8f7a;
       }
+      .studio-proof {
+        border-color: rgba(83, 96, 173, 0.22);
+        background: rgba(83, 96, 173, 0.1);
+      }
+      .studio-proof span {
+        color: #303d8d;
+      }
+      .studio-proof a {
+        background: #5360ad;
+      }
       @media (max-width: 860px) { header, .grid { display: block; } article + article { margin-top: 12px; } }
     </style>
   </head>
@@ -257,6 +277,12 @@ function buildMarkdownIndex(packs) {
         lines.push(`- Dream Proof screenshot: ${pack.visualProof.screenshotPath}`);
       }
     }
+    if (pack.studioProof) {
+      lines.push(`- Studio Proof: ${pack.studioProof.finalCueLabel} / ${pack.studioProof.finalCueDetail}`);
+      if (pack.studioProof.screenshotPath) {
+        lines.push(`- Studio Proof screenshot: ${pack.studioProof.screenshotPath}`);
+      }
+    }
     lines.push(`- Gallery: ${pack.galleryPath}`);
     lines.push(`- Summary: ${pack.summaryPath}`);
     if (pack.notesPath) {
@@ -282,6 +308,23 @@ function readDreamVisualProof(entry, packDir, summary) {
     screenshotPath: screenshotFile ? toRecordingLink(path.join("visual-checks", entry, screenshotFile)) : "",
     summaryPath: toRecordingLink(path.join("visual-checks", entry, "summary.json")),
     notesPath: existsSync(path.join(packDir, "clip-notes.md")) ? toRecordingLink(path.join("visual-checks", entry, "clip-notes.md")) : "",
+  };
+}
+
+function readStudioProofPlayback(entry, packDir, summary) {
+  const proofPlayback = summary.proofPlayback && typeof summary.proofPlayback === "object" ? summary.proofPlayback : null;
+  const finalCue = proofPlayback?.finalActiveCue && typeof proofPlayback.finalActiveCue === "object" ? proofPlayback.finalActiveCue : null;
+  if (!proofPlayback || !finalCue) {
+    return null;
+  }
+
+  const screenshotFile = path.basename(typeof proofPlayback.screenshotPath === "string" ? proofPlayback.screenshotPath : "");
+  return {
+    finalCueLabel: typeof finalCue.label === "string" ? finalCue.label : "",
+    finalCueDetail: typeof finalCue.detail === "string" ? finalCue.detail : "",
+    screenshotPath: screenshotFile ? toRecordingLink(path.join("studio-checks", entry, screenshotFile)) : "",
+    summaryPath: toRecordingLink(path.join("studio-checks", entry, "summary.json")),
+    notesPath: existsSync(path.join(packDir, "clip-notes.md")) ? toRecordingLink(path.join("studio-checks", entry, "clip-notes.md")) : "",
   };
 }
 

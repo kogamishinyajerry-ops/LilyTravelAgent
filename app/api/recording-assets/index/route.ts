@@ -51,6 +51,15 @@ function buildRecordingIndexHtml(
                     ${pack.visualProof.notesPath ? `<a href="${escapeHtml(buildRecordingFileUrl(pack.visualProof.notesPath))}">notes</a>` : ""}
                   </nav>
                 </div>` : ""}
+              ${pack.studioProof ? `
+                <div class="visual-proof studio-proof">
+                  <span>Studio Proof · ${escapeHtml(pack.studioProof.finalCueLabel)} · ${escapeHtml(pack.studioProof.finalCueDetail)}</span>
+                  <nav>
+                    ${pack.studioProof.screenshotPath ? `<a href="${escapeHtml(buildRecordingFileUrl(pack.studioProof.screenshotPath))}">playback screenshot</a>` : ""}
+                    <a href="${escapeHtml(buildRecordingFileUrl(pack.studioProof.summaryPath))}">summary</a>
+                    ${pack.studioProof.notesPath ? `<a href="${escapeHtml(buildRecordingFileUrl(pack.studioProof.notesPath))}">notes</a>` : ""}
+                  </nav>
+                </div>` : ""}
             </article>`,
         )
         .join("")
@@ -91,6 +100,9 @@ function buildRecordingIndexHtml(
       .visual-proof span { color: #284f42; font-size: 0.82rem; font-weight: 950; }
       .visual-proof nav { display: flex; flex-wrap: wrap; gap: 6px; }
       .visual-proof a { border-radius: 999px; padding: 5px 8px; color: #fff; font-size: 0.74rem; font-weight: 900; text-decoration: none; background: #4f8f7a; }
+      .studio-proof { border-color: rgba(83, 96, 173, 0.22); background: rgba(83, 96, 173, 0.1); }
+      .studio-proof span { color: #303d8d; }
+      .studio-proof a { background: #5360ad; }
       @media (max-width: 860px) { header, .grid { display: block; } article + article { margin-top: 12px; } }
     </style>
   </head>

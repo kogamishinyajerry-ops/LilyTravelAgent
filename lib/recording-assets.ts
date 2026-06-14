@@ -15,6 +15,7 @@ export type RecordingAssetPack = {
   notesPath: string;
   summaryPath: string;
   visualProof: RecordingDreamVisualProofSummary | null;
+  studioProof: RecordingStudioProofPlaybackSummary | null;
 };
 
 export type RecordingAssetsSummary = {
@@ -162,32 +163,12 @@ async function readLatestStudioProofPlayback(recordingsRoot: string): Promise<Re
     }
 
     const summary = JSON.parse(await readFile(summaryPath, "utf8")) as Record<string, unknown>;
-    const proofPlayback = typeof summary.proofPlayback === "object" && summary.proofPlayback
-      ? summary.proofPlayback as Record<string, unknown>
-      : null;
-    const finalCue = typeof proofPlayback?.finalActiveCue === "object" && proofPlayback.finalActiveCue
-      ? proofPlayback.finalActiveCue as Record<string, unknown>
-      : null;
-    if (!proofPlayback || !finalCue) {
+    const proofPlayback = readStudioProofPlaybackFromSummary(entry, packDir, summary);
+    if (!proofPlayback) {
       continue;
     }
 
-    const initialCues = Array.isArray(proofPlayback.initialCues) ? proofPlayback.initialCues : [];
-    const screenshotFile = path.basename(readString(proofPlayback.screenshotPath));
-    runs.push({
-      id: entry,
-      createdAt: readString(summary.createdAt) || entry,
-      finalCueLabel: readString(finalCue.label),
-      finalCueState: readString(finalCue.state),
-      finalCueDetail: readString(finalCue.detail),
-      buttonTextAfterPlayback: readString(proofPlayback.buttonTextAfterPlayback),
-      cueLabels: initialCues
-        .map((item) => readString((item as Record<string, unknown>).label))
-        .filter(Boolean),
-      screenshotPath: screenshotFile ? toRecordingLink(path.join("studio-checks", entry, screenshotFile)) : "",
-      summaryPath: toRecordingLink(path.join("studio-checks", entry, "summary.json")),
-      notesPath: existsSync(path.join(packDir, "clip-notes.md")) ? toRecordingLink(path.join("studio-checks", entry, "clip-notes.md")) : "",
-    });
+    runs.push(proofPlayback);
   }
 
   return runs.sort((a, b) => b.createdAt.localeCompare(a.createdAt))[0] || null;
@@ -405,10 +386,40 @@ async function readSource(recordingsRoot: string, source: (typeof sources)[numbe
       notesPath: existsSync(path.join(packDir, "clip-notes.md")) ? toRecordingLink(path.join(source.dir, entry, "clip-notes.md")) : "",
       summaryPath: toRecordingLink(path.join(source.dir, entry, "summary.json")),
       visualProof: source.type === "dream" ? readDreamVisualProofFromSummary(entry, packDir, summary) : null,
+      studioProof: source.type === "studio" ? readStudioProofPlaybackFromSummary(entry, packDir, summary) : null,
     });
   }
 
   return packs;
+}
+
+function readStudioProofPlaybackFromSummary(entry: string, packDir: string, summary: Record<string, unknown>): RecordingStudioProofPlaybackSummary | null {
+  const proofPlayback = typeof summary.proofPlayback === "object" && summary.proofPlayback
+    ? summary.proofPlayback as Record<string, unknown>
+    : null;
+  const finalCue = typeof proofPlayback?.finalActiveCue === "object" && proofPlayback.finalActiveCue
+    ? proofPlayback.finalActiveCue as Record<string, unknown>
+    : null;
+  if (!proofPlayback || !finalCue) {
+    return null;
+  }
+
+  const initialCues = Array.isArray(proofPlayback.initialCues) ? proofPlayback.initialCues : [];
+  const screenshotFile = path.basename(readString(proofPlayback.screenshotPath));
+  return {
+    id: entry,
+    createdAt: readString(summary.createdAt) || entry,
+    finalCueLabel: readString(finalCue.label),
+    finalCueState: readString(finalCue.state),
+    finalCueDetail: readString(finalCue.detail),
+    buttonTextAfterPlayback: readString(proofPlayback.buttonTextAfterPlayback),
+    cueLabels: initialCues
+      .map((item) => readString((item as Record<string, unknown>).label))
+      .filter(Boolean),
+    screenshotPath: screenshotFile ? toRecordingLink(path.join("studio-checks", entry, screenshotFile)) : "",
+    summaryPath: toRecordingLink(path.join("studio-checks", entry, "summary.json")),
+    notesPath: existsSync(path.join(packDir, "clip-notes.md")) ? toRecordingLink(path.join("studio-checks", entry, "clip-notes.md")) : "",
+  };
 }
 
 function buildPackTitle(type: RecordingAssetPack["type"], summary: Record<string, unknown>) {

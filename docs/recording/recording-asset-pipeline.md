@@ -58,6 +58,7 @@ DREAM_LENSES=low-skyline,isometric-atlas npm run check:dream-lenses
 - `Dream Proof` status in `/studio`, showing the latest Dream visual proof playback result.
 - `Dream Proof` evidence links in `/studio`: playback screenshot, summary, and clip notes.
 - `Dream Proof` evidence in `/api/recording-assets/index` and `recordings/index.html`: final cue, readiness value, playback screenshot, summary, and notes.
+- `Studio Proof` evidence in `/api/recording-assets/index` and `recordings/index.html`: final Suite Run cue, playback screenshot, summary, and notes.
 - `Recording Index QA` status in `/studio`: proof-card screenshot, summary, and notes from the latest `index-checks` run.
 - `Recording Suite` status in `/studio`: full-suite pass/fail state, step count, duration, summary, and notes from the latest `suite-runs` manifest.
 - `Studio Proof` status in `/studio`: Suite Run proof playback captured by the latest Studio visual QA pack.
@@ -99,6 +100,7 @@ Run it, return to `/studio`, then click `刷新`.
 - "The proof playback line now ends at Suite Run, which closes the whole QA story in one highlighted step."
 - "Studio visual QA records that final Suite Run highlight, so the recording proof is not only visible live but saved in the QA pack."
 - "Studio now reads that saved proof back into the workbench, closing the loop from UI to QA pack and back to UI."
+- "The archive now carries both sides of the proof loop: Dream Proof for the product screen and Studio Proof for the creator workbench."
 - "The lens batch lets me compare five camera directions before I tune or record the final clip."
 
 ## Verification
