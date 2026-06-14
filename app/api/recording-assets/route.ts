@@ -11,5 +11,6 @@ export async function GET() {
     ok: true,
     ...summary,
     indexUrl: summary.indexAvailable ? "/api/recording-assets/index" : "",
+    lensComparisonUrl: "/api/recording-assets/lens-comparison",
   });
 }

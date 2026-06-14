@@ -1048,3 +1048,14 @@ Files shown: terminal verification output, docs/recording/goal-121-130-recap.md,
 Command/result: npm run lint && npm test && npm run build (43 files, 899 tests, build passed)
 Voiceover note: "这一轮最后我还是跑完整质量门。五个镜头的调参证据留下来了，产品也还能正常构建。"
 Usable for: goal closeout clip, quality gate proof, Vibe Coding reliability narrative, continued goal run round 130
+
+## Phase CL: v0.8.79 — Director Lens Comparison Dashboard
+
+Date: 2026-06-14
+Clip title: Phase CL: v0.8.79 — Director Lens Comparison Dashboard
+What changed: Added a local `/api/recording-assets/lens-comparison` dashboard that reads Dream QA packs, groups them by Director Lens, keeps the newest pack per lens, shows D1-D4 thumbnails side-by-side, and exposes tuning/checklist evidence. `/studio` now links to it from the asset panel, and image serving is constrained to local recording screenshots.
+Why this matters: The lens workflow now has a review surface, not only scattered folders. This gives the creator a direct screen for explaining how Agent-generated QA packs become visual direction decisions.
+Files shown: lib/lens-comparison.ts, app/api/recording-assets/lens-comparison/route.ts, components/studio-mode.tsx, docs/recording/lens-visual-capture-workflow.md
+Command/result: npm test -- lib/lens-comparison.test.ts components/studio-mode.test.tsx; npm run lint && npm run build; DREAM_URL=http://127.0.0.1:3000/dream npm run check:dream-lenses; Browser check confirmed 5 lens cards, 20 images, and 0 broken images.
+Voiceover note: "我把五个 lens 的 QA 素材做成一个横向对比看板。现在不是凭感觉挑镜头，而是 Auto、Water、Skyline、Atlas、Detail 都能一眼对比 D1 到 D4。"
+Usable for: lens comparison clip, visual review workflow, Vibe Coding product evidence narrative, continued goal run round 134

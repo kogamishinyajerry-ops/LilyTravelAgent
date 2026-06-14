@@ -1,0 +1,286 @@
+import path from "node:path";
+import { NextResponse } from "next/server";
+import { directorLenses } from "@/lib/director-lens";
+import { readLensComparisonDashboard, type LensComparisonDashboard, type LensComparisonPack } from "@/lib/lens-comparison";
+
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
+const recordingsRoot = path.join(/*turbopackIgnore: true*/ process.cwd(), "recordings");
+
+export async function GET() {
+  const dashboard = await readLensComparisonDashboard(recordingsRoot);
+  return new NextResponse(buildLensComparisonHtml(dashboard), {
+    headers: {
+      "Content-Type": "text/html; charset=utf-8",
+      "Cache-Control": "no-store",
+    },
+  });
+}
+
+function buildLensComparisonHtml(dashboard: LensComparisonDashboard) {
+  const lensCards = dashboard.packs.length
+    ? dashboard.packs.map(renderLensCard).join("")
+    : `<article class="empty">
+        <p>No Dream lens QA packs yet.</p>
+        <h2>Run <code>npm run check:dream-lenses</code></h2>
+      </article>`;
+  const missing = dashboard.missingLensIds.length
+    ? `<p class="missing">Missing: ${dashboard.missingLensIds.map((id) => escapeHtml(id)).join(" / ")}</p>`
+    : `<p class="missing ready">All Director Lens modes have review packs.</p>`;
+
+  return `<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>LilyTravelAgent Director Lens Comparison</title>
+    <style>
+      * { box-sizing: border-box; }
+      :root {
+        color-scheme: dark;
+        --ink: #f3efe3;
+        --muted: rgba(243, 239, 227, 0.62);
+        --line: rgba(243, 239, 227, 0.13);
+        --panel: rgba(20, 24, 21, 0.82);
+        --glass: rgba(243, 239, 227, 0.06);
+        --green: #84b59a;
+        --amber: #e6aa4d;
+        --coral: #db7965;
+        --blue: #8ba6d9;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        color: var(--ink);
+        background:
+          linear-gradient(120deg, rgba(132, 181, 154, 0.16), transparent 34%),
+          linear-gradient(220deg, rgba(230, 170, 77, 0.14), transparent 36%),
+          #10130f;
+        font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+      main {
+        width: min(1440px, calc(100vw - 34px));
+        margin: 0 auto;
+        padding: 26px 0 36px;
+      }
+      h1, h2, h3, p { margin: 0; }
+      header {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: end;
+        gap: 18px;
+        margin-bottom: 14px;
+      }
+      .eyebrow {
+        color: var(--green);
+        font-size: 0.78rem;
+        font-weight: 900;
+        letter-spacing: 0;
+        text-transform: uppercase;
+      }
+      h1 {
+        max-width: 820px;
+        margin-top: 5px;
+        font-size: clamp(2.1rem, 4.8vw, 4.6rem);
+        line-height: 0.92;
+      }
+      .stats {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: end;
+        gap: 8px;
+      }
+      .stats span, .missing {
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 7px 10px;
+        color: var(--ink);
+        background: rgba(255,255,255,0.06);
+        font-size: 0.8rem;
+        font-weight: 900;
+      }
+      .missing { display: inline-block; margin-bottom: 12px; color: var(--amber); }
+      .missing.ready { color: var(--green); }
+      .stack { display: grid; gap: 12px; }
+      article {
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--panel);
+        box-shadow: 0 24px 70px rgba(0, 0, 0, 0.28);
+      }
+      .lens {
+        display: grid;
+        grid-template-columns: 240px minmax(0, 1fr);
+        min-height: 260px;
+      }
+      .lens-head {
+        display: grid;
+        align-content: space-between;
+        gap: 16px;
+        padding: 18px;
+        background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+      }
+      .lens-head h2 { font-size: 2.1rem; line-height: 0.95; }
+      .lens-head p { color: var(--muted); font-size: 0.86rem; line-height: 1.35; }
+      .lens-head strong {
+        display: block;
+        margin-top: 8px;
+        color: var(--amber);
+        font-size: 0.82rem;
+        line-height: 1.35;
+      }
+      .checklist {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .checklist span {
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 999px;
+        padding: 5px 7px;
+        color: var(--muted);
+        font-size: 0.72rem;
+        font-weight: 900;
+      }
+      .checklist .ready { color: var(--green); }
+      .checklist .needs-review { color: var(--coral); }
+      .shots {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 1px;
+        background: var(--line);
+      }
+      figure {
+        position: relative;
+        display: grid;
+        min-height: 260px;
+        margin: 0;
+        background: #171b17;
+      }
+      figure img {
+        width: 100%;
+        height: 100%;
+        min-height: 260px;
+        object-fit: cover;
+        filter: saturate(1.04) contrast(1.04);
+      }
+      figcaption {
+        position: absolute;
+        inset: auto 8px 8px;
+        display: grid;
+        gap: 4px;
+        border: 1px solid rgba(255,255,255,0.12);
+        border-radius: 8px;
+        padding: 8px;
+        background: rgba(10, 12, 10, 0.62);
+        backdrop-filter: blur(10px);
+      }
+      figcaption span {
+        color: var(--green);
+        font-size: 0.76rem;
+        font-weight: 1000;
+      }
+      figcaption strong {
+        color: var(--ink);
+        font-size: 0.92rem;
+        line-height: 1.05;
+      }
+      figcaption small {
+        color: var(--muted);
+        font-size: 0.7rem;
+        line-height: 1.2;
+      }
+      .empty {
+        display: grid;
+        gap: 10px;
+        padding: 22px;
+      }
+      code {
+        border-radius: 6px;
+        padding: 2px 6px;
+        color: var(--amber);
+        background: rgba(255,255,255,0.08);
+      }
+      @media (max-width: 980px) {
+        header, .lens { grid-template-columns: 1fr; }
+        .stats { justify-content: start; }
+        .shots { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      }
+      @media (max-width: 640px) {
+        .shots { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <div>
+          <p class="eyebrow">LilyTravelAgent / Visual Review</p>
+          <h1>Director Lens Comparison</h1>
+        </div>
+        <div class="stats">
+          <span>${dashboard.totalDreamPacks} Dream packs</span>
+          <span>${dashboard.comparedLensCount}/${directorLenses.length} lenses</span>
+        </div>
+      </header>
+      ${missing}
+      <section class="stack">${lensCards}</section>
+    </main>
+  </body>
+</html>`;
+}
+
+function renderLensCard(pack: LensComparisonPack) {
+  const dayMap = new Map(pack.days.map((day) => [day.day, day]));
+  const shots = [1, 2, 3, 4]
+    .map((day) => {
+      const shot = dayMap.get(day);
+      if (!shot) {
+        return `
+          <figure>
+            <figcaption>
+              <span>D${day}</span>
+              <strong>Missing</strong>
+              <small>Run QA again</small>
+            </figcaption>
+          </figure>`;
+      }
+
+      return `
+        <figure>
+          <img src="${escapeHtml(shot.screenshotUrl)}" alt="${escapeHtml(`${pack.lensProof} D${day}`)}" loading="lazy" />
+          <figcaption>
+            <span>D${day}</span>
+            <strong>${escapeHtml(shot.label)}</strong>
+            <small>${escapeHtml(shot.cue || shot.compositionProof || "visual beat")}</small>
+          </figcaption>
+        </figure>`;
+    })
+    .join("");
+
+  return `
+    <article class="lens ${escapeHtml(pack.lensId)}">
+      <div class="lens-head">
+        <div>
+          <p>${escapeHtml(pack.demoRoadbook)} · ${escapeHtml(pack.createdAt)}</p>
+          <h2>${escapeHtml(pack.lensLabel)}</h2>
+          <strong>${escapeHtml(pack.tuningCue)}</strong>
+        </div>
+        <div class="checklist">
+          ${pack.checklist.map((item) => `<span class="${escapeHtml(item.state)}">${escapeHtml(item.label)} · ${escapeHtml(item.detail)}</span>`).join("")}
+          <span>${pack.sourcePackCount} pack${pack.sourcePackCount > 1 ? "s" : ""}</span>
+        </div>
+      </div>
+      <div class="shots">${shots}</div>
+    </article>`;
+}
+
+function escapeHtml(value: string | number) {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}

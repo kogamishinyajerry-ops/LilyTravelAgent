@@ -19,6 +19,7 @@ function recordingAssetsResponse(packCount: number, title = "Studio 16:9 demo pa
     countsByType: packCount ? { dream: 12, studio: 3, bridge: 1 } : { dream: 0, studio: 0, bridge: 0 },
     indexAvailable,
     indexUrl: indexAvailable ? "/api/recording-assets/index" : "",
+    lensComparisonUrl: "/api/recording-assets/lens-comparison",
     recentPacks: packCount
       ? [
           {
@@ -119,6 +120,7 @@ describe("StudioMode demo roadbooks", () => {
     expect(workflow.textContent).toContain("桥接证据");
     expect(workflow.textContent).toContain("用 Bridge QA 状态卡证明页面闭环。");
     expect(screen.getByRole("link", { name: /打开总索引/ }).getAttribute("href")).toBe("/api/recording-assets/index");
+    expect(screen.getByRole("link", { name: /镜头对比/ }).getAttribute("href")).toBe("/api/recording-assets/lens-comparison");
     expect(screen.queryByLabelText("录屏讲解轨道")).toBeNull();
     expect(screen.queryByLabelText("当前镜头建议")).toBeNull();
     expect(screen.queryByLabelText("系列章节提示")).toBeNull();

@@ -10,6 +10,7 @@ Purpose: turn every visual QA run into usable creator material: screenshots, loc
 4. Click `刷新` in the `素材资产` panel.
 5. Point to `Bridge QA 证据状态`.
 6. Open `打开总索引`.
+7. Open `镜头对比`.
 
 Optional all-lens product run:
 
@@ -32,6 +33,7 @@ DREAM_LENSES=low-skyline,isometric-atlas npm run check:dream-lenses
 - `/studio` QA pack: walkthrough footage for the 16:9 creator workbench.
 - Studio-Dream Bridge QA pack: handoff proof for the two-way recording circuit.
 - `recordings/index.html` and `recordings/clip-index.md`: the local archive entry points.
+- `/api/recording-assets/lens-comparison`: the local Director Lens comparison dashboard with D1-D4 thumbnails.
 
 ## What To Show On Screen
 
@@ -44,6 +46,7 @@ DREAM_LENSES=low-skyline,isometric-atlas npm run check:dream-lenses
 - `Bridge QA 证据状态` in script mode.
 - In `/dream`, `Agent Visual Contract`, `Director Lens`, `Scene Inspector`, and `Proof Stack` show why the cinematic page is structured, not only decorative.
 - `打开总索引` leading to `/api/recording-assets/index`.
+- `镜头对比` leading to `/api/recording-assets/lens-comparison`.
 
 ## First-Run State
 

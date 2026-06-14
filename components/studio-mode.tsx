@@ -39,6 +39,7 @@ type RecordingAssetsState =
       countsByType: Record<RecordingAssetType, number>;
       indexAvailable: boolean;
       indexUrl: string;
+      lensComparisonUrl: string;
       recentPacks: RecordingAssetSummaryPack[];
       latestPack: {
         title: string;
@@ -64,6 +65,7 @@ type RecordingAssetsApiResponse = {
   countsByType?: Record<RecordingAssetType, number>;
   indexAvailable?: boolean;
   indexUrl?: string;
+  lensComparisonUrl?: string;
   recentPacks?: RecordingAssetSummaryPack[];
   latestPack?: {
     title: string;
@@ -298,6 +300,7 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
           countsByType: data.countsByType || { dream: 0, studio: 0, bridge: 0 },
           indexAvailable: Boolean(data.indexAvailable),
           indexUrl: data.indexUrl || "",
+          lensComparisonUrl: data.lensComparisonUrl || "/api/recording-assets/lens-comparison",
           recentPacks: data.recentPacks || [],
           latestPack: data.latestPack || null,
         });
@@ -688,6 +691,10 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
                     ) : (
                       <span>等待索引</span>
                     )}
+                    <a href={recordingAssets.lensComparisonUrl} target="_blank" rel="noreferrer">
+                      镜头对比
+                      <ExternalLink size={14} />
+                    </a>
                   </div>
                   {recordingCommandCopyState === "copied" ? <span className="studio-recording-copy-status">录屏套件命令已复制</span> : null}
                   {recordingCommandCopyState === "error" ? <span className="studio-recording-copy-status">浏览器不允许自动复制，可手动复制上方命令</span> : null}
