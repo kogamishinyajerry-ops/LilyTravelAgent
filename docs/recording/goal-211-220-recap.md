@@ -10,11 +10,10 @@ This run added a no-storage recording queue handoff. The comparison dashboard st
 
 | Goal | Commit | Summary |
 | --- | --- | --- |
-| 211-214 | pending | Added candidate queue params and `/dream` current/next candidate copy. |
-| 215 | pending | Added focused tests and recording docs. |
-| 216 | pending | Browser visual handoff check. |
-| 217 | pending | Final lint/test/build verification. |
-| 218 | pending | Push to GitHub. |
+| 211-215 | `cc5ce62` | Added candidate queue params, `/dream` current/next candidate copy, focused tests, and recording docs. |
+| 216 | `cc5ce62` | Browser check confirmed `#1/4`, `Next #2`, visible first-viewport cue, active lens, and return path. |
+| 217 | closeout | Final lint/test/build verification: 44 files, 907 tests, build passed. |
+| 218 | closeout | Push to GitHub after final closeout commit. |
 | 219-220 | closeout | Next-goal handoff. |
 
 ## What Changed In The Creator Loop
@@ -29,6 +28,7 @@ This run added a no-storage recording queue handoff. The comparison dashboard st
 - `npm test -- lib/lens-comparison.test.ts components/dream-roadbook.test.tsx` (24 tests passed)
 - `npm run lint` (passed)
 - Browser check: candidate handoff showed `#1/4`, `Next #2`, visible first-viewport cue, active lens, and return path.
+- `npm run lint && npm test && npm run build` (44 files, 907 tests, build passed)
 
 ## Recording Angle
 

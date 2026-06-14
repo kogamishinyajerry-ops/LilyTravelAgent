@@ -1290,3 +1290,14 @@ Files shown: lib/lens-comparison.ts, app/dream/page.tsx, components/dream-roadbo
 Command/result: npm test -- lib/lens-comparison.test.ts components/dream-roadbook.test.tsx; npm run lint; Browser check confirmed `#1/4`, `Next #2`, visible cue, and return path.
 Voiceover note: "这一步我没有做复杂队列系统，只把 Top shots 的顺序写进 URL。进入 /dream 后左侧直接显示现在录第几个、下一个是谁。"
 Usable for: recording queue handoff clip, no-storage workflow proof, continued goal run round 214
+
+## Phase DH: v0.8.101 — Goals 211-220 Final Quality Gate
+
+Date: 2026-06-14
+Clip title: Phase DH: v0.8.101 — Goals 211-220 Final Quality Gate
+What changed: Closed the lightweight recording queue handoff run with the full local lint, test, and production-build gate after browser visual inspection.
+Why this matters: The queue handoff remains intentionally simple and verified: ranked URL context, first-viewport current/next cue, no storage, no auth, tests, and production build.
+Files shown: docs/recording/goal-211-220-recap.md, `/api/recording-assets/lens-comparison`, `/dream?...candidate=1`, terminal verification output
+Command/result: npm run lint && npm test && npm run build (44 files, 907 tests, build passed)
+Voiceover note: "轻量队列也按同一套质量门收口。没有数据库、没有账号，先用 URL 把录屏队列串起来，而且测试和构建都通过。"
+Usable for: goal closeout clip, no-storage queue proof, next candidate-step goal, continued goal run round 217
