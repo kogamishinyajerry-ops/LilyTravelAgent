@@ -982,3 +982,14 @@ Files shown: lib/director-lens.ts, components/dream-skyline-scene.tsx, component
 Command/result: npm test -- lib/director-lens.test.ts; npm test -- lib/cinematic-scene-preset.test.ts components/dream-roadbook.test.tsx; npm run lint
 Voiceover note: "我先不追求一次把 3D 做到最终，而是把 low-skyline 的变化拆成可测参数：天际线更高、水线更亮、路线更明显，然后让 QA 自动记录这些证据。"
 Usable for: low-skyline tuning clip, lens comparison workflow, Vibe Coding visual QA narrative, continued goal run round 115
+
+## Phase CF: v0.8.73 — Low-Skyline Verification Checkpoint
+
+Date: 2026-06-14
+Clip title: Phase CF: v0.8.73 — Low-Skyline Verification Checkpoint
+What changed: Ran the full local quality gate after the first low-skyline 3D tuning pass and the Dream visual QA tuning evidence update.
+Why this matters: The lens tuning layer is now safe to keep building on. The QA pack can record the low-skyline tuning cue, and the production build still passes.
+Files shown: docs/recording/dev-log.md, terminal verification output, `/dream`
+Command/result: npm run lint && npm test && npm run build (43 files, 894 tests, build passed)
+Voiceover note: "low-skyline 的第一轮调参后，我又跑完整质量门。现在它不是一个感觉上的变化，而是有测试、有 Scene Inspector、有 QA 脚本记录。"
+Usable for: verification checkpoint clip, low-skyline tuning evidence, Vibe Coding quality gate narrative, continued goal run round 116
