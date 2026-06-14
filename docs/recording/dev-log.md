@@ -2016,3 +2016,14 @@ Files shown: scripts/index-recording-assets.mjs, recordings/index.html, recordin
 Command/result: node --check scripts/index-recording-assets.mjs passed; temporary ready/legacy fixture check passed; npm run index:recording-assets indexed 78 packs and both generated indexes contain `Proof Story Complete`.
 Voiceover note: "这一步把 Complete line 从 QA summary 推进到素材总索引。后期剪辑时打开 index，也能看到最终交付闭环已经完成。"
 Usable for: archive browsing walkthrough, proof-pack editing clip, continued goal run round 794
+
+## Phase FS: v0.8.167 — Complete Line In API Index QA
+
+Date: 2026-06-14
+Clip title: Phase FS: v0.8.167 — Complete Line In API Index QA
+What changed: `/api/recording-assets/index` now mirrors the static index `Proof Story Complete` line, and `npm run check:recording-index` asserts it when the latest Studio QA summary provides `scriptMaterial.completeLine`.
+Why this matters: Static archive, browser-served archive, and automated index QA now agree on the same final closeout proof.
+Files shown: app/api/recording-assets/index/route.ts, scripts/check-recording-index.mjs, recordings/index-checks/2026-06-14T10-48-41-025Z/clip-notes.md, docs/recording/goal-801-810-recap.md
+Command/result: node --check scripts/check-recording-index.mjs passed; npm run check:recording-index passed and the newest index-check notes contain `Proof Story Complete`.
+Voiceover note: "这里完成的是 archive alignment。静态 index、API index、自动 QA notes 三个地方都出现同一条 Complete proof。"
+Usable for: index QA walkthrough, proof alignment clip, continued goal run round 804

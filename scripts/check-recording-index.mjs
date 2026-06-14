@@ -241,6 +241,7 @@ function readStudioScriptMaterial(entry, packDir, summary) {
     label: "Proof Story Script Material",
     selector: ".script-material-proof",
     cue: typeof scriptMaterial.cue === "string" ? scriptMaterial.cue : "",
+    completeLine: typeof scriptMaterial.completeLine === "string" ? scriptMaterial.completeLine : "",
     screenshotPath: screenshotFile ? toRecordingLink(path.join("studio-checks", entry, screenshotFile)) : "",
     summaryPath: toRecordingLink(path.join("studio-checks", entry, "summary.json")),
     notesPath: existsSync(path.join(packDir, "clip-notes.md")) ? toRecordingLink(path.join("studio-checks", entry, "clip-notes.md")) : "",
@@ -267,6 +268,9 @@ function assertStaticScriptMaterial(staticIndex, staticIndexPath, scriptMaterial
   assert(staticIndex.includes(proofStoryNarrationPreview), `${staticIndexPath} does not include the Proof Story narration preview.`);
   assert(staticIndex.includes(proofStoryCloseoutStatus), `${staticIndexPath} does not include the Proof Story closeout status.`);
   assert(staticIndex.includes(scriptMaterial.cue), `${staticIndexPath} does not include the ${scriptMaterial.label} cue.`);
+  if (scriptMaterial.completeLine) {
+    assert(staticIndex.includes(scriptMaterial.completeLine), `${staticIndexPath} does not include the ${scriptMaterial.label} Complete line.`);
+  }
   assert(scriptMaterial.screenshotPath, `${scriptMaterial.label} local proof is missing a screenshot path.`);
   assert(scriptMaterial.summaryPath, `${scriptMaterial.label} local proof is missing a summary path.`);
   assert(scriptMaterial.notesPath, `${scriptMaterial.label} local proof is missing a notes path.`);
@@ -287,6 +291,9 @@ function assertScriptMaterialText(scriptMaterial, proofText) {
   assert(proofText.includes(proofStoryNarrationPreview), `API index script-material block missing narration preview: ${proofText}`);
   assert(proofText.includes(proofStoryCloseoutStatus), `API index script-material block missing closeout status: ${proofText}`);
   assert(proofText.includes(scriptMaterial.cue), `API index script-material block missing cue: ${proofText}`);
+  if (scriptMaterial.completeLine) {
+    assert(proofText.includes(scriptMaterial.completeLine), `API index script-material block missing Complete line: ${proofText}`);
+  }
 }
 
 async function findMatchingProofBlock(page, proof) {
@@ -486,6 +493,7 @@ function buildClipNotes(summary) {
       "",
       `- Proof-card screenshot: ${path.basename(summary.scriptMaterialCheck.screenshotPath)}`,
       `- Production Assets QA: ${proofStoryProductionAssetsLabel}; narration preview; closeout status; cue text; ${summary.scriptMaterialCheck.links.length}/3 evidence links checked.`,
+      summary.localStudioProof.scriptMaterial.completeLine ? `- ${summary.localStudioProof.scriptMaterial.completeLine}` : "",
       `- ${buildProofStoryDeliveryLine(summary)}`,
     );
 
