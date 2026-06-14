@@ -41,6 +41,7 @@ DREAM_LENSES=low-skyline,isometric-atlas npm run check:dream-lenses
 
 - Total asset count.
 - Dream / Studio / Bridge pack counts.
+- Copy buttons for `npm run check:recording-suite` and `npm run check:lens-candidate-handoff`.
 - Recent three QA packs.
 - Dream QA / Studio QA / Bridge QA badges.
 - `产品画面` / `讲解画面` / `桥接验证` usage hints.

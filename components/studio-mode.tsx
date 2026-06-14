@@ -128,6 +128,7 @@ function getStudioDemoRoadbook(value?: string) {
 
 const localDemoModelLabel = "Local Demo";
 const recordingSuiteCommand = "npm run check:recording-suite";
+const candidateHandoffCommand = "npm run check:lens-candidate-handoff";
 const recordingWorkflowSteps = [
   {
     step: "1",
@@ -151,6 +152,11 @@ const recordingWorkflowSteps = [
   },
   {
     step: "5",
+    title: "候选 QA",
+    cue: "验证 Top shots 是否带着 rank / day / lens 进入 Dream。",
+  },
+  {
+    step: "6",
     title: "桥接证据",
     cue: "用 Bridge QA 状态卡证明页面闭环。",
   },
@@ -286,6 +292,7 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
   const [recordingAssetsRefreshing, setRecordingAssetsRefreshing] = useState(false);
   const [scriptMode, setScriptMode] = useState(false);
   const [recordingCommandCopyState, setRecordingCommandCopyState] = useState<"idle" | "copied" | "error">("idle");
+  const [candidateCommandCopyState, setCandidateCommandCopyState] = useState<"idle" | "copied" | "error">("idle");
 
   const locatedCount = useMemo(() => points.filter((point) => point.status === "ok").length, [points]);
   const topStops = roadbook.days.flatMap((day) => day.stops.slice(0, 2)).slice(0, 8);
@@ -405,6 +412,15 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
       setRecordingCommandCopyState("copied");
     } catch {
       setRecordingCommandCopyState("error");
+    }
+  }
+
+  async function copyCandidateHandoffCommand() {
+    try {
+      await navigator.clipboard.writeText(candidateHandoffCommand);
+      setCandidateCommandCopyState("copied");
+    } catch {
+      setCandidateCommandCopyState("error");
     }
   }
 
@@ -705,6 +721,10 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
                       <Copy size={14} />
                       {recordingCommandCopyState === "copied" ? "已复制" : recordingCommandCopyState === "error" ? "手动复制" : "复制命令"}
                     </button>
+                    <button type="button" onClick={copyCandidateHandoffCommand}>
+                      <Copy size={14} />
+                      {candidateCommandCopyState === "copied" ? "已复制候选 QA" : candidateCommandCopyState === "error" ? "手动复制候选 QA" : "复制候选 QA"}
+                    </button>
                     <button type="button" onClick={() => loadRecordingAssets()} disabled={recordingAssetsRefreshing}>
                       <RotateCcw size={14} className={recordingAssetsRefreshing ? "spin" : ""} />
                       {recordingAssetsRefreshing ? "刷新中" : "刷新"}
@@ -724,6 +744,8 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
                   </div>
                   {recordingCommandCopyState === "copied" ? <span className="studio-recording-copy-status">录屏套件命令已复制</span> : null}
                   {recordingCommandCopyState === "error" ? <span className="studio-recording-copy-status">浏览器不允许自动复制，可手动复制上方命令</span> : null}
+                  {candidateCommandCopyState === "copied" ? <span className="studio-recording-copy-status">候选 QA 命令已复制</span> : null}
+                  {candidateCommandCopyState === "error" ? <span className="studio-recording-copy-status">浏览器不允许自动复制候选 QA 命令</span> : null}
                   <div className="studio-recording-workflow" aria-label="录屏素材流程">
                     {recordingWorkflowSteps.map((item) => (
                       <div key={item.step}>

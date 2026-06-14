@@ -119,6 +119,7 @@ describe("StudioMode demo roadbooks", () => {
     expect(screen.getAllByText("Dream low-skyline lens visual pack")[0]).toBeTruthy();
     expect(screen.getAllByText("low-skyline lens").length).toBeGreaterThanOrEqual(1);
     expect(screen.getByRole("button", { name: "复制命令" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "复制候选 QA" })).toBeTruthy();
     expect(screen.getByRole("link", { name: /梦境路书/ }).getAttribute("href")).toBe("/dream?demo=dali");
     expect(screen.getByLabelText("Demo Bridge").textContent).toContain("云南大理 → Dream");
     expect(screen.getByLabelText("Demo Bridge").textContent).toContain("Recording suite 已覆盖");
@@ -129,6 +130,8 @@ describe("StudioMode demo roadbooks", () => {
     expect(workflow.textContent).toContain("运行 QA");
     expect(workflow.textContent).toContain("刷新素材");
     expect(workflow.textContent).toContain("打开索引");
+    expect(workflow.textContent).toContain("候选 QA");
+    expect(workflow.textContent).toContain("验证 Top shots 是否带着 rank / day / lens 进入 Dream。");
     expect(workflow.textContent).toContain("桥接证据");
     expect(workflow.textContent).toContain("用 Bridge QA 状态卡证明页面闭环。");
     expect(screen.getByRole("link", { name: /打开总索引/ }).getAttribute("href")).toBe("/api/recording-assets/index");
@@ -264,5 +267,22 @@ describe("StudioMode demo roadbooks", () => {
     expect(writeText).toHaveBeenCalledWith("npm run check:recording-suite");
     expect(await screen.findByText("录屏套件命令已复制")).toBeTruthy();
     expect(screen.getByRole("button", { name: "已复制" })).toBeTruthy();
+  });
+
+  it("copies the lens candidate handoff QA command from the Studio asset panel", async () => {
+    const writeText = vi.fn(async () => undefined);
+    Object.defineProperty(window.navigator, "clipboard", {
+      value: { writeText },
+      configurable: true,
+    });
+
+    render(<StudioMode />);
+
+    expect(await screen.findByText("15 个素材包")).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: "复制候选 QA" }));
+
+    expect(writeText).toHaveBeenCalledWith("npm run check:lens-candidate-handoff");
+    expect(await screen.findByText("候选 QA 命令已复制")).toBeTruthy();
+    expect(screen.getByRole("button", { name: "已复制候选 QA" })).toBeTruthy();
   });
 });
