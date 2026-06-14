@@ -1268,3 +1268,14 @@ Files shown: lib/lens-comparison.ts, app/dream/page.tsx, components/dream-roadbo
 Command/result: npm test -- lib/lens-comparison.test.ts components/dream-roadbook.test.tsx; npm run lint; Browser check confirmed candidate link params, visible first-viewport cue, active lens, and return path.
 Voiceover note: "现在候选条不是一个静态列表，点进去会把 rank、D 几、差异说明带进 /dream。录屏时我可以直接从证据看板跳到要录的场景，再一键回看板。"
 Usable for: candidate handoff clip, creator loop proof, continued goal run round 204
+
+## Phase DF: v0.8.99 — Goals 201-210 Final Quality Gate
+
+Date: 2026-06-14
+Clip title: Phase DF: v0.8.99 — Goals 201-210 Final Quality Gate
+What changed: Closed the candidate-to-Dream handoff run with the full local lint, test, and production-build gate after browser visual inspection.
+Why this matters: The creator loop is now verified end to end: dashboard candidate, `/dream` handoff cue, active day/lens context, return path, tests, and production build.
+Files shown: docs/recording/goal-201-210-recap.md, `/api/recording-assets/lens-comparison`, `/dream?...candidate=1`, terminal verification output
+Command/result: npm run lint && npm test && npm run build (44 files, 907 tests, build passed)
+Voiceover note: "候选跳转做完后，我继续跑完整质量门。现在从看板选 Top shot 到 /dream 录制场景，再回到看板，是一条可验证的闭环。"
+Usable for: goal closeout clip, candidate handoff proof, next recording-queue handoff, continued goal run round 207

@@ -10,11 +10,10 @@ This run connected the Best Recording Candidates strip to the actual `/dream` re
 
 | Goal | Commit | Summary |
 | --- | --- | --- |
-| 201-204 | pending | Added candidate query params, `/dream` cue, active-day handoff, and return path. |
-| 205 | pending | Added focused tests and recording docs. |
-| 206 | pending | Browser visual handoff check. |
-| 207 | pending | Final lint/test/build verification. |
-| 208 | pending | Push to GitHub. |
+| 201-205 | `b7cb5f1` | Added candidate query params, `/dream` cue, active-day handoff, return path, focused tests, and recording docs. |
+| 206 | `b7cb5f1` | Browser check confirmed candidate params, visible first-viewport cue, active lens, and return path. |
+| 207 | closeout | Final lint/test/build verification: 44 files, 907 tests, build passed. |
+| 208 | closeout | Push to GitHub after final closeout commit. |
 | 209-210 | closeout | Next-goal handoff. |
 
 ## What Changed In The Creator Loop
@@ -29,6 +28,7 @@ This run connected the Best Recording Candidates strip to the actual `/dream` re
 - `npm test -- lib/lens-comparison.test.ts components/dream-roadbook.test.tsx` (24 tests passed)
 - `npm run lint` (passed)
 - Browser check: clicking a candidate opened `/dream` with candidate params, visible first-viewport cue, active lens, and return path.
+- `npm run lint && npm test && npm run build` (44 files, 907 tests, build passed)
 
 ## Recording Angle
 
