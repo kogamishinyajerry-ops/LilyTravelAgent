@@ -14,6 +14,9 @@ const skipRebuild = process.env.RECORDING_INDEX_SKIP_REBUILD === "1";
 const npmCommand = process.platform === "win32" ? "npm.cmd" : "npm";
 const systemChromePath = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
 const executablePath = process.env.PLAYWRIGHT_CHROME_EXECUTABLE || (existsSync(systemChromePath) ? systemChromePath : undefined);
+const proofStoryProductionAssetsLabel = "Proof Story Production Assets";
+const proofStoryNarrationPreview = "Studio 现在把 Proof Story 脚本路径、证据时间线、四行预览和复制动作放在同一个录屏面板里。";
+const proofStoryCloseoutStatus = "Proof Story · 脚本路径: 就绪 · Studio QA: 已捕获 · 索引入库: 已入库";
 
 function resolveUrl(pathname) {
   return new URL(pathname, baseUrl).toString();
@@ -257,7 +260,10 @@ function assertStaticProof(staticIndex, staticIndexPath, proof) {
 }
 
 function assertStaticScriptMaterial(staticIndex, staticIndexPath, scriptMaterial) {
+  assert(staticIndex.includes(proofStoryProductionAssetsLabel), `${staticIndexPath} does not include ${proofStoryProductionAssetsLabel}.`);
   assert(staticIndex.includes(scriptMaterial.label), `${staticIndexPath} does not include ${scriptMaterial.label}.`);
+  assert(staticIndex.includes(proofStoryNarrationPreview), `${staticIndexPath} does not include the Proof Story narration preview.`);
+  assert(staticIndex.includes(proofStoryCloseoutStatus), `${staticIndexPath} does not include the Proof Story closeout status.`);
   assert(staticIndex.includes(scriptMaterial.cue), `${staticIndexPath} does not include the ${scriptMaterial.label} cue.`);
   assert(scriptMaterial.screenshotPath, `${scriptMaterial.label} local proof is missing a screenshot path.`);
   assert(scriptMaterial.summaryPath, `${scriptMaterial.label} local proof is missing a summary path.`);
@@ -274,7 +280,10 @@ function assertProofText(proof, proofText) {
 }
 
 function assertScriptMaterialText(scriptMaterial, proofText) {
+  assert(proofText.includes(proofStoryProductionAssetsLabel), `API index script-material block missing ${proofStoryProductionAssetsLabel}: ${proofText}`);
   assert(proofText.includes(scriptMaterial.label), `API index script-material block missing label: ${proofText}`);
+  assert(proofText.includes(proofStoryNarrationPreview), `API index script-material block missing narration preview: ${proofText}`);
+  assert(proofText.includes(proofStoryCloseoutStatus), `API index script-material block missing closeout status: ${proofText}`);
   assert(proofText.includes(scriptMaterial.cue), `API index script-material block missing cue: ${proofText}`);
 }
 

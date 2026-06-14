@@ -1862,3 +1862,14 @@ Files shown: lib/recording-assets.ts, lib/recording-assets.test.ts, components/s
 Command/result: npm test -- lib/recording-assets.test.ts components/studio-mode.test.tsx passed with 31 tests; browser check confirmed the chip is visible, compact, and console errors were empty.
 Voiceover note: "现在 Studio 也能看到 Production Assets 是否已经回流到两个索引。也就是说，录屏素材从卡片、QA、索引到 Studio 状态形成了闭环。"
 Usable for: Studio asset-loop closeout, production readiness narration, continued goal run round 654
+
+## Phase FH: v0.8.153 — Production Assets Text QA
+
+Date: 2026-06-14
+Clip title: Phase FH: v0.8.153 — Production Assets Text QA
+What changed: `npm run check:recording-index` now verifies the optional Proof Story production-assets block more deeply. When script-material evidence exists, static `recordings/index.html` and dynamic `/api/recording-assets/index` must include `Proof Story Production Assets`, the narration preview, the closeout status, the existing `Proof Story Script Material` label, cue text, and the three evidence links.
+Why this matters: The archive QA now protects the creator-facing story, not only the old screenshot/link baseline.
+Files shown: scripts/check-recording-index.mjs, README.md, docs/recording/goal-661-670-recap.md
+Command/result: node --check scripts/check-recording-index.mjs passed; npm run check:recording-index passed and wrote `recordings/index-checks/2026-06-14T09-48-27-130Z/summary.json`.
+Voiceover note: "现在我不是只检查链接有没有，而是连 Production Assets 这段给创作者看的文案也纳入自动验收。"
+Usable for: QA rigor clip, production-assets proof narration, continued goal run round 664
