@@ -64,7 +64,7 @@ DREAM_LENSES=low-skyline,isometric-atlas npm run check:dream-lenses
 - `/dream` `Dream Visual Proof Cue Strip`, covering Terrain, Skyline, AI Asset, Route, and Proof over the cinematic scene.
 - `/dream` `播放视觉证据`, highlighting those five visual proof cues in recording order.
 - `npm run check:dream-visuals` captures the visual proof cue labels, final `Proof` playback state, and `dream-*-visual-proof-playback.png`.
-- `npm run check:recording-index` verifies `/api/recording-assets/index` exposes Dream Proof and writes an `index-checks` proof pack.
+- `npm run check:recording-index` verifies `/api/recording-assets/index` exposes Dream Proof and writes an `index-checks` proof pack. `npm run check:recording-suite` now runs this step after generating the asset index.
 - In `/dream`, `Agent Visual Contract`, `Director Lens`, `Scene Inspector`, and `Proof Stack` show why the cinematic page is structured, not only decorative.
 - `打开总索引` leading to `/api/recording-assets/index`.
 - `镜头对比` leading to `/api/recording-assets/lens-comparison`.
@@ -87,6 +87,7 @@ Run it, return to `/studio`, then click `刷新`.
 - "In Dream QA, the screenshot is paired with a visual contract: prompt strategy, director lens, scene proof, asset state, and motion evidence."
 - "The archive does not only list screenshots. It also carries the Dream Proof playback result, so evidence survives outside the Studio screen."
 - "The Studio panel now shows that the archive itself was checked: screenshot, summary, and notes are all linked from Index QA."
+- "The full recording suite now creates the index proof pack automatically, so one command prepares both assets and their archive QA."
 - "The lens batch lets me compare five camera directions before I tune or record the final clip."
 
 ## Verification

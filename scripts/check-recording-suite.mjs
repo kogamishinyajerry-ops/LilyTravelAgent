@@ -41,6 +41,14 @@ const steps = [
     args: ["run", "index:recording-assets"],
     env: {},
   },
+  {
+    label: "Recording index proof QA",
+    args: ["run", "check:recording-index"],
+    env: {
+      RECORDING_INDEX_BASE_URL: baseUrl,
+      RECORDING_INDEX_SKIP_REBUILD: "1",
+    },
+  },
 ];
 
 async function main() {

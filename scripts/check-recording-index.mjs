@@ -9,6 +9,7 @@ const runStamp = new Date().toISOString().replace(/[:.]/g, "-");
 const outDir = process.env.RECORDING_INDEX_OUT_DIR || path.join("recordings", "index-checks", runStamp);
 const recordingsRoot = process.env.RECORDINGS_DIR || "recordings";
 const visualChecksRoot = path.join(recordingsRoot, "visual-checks");
+const skipRebuild = process.env.RECORDING_INDEX_SKIP_REBUILD === "1";
 const npmCommand = process.platform === "win32" ? "npm.cmd" : "npm";
 const systemChromePath = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
 const executablePath = process.env.PLAYWRIGHT_CHROME_EXECUTABLE || (existsSync(systemChromePath) ? systemChromePath : undefined);
@@ -32,7 +33,11 @@ async function main() {
   }
 
   await assertReachable(resolveUrl("/api/recording-assets/index"));
-  await runIndexCommand();
+  if (skipRebuild) {
+    console.log("Recording asset index generation skipped: using existing index from the recording suite.");
+  } else {
+    await runIndexCommand();
+  }
   await mkdir(outDir, { recursive: true });
 
   const staticIndexPath = path.join(recordingsRoot, "index.html");
