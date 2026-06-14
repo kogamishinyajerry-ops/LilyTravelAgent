@@ -1510,3 +1510,14 @@ Files shown: components/dream-roadbook.tsx, components/dream-roadbook.test.tsx, 
 Command/result: npm test -- components/dream-roadbook.test.tsx (21 Dream tests passed); Chrome browser check confirmed the sequence reaches `Proof` and avoids key scene overlap; npm run lint && npm test && npm run build passed with 44 files, 914 tests, and a successful production build.
 Voiceover note: "现在 Dream 主画面也有证据线播放。点一下，就从 Terrain 走到 Proof，直接把画面背后的资产管线讲清楚。"
 Usable for: Dream proof playback clip, visual asset-pipeline narration, continued goal run round 334
+
+## Phase EB: v0.8.121 — Dream Visual Proof Playback QA Evidence
+
+Date: 2026-06-14
+Clip title: Phase EB: v0.8.121 — Dream Visual Proof Playback QA Evidence
+What changed: `npm run check:dream-visuals` now captures the Dream visual proof cue strip, clicks `播放视觉证据`, verifies final active cue `Proof`, and writes the evidence into summary/html/clip-notes.
+Why this matters: The new Dream proof playback is no longer only a UI feature; it is now part of the recording asset pipeline.
+Files shown: scripts/check-dream-visuals.mjs, recordings/visual-checks/2026-06-14T07-43-03-727Z/summary.json, recordings/visual-checks/2026-06-14T07-43-03-727Z/clip-notes.md
+Command/result: node --check scripts/check-dream-visuals.mjs passed; npm run check:dream-visuals passed; npm run lint && npm test && npm run build passed with 44 files, 914 tests, and a successful production build.
+Voiceover note: "我不只做了 Dream 的视觉证据线，还让 QA 真正去点击播放，确认最后停在 Proof，并把这条证据写进素材包。"
+Usable for: Dream QA proof clip, recording asset pipeline evidence, continued goal run round 344
