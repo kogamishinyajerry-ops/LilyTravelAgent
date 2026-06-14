@@ -281,10 +281,10 @@ function getBridgeEvidenceCue(recordingAssets: RecordingAssetsState) {
 function getRecordingProofChecklist(recordingAssets: RecordingAssetsState) {
   if (recordingAssets.status !== "ready") {
     return [
-      { label: "Bridge QA", state: "等待读取", detail: "读取本地桥接素材。", href: "" },
-      { label: "Candidate QA", state: "等待读取", detail: "读取候选点击 QA。", href: "" },
-      { label: "Lens Compare", state: "等待读取", detail: "读取镜头对比入口。", href: "" },
-      { label: "Asset Index", state: "等待读取", detail: "读取总素材索引。", href: "" },
+      { label: "Bridge QA", state: "等待读取", detail: "读取本地桥接素材。", href: "", cue: "先证明 Studio 和 Dream 能互相跳转。" },
+      { label: "Candidate QA", state: "等待读取", detail: "读取候选点击 QA。", href: "", cue: "再证明候选镜头点击后上下文不会丢。" },
+      { label: "Lens Compare", state: "等待读取", detail: "读取镜头对比入口。", href: "", cue: "接着比较不同视觉镜头的成片差异。" },
+      { label: "Asset Index", state: "等待读取", detail: "读取总素材索引。", href: "", cue: "最后进入素材库，挑录屏片段。" },
     ];
   }
 
@@ -295,6 +295,7 @@ function getRecordingProofChecklist(recordingAssets: RecordingAssetsState) {
       state: bridgeCount > 0 ? "已验证" : "待生成",
       detail: bridgeCount > 0 ? `${bridgeCount} 个桥接素材` : "运行 recording suite",
       href: "",
+      cue: "先证明 Studio 和 Dream 能互相跳转。",
     },
     {
       label: "Candidate QA",
@@ -303,18 +304,21 @@ function getRecordingProofChecklist(recordingAssets: RecordingAssetsState) {
         ? `${recordingAssets.latestCandidateHandoff.captureCount} 个入口`
         : candidateHandoffCommand,
       href: recordingAssets.latestCandidateHandoff?.summaryPath || "",
+      cue: "再证明候选镜头点击后上下文不会丢。",
     },
     {
       label: "Lens Compare",
       state: recordingAssets.lensComparisonUrl ? "可打开" : "待生成",
       detail: "镜头候选对比",
       href: recordingAssets.lensComparisonUrl,
+      cue: "接着比较不同视觉镜头的成片差异。",
     },
     {
       label: "Asset Index",
       state: recordingAssets.indexAvailable ? "可打开" : "待生成",
       detail: recordingAssets.indexAvailable ? `${recordingAssets.packCount} 个素材包` : recordingSuiteCommand,
       href: recordingAssets.indexAvailable ? recordingAssets.indexUrl : "",
+      cue: "最后进入素材库，挑录屏片段。",
     },
   ];
 }
@@ -334,10 +338,13 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
   const [scriptMode, setScriptMode] = useState(false);
   const [recordingCommandCopyState, setRecordingCommandCopyState] = useState<"idle" | "copied" | "error">("idle");
   const [candidateCommandCopyState, setCandidateCommandCopyState] = useState<"idle" | "copied" | "error">("idle");
+  const [proofCueIndex, setProofCueIndex] = useState(0);
+  const [proofCuePlaying, setProofCuePlaying] = useState(false);
 
   const locatedCount = useMemo(() => points.filter((point) => point.status === "ok").length, [points]);
   const topStops = roadbook.days.flatMap((day) => day.stops.slice(0, 2)).slice(0, 8);
   const dreamHandoffHref = demoRoadbookId ? `/dream?demo=${demoRoadbookId}` : "/dream";
+  const recordingProofChecklist = useMemo(() => getRecordingProofChecklist(recordingAssets), [recordingAssets]);
 
   const loadRecordingAssets = useCallback(
     async ({ markRefreshing = true, isActive = () => true }: { markRefreshing?: boolean; isActive?: () => boolean } = {}) => {
@@ -386,6 +393,22 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
       active = false;
     };
   }, [loadRecordingAssets]);
+
+  useEffect(() => {
+    if (!scriptMode || !proofCuePlaying) {
+      return;
+    }
+
+    const timer = window.setTimeout(() => {
+      const nextIndex = Math.min(proofCueIndex + 1, recordingProofChecklist.length - 1);
+      setProofCueIndex(nextIndex);
+      if (nextIndex >= recordingProofChecklist.length - 1) {
+        setProofCuePlaying(false);
+      }
+    }, 1200);
+
+    return () => window.clearTimeout(timer);
+  }, [proofCueIndex, proofCuePlaying, recordingProofChecklist.length, scriptMode]);
 
   function updateBrief<K extends keyof TravelBrief>(key: K, value: TravelBrief[K]) {
     setBrief((current) => ({ ...current, [key]: value }));
@@ -465,6 +488,19 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
     }
   }
 
+  function playProofCueSequence() {
+    setProofCueIndex(0);
+    setProofCuePlaying(true);
+  }
+
+  function toggleScriptMode() {
+    if (scriptMode) {
+      setProofCuePlaying(false);
+      setProofCueIndex(0);
+    }
+    setScriptMode((current) => !current);
+  }
+
   return (
     <main id="main-content" tabIndex={-1} className="studio-page">
       <section className="studio-stage">
@@ -486,7 +522,7 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
               type="button"
               className={`studio-mode-toggle ${scriptMode ? "active" : ""}`}
               aria-pressed={scriptMode}
-              onClick={() => setScriptMode((current) => !current)}
+              onClick={toggleScriptMode}
             >
               <ListChecks size={16} />
               脚本模式
@@ -660,11 +696,20 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
                 })()}
                 <div className="studio-proof-checklist" aria-label="录屏证据清单">
                   <div className="studio-proof-checklist-heading">
-                    <span>Proof Stack</span>
-                    <strong>录屏证据清单</strong>
+                    <div>
+                      <span>Proof Stack</span>
+                      <strong>录屏证据清单</strong>
+                    </div>
+                    <button type="button" onClick={playProofCueSequence} aria-pressed={proofCuePlaying}>
+                      {proofCuePlaying ? "讲解中" : "播放证据线"}
+                    </button>
                   </div>
-                  {getRecordingProofChecklist(recordingAssets).map((item) => (
-                    <div className="studio-proof-checklist-item" key={item.label}>
+                  {recordingProofChecklist.map((item, index) => (
+                    <div
+                      className={`studio-proof-checklist-item ${index === proofCueIndex ? "active" : ""}`}
+                      key={item.label}
+                      aria-current={index === proofCueIndex ? "step" : undefined}
+                    >
                       <span>{item.label}</span>
                       <strong>{item.state}</strong>
                       {item.href ? (
@@ -675,6 +720,7 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
                       ) : (
                         <p>{item.detail}</p>
                       )}
+                      {index === proofCueIndex ? <em>{item.cue}</em> : null}
                     </div>
                   ))}
                 </div>

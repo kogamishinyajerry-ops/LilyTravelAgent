@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 
 vi.mock("next/link", () => ({
   default: ({ children, href, ...rest }: { children: React.ReactNode; href: string }) => (
@@ -80,6 +80,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
+  vi.useRealTimers();
   cleanup();
   vi.restoreAllMocks();
   vi.unstubAllGlobals();
@@ -260,11 +261,45 @@ describe("StudioMode demo roadbooks", () => {
     expect(proofChecklist.textContent).toContain("镜头候选对比");
     expect(proofChecklist.textContent).toContain("Asset Index");
     expect(proofChecklist.textContent).toContain("15 个素材包");
+    expect(within(proofChecklist).getByRole("button", { name: "播放证据线" })).toBeTruthy();
+    expect(within(proofChecklist).getByText("先证明 Studio 和 Dream 能互相跳转。")).toBeTruthy();
     expect(within(proofChecklist).getByRole("link", { name: /3 个入口/ }).getAttribute("href")).toBe("candidate-handoff-checks/candidate-latest/summary.json");
     expect(within(proofChecklist).getByRole("link", { name: /镜头候选对比/ }).getAttribute("href")).toBe("/api/recording-assets/lens-comparison");
     expect(within(proofChecklist).getByRole("link", { name: /15 个素材包/ }).getAttribute("href")).toBe("/api/recording-assets/index");
     expect(screen.getByText("讲解轨道已打开")).toBeTruthy();
     expect(screen.getByRole("button", { name: /脚本模式/ }).getAttribute("aria-pressed")).toBe("true");
+  });
+
+  it("plays the proof checklist cue sequence for screen recording", async () => {
+    render(<StudioMode />);
+
+    fireEvent.click(screen.getByRole("button", { name: /脚本模式/ }));
+
+    const proofChecklist = await screen.findByLabelText("录屏证据清单");
+    expect(proofChecklist.querySelector('[aria-current="step"]')?.textContent).toContain("Bridge QA");
+
+    vi.useFakeTimers();
+    fireEvent.click(within(proofChecklist).getByRole("button", { name: "播放证据线" }));
+    expect(within(proofChecklist).getByRole("button", { name: "讲解中" }).getAttribute("aria-pressed")).toBe("true");
+    expect(proofChecklist.querySelector('[aria-current="step"]')?.textContent).toContain("先证明 Studio 和 Dream 能互相跳转。");
+
+    await act(async () => {
+      vi.advanceTimersByTime(1200);
+    });
+    expect(proofChecklist.querySelector('[aria-current="step"]')?.textContent).toContain("Candidate QA");
+    expect(proofChecklist.querySelector('[aria-current="step"]')?.textContent).toContain("再证明候选镜头点击后上下文不会丢。");
+
+    await act(async () => {
+      vi.advanceTimersByTime(1200);
+    });
+    expect(proofChecklist.querySelector('[aria-current="step"]')?.textContent).toContain("Lens Compare");
+
+    await act(async () => {
+      vi.advanceTimersByTime(1200);
+    });
+    expect(proofChecklist.querySelector('[aria-current="step"]')?.textContent).toContain("Asset Index");
+    expect(proofChecklist.querySelector('[aria-current="step"]')?.textContent).toContain("最后进入素材库，挑录屏片段。");
+    expect(within(proofChecklist).getByRole("button", { name: "播放证据线" }).getAttribute("aria-pressed")).toBe("false");
   });
 
   it("copies the local recording suite command for screen-recorded workflow demos", async () => {
