@@ -334,6 +334,7 @@ describe("StudioMode demo roadbooks", () => {
     expect(screen.getByLabelText("Proof Story Bundle Chain QA 状态").textContent).toBe("Chain 已入库");
     expect(screen.getByLabelText("Proof Story Index Chain 状态").textContent).toBe("Index Chain 已验证");
     expect(screen.getByLabelText("Recording Index Chain 状态").textContent).toBe("Index Chain 已验证");
+    expect(screen.getByLabelText("Recording Index Summary 状态").textContent).toBe("Index Summary 已验证");
     const proofChainSummary = screen.getByLabelText("Proof Chain Summary 预览").textContent || "";
     expect(proofChainSummary).toContain("Proof Chain Summary");
     expect(proofChainSummary).toContain("Chain: Proof Story Bundle Chain");
@@ -400,6 +401,7 @@ describe("StudioMode demo roadbooks", () => {
     expect(screen.getByLabelText("Recording Index QA 状态").textContent).toContain("素材总索引已验证");
     expect(screen.getByLabelText("Recording Index QA 状态").textContent).toContain("Dream + Studio 双证据 · Proof · 3/5 ready · 6 条证据链接");
     expect(screen.getByLabelText("Recording Index QA 状态").textContent).toContain("Index Chain 已验证");
+    expect(screen.getByLabelText("Recording Index QA 状态").textContent).toContain("Index Summary 已验证");
     expect(within(screen.getByLabelText("Recording Index QA 状态")).getByLabelText("Index QA proof checks").textContent).toContain("Dream 3/3");
     expect(within(screen.getByLabelText("Recording Index QA 状态")).getByLabelText("Index QA proof checks").textContent).toContain("Studio 3/3");
     expect(screen.getByLabelText("Recording Index QA 状态").textContent).toContain("Index QA");
@@ -698,6 +700,7 @@ describe("StudioMode demo roadbooks", () => {
 
     fireEvent.click(screen.getByRole("button", { name: /脚本模式/ }));
     expect(screen.getByLabelText("录屏证据清单").textContent).toContain("Index Chain 待验证");
+    expect(screen.getByLabelText("录屏证据清单").textContent).toContain("Index Summary 已验证");
   });
 
   it("shows a pending Index Summary state for older index QA packs", async () => {
@@ -718,6 +721,10 @@ describe("StudioMode demo roadbooks", () => {
     expect(await screen.findByLabelText("Proof Chain Summary 预览")).toBeTruthy();
     expect(screen.getByLabelText("Proof Chain Summary QA 状态").textContent).toBe("Summary 已入库");
     expect(screen.getByLabelText("Proof Chain Index Summary 状态").textContent).toBe("Index Summary 待验证");
+    expect(screen.getByLabelText("Recording Index Summary 状态").textContent).toBe("Index Summary 待验证");
+
+    fireEvent.click(screen.getByRole("button", { name: /脚本模式/ }));
+    expect(screen.getByLabelText("录屏证据清单").textContent).toContain("Index Summary 待验证");
   });
 
   it("keeps legacy Dream-only wording for older 3-link recording index checks", async () => {
@@ -900,6 +907,7 @@ describe("StudioMode demo roadbooks", () => {
     expect(proofChecklist.textContent).toContain("Index QA");
     expect(proofChecklist.textContent).toContain("Dream + Studio 双证据 · 6 条链接");
     expect(proofChecklist.textContent).toContain("Index Chain 已验证");
+    expect(proofChecklist.textContent).toContain("Index Summary 已验证");
     expect(proofChecklist.textContent).toContain("Suite Run");
     expect(proofChecklist.textContent).toContain("7 步 · 7 通过");
     expect(within(proofChecklist).getByRole("button", { name: "播放证据线" })).toBeTruthy();
@@ -948,7 +956,7 @@ describe("StudioMode demo roadbooks", () => {
       vi.advanceTimersByTime(1200);
     });
     expect(proofChecklist.querySelector('[aria-current="step"]')?.textContent).toContain("Index QA");
-    expect(proofChecklist.querySelector('[aria-current="step"]')?.textContent).toContain("确认总索引同时验收 Dream、Studio 和最终 Chain 交付。");
+    expect(proofChecklist.querySelector('[aria-current="step"]')?.textContent).toContain("确认总索引同时验收 Dream、Studio、最终 Chain 和 Summary 交付。");
     expect(within(proofChecklist).getByRole("button", { name: "讲解中" }).getAttribute("aria-pressed")).toBe("true");
 
     await act(async () => {

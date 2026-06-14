@@ -2214,3 +2214,14 @@ Files shown: lib/recording-assets.ts, components/studio-mode.tsx, app/globals.cs
 Command/result: npm test -- lib/recording-assets.test.ts components/studio-mode.test.tsx passed with 53 tests; browser check against `http://localhost:3000/studio` showed `Summary 已入库`, `Index Summary 已验证`, 297px row width inside a 313px card, and 0 console errors.
 Voiceover note: "Summary 也完成回流闭环：Studio QA 采集，Recording Index QA 验证，然后 Studio 显示 Index Summary 已验证。"
 Usable for: final Summary proof-loop walkthrough, post-production note verification clip, continued goal run round 974
+
+## Phase FS: v0.8.185 — Index Summary In Main Recording Rail
+
+Date: 2026-06-14
+Clip title: Phase FS: v0.8.185 — Index Summary In Main Recording Rail
+What changed: The main `/studio` Recording Index QA card now shows `Index Summary 已验证` beside `Index Chain 已验证`, and script mode appends the same Summary state to the Index QA proof checklist.
+Why this matters: The primary recording rail can now explain the final post-production note loop without requiring viewers to inspect the smaller script-material card.
+Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, README.md, docs/recording/goal-981-990-recap.md
+Command/result: npm test -- components/studio-mode.test.tsx passed with 38 tests; browser check against `http://localhost:3000/studio` showed `Index Summary 已验证`, no chip overflow in a 313px Recording Index card, the Index QA playback cue including `Summary 交付`, and 0 console errors. `npm run lint && npm test && npm run build` passed with 951 tests and a successful Next.js production build.
+Voiceover note: "现在主录屏轨道也能直接讲 Summary 回流：Index QA 卡片和脚本模式都显示 Index Summary 已验证，说明后期 notes 已经进入总素材验收。"
+Usable for: main recording rail proof-loop walkthrough, final post-production note teaching segment, continued goal run round 984
