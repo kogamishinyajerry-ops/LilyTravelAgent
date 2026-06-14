@@ -2334,7 +2334,7 @@ textarea {
 
 .studio-proof-bundle-chain-row {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) auto auto;
   align-items: center;
   gap: 5px;
   min-width: 0;
@@ -2360,6 +2360,33 @@ textarea {
 }
 
 .studio-proof-bundle-chain-preview.missing {
+  color: #7a3c24;
+  border-color: rgba(191, 128, 85, 0.22);
+  background: rgba(191, 128, 85, 0.1);
+}
+
+.studio-proof-bundle-chain-archive {
+  overflow: hidden;
+  width: max-content;
+  max-width: 82px;
+  border: 1px solid rgba(38, 59, 49, 0.12);
+  border-radius: 999px;
+  padding: 4px 7px;
+  font-size: 0.56rem;
+  font-weight: 950;
+  line-height: 1;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.studio-proof-bundle-chain-archive.ready {
+  color: #275f4c;
+  border-color: rgba(79, 143, 122, 0.26);
+  background: rgba(79, 143, 122, 0.14);
+}
+
+.studio-proof-bundle-chain-archive.missing {
   color: #7a3c24;
   border-color: rgba(191, 128, 85, 0.22);
   background: rgba(191, 128, 85, 0.1);

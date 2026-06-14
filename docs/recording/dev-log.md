@@ -2115,3 +2115,14 @@ Files shown: scripts/check-studio-visuals.mjs, recordings/studio-checks/2026-06-
 Command/result: node --check scripts/check-studio-visuals.mjs passed; npm run check:studio-visuals passed and the newest Studio QA notes contain `Proof Story Bundle Chain` plus `Bundle Chain 已复制`.
 Voiceover note: "Chain 句子也进了 Studio QA notes。这样页面上能复制的后期说明，会自动进入素材证据包，后面剪视频不用再手动整理。"
 Usable for: Studio QA notes walkthrough, video-notes automation clip, continued goal run round 884
+
+## Phase FS: v0.8.176 — Chain Archive Chip In Studio
+
+Date: 2026-06-14
+Clip title: Phase FS: v0.8.176 — Chain Archive Chip In Studio
+What changed: `/studio` now reads the latest Studio QA `bundleChainLine` and `bundleChainCopyState`, then shows a compact `Chain 已入库` chip beside the `复制 Chain` action.
+Why this matters: The video-notes closeout sentence now has the same visible archive proof loop as Delivery, Complete, Bundle, and Index Bundle.
+Files shown: lib/recording-assets.ts, components/studio-mode.tsx, app/globals.css, docs/recording/goal-891-900-recap.md
+Command/result: npm test -- lib/recording-assets.test.ts passed with 15 tests; npm test -- components/studio-mode.test.tsx passed with 33 tests; browser check against `http://localhost:3000/studio` showed `Chain 已入库`, 297px row width inside a 313px card, and 0 console errors.
+Voiceover note: "Chain 句子不只是页面里的便捷复制按钮。它已经进入 Studio QA notes，现在又回到 Studio 里显示 Chain 已入库。"
+Usable for: final video-notes archive clip, Studio proof-loop teaching segment, continued goal run round 894

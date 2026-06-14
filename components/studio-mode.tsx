@@ -153,6 +153,8 @@ type RecordingStudioScriptMaterialSummary = {
   completeLine?: string;
   completeBundleLine?: string;
   completeBundleCopyState?: string;
+  bundleChainLine?: string;
+  bundleChainCopyState?: string;
   screenshotPath?: string;
 };
 
@@ -651,6 +653,24 @@ function getProofStoryBundleChainState({
   };
 }
 
+function getProofStoryBundleChainArchiveState(scriptMaterial: RecordingStudioScriptMaterialSummary | null | undefined, currentChainLine: string) {
+  const archivedLine = scriptMaterial?.bundleChainLine || "";
+  const copyState = scriptMaterial?.bundleChainCopyState || "";
+  if (!archivedLine) {
+    return { label: "Chain 待入库", ready: false };
+  }
+
+  if (archivedLine !== currentChainLine) {
+    return { label: "Chain 待同步", ready: false };
+  }
+
+  if (!copyState.includes("已复制")) {
+    return { label: "Chain 待验证", ready: false };
+  }
+
+  return { label: "Chain 已入库", ready: true };
+}
+
 function getProofStoryDeliverySync(studioLine: string, notesLine: string) {
   if (!notesLine) {
     return { label: "Delivery 待入库", ready: false };
@@ -854,6 +874,10 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
     bundleState: proofStoryCompleteBundleArchiveState,
     indexBundleState: proofStoryIndexCompleteBundleState,
   });
+  const proofStoryBundleChainArchiveState =
+    recordingAssets.status === "ready"
+      ? getProofStoryBundleChainArchiveState(recordingAssets.latestStudioProofPlayback?.scriptMaterial, proofStoryBundleChainState.label)
+      : getProofStoryBundleChainArchiveState(null, proofStoryBundleChainState.label);
 
   const loadRecordingAssets = useCallback(
     async ({ markRefreshing = true, isActive = () => true }: { markRefreshing?: boolean; isActive?: () => boolean } = {}) => {
@@ -1558,6 +1582,12 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
                             >
                               {proofStoryBundleChainState.label}
                             </p>
+                            <span
+                              className={`studio-proof-bundle-chain-archive ${proofStoryBundleChainArchiveState.ready ? "ready" : "missing"}`}
+                              aria-label="Proof Story Bundle Chain QA 状态"
+                            >
+                              {proofStoryBundleChainArchiveState.label}
+                            </span>
                             <button
                               type="button"
                               className="studio-proof-bundle-chain-copy"

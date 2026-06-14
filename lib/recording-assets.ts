@@ -134,6 +134,8 @@ export type RecordingStudioScriptMaterialSummary = {
   completeLine?: string;
   completeBundleLine?: string;
   completeBundleCopyState?: string;
+  bundleChainLine?: string;
+  bundleChainCopyState?: string;
   screenshotPath: string;
 };
 
@@ -625,6 +627,8 @@ function readStudioScriptMaterialFromSummary(entry: string, summary: Record<stri
   const completeLine = readString(scriptMaterial.completeLine);
   const completeBundleLine = readString(scriptMaterial.completeBundleLine);
   const completeBundleCopyState = readString(scriptMaterial.completeBundleCopyState);
+  const bundleChainLine = readString(scriptMaterial.bundleChainLine);
+  const bundleChainCopyState = readString(scriptMaterial.bundleChainCopyState);
   return {
     visible: Boolean(scriptMaterial.visible),
     scriptPath: readString(scriptMaterial.scriptPath),
@@ -635,6 +639,8 @@ function readStudioScriptMaterialFromSummary(entry: string, summary: Record<stri
     ...(completeLine ? { completeLine } : {}),
     ...(completeBundleLine ? { completeBundleLine } : {}),
     ...(completeBundleCopyState ? { completeBundleCopyState } : {}),
+    ...(bundleChainLine ? { bundleChainLine } : {}),
+    ...(bundleChainCopyState ? { bundleChainCopyState } : {}),
     screenshotPath: screenshotFile ? toRecordingLink(path.join("studio-checks", entry, screenshotFile)) : "",
   };
 }

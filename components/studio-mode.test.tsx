@@ -21,6 +21,8 @@ const readyProofStoryCompleteLine =
   "Proof Story Complete · Delivery 已入库 · Handoff 已复制 · QA 收据就绪";
 const readyProofStoryCompleteBundleLine =
   "Proof Story Complete Bundle · Delivery: Delivery 已入库 · Handoff: Handoff 已复制 · Studio Complete: Complete 已入库 · Index Complete: Index Complete 已验证 · QA receipt: index-checks/index-check-latest/clip-notes.md";
+const readyProofStoryBundleChainLine =
+  "Proof Story Bundle Chain · Bundle 已入库 · Index Bundle 已验证 · 后期交付链路闭环";
 
 function recordingAssetsResponse(
   packCount: number,
@@ -47,6 +49,9 @@ function recordingAssetsResponse(
     omitCompleteBundleQa?: boolean;
     completeBundleLine?: string;
     completeBundleCopyState?: string;
+    omitBundleChainQa?: boolean;
+    bundleChainLine?: string;
+    bundleChainCopyState?: string;
   } = {},
 ) {
   const indexLinkCount = options.indexLinkCount ?? 6;
@@ -185,6 +190,12 @@ function recordingAssetsResponse(
                   completeBundleLine: options.completeBundleLine || readyProofStoryCompleteBundleLine,
                   completeBundleCopyState: options.completeBundleCopyState || "Complete Bundle 已复制",
                 }),
+            ...(options.omitBundleChainQa
+              ? {}
+              : {
+                  bundleChainLine: options.bundleChainLine || readyProofStoryBundleChainLine,
+                  bundleChainCopyState: options.bundleChainCopyState || "Bundle Chain 已复制",
+                }),
             screenshotPath: "studio-checks/studio-proof-latest/studio-proof-story-script-material.png",
           },
         }
@@ -302,9 +313,8 @@ describe("StudioMode demo roadbooks", () => {
     expect(screen.getByLabelText("Proof Story Complete Bundle 预览").textContent).toContain("Index Complete: Index Complete 已验证");
     expect(screen.getByLabelText("Proof Story Complete Bundle QA 状态").textContent).toBe("Bundle 已入库");
     expect(screen.getByLabelText("Proof Story Index Bundle 状态").textContent).toBe("Index Bundle 已验证");
-    expect(screen.getByLabelText("Proof Story Bundle Chain 状态").textContent).toBe(
-      "Proof Story Bundle Chain · Bundle 已入库 · Index Bundle 已验证 · 后期交付链路闭环",
-    );
+    expect(screen.getByLabelText("Proof Story Bundle Chain 状态").textContent).toBe(readyProofStoryBundleChainLine);
+    expect(screen.getByLabelText("Proof Story Bundle Chain QA 状态").textContent).toBe("Chain 已入库");
     expect(within(scriptCard).getByRole("link", { name: "Production Assets QA 收据" }).getAttribute("href")).toBe(
       "/api/recording-assets/file?path=index-checks%2Findex-check-latest%2Fclip-notes.md",
     );
@@ -616,6 +626,25 @@ describe("StudioMode demo roadbooks", () => {
     expect(screen.getByLabelText("Proof Story Index Bundle 状态").textContent).toBe("Index Bundle 待验证");
     expect(screen.getByLabelText("Proof Story Bundle Chain 状态").textContent).toContain("Index Bundle 待验证");
     expect(screen.getByLabelText("Proof Story Bundle Chain 状态").textContent).toContain("后期交付链路待补齐");
+  });
+
+  it("shows a pending Bundle Chain archive state for older Studio QA packs", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => ({
+        ok: true,
+        status: 200,
+        json: async () =>
+          recordingAssetsResponse(15, "Studio 16:9 demo pack", true, {
+            omitBundleChainQa: true,
+          }),
+      })) as unknown as typeof fetch,
+    );
+
+    render(<StudioMode />);
+
+    expect(await screen.findByLabelText("Proof Story Bundle Chain 状态")).toBeTruthy();
+    expect(screen.getByLabelText("Proof Story Bundle Chain QA 状态").textContent).toBe("Chain 待入库");
   });
 
   it("keeps legacy Dream-only wording for older 3-link recording index checks", async () => {
