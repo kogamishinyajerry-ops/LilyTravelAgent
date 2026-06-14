@@ -120,6 +120,7 @@ npm run check:dream-lenses
 npm run check:studio-visuals
 npm run check:studio-dream-handoff
 npm run index:recording-assets
+npm run check:recording-index
 npm run check:recording-suite
 ```
 
@@ -134,6 +135,8 @@ npm run check:recording-suite
 `npm run check:lens-candidate-handoff` expects `http://localhost:3000` unless `LENS_CANDIDATE_BASE_URL` is set. It verifies the Director Lens comparison dashboard candidate actions by clicking `Open first candidate`, the first candidate card, and one queue chip, then checking that `/dream` receives the expected candidate rank, day, and lens context.
 
 `npm run index:recording-assets` scans local `recordings/visual-checks`, `recordings/studio-checks`, and `recordings/handoff-checks`, then writes `recordings/index.html` and `recordings/clip-index.md` as a local asset index. When Dream QA packs include visual-proof playback evidence, the index also shows the final `Proof` cue plus links to the playback screenshot, summary, and notes.
+
+`npm run check:recording-index` expects the local dev server to be running at `http://localhost:3000` unless `RECORDING_INDEX_BASE_URL` is set. It regenerates the local asset index, opens `/api/recording-assets/index`, verifies Dream Proof text and screenshot/summary/notes links, then writes a small proof pack under `recordings/index-checks/`. If no local Dream visual-proof pack exists yet, it exits with a clear skipped-precondition message and tells you to run `npm run check:dream-visuals`.
 
 `npm run check:recording-suite` expects the local dev server to be running at `http://localhost:3000`. It runs the Dali `/dream` visual QA, coastal `/dream` visual QA, Dali Director Lens QA for the four non-auto lens modes, `/studio` visual QA, Studio-Dream handoff QA, and recording asset index in sequence. Set `RECORDING_SUITE_BASE_URL`, `DREAM_URL`, `STUDIO_URL`, or `HANDOFF_BASE_URL` to target another local server.
 
