@@ -1796,3 +1796,14 @@ Files shown: lib/recording-assets.ts, lib/recording-assets.test.ts, components/s
 Command/result: npm test -- lib/recording-assets.test.ts components/studio-mode.test.tsx passed with 26 tests; browser check confirmed the Index QA script-material link returned 200; npm run lint && npm test && npm run build
 Voiceover note: "现在 Studio 脚本素材卡上有两层证据：它先被 Studio QA 捕获，再被 Index QA 验证进素材总索引。"
 Usable for: Studio proof-loop closeout, script-material archive status narration, continued goal run round 594
+
+## Phase FB: v0.8.147 — Proof Story Closeout Checklist
+
+Date: 2026-06-14
+Clip title: Phase FB: v0.8.147 — Proof Story Closeout Checklist
+What changed: `/studio` now shows a compact four-state `Proof Story 收口清单` inside the existing `脚本素材` card: `脚本路径`, `Studio QA`, `索引入库`, and `Index QA`.
+Why this matters: The creator can close the Proof Story workflow in one glance: script ready, Studio QA captured, archive entry present, and Index QA verified.
+Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, app/globals.css, docs/recording/goal-601-610-recap.md
+Command/result: npm test -- components/studio-mode.test.tsx passed with 14 tests; browser check confirmed the checklist fits inside the card and console errors were empty; npm run lint && npm test && npm run build
+Voiceover note: "这一行就是 Proof Story 的收口：脚本路径就绪，Studio QA 已捕获，素材已入库，Index QA 已验证。"
+Usable for: Studio proof-loop closeout clip, compact recording-status narration, continued goal run round 604

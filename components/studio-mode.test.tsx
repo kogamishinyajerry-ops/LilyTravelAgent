@@ -230,6 +230,11 @@ describe("StudioMode demo roadbooks", () => {
     expect(within(scriptCard).getByRole("link", { name: "Index QA 已验证脚本素材 · 3/3" }).getAttribute("href")).toBe(
       "/api/recording-assets/file?path=index-checks%2Findex-check-latest%2Frecording-index-script-material-proof.png",
     );
+    const closeout = screen.getByLabelText("Proof Story 收口清单");
+    expect(closeout.textContent).toContain("脚本路径就绪");
+    expect(closeout.textContent).toContain("Studio QA已捕获");
+    expect(closeout.textContent).toContain("索引入库已入库");
+    expect(closeout.textContent).toContain("Index QA已验证");
     expect(within(evidenceTimeline).getByRole("link", { name: /Dream Proof/ }).getAttribute("href")).toBe(
       "/api/recording-assets/file?path=visual-checks%2Fdream-proof-latest%2Fsummary.json",
     );
@@ -243,7 +248,7 @@ describe("StudioMode demo roadbooks", () => {
       "/api/recording-assets/file?path=suite-runs%2Fsuite-run-latest%2Fsummary.json",
     );
     expect(screen.getByLabelText("最近素材包")).toBeTruthy();
-    expect(screen.getByText("Studio QA")).toBeTruthy();
+    expect(screen.getAllByText("Studio QA").length).toBeGreaterThan(0);
     expect(screen.getByText("Bridge QA")).toBeTruthy();
     expect(screen.getByText("Dream QA")).toBeTruthy();
     expect(screen.getByText("讲解画面")).toBeTruthy();
@@ -452,6 +457,11 @@ describe("StudioMode demo roadbooks", () => {
     expect(screen.getByLabelText("证据讲解稿预览").textContent).toContain("04. Suite Run: 待运行 · npm run check:recording-suite");
     expect(screen.getByLabelText("Proof Story 脚本素材").textContent).toContain("QA 待捕获 · npm run check:studio-visuals");
     expect(screen.getByLabelText("Proof Story 脚本素材").textContent).toContain("Index QA 待验证脚本素材 · npm run check:recording-index");
+    const closeout = screen.getByLabelText("Proof Story 收口清单");
+    expect(closeout.textContent).toContain("脚本路径就绪");
+    expect(closeout.textContent).toContain("Studio QA待捕获");
+    expect(closeout.textContent).toContain("索引入库待入库");
+    expect(closeout.textContent).toContain("Index QA待验证");
     expect(screen.getByText("Dream 0")).toBeTruthy();
     expect(screen.getByText("Studio 0")).toBeTruthy();
     expect(screen.getByText("生成本地素材索引")).toBeTruthy();

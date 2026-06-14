@@ -569,6 +569,21 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
       : null;
   const recordingEvidenceTimeline = useMemo(() => getRecordingEvidenceTimeline(recordingAssets), [recordingAssets]);
   const proofStoryLines = useMemo(() => buildProofStoryLines(recordingEvidenceTimeline), [recordingEvidenceTimeline]);
+  const proofStoryCloseoutItems = useMemo(() => {
+    const studioScriptCaptured = recordingAssets.status === "ready" && Boolean(recordingAssets.latestStudioProofPlayback?.scriptMaterial);
+    const scriptMaterialIndexed =
+      recordingAssets.status === "ready" &&
+      recordingAssets.indexAvailable &&
+      Boolean(recordingAssets.latestStudioProofPlayback?.scriptMaterial || recordingAssets.latestRecordingIndexCheck?.scriptMaterialCheck);
+    const scriptMaterialIndexVerified = recordingAssets.status === "ready" && Boolean(recordingAssets.latestRecordingIndexCheck?.scriptMaterialCheck);
+
+    return [
+      { label: "脚本路径", status: "就绪", ready: true },
+      { label: "Studio QA", status: studioScriptCaptured ? "已捕获" : "待捕获", ready: studioScriptCaptured },
+      { label: "索引入库", status: scriptMaterialIndexed ? "已入库" : "待入库", ready: scriptMaterialIndexed },
+      { label: "Index QA", status: scriptMaterialIndexVerified ? "已验证" : "待验证", ready: scriptMaterialIndexVerified },
+    ];
+  }, [recordingAssets]);
 
   const loadRecordingAssets = useCallback(
     async ({ markRefreshing = true, isActive = () => true }: { markRefreshing?: boolean; isActive?: () => boolean } = {}) => {
@@ -1077,6 +1092,14 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
                           ) : (
                             <span className="studio-proof-script-status missing">Index QA 待验证脚本素材 · {recordingIndexCommand}</span>
                           )}
+                          <div className="studio-proof-closeout" aria-label="Proof Story 收口清单">
+                            {proofStoryCloseoutItems.map((item) => (
+                              <span className={item.ready ? "ready" : "missing"} key={item.label}>
+                                <strong>{item.label}</strong>
+                                <em>{item.status}</em>
+                              </span>
+                            ))}
+                          </div>
                           <button type="button" onClick={copyProofStoryScriptPath}>
                             <Copy size={13} />
                             {proofScriptCopyState === "copied" ? "脚本路径已复制" : proofScriptCopyState === "error" ? "手动复制路径" : "复制脚本路径"}

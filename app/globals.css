@@ -1911,6 +1911,52 @@ textarea {
   background: rgba(191, 128, 85, 0.1);
 }
 
+.studio-proof-closeout {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 4px;
+}
+
+.studio-proof-closeout span {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+  border: 1px solid rgba(38, 59, 49, 0.12);
+  border-radius: 7px;
+  padding: 5px 4px;
+  background: rgba(255, 255, 255, 0.62);
+}
+
+.studio-proof-closeout span.ready {
+  border-color: rgba(79, 143, 122, 0.25);
+  background: rgba(79, 143, 122, 0.12);
+}
+
+.studio-proof-closeout span.missing {
+  border-color: rgba(191, 128, 85, 0.2);
+  background: rgba(191, 128, 85, 0.09);
+}
+
+.studio-proof-closeout strong,
+.studio-proof-closeout em {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.studio-proof-closeout strong {
+  color: var(--moss);
+  font-size: 0.58rem;
+  font-weight: 950;
+}
+
+.studio-proof-closeout em {
+  color: var(--sage);
+  font-size: 0.58rem;
+  font-style: normal;
+  font-weight: 900;
+}
+
 .studio-proof-story-actions button {
   display: inline-flex;
   align-items: center;
