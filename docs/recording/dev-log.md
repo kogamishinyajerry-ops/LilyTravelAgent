@@ -1375,6 +1375,17 @@ Clip title: Phase DO: v0.8.108 — Candidate Thumbnail Queue
 What changed: The Director Lens comparison dashboard now renders a compact current-scene thumbnail inside every ranked candidate card.
 Why this matters: The candidate strip becomes visually diagnostic. The creator can preview the scene beat before opening `/dream`, while the larger before/after grid stays below for detailed review.
 Files shown: app/api/recording-assets/lens-comparison/route.ts, lib/lens-comparison.test.ts, docs/recording/lens-visual-capture-workflow.md
-Command/result: npm test -- lib/lens-comparison.test.ts; npm run lint; Browser check should confirm 4 candidate thumbnails, 4 candidate links, 44 image URLs, and 0 broken images.
+Command/result: npm test -- lib/lens-comparison.test.ts (7 tests passed); npm run lint; Browser check confirmed 4 candidate thumbnails, 4 candidate links, 44 image URLs, and 0 broken images.
 Voiceover note: "现在候选不是纯文字了，每个 Top shot 都有小场景图。录屏时我可以先讲为什么这个画面值得点进去。"
 Usable for: thumbnail candidate queue clip, visual decision proof, continued goal run round 254
+
+## Phase DP: v0.8.109 — Goals 251-260 Final Quality Gate
+
+Date: 2026-06-14
+Clip title: Phase DP: v0.8.109 — Goals 251-260 Final Quality Gate
+What changed: Closed the candidate-thumbnail run with the full local lint, test, and production-build gate after browser visual inspection.
+Why this matters: The dashboard candidate queue now carries actual scene previews, while the full app remains stable for recording and further iteration.
+Files shown: docs/recording/goal-251-260-recap.md, `/api/recording-assets/lens-comparison`, terminal verification output
+Command/result: npm run lint && npm test && npm run build (44 files, 909 tests, build passed)
+Voiceover note: "缩略图候选条做完后，我继续完整质量门。现在这条队列不只是排名，也能提前看到每个镜头画面。"
+Usable for: goal closeout clip, thumbnail queue proof, next hover/focus badge handoff, continued goal run round 257

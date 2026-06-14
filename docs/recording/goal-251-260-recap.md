@@ -10,11 +10,11 @@ This run turned the ranked candidate strip into a visual queue. Each candidate c
 
 | Goal | Commit | Summary |
 | --- | --- | --- |
-| 251-255 | pending | Added current-scene thumbnails to ranked candidate cards, focused data coverage, and recording docs. |
-| 256 | pending | Browser check should confirm 4 candidate thumbnails, 4 candidate links, 44 image URLs, and 0 broken images. |
-| 257 | pending | Final lint/test/build verification. |
-| 258 | pending | Push to GitHub after closeout commit. |
-| 259-260 | pending | Next-goal handoff. |
+| 251-255 | `60b8365` | Added current-scene thumbnails to ranked candidate cards, focused data coverage, and recording docs. |
+| 256 | `60b8365` | Browser check confirmed 4 candidate thumbnails, 4 candidate links, 44 image URLs, and 0 broken images. |
+| 257 | closeout | Final lint/test/build verification: 44 files, 909 tests, build passed. |
+| 258 | closeout | Push to GitHub after final closeout commit. |
+| 259-260 | closeout | Next-goal handoff. |
 
 ## What Changed In The Creator Loop
 
@@ -23,12 +23,12 @@ This run turned the ranked candidate strip into a visual queue. Each candidate c
 - The full before/after grid remains available below for deeper inspection.
 - The `/dream` handoff remains URL-only with no storage or auth.
 
-## Evidence To Capture
+## Evidence
 
-- `npm test -- lib/lens-comparison.test.ts`
-- `npm run lint`
-- Browser check: `/api/recording-assets/lens-comparison` shows 4 candidate thumbnail images, 4 candidate links, 44 image URLs, and 0 broken images.
-- `npm run lint && npm test && npm run build`
+- `npm test -- lib/lens-comparison.test.ts` (7 tests passed)
+- `npm run lint` (passed)
+- Browser check: `/api/recording-assets/lens-comparison` showed 4 candidate thumbnail images, 4 candidate links, 44 image URLs, and 0 broken images.
+- `npm run lint && npm test && npm run build` (44 files, 909 tests, build passed)
 
 ## Recording Angle
 
