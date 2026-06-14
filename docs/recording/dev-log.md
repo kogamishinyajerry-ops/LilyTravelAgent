@@ -2170,3 +2170,14 @@ Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, app/gl
 Command/result: npm test -- components/studio-mode.test.tsx passed with 36 tests; browser check against `http://localhost:3000/studio` confirmed the copied summary matched the preview, row width was 297px inside a 313px card, and console errors were 0.
 Voiceover note: "这里不是再加一个按钮，而是把最终 Chain 的证据路径整理成后期 notes。录完屏以后，剪辑阶段可以直接拿这句话定位证据。"
 Usable for: post-production note workflow clip, proof-chain copy action demo, continued goal run round 934
+
+## Phase FS: v0.8.181 — Proof Chain Summary In Studio QA
+
+Date: 2026-06-14
+Clip title: Phase FS: v0.8.181 — Proof Chain Summary In Studio QA
+What changed: `npm run check:studio-visuals` now reads the visible `Proof Chain Summary`, clicks `复制 Summary`, and writes the summary line plus copy state into Studio QA `summary.json`, `index.html`, and `clip-notes.md`.
+Why this matters: The post-production note is now part of the automated proof pack, not only an in-page copy helper.
+Files shown: scripts/check-studio-visuals.mjs, recordings/studio-checks/2026-06-14T11-57-33-774Z/clip-notes.md, README.md, docs/recording/goal-941-950-recap.md
+Command/result: node --check scripts/check-studio-visuals.mjs passed; npm run check:studio-visuals passed and generated `recordings/studio-checks/2026-06-14T11-57-33-774Z/clip-notes.md` with `Proof Chain Summary` and `Proof Chain Summary 已复制`.
+Voiceover note: "Summary 也进入 Studio QA。页面上一键复制的后期 notes，现在会自动出现在证据包里，剪辑时不再靠手动记录。"
+Usable for: Studio QA post-production note clip, proof-chain summary automation demo, continued goal run round 944

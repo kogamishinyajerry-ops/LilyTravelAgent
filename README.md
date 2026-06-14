@@ -128,7 +128,7 @@ npm run check:recording-suite
 
 `npm run check:dream-lenses` runs the same `/dream` visual QA once per Director Lens and writes one local QA pack per lens under `recordings/visual-checks/`. Set `DREAM_LENSES=wide-water,low-skyline` to run a smaller subset.
 
-`npm run check:studio-visuals` expects `http://localhost:3000/studio` unless `STUDIO_URL` is set. It captures the Dali and coastal 16:9 recording layouts, verifies the Studio proof playback, captures the Proof Story `脚本素材` card, verifies the Proof Story Handoff, Complete Bundle, and Bundle Chain copy states, records the Proof Story Complete strip, and writes `summary.json`, `index.html`, and `clip-notes.md` under `recordings/studio-checks/`.
+`npm run check:studio-visuals` expects `http://localhost:3000/studio` unless `STUDIO_URL` is set. It captures the Dali and coastal 16:9 recording layouts, verifies the Studio proof playback, captures the Proof Story `脚本素材` card, verifies the Proof Story Handoff, Complete Bundle, Bundle Chain, and Proof Chain Summary copy states, records the Proof Story Complete strip, and writes `summary.json`, `index.html`, and `clip-notes.md` under `recordings/studio-checks/`.
 
 `npm run check:studio-dream-handoff` expects `http://localhost:3000` unless `HANDOFF_BASE_URL` is set. It verifies both Dali and coastal round trips between `/studio?demo=...` and `/dream?demo=...`, then writes screenshots, `summary.json`, and `clip-notes.md` under `recordings/handoff-checks/`.
 
@@ -239,6 +239,7 @@ npm run check:recording-suite
 - `docs/recording/goal-911-920-recap.md` summarizes surfacing the Index Chain verification state back in `/studio`.
 - `docs/recording/goal-921-930-recap.md` summarizes surfacing Index Chain in the main Studio recording rail and proof checklist.
 - `docs/recording/goal-931-940-recap.md` summarizes adding the one-click Proof Chain Summary post-production note.
+- `docs/recording/goal-941-950-recap.md` summarizes capturing Proof Chain Summary in Studio visual QA outputs.
 - `docs/recording/proof-story-demo-script.md` gives a short `/studio` script for recording the evidence timeline, four-line proof-story preview, and copy action.
 - `docs/recording/studio-dream-demo-script.md` gives a shot-by-shot Studio ↔ Dream demo recording path.
 - `docs/recording/bridge-qa-evidence-script.md` gives a short Bridge QA proof clip script.
