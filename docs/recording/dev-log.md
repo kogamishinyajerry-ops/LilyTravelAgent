@@ -1114,3 +1114,14 @@ Files shown: docs/recording/goal-141-150-recap.md, README.md, `/api/recording-as
 Command/result: npm run lint (passed)
 Voiceover note: "这轮不是继续堆页面，而是先把评审对象变干净：看板只看 3D 渲染帧。下一轮才开始真正调 3D 内容。"
 Usable for: goal recap clip, visual QA philosophy, next 3D render-quality handoff, continued goal run round 146
+
+## Phase CR: v0.8.85 — Goals 141-150 Final Quality Gate
+
+Date: 2026-06-14
+Clip title: Phase CR: v0.8.85 — Goals 141-150 Final Quality Gate
+What changed: Ran the full local quality gate after the pure WebGL scene crop QA pipeline, dashboard scene-crop totals, and recap docs were in place.
+Why this matters: The visual review system can now isolate 3D render frames and still pass the full product gate.
+Files shown: terminal verification output, docs/recording/goal-141-150-recap.md, `/api/recording-assets/lens-comparison`
+Command/result: npm run lint && npm test && npm run build (44 files, 903 tests, build passed)
+Voiceover note: "我把评审对象缩到 WebGL 画面本体后，再跑完整质量门。下一轮开始真正改 3D 内容，让画面本身更有冲击力。"
+Usable for: goal closeout clip, quality gate proof, 3D content-quality handoff, continued goal run round 147
