@@ -237,6 +237,7 @@ const dreamVisualProofCommand = "npm run check:dream-visuals";
 const studioVisualProofCommand = "npm run check:studio-visuals";
 const proofStoryScriptPath = "docs/recording/proof-story-demo-script.md";
 const proofStoryScriptCue = "证据时间线 → 四行讲解稿预览 → 复制讲解稿";
+const proofStoryHandoffCaption = "Vibe Coding 不是只生成页面，而是把路书、QA 证据和后期素材交付打成闭环。";
 const recordingWorkflowSteps = [
   {
     step: "1",
@@ -504,6 +505,10 @@ function getProofStoryDeliveryLine(closeoutLine: string, productionAssetsLine: s
   return `Proof Story Delivery · ${closeoutLine} · ${productionAssetsLine} · QA receipt: ${receiptPath || "待生成"}`;
 }
 
+function getProofStoryHandoffLine(deliveryLine: string, receiptPath: string) {
+  return `Proof Story Handoff · ${deliveryLine} · QA notes: ${receiptPath || "待生成"} · Caption: ${proofStoryHandoffCaption}`;
+}
+
 function getProofStoryDeliverySync(studioLine: string, notesLine: string) {
   if (!notesLine) {
     return { label: "Delivery 待入库", ready: false };
@@ -606,6 +611,7 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
   const [proofCloseoutCopyState, setProofCloseoutCopyState] = useState<"idle" | "copied" | "error">("idle");
   const [productionReceiptCopyState, setProductionReceiptCopyState] = useState<"idle" | "copied" | "error">("idle");
   const [proofDeliveryCopyState, setProofDeliveryCopyState] = useState<"idle" | "copied" | "error">("idle");
+  const [proofHandoffCopyState, setProofHandoffCopyState] = useState<"idle" | "copied" | "error">("idle");
   const [proofCueIndex, setProofCueIndex] = useState(0);
   const [proofCuePlaying, setProofCuePlaying] = useState(false);
 
@@ -653,6 +659,10 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
   const proofStoryDeliveryLineFromNotes =
     recordingAssets.status === "ready" ? recordingAssets.latestRecordingIndexCheck?.proofStoryDeliveryLine || "" : "";
   const proofStoryDeliverySync = getProofStoryDeliverySync(proofStoryDeliveryLine, proofStoryDeliveryLineFromNotes);
+  const proofStoryHandoffLine = useMemo(
+    () => getProofStoryHandoffLine(proofStoryDeliveryLine, proofStoryProductionReceiptPath),
+    [proofStoryDeliveryLine, proofStoryProductionReceiptPath],
+  );
 
   const loadRecordingAssets = useCallback(
     async ({ markRefreshing = true, isActive = () => true }: { markRefreshing?: boolean; isActive?: () => boolean } = {}) => {
@@ -845,6 +855,15 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
       setProofDeliveryCopyState("copied");
     } catch {
       setProofDeliveryCopyState("error");
+    }
+  }
+
+  async function copyProofStoryHandoffLine() {
+    try {
+      await navigator.clipboard.writeText(proofStoryHandoffLine);
+      setProofHandoffCopyState("copied");
+    } catch {
+      setProofHandoffCopyState("error");
     }
   }
 
@@ -1250,6 +1269,20 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
                             >
                               <Copy size={10} />
                               {proofDeliveryCopyState === "copied" ? "已复制" : proofDeliveryCopyState === "error" ? "手动" : "复制"}
+                            </button>
+                          </div>
+                          <div className="studio-proof-handoff-row">
+                            <p className="studio-proof-handoff-preview" aria-label="Proof Story Handoff 预览">
+                              {proofStoryHandoffLine}
+                            </p>
+                            <button
+                              type="button"
+                              className="studio-proof-handoff-copy"
+                              onClick={copyProofStoryHandoffLine}
+                              aria-label="复制 Proof Story Handoff"
+                            >
+                              <Copy size={10} />
+                              {proofHandoffCopyState === "copied" ? "已复制" : proofHandoffCopyState === "error" ? "手动" : "复制"}
                             </button>
                           </div>
                           <button type="button" onClick={copyProofStoryCloseout}>

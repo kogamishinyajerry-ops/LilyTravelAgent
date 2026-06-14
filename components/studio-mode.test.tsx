@@ -14,6 +14,9 @@ import { StudioMode } from "./studio-mode";
 
 const readyProofStoryDeliveryLine =
   "Proof Story Delivery · Proof Story · 脚本路径: 就绪 · Studio QA: 已捕获 · 索引入库: 已入库 · Index QA: 已验证 · Production Assets · HTML + Clip 已入库 · QA receipt: index-checks/index-check-latest/clip-notes.md";
+const proofStoryHandoffCaption = "Vibe Coding 不是只生成页面，而是把路书、QA 证据和后期素材交付打成闭环。";
+const readyProofStoryHandoffLine =
+  `Proof Story Handoff · ${readyProofStoryDeliveryLine} · QA notes: index-checks/index-check-latest/clip-notes.md · Caption: ${proofStoryHandoffCaption}`;
 
 function recordingAssetsResponse(
   packCount: number,
@@ -252,6 +255,7 @@ describe("StudioMode demo roadbooks", () => {
     expect(screen.getByLabelText("Proof Story Production Assets 状态").textContent).toBe("Production Assets · HTML + Clip 已入库");
     expect(screen.getByLabelText("Proof Story Delivery 预览").textContent).toBe(readyProofStoryDeliveryLine);
     expect(screen.getByLabelText("Proof Story Delivery QA notes 状态").textContent).toBe("Delivery 已入库");
+    expect(screen.getByLabelText("Proof Story Handoff 预览").textContent).toBe(readyProofStoryHandoffLine);
     expect(within(scriptCard).getByRole("link", { name: "Production Assets QA 收据" }).getAttribute("href")).toBe(
       "/api/recording-assets/file?path=index-checks%2Findex-check-latest%2Fclip-notes.md",
     );
@@ -412,6 +416,7 @@ describe("StudioMode demo roadbooks", () => {
 
     expect(await screen.findByLabelText("Proof Story Production Assets 状态")).toBeTruthy();
     expect(screen.getByLabelText("Proof Story Delivery 预览").textContent).toContain("QA receipt: 待生成");
+    expect(screen.getByLabelText("Proof Story Handoff 预览").textContent).toContain("QA notes: 待生成");
     expect(screen.getByLabelText("Proof Story Delivery QA notes 状态").textContent).toBe("Delivery 待入库");
     expect(screen.queryByRole("link", { name: "Production Assets QA 收据" })).toBeNull();
     expect(screen.queryByRole("button", { name: "复制 Production Assets QA 收据路径" })).toBeNull();
@@ -801,6 +806,26 @@ describe("StudioMode demo roadbooks", () => {
     expect(copyButton.textContent).toContain("已复制");
   });
 
+  it("copies the one-line Proof Story handoff summary", async () => {
+    const writeText = vi.fn(async () => undefined);
+    Object.defineProperty(window.navigator, "clipboard", {
+      value: { writeText },
+      configurable: true,
+    });
+
+    render(<StudioMode />);
+
+    expect(await screen.findByText("15 个素材包")).toBeTruthy();
+    const handoffPreview = screen.getByLabelText("Proof Story Handoff 预览").textContent || "";
+    const copyButton = screen.getByRole("button", { name: "复制 Proof Story Handoff" });
+    await act(async () => {
+      fireEvent.click(copyButton);
+    });
+
+    expect(writeText).toHaveBeenCalledWith(handoffPreview);
+    expect(copyButton.textContent).toContain("已复制");
+  });
+
   it("shows a closeout copy fallback when clipboard access fails", async () => {
     const writeText = vi.fn(async () => {
       throw new Error("clipboard denied");
@@ -817,6 +842,25 @@ describe("StudioMode demo roadbooks", () => {
 
     expect(await screen.findByText("手动复制收口状态")).toBeTruthy();
     expect(writeText).toHaveBeenCalledWith("Proof Story · 脚本路径: 就绪 · Studio QA: 已捕获 · 索引入库: 已入库 · Index QA: 已验证");
+  });
+
+  it("shows a handoff copy fallback when clipboard access fails", async () => {
+    const writeText = vi.fn(async () => {
+      throw new Error("clipboard denied");
+    });
+    Object.defineProperty(window.navigator, "clipboard", {
+      value: { writeText },
+      configurable: true,
+    });
+
+    render(<StudioMode />);
+
+    expect(await screen.findByText("15 个素材包")).toBeTruthy();
+    const handoffPreview = screen.getByLabelText("Proof Story Handoff 预览").textContent || "";
+    fireEvent.click(screen.getByRole("button", { name: "复制 Proof Story Handoff" }));
+
+    expect(await screen.findByText("手动")).toBeTruthy();
+    expect(writeText).toHaveBeenCalledWith(handoffPreview);
   });
 
   it("shows a proof story copy fallback when clipboard access fails", async () => {

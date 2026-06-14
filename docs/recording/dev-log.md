@@ -1939,3 +1939,14 @@ Files shown: lib/recording-assets.ts, components/studio-mode.tsx, app/globals.cs
 Command/result: npm test -- lib/recording-assets.test.ts components/studio-mode.test.tsx passed with 35 tests; browser check against `http://localhost:3000/studio` confirmed `Delivery 已入库` is visible in a 1440x900 viewport with empty console errors.
 Voiceover note: "现在这不是单向生成了：QA notes 生成了 Delivery 行以后，Studio 会读回来，用一个小 chip 告诉我这条最终交付文案已经入库。"
 Usable for: closed-loop Agent workflow clip, proof-pack sync narration, continued goal run round 724
+
+## Phase FO: v0.8.160 — Copy Proof Story Handoff Line
+
+Date: 2026-06-14
+Clip title: Phase FO: v0.8.160 — Copy Proof Story Handoff Line
+What changed: `/studio` now shows a compact `Proof Story Handoff` preview inside the Proof Story `脚本素材` card. The line combines the current Delivery line, QA notes path, and a one-sentence Vibe Coding recording caption, with a small copy action.
+Why this matters: The creator can paste one final handoff note into video planning docs, linking the product state, QA proof pack, and content angle without rewriting it after recording.
+Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, app/globals.css, docs/recording/goal-731-740-recap.md
+Command/result: npm test -- components/studio-mode.test.tsx passed with 23 tests; browser check against `http://localhost:3000/studio` confirmed the Handoff preview/copy action fit inside the Proof Story card with empty console errors.
+Voiceover note: "最后我把 Delivery、QA notes 和视频标题角度压成一条 Handoff。录完屏，这一行就可以直接进选题和剪辑备注。"
+Usable for: final handoff notes clip, Vibe Coding content-production narration, continued goal run round 734
