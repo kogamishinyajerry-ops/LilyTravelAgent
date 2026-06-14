@@ -1026,3 +1026,14 @@ Files shown: lib/director-lens.ts, scripts/check-dream-visuals.mjs, docs/recordi
 Command/result: npm run lint && npm test && npm run build (43 files, 899 tests, build passed)
 Voiceover note: "五个镜头现在都有自己的 tuning cue，并且所有测试和 build 都过了。下一步就可以从参数证据走向截图对比和视觉细调。"
 Usable for: all-lens tuning checkpoint, QA evidence clip, Vibe Coding visual system narrative, continued goal run round 127
+
+## Phase CJ: v0.8.77 — Goals 121-130 All-Lens Tuning Recap
+
+Date: 2026-06-14
+Clip title: Phase CJ: v0.8.77 — Goals 121-130 All-Lens Tuning Recap
+What changed: Added the 121-130 recap and README entry that package the all-lens tuning pass, Scene Inspector cues, live QA evidence, and next dashboard direction.
+Why this matters: This turns the tuning work into a reusable content chapter. The viewer can see how the Agent product moved from one tuned lens to five comparable visual directions, with a clear next step toward screenshot-based review.
+Files shown: docs/recording/goal-121-130-recap.md, README.md, docs/recording/dev-log.md, `/dream`
+Command/result: npm run lint (passed)
+Voiceover note: "这一段我把 121 到 130 轮整理成一个复盘入口：五种镜头都有调参证据，下一步开始做镜头对比看板。"
+Usable for: all-lens recap clip, Vibe Coding chapter transition, dashboard handoff, continued goal run round 129
