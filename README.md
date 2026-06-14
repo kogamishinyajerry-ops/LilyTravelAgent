@@ -183,6 +183,7 @@ npm run check:recording-suite
 - `docs/recording/goal-351-360-recap.md` summarizes the Studio Dream Proof QA status card.
 - `docs/recording/goal-361-370-recap.md` summarizes Studio Dream Proof evidence links.
 - `docs/recording/goal-371-380-recap.md` summarizes Dream Proof evidence in the recording asset index.
+- `docs/recording/goal-381-390-recap.md` summarizes the automated recording-index QA command.
 - `docs/recording/studio-dream-demo-script.md` gives a shot-by-shot Studio ↔ Dream demo recording path.
 - `docs/recording/bridge-qa-evidence-script.md` gives a short Bridge QA proof clip script.
 - `docs/recording/cinematic-visual-contract-script.md` gives a short `/dream` visual-contract recording script for template strategy, Scene Inspector, Proof Stack, and asset state.

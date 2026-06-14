@@ -1554,3 +1554,14 @@ Files shown: scripts/index-recording-assets.mjs, lib/recording-assets.ts, app/ap
 Command/result: node --check scripts/index-recording-assets.mjs passed; npm test -- lib/recording-assets.test.ts passed with 7 tests; npm run index:recording-assets indexed 50 packs; Chrome browser check confirmed Dream Proof links returned 200; npm run lint && npm test && npm run build passed with 44 files, 915 tests, and a successful production build.
 Voiceover note: "上一轮我把 Dream Proof 放回 Studio，这一轮我把它放进素材总索引。以后打开 archive，就能直接看到这条视觉证据线停在 Proof，并点开截图、summary 和 notes。"
 Usable for: recording archive proof clip, Dream evidence pipeline narration, continued goal run round 374
+
+## Phase EF: v0.8.125 — Recording Index QA Command
+
+Date: 2026-06-14
+Clip title: Phase EF: v0.8.125 — Recording Index QA Command
+What changed: Added `npm run check:recording-index`. The command regenerates the recording asset index, opens `/api/recording-assets/index`, verifies Dream Proof text, checks playback screenshot / summary / notes links, and writes an `index-checks` proof pack.
+Why this matters: The archive evidence check is now repeatable before recording, instead of depending on a manual browser inspection.
+Files shown: scripts/check-recording-index.mjs, package.json, README.md, docs/recording/recording-asset-pipeline.md, recordings/index-checks/2026-06-14T07-58-51-630Z/summary.json
+Command/result: node --check scripts/check-recording-index.mjs passed; npm run check:recording-index passed; RECORDINGS_DIR=<empty> npm run check:recording-index skipped cleanly; npm run lint && npm test && npm run build passed with 44 files, 915 tests, and a successful production build.
+Voiceover note: "这一轮我把素材总索引的验收也变成命令。它会刷新 archive，打开 API index，确认 Dream Proof 文字和三条证据链接都没断。"
+Usable for: recording archive QA clip, Vibe Coding automation narration, continued goal run round 384
