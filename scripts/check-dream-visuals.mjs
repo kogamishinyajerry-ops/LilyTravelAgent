@@ -14,6 +14,13 @@ const expectedCompositionProofs = {
   dali: ["D1 old-town beat", "D2 water hero", "D3 village detail", "D4 return beat"],
   coast: ["D1 lighthouse beat", "D2 bay hero", "D3 harbor skyline", "D4 sunset beat"],
 };
+const expectedLensTunings = {
+  auto: "skyline 1.00x / water 1.00x / route 1.00x",
+  "wide-water": "skyline 0.90x / water 1.36x / route 0.82x",
+  "low-skyline": "skyline 1.34x / water 1.08x / route 1.18x",
+  "isometric-atlas": "skyline 0.72x / water 0.82x / route 1.42x",
+  "close-detail": "skyline 1.18x / water 0.72x / route 0.78x",
+};
 const runStamp = new Date().toISOString().replace(/[:.]/g, "-");
 const outDir = process.env.DREAM_VISUAL_OUT_DIR || path.join("recordings", "visual-checks", runStamp);
 const systemChromePath = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
@@ -187,10 +194,10 @@ async function main() {
       proofStack.find((item) => item.label === "Director")?.value === activeLens?.proof,
       `Director proof mismatch for D${day}: ${proofStack.find((item) => item.label === "Director")?.value}`,
     );
-    if (directorLens === "low-skyline") {
+    if (expectedLensTunings[directorLens]) {
       assert(
-        inspectorGrid.find((item) => item.label === "Tune")?.value === "skyline 1.34x / water 1.08x / route 1.18x",
-        `Low-skyline tuning mismatch for D${day}: ${inspectorGrid.find((item) => item.label === "Tune")?.value}`,
+        inspectorGrid.find((item) => item.label === "Tune")?.value === expectedLensTunings[directorLens],
+        `${directorLens} tuning mismatch for D${day}: ${inspectorGrid.find((item) => item.label === "Tune")?.value}`,
       );
     }
     assert(
