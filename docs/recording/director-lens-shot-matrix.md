@@ -4,11 +4,11 @@ Purpose: pick a camera direction before recording a `/dream` clip, then verify t
 
 | Lens id | UI label | Best for | Recording move | QA proof | QA command |
 | --- | --- | --- | --- | --- | --- |
-| `auto` | Auto | Default product walkthrough. | Start here, then explain the system chooses a day-specific camera. | `auto day lens` | `npm run check:dream-visuals` |
-| `wide-water` | Water | Lakes, coasts, bridges, islands. | Click D2 first and show the wide route shape. | `wide-water lens` | `DREAM_LENS=wide-water npm run check:dream-visuals` |
+| `auto` | Auto | Default product walkthrough. | Start here, then explain the system chooses a day-specific camera. | `skyline 1.00x / water 1.00x / route 1.00x` | `npm run check:dream-visuals` |
+| `wide-water` | Water | Lakes, coasts, bridges, islands. | Click D2 first and show the wide route shape. | `skyline 0.90x / water 1.36x / route 0.82x` | `DREAM_LENS=wide-water npm run check:dream-visuals` |
 | `low-skyline` | Skyline | City skyline, harbor, mountain silhouettes. | Switch to `Skyline`, then click D1-D4 to show stronger depth. | `skyline 1.34x / water 1.08x / route 1.18x` | `DREAM_LENS=low-skyline npm run check:dream-visuals` |
-| `isometric-atlas` | Atlas | Route overview, architectural clusters, Monument-Valley style. | Show the route rail and Proof Stack as a structured map. | `isometric-atlas lens` | `DREAM_LENS=isometric-atlas npm run check:dream-visuals` |
-| `close-detail` | Detail | Courtyards, food streets, textures, photo spots. | Pair the lens with the asset panel and talk about grounded detail. | `close-detail lens` | `DREAM_LENS=close-detail npm run check:dream-visuals` |
+| `isometric-atlas` | Atlas | Route overview, architectural clusters, Monument-Valley style. | Show the route rail and Proof Stack as a structured map. | `skyline 0.72x / water 0.82x / route 1.42x` | `DREAM_LENS=isometric-atlas npm run check:dream-visuals` |
+| `close-detail` | Detail | Courtyards, food streets, textures, photo spots. | Pair the lens with the asset panel and talk about grounded detail. | `skyline 1.18x / water 0.72x / route 0.78x` | `DREAM_LENS=close-detail npm run check:dream-visuals` |
 
 ## How To Use
 
@@ -16,7 +16,7 @@ Purpose: pick a camera direction before recording a `/dream` clip, then verify t
 2. Select the same lens in `/dream`.
 3. Click D1-D4 once.
 4. Point to `Agent Visual Contract`, `Proof Stack`, and `资产缓存`.
-5. Point to Scene Inspector `Tune` when using `low-skyline`.
+5. Point to Scene Inspector `Tune` when comparing lens modes.
 6. Run the matching QA command before or after recording to generate `summary.json`, `index.html`, and `clip-notes.md`.
 
 ## Clip Thesis Examples
