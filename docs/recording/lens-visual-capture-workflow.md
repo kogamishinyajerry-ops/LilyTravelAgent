@@ -37,14 +37,14 @@ Each lens run writes a folder under `recordings/visual-checks/` with:
 
 After `npm run index:recording-assets`, the top-level recording index shows lens-aware titles such as `Dream low-skyline lens visual pack`, and `/studio` recent asset cards show a lens chip.
 
-`/studio` also links to `/api/recording-assets/lens-comparison`, a local Director Lens comparison dashboard. It reads the newest Dream QA pack for each lens, groups shared `runStamp-lens-*` folders into complete five-lens batches, shows current-vs-previous D1-D4 pure 3D crops, labels each pair as `Changed`, `Subtle`, or `Missing` from existing canvas stats, ranks the top changed shots in a `Best Recording Candidates` strip, opens `/dream` with candidate queue query params, surfaces the Scene Inspector tuning cue plus a compact review checklist, and links back to `/dream?lens=...` for same-lens recording.
+`/studio` also links to `/api/recording-assets/lens-comparison`, a local Director Lens comparison dashboard. It reads the newest Dream QA pack for each lens, groups shared `runStamp-lens-*` folders into complete five-lens batches, shows current-vs-previous D1-D4 pure 3D crops, labels each pair as `Changed`, `Subtle`, or `Missing` from existing canvas stats, ranks the top changed shots in a `Best Recording Candidates` strip, shows an `Open first candidate` primary action plus 1-4 queue chips, opens `/dream` with candidate queue query params, surfaces the Scene Inspector tuning cue plus a compact review checklist, and links back to `/dream?lens=...` for same-lens recording.
 
 ## Review Loop
 
 1. Open `/studio`.
 2. Click `镜头对比`.
 3. Read the Current Batch and Previous Batch chips at the top.
-4. Use `Best Recording Candidates` to pick the strongest changed shot.
+4. Use `Best Recording Candidates`, `Open first candidate`, and the 1-4 queue chips to pick the strongest changed shot.
 5. Compare `Auto`, `Water`, `Skyline`, `Atlas`, and `Detail` with the Current row above the Previous row.
 6. Pick one lens that best supports the clip thesis.
 7. Click a candidate to open `/dream` with the same lens, active candidate day, visible candidate cue, clickable next-candidate chip, and return link to the comparison dashboard.
@@ -55,6 +55,8 @@ After `npm run index:recording-assets`, the top-level recording index shows lens
 
 - Does the selected lens create a visibly different composition?
 - Does the `Best Recording Candidates` strip surface the shot you would actually record?
+- Does the strip make the first action obvious before jumping into `/dream`?
+- Do the 1-4 queue chips make the recording order visible at a glance?
 - Does the `/dream` handoff show the candidate cue in the first viewport?
 - Does the cue show current candidate count and the next candidate without needing storage?
 - Does the `Next` chip advance to the next ranked candidate when clicked?

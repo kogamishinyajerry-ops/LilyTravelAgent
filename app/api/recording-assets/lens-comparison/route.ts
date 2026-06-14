@@ -123,13 +123,13 @@ function buildLensComparisonHtml(dashboard: LensComparisonDashboard) {
         margin-bottom: 12px;
         background: var(--line);
       }
-      .candidate-head, .candidate-list a {
+      .candidate-head, .candidate-list a, .candidate-sequence-chip {
         background: rgba(255,255,255,0.055);
       }
       .candidate-head {
         display: grid;
         align-content: center;
-        gap: 5px;
+        gap: 9px;
         padding: 14px;
       }
       .candidate-head span {
@@ -141,6 +141,53 @@ function buildLensComparisonHtml(dashboard: LensComparisonDashboard) {
       .candidate-head strong {
         color: var(--ink);
         font-size: 1.16rem;
+        line-height: 1.05;
+      }
+      .candidate-primary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 36px;
+        border: 1px solid rgba(255,255,255,0.18);
+        border-radius: 999px;
+        padding: 8px 11px;
+        color: #0f130f;
+        background: var(--amber);
+        font-size: 0.78rem;
+        font-weight: 1000;
+        text-decoration: none;
+      }
+      .candidate-sequence {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 5px;
+      }
+      .candidate-sequence-chip {
+        display: grid;
+        place-items: center;
+        min-width: 0;
+        min-height: 42px;
+        border: 1px solid rgba(255,255,255,0.12);
+        border-radius: 8px;
+        padding: 5px 3px;
+        color: var(--ink);
+        text-align: center;
+        text-decoration: none;
+      }
+      .candidate-sequence-chip.is-first {
+        border-color: rgba(230,170,77,0.72);
+        background: rgba(230,170,77,0.16);
+      }
+      .candidate-sequence-chip span {
+        color: var(--green);
+        font-size: 0.68rem;
+        font-weight: 1000;
+        line-height: 1;
+      }
+      .candidate-sequence-chip small {
+        color: var(--muted);
+        font-size: 0.58rem;
+        font-weight: 900;
         line-height: 1.05;
       }
       .candidate-list {
@@ -445,10 +492,24 @@ function renderCandidateStrip(candidates: LensRecordingCandidate[]) {
     return "";
   }
 
+  const firstCandidate = candidates[0];
+  const queueChips = candidates
+    .map(
+      (candidate) => `<a class="candidate-sequence-chip${candidate.rank === 1 ? " is-first" : ""}" href="${escapeHtml(candidate.dreamUrl)}" title="${escapeHtml(
+        `Open #${candidate.rank} ${candidate.lensLabel} D${candidate.day}`,
+      )}">
+        <span>#${candidate.rank}</span>
+        <small>${escapeHtml(`D${candidate.day}`)}</small>
+      </a>`,
+    )
+    .join("");
+
   return `<section class="candidate-strip" aria-label="Best recording candidates">
     <div class="candidate-head">
       <span>Best Recording Candidates</span>
       <strong>Top changed scene crops</strong>
+      <a class="candidate-primary" href="${escapeHtml(firstCandidate.dreamUrl)}">Open first candidate</a>
+      <div class="candidate-sequence" aria-label="Recording queue sequence">${queueChips}</div>
     </div>
     <div class="candidate-list">
       ${candidates

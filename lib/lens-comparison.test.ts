@@ -208,6 +208,46 @@ describe("lens comparison dashboard", () => {
     expect(dashboard.bestRecordingCandidates[0].dreamUrl).toContain("nextCandidateDetail=");
   });
 
+  it("caps the recording candidate queue at four ranked handoff URLs", async () => {
+    await writeLensBatch("2026-06-13T01-00-00-000Z", "2026-06-13T01:00:00.000Z");
+    await writeLensBatch("2026-06-13T02-00-00-000Z", "2026-06-13T02:00:00.000Z", {
+      auto: {
+        1: { checksum: 9_000_101, lit: 2001, varied: 51 },
+      },
+      "close-detail": {
+        4: { checksum: 8_000_104, lit: 2004, varied: 54 },
+      },
+      "wide-water": {
+        2: { checksum: 7_000_102, lit: 2002, varied: 52 },
+      },
+      "low-skyline": {
+        3: { checksum: 6_000_103, lit: 2003, varied: 53 },
+      },
+      "isometric-atlas": {
+        1: { checksum: 5_000_101, lit: 2001, varied: 51 },
+      },
+    });
+
+    const dashboard = await readLensComparisonDashboard(tempRoot);
+    const candidates = dashboard.bestRecordingCandidates;
+    const urls = candidates.map((candidate) => new URL(candidate.dreamUrl, "http://localhost"));
+
+    expect(candidates).toHaveLength(4);
+    expect(candidates.map((candidate) => `${candidate.rank}:${candidate.lensId}:D${candidate.day}`)).toEqual([
+      "1:auto:D1",
+      "2:close-detail:D4",
+      "3:wide-water:D2",
+      "4:low-skyline:D3",
+    ]);
+    expect(candidates.some((candidate) => candidate.lensId === "isometric-atlas")).toBe(false);
+    expect(urls.map((url) => url.searchParams.get("candidateTotal"))).toEqual(["4", "4", "4", "4"]);
+    expect(urls.map((url) => url.searchParams.get("candidateRank"))).toEqual(["1", "2", "3", "4"]);
+    expect(urls[0].searchParams.get("nextCandidateRank")).toBe("2");
+    expect(urls[1].searchParams.get("nextCandidateRank")).toBe("3");
+    expect(urls[2].searchParams.get("nextCandidateRank")).toBe("4");
+    expect(urls[3].searchParams.has("nextCandidateRank")).toBe(false);
+  });
+
   it("resolves only image files inside the recordings root", () => {
     expect(resolveRecordingAssetFile(tempRoot, "visual-checks/run/dream-dali-d1.png")).toBe(path.join(tempRoot, "visual-checks/run/dream-dali-d1.png"));
     expect(resolveRecordingAssetFile(tempRoot, "../.env.local")).toBeNull();

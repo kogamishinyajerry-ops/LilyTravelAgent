@@ -1345,3 +1345,14 @@ Files shown: docs/recording/goal-231-240-recap.md, `/dream?...candidateRank=4`, 
 Command/result: npm run lint && npm test && npm run build (44 files, 908 tests, build passed)
 Voiceover note: "最后候选状态也收口后，质量门继续全绿。这个队列还是轻量 URL 方案，但已经有开始、下一步和结束。"
 Usable for: goal closeout clip, queue end-state proof, next dashboard candidate-strip refinement, continued goal run round 237
+
+## Phase DM: v0.8.106 — Candidate Strip Primary Entry
+
+Date: 2026-06-14
+Clip title: Phase DM: v0.8.106 — Candidate Strip Primary Entry
+What changed: The Director Lens comparison dashboard candidate strip now shows an `Open first candidate` primary action and compact 1-4 queue chips before the ranked candidate cards.
+Why this matters: The recording workflow has a clearer starting point. A creator can open the comparison page, see the queue order, and jump into the first `/dream` candidate without scanning every card first.
+Files shown: app/api/recording-assets/lens-comparison/route.ts, lib/lens-comparison.test.ts, docs/recording/lens-visual-capture-workflow.md
+Command/result: npm test -- lib/lens-comparison.test.ts; npm run lint; Browser check should confirm the primary action, 4 queue chips, 4 candidate links, 40 image URLs, and 0 broken images.
+Voiceover note: "这一步是把看板入口产品化：不是让用户自己猜从哪张开始，而是明确 Open first candidate，同时把 1-4 的录屏顺序露出来。"
+Usable for: dashboard entry-point clip, recording queue setup, continued goal run round 244

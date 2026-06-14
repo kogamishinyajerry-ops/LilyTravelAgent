@@ -164,6 +164,7 @@ npm run check:recording-suite
 - `docs/recording/goal-211-220-recap.md` summarizes the lightweight recording queue handoff copy.
 - `docs/recording/goal-221-230-recap.md` summarizes the interactive next-candidate link in `/dream`.
 - `docs/recording/goal-231-240-recap.md` summarizes the final-candidate state for the lightweight recording queue.
+- `docs/recording/goal-241-250-recap.md` summarizes the dashboard candidate primary action and visible queue chips.
 - `docs/recording/studio-dream-demo-script.md` gives a shot-by-shot Studio ↔ Dream demo recording path.
 - `docs/recording/bridge-qa-evidence-script.md` gives a short Bridge QA proof clip script.
 - `docs/recording/cinematic-visual-contract-script.md` gives a short `/dream` visual-contract recording script for template strategy, Scene Inspector, Proof Stack, and asset state.
