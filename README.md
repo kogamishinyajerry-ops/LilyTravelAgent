@@ -186,6 +186,7 @@ npm run check:recording-suite
 - `docs/recording/goal-381-390-recap.md` summarizes the automated recording-index QA command.
 - `docs/recording/goal-391-400-recap.md` summarizes the Studio Recording Index QA status card.
 - `docs/recording/goal-401-410-recap.md` summarizes adding Recording Index QA to the full recording suite.
+- `docs/recording/goal-411-420-recap.md` summarizes the recording suite run manifest.
 - `docs/recording/studio-dream-demo-script.md` gives a shot-by-shot Studio ↔ Dream demo recording path.
 - `docs/recording/bridge-qa-evidence-script.md` gives a short Bridge QA proof clip script.
 - `docs/recording/cinematic-visual-contract-script.md` gives a short `/dream` visual-contract recording script for template strategy, Scene Inspector, Proof Stack, and asset state.

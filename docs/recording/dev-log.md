@@ -1587,3 +1587,14 @@ Files shown: scripts/check-recording-suite.mjs, scripts/check-recording-index.mj
 Command/result: node --check scripts/check-recording-index.mjs && node --check scripts/check-recording-suite.mjs passed; RECORDING_INDEX_SKIP_REBUILD=1 npm run check:recording-index passed; npm run check:recording-suite passed; npm run lint && npm test && npm run build passed with 44 files, 916 tests, and a successful production build.
 Voiceover note: "现在 full suite 最后会自动跑 Index QA。也就是说一条命令不仅生成素材，还验证素材总索引的证据链。"
 Usable for: full-suite workflow clip, recording readiness narration, continued goal run round 404
+
+## Phase EI: v0.8.128 — Recording Suite Run Manifest
+
+Date: 2026-06-14
+Clip title: Phase EI: v0.8.128 — Recording Suite Run Manifest
+What changed: `npm run check:recording-suite` now writes `recordings/suite-runs/<stamp>/summary.json` and `clip-notes.md`, listing each step's status, duration, exit code, env overrides, and discovered output paths.
+Why this matters: The full recording workflow now has one top-level receipt that can be shown in Studio or used as a recording review checklist.
+Files shown: scripts/check-recording-suite.mjs, README.md, docs/recording/recording-asset-pipeline.md, recordings/suite-runs/2026-06-14T08-10-33-846Z/summary.json, recordings/suite-runs/2026-06-14T08-10-33-846Z/clip-notes.md
+Command/result: node --check scripts/check-recording-suite.mjs passed; npm run check:recording-suite passed; unreachable-base failure test wrote a failed manifest; npm run lint && npm test && npm run build passed with 44 files, 916 tests, and a successful production build.
+Voiceover note: "这一轮给 recording suite 加了一张总收据。所有子步骤、耗时、输出文件都写进 suite-runs，后面 Studio 就可以显示 full suite 是否完整跑完。"
+Usable for: suite manifest clip, top-level proof narration, continued goal run round 414
