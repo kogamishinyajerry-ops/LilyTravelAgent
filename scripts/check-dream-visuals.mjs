@@ -86,6 +86,15 @@ async function readCompositionProfile(page) {
   );
 }
 
+async function readSceneInspectorGrid(page) {
+  return page.locator(".dream-scene-inspector-grid span").evaluateAll((items) =>
+    items.map((item) => ({
+      label: item.querySelector("small")?.textContent?.trim() || "",
+      value: item.querySelector("strong")?.textContent?.trim() || "",
+    })),
+  );
+}
+
 async function readProofStack(page) {
   return page.locator(".dream-cinematic-proof-grid span").evaluateAll((items) =>
     items.map((item) => ({
@@ -150,6 +159,7 @@ async function main() {
 
     const inspectorText = await page.locator(".dream-scene-inspector").innerText();
     const timeline = await readDirectorTimeline(page);
+    const inspectorGrid = await readSceneInspectorGrid(page);
     const composition = await readCompositionProfile(page);
     const proofStack = await readProofStack(page);
     const canvasStats = await readCanvasStats(page);
@@ -159,6 +169,7 @@ async function main() {
     assert(inspectorText.includes(`D${day}`), `Scene Inspector did not mention D${day}.`);
     assert(timeline.length === 4, `Director timeline should have 4 items for D${day}; got ${timeline.length}.`);
     assert(composition.length === 4, `Composition profile should have 4 items for D${day}; got ${composition.length}.`);
+    assert(inspectorGrid.some((item) => item.label === "Tune"), `Scene Inspector should expose lens tuning for D${day}.`);
     assert(proofStack.length === 5, `Proof stack should have 5 items for D${day}; got ${proofStack.length}.`);
     const activeTimelineItem = timeline.find((item) => item.active);
     assert(activeTimelineItem?.day === day, `Director timeline active item should be D${day}.`);
@@ -176,6 +187,12 @@ async function main() {
       proofStack.find((item) => item.label === "Director")?.value === activeLens?.proof,
       `Director proof mismatch for D${day}: ${proofStack.find((item) => item.label === "Director")?.value}`,
     );
+    if (directorLens === "low-skyline") {
+      assert(
+        inspectorGrid.find((item) => item.label === "Tune")?.value === "skyline 1.34x / water 1.08x / route 1.18x",
+        `Low-skyline tuning mismatch for D${day}: ${inspectorGrid.find((item) => item.label === "Tune")?.value}`,
+      );
+    }
     assert(
       proofStack.filter((item) => item.status.includes("ready")).length >= 3,
       `Proof stack should have at least composition + director + landmark ready for D${day}.`,
@@ -190,6 +207,7 @@ async function main() {
       day,
       inspectorText,
       timeline,
+      inspectorGrid,
       composition,
       proofStack,
       directorLens: activeLens,
@@ -267,6 +285,15 @@ function buildHtmlReport(summary) {
             </li>`,
         )
         .join("");
+      const inspectorItems = day.inspectorGrid
+        .map(
+          (item) => `
+            <li>
+              <span>${escapeHtml(item.label)}</span>
+              <strong>${escapeHtml(item.value)}</strong>
+            </li>`,
+        )
+        .join("");
       const proofItems = day.proofStack
         .map(
           (item) => `
@@ -284,6 +311,7 @@ function buildHtmlReport(summary) {
             <h2>${escapeHtml(shotLine)}</h2>
             <pre>${escapeHtml(day.inspectorText)}</pre>
             <ul class="timeline">${timelineItems}</ul>
+            <ul class="proof-list">${inspectorItems}</ul>
             <ul class="proof-list">${compositionItems}</ul>
             <ul class="proof-list">${proofItems}</ul>
             <dl>
@@ -577,6 +605,7 @@ function buildClipNotes(summary) {
         `- Screenshot: ${path.basename(day.screenshotPath)}`,
         `- Director cue: ${active?.cue || "无 cue"}`,
         `- Director Lens: ${day.directorLens?.proof || "auto"}`,
+        `- Lens tuning: ${day.inspectorGrid.find((item) => item.label === "Tune")?.value || "无"}`,
         `- Composition proof: ${day.proofStack.find((item) => item.label === "Composition")?.value || "无"}`,
         `- Proof stack: ${day.proofStack.map((item) => `${item.label}=${item.value}`).join(" / ")}`,
         `- Canvas lit pixels: ${day.canvasStats.lit}`,
