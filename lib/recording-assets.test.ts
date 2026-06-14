@@ -46,6 +46,7 @@ describe("recording assets", () => {
     expect(summary.latestPack).toBeNull();
     expect(summary.latestCandidateHandoff).toBeNull();
     expect(summary.latestDreamVisualProof).toBeNull();
+    expect(summary.latestRecordingIndexCheck).toBeNull();
     expect(summary.indexAvailable).toBe(false);
     expect(summary.clipIndexAvailable).toBe(false);
   });
@@ -181,6 +182,46 @@ describe("recording assets", () => {
       screenshotPath: "visual-checks/new-with-proof/dream-dali-visual-proof-playback.png",
       summaryPath: "visual-checks/new-with-proof/summary.json",
       notesPath: "visual-checks/new-with-proof/clip-notes.md",
+    });
+  });
+
+  it("reports the latest recording index QA evidence when available", async () => {
+    await writeSummary("index-checks/old-index-check", {
+      createdAt: "2026-06-13T04:00:00.000Z",
+      proofText: "Dream Proof · Proof · 3/5 ready",
+      apiIndexUrl: "http://localhost:3000/api/recording-assets/index",
+      localProof: {
+        finalCueLabel: "Proof",
+        finalCueValue: "3/5 ready",
+      },
+      links: [{ id: "screenshot" }],
+      screenshotPath: path.join(tempRoot, "index-checks", "old-index-check", "recording-index-dream-proof.png"),
+    });
+    await writeSummary("index-checks/new-index-check", {
+      createdAt: "2026-06-13T05:00:00.000Z",
+      proofText: "Dream Proof · Proof · 3/5 ready\nplayback screenshot\nsummary\nnotes",
+      apiIndexUrl: "http://localhost:3000/api/recording-assets/index",
+      localProof: {
+        finalCueLabel: "Proof",
+        finalCueValue: "3/5 ready",
+      },
+      links: [{ id: "screenshot" }, { id: "summary" }, { id: "notes" }],
+      screenshotPath: path.join(tempRoot, "index-checks", "new-index-check", "recording-index-dream-proof.png"),
+    });
+
+    const summary = await readRecordingAssetsSummary(tempRoot);
+
+    expect(summary.latestRecordingIndexCheck).toMatchObject({
+      id: "new-index-check",
+      createdAt: "2026-06-13T05:00:00.000Z",
+      finalCueLabel: "Proof",
+      finalCueValue: "3/5 ready",
+      linkCount: 3,
+      proofText: "Dream Proof · Proof · 3/5 ready\nplayback screenshot\nsummary\nnotes",
+      apiIndexUrl: "http://localhost:3000/api/recording-assets/index",
+      screenshotPath: "index-checks/new-index-check/recording-index-dream-proof.png",
+      summaryPath: "index-checks/new-index-check/summary.json",
+      notesPath: "index-checks/new-index-check/clip-notes.md",
     });
   });
 

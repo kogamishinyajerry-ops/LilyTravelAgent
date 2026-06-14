@@ -42,6 +42,20 @@ function recordingAssetsResponse(packCount: number, title = "Studio 16:9 demo pa
           notesPath: "visual-checks/dream-proof-latest/clip-notes.md",
         }
       : null,
+    latestRecordingIndexCheck: packCount
+      ? {
+          id: "index-check-latest",
+          createdAt: "2026-06-13T05:49:00.000Z",
+          finalCueLabel: "Proof",
+          finalCueValue: "3/5 ready",
+          linkCount: 3,
+          proofText: "Dream Proof · Proof · 3/5 ready",
+          apiIndexUrl: "http://localhost:3000/api/recording-assets/index",
+          screenshotPath: "index-checks/index-check-latest/recording-index-dream-proof.png",
+          summaryPath: "index-checks/index-check-latest/summary.json",
+          notesPath: "index-checks/index-check-latest/clip-notes.md",
+        }
+      : null,
     recentPacks: packCount
       ? [
           {
@@ -141,6 +155,18 @@ describe("StudioMode demo roadbooks", () => {
     );
     expect(within(screen.getByLabelText("Dream visual proof QA 状态")).getByRole("link", { name: /notes/ }).getAttribute("href")).toBe(
       "/api/recording-assets/file?path=visual-checks%2Fdream-proof-latest%2Fclip-notes.md",
+    );
+    expect(screen.getByLabelText("Recording Index QA 状态").textContent).toContain("素材总索引已验证");
+    expect(screen.getByLabelText("Recording Index QA 状态").textContent).toContain("Proof · 3/5 ready · 3 条证据链接");
+    expect(screen.getByLabelText("Recording Index QA 状态").textContent).toContain("Index QA");
+    expect(within(screen.getByLabelText("Recording Index QA 状态")).getByRole("link", { name: /索引截图/ }).getAttribute("href")).toBe(
+      "/api/recording-assets/file?path=index-checks%2Findex-check-latest%2Frecording-index-dream-proof.png",
+    );
+    expect(within(screen.getByLabelText("Recording Index QA 状态")).getByRole("link", { name: /summary/ }).getAttribute("href")).toBe(
+      "/api/recording-assets/file?path=index-checks%2Findex-check-latest%2Fsummary.json",
+    );
+    expect(within(screen.getByLabelText("Recording Index QA 状态")).getByRole("link", { name: /notes/ }).getAttribute("href")).toBe(
+      "/api/recording-assets/file?path=index-checks%2Findex-check-latest%2Fclip-notes.md",
     );
     expect(screen.getAllByText("Dream low-skyline lens visual pack")[0]).toBeTruthy();
     expect(screen.getAllByText("low-skyline lens").length).toBeGreaterThanOrEqual(1);
@@ -250,6 +276,8 @@ describe("StudioMode demo roadbooks", () => {
     expect(screen.getByLabelText("候选点击 QA 状态").textContent).toContain("npm run check:lens-candidate-handoff");
     expect(screen.getByLabelText("Dream visual proof QA 状态").textContent).toContain("等待视觉证据 QA");
     expect(screen.getByLabelText("Dream visual proof QA 状态").textContent).toContain("npm run check:dream-visuals");
+    expect(screen.getByLabelText("Recording Index QA 状态").textContent).toContain("等待素材索引 QA");
+    expect(screen.getByLabelText("Recording Index QA 状态").textContent).toContain("npm run check:recording-index");
     expect(screen.getByText("Dream 0")).toBeTruthy();
     expect(screen.getByText("Studio 0")).toBeTruthy();
     expect(screen.getByText("生成本地素材索引")).toBeTruthy();
@@ -288,11 +316,14 @@ describe("StudioMode demo roadbooks", () => {
     expect(proofChecklist.textContent).toContain("镜头候选对比");
     expect(proofChecklist.textContent).toContain("Asset Index");
     expect(proofChecklist.textContent).toContain("15 个素材包");
+    expect(proofChecklist.textContent).toContain("Index QA");
+    expect(proofChecklist.textContent).toContain("3 条证据链接");
     expect(within(proofChecklist).getByRole("button", { name: "播放证据线" })).toBeTruthy();
     expect(within(proofChecklist).getByText("先证明 Studio 和 Dream 能互相跳转。")).toBeTruthy();
     expect(within(proofChecklist).getByRole("link", { name: /3 个入口/ }).getAttribute("href")).toBe("candidate-handoff-checks/candidate-latest/summary.json");
     expect(within(proofChecklist).getByRole("link", { name: /镜头候选对比/ }).getAttribute("href")).toBe("/api/recording-assets/lens-comparison");
     expect(within(proofChecklist).getByRole("link", { name: /15 个素材包/ }).getAttribute("href")).toBe("/api/recording-assets/index");
+    expect(within(proofChecklist).getByRole("link", { name: /3 条证据链接/ }).getAttribute("href")).toBe("index-checks/index-check-latest/summary.json");
     expect(screen.getByText("讲解轨道已打开")).toBeTruthy();
     expect(screen.getByRole("button", { name: /脚本模式/ }).getAttribute("aria-pressed")).toBe("true");
   });
@@ -326,6 +357,13 @@ describe("StudioMode demo roadbooks", () => {
     });
     expect(proofChecklist.querySelector('[aria-current="step"]')?.textContent).toContain("Asset Index");
     expect(proofChecklist.querySelector('[aria-current="step"]')?.textContent).toContain("最后进入素材库，挑录屏片段。");
+    expect(within(proofChecklist).getByRole("button", { name: "讲解中" }).getAttribute("aria-pressed")).toBe("true");
+
+    await act(async () => {
+      vi.advanceTimersByTime(1200);
+    });
+    expect(proofChecklist.querySelector('[aria-current="step"]')?.textContent).toContain("Index QA");
+    expect(proofChecklist.querySelector('[aria-current="step"]')?.textContent).toContain("确认素材总索引本身也有自动验收。");
     expect(within(proofChecklist).getByRole("button", { name: "播放证据线" }).getAttribute("aria-pressed")).toBe("false");
   });
 

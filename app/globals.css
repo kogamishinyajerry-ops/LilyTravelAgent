@@ -1790,7 +1790,8 @@ textarea {
 }
 
 .studio-candidate-handoff-status,
-.studio-dream-proof-status {
+.studio-dream-proof-status,
+.studio-recording-index-check-status {
   display: grid;
   gap: 3px;
   border: 1px solid rgba(38, 59, 49, 0.12);
@@ -1800,26 +1801,30 @@ textarea {
 }
 
 .studio-candidate-handoff-status.ready,
-.studio-dream-proof-status.ready {
+.studio-dream-proof-status.ready,
+.studio-recording-index-check-status.ready {
   border-color: rgba(79, 143, 122, 0.26);
   background: rgba(79, 143, 122, 0.13);
 }
 
 .studio-candidate-handoff-status.missing,
-.studio-dream-proof-status.missing {
+.studio-dream-proof-status.missing,
+.studio-recording-index-check-status.missing {
   border-color: rgba(191, 128, 85, 0.22);
   background: rgba(191, 128, 85, 0.1);
 }
 
 .studio-candidate-handoff-status small,
-.studio-dream-proof-status small {
+.studio-dream-proof-status small,
+.studio-recording-index-check-status small {
   color: var(--sage);
   font-size: 0.68rem;
   font-weight: 950;
 }
 
 .studio-recording-assets .studio-candidate-handoff-status strong,
-.studio-recording-assets .studio-dream-proof-status strong {
+.studio-recording-assets .studio-dream-proof-status strong,
+.studio-recording-assets .studio-recording-index-check-status strong {
   overflow: hidden;
   color: var(--moss);
   font-size: 0.86rem;
@@ -1828,7 +1833,8 @@ textarea {
 }
 
 .studio-recording-assets .studio-candidate-handoff-status span,
-.studio-recording-assets .studio-dream-proof-status span {
+.studio-recording-assets .studio-dream-proof-status span,
+.studio-recording-assets .studio-recording-index-check-status span {
   overflow: hidden;
   font-size: 0.72rem;
   text-overflow: ellipsis;

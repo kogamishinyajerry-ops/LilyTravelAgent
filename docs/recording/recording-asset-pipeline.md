@@ -57,8 +57,10 @@ DREAM_LENSES=low-skyline,isometric-atlas npm run check:dream-lenses
 - `Dream Proof` status in `/studio`, showing the latest Dream visual proof playback result.
 - `Dream Proof` evidence links in `/studio`: playback screenshot, summary, and clip notes.
 - `Dream Proof` evidence in `/api/recording-assets/index` and `recordings/index.html`: final cue, readiness value, playback screenshot, summary, and notes.
+- `Recording Index QA` status in `/studio`: proof-card screenshot, summary, and notes from the latest `index-checks` run.
 - `Bridge QA 证据状态` in script mode.
 - `候选点击 QA 状态` in the `/studio` asset panel after `npm run check:lens-candidate-handoff`.
+- `Index QA` in the `/studio` proof checklist after `npm run check:recording-index`.
 - `/dream` `Dream Visual Proof Cue Strip`, covering Terrain, Skyline, AI Asset, Route, and Proof over the cinematic scene.
 - `/dream` `播放视觉证据`, highlighting those five visual proof cues in recording order.
 - `npm run check:dream-visuals` captures the visual proof cue labels, final `Proof` playback state, and `dream-*-visual-proof-playback.png`.
@@ -84,6 +86,7 @@ Run it, return to `/studio`, then click `刷新`.
 - "Dream QA is product footage. Studio QA is walkthrough footage. Bridge QA proves the handoff."
 - "In Dream QA, the screenshot is paired with a visual contract: prompt strategy, director lens, scene proof, asset state, and motion evidence."
 - "The archive does not only list screenshots. It also carries the Dream Proof playback result, so evidence survives outside the Studio screen."
+- "The Studio panel now shows that the archive itself was checked: screenshot, summary, and notes are all linked from Index QA."
 - "The lens batch lets me compare five camera directions before I tune or record the final clip."
 
 ## Verification

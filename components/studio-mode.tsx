@@ -48,6 +48,7 @@ type RecordingAssetsState =
       } | null;
       latestCandidateHandoff: RecordingCandidateHandoffSummary | null;
       latestDreamVisualProof: RecordingDreamVisualProofSummary | null;
+      latestRecordingIndexCheck: RecordingIndexCheckSummary | null;
     }
   | { status: "error"; message: string };
 
@@ -66,6 +67,19 @@ type RecordingDreamVisualProofSummary = {
   finalCueValue: string;
   buttonTextAfterPlayback: string;
   cueLabels: string[];
+  screenshotPath: string;
+  summaryPath: string;
+  notesPath?: string;
+};
+
+type RecordingIndexCheckSummary = {
+  id: string;
+  createdAt: string;
+  finalCueLabel: string;
+  finalCueValue: string;
+  linkCount: number;
+  proofText: string;
+  apiIndexUrl: string;
   screenshotPath: string;
   summaryPath: string;
   notesPath?: string;
@@ -96,6 +110,7 @@ type RecordingAssetsApiResponse = {
   } | null;
   latestCandidateHandoff?: RecordingCandidateHandoffSummary | null;
   latestDreamVisualProof?: RecordingDreamVisualProofSummary | null;
+  latestRecordingIndexCheck?: RecordingIndexCheckSummary | null;
   message?: string;
 };
 
@@ -143,6 +158,7 @@ function getStudioDemoRoadbook(value?: string) {
 const localDemoModelLabel = "Local Demo";
 const recordingSuiteCommand = "npm run check:recording-suite";
 const candidateHandoffCommand = "npm run check:lens-candidate-handoff";
+const recordingIndexCommand = "npm run check:recording-index";
 const recordingWorkflowSteps = [
   {
     step: "1",
@@ -303,6 +319,7 @@ function getRecordingProofChecklist(recordingAssets: RecordingAssetsState) {
       { label: "Candidate QA", state: "等待读取", detail: "读取候选点击 QA。", href: "", cue: "再证明候选镜头点击后上下文不会丢。" },
       { label: "Lens Compare", state: "等待读取", detail: "读取镜头对比入口。", href: "", cue: "接着比较不同视觉镜头的成片差异。" },
       { label: "Asset Index", state: "等待读取", detail: "读取总素材索引。", href: "", cue: "最后进入素材库，挑录屏片段。" },
+      { label: "Index QA", state: "等待读取", detail: "读取索引 QA 证据。", href: "", cue: "确认素材总索引本身也有自动验收。" },
     ];
   }
 
@@ -337,6 +354,15 @@ function getRecordingProofChecklist(recordingAssets: RecordingAssetsState) {
       detail: recordingAssets.indexAvailable ? `${recordingAssets.packCount} 个素材包` : recordingSuiteCommand,
       href: recordingAssets.indexAvailable ? recordingAssets.indexUrl : "",
       cue: "最后进入素材库，挑录屏片段。",
+    },
+    {
+      label: "Index QA",
+      state: recordingAssets.latestRecordingIndexCheck ? "已验证" : "待运行",
+      detail: recordingAssets.latestRecordingIndexCheck
+        ? `${recordingAssets.latestRecordingIndexCheck.linkCount} 条证据链接`
+        : recordingIndexCommand,
+      href: recordingAssets.latestRecordingIndexCheck?.summaryPath || "",
+      cue: "确认素材总索引本身也有自动验收。",
     },
   ];
 }
@@ -388,6 +414,7 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
           latestPack: data.latestPack || null,
           latestCandidateHandoff: data.latestCandidateHandoff || null,
           latestDreamVisualProof: data.latestDreamVisualProof || null,
+          latestRecordingIndexCheck: data.latestRecordingIndexCheck || null,
         });
         setRecordingAssetsReadAt(new Date().toISOString());
       } catch (caught) {
@@ -853,6 +880,43 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
                         <small>Dream Proof</small>
                         <strong>等待视觉证据 QA</strong>
                         <span>运行 npm run check:dream-visuals 后显示 Proof 播放状态。</span>
+                      </>
+                    )}
+                  </div>
+                  <div className={`studio-recording-index-check-status ${recordingAssets.latestRecordingIndexCheck ? "ready" : "missing"}`} aria-label="Recording Index QA 状态">
+                    {recordingAssets.latestRecordingIndexCheck ? (
+                      <>
+                        <small>Index QA · {formatRecordingAssetTime(recordingAssets.latestRecordingIndexCheck.createdAt)}</small>
+                        <strong>素材总索引已验证</strong>
+                        <span>
+                          {recordingAssets.latestRecordingIndexCheck.finalCueLabel} · {recordingAssets.latestRecordingIndexCheck.finalCueValue} · {recordingAssets.latestRecordingIndexCheck.linkCount} 条证据链接
+                        </span>
+                        <div className="studio-dream-proof-links">
+                          {recordingAssets.latestRecordingIndexCheck.screenshotPath ? (
+                            <a href={buildRecordingEvidenceUrl(recordingAssets.latestRecordingIndexCheck.screenshotPath)} target="_blank" rel="noreferrer">
+                              索引截图
+                              <ExternalLink size={12} />
+                            </a>
+                          ) : null}
+                          {recordingAssets.latestRecordingIndexCheck.summaryPath ? (
+                            <a href={buildRecordingEvidenceUrl(recordingAssets.latestRecordingIndexCheck.summaryPath)} target="_blank" rel="noreferrer">
+                              summary
+                              <ExternalLink size={12} />
+                            </a>
+                          ) : null}
+                          {recordingAssets.latestRecordingIndexCheck.notesPath ? (
+                            <a href={buildRecordingEvidenceUrl(recordingAssets.latestRecordingIndexCheck.notesPath)} target="_blank" rel="noreferrer">
+                              notes
+                              <ExternalLink size={12} />
+                            </a>
+                          ) : null}
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <small>Index QA</small>
+                        <strong>等待素材索引 QA</strong>
+                        <span>运行 npm run check:recording-index 后显示总索引验证状态。</span>
                       </>
                     )}
                   </div>
