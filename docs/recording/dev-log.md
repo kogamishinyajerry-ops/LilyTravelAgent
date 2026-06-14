@@ -1598,3 +1598,14 @@ Files shown: scripts/check-recording-suite.mjs, README.md, docs/recording/record
 Command/result: node --check scripts/check-recording-suite.mjs passed; npm run check:recording-suite passed; unreachable-base failure test wrote a failed manifest; npm run lint && npm test && npm run build passed with 44 files, 916 tests, and a successful production build.
 Voiceover note: "这一轮给 recording suite 加了一张总收据。所有子步骤、耗时、输出文件都写进 suite-runs，后面 Studio 就可以显示 full suite 是否完整跑完。"
 Usable for: suite manifest clip, top-level proof narration, continued goal run round 414
+
+## Phase EJ: v0.8.129 — Studio Recording Suite Status
+
+Date: 2026-06-14
+Clip title: Phase EJ: v0.8.129 — Studio Recording Suite Status
+What changed: `/studio` now reads the latest `suite-runs` manifest and shows a `Recording Suite` status card with pass/fail state, step count, passed-step count, duration, summary link, and notes link.
+Why this matters: The creator can confirm full recording readiness from Studio without reading terminal output or opening the suite manifest manually.
+Files shown: lib/recording-assets.ts, components/studio-mode.tsx, app/globals.css, components/studio-mode.test.tsx, lib/recording-assets.test.ts
+Command/result: npm test -- lib/recording-assets.test.ts components/studio-mode.test.tsx passed with 19 tests; Chrome browser check confirmed `/studio` shows `Full suite 已通过`, `7 步 · 7 通过 · 1m 47s`, and two 200 evidence links; npm run lint && npm test && npm run build passed with 44 files, 917 tests, and a successful production build.
+Voiceover note: "现在 Studio 直接显示 full suite 的总状态：七步全过、耗时一分多钟，summary 和 notes 都在卡片里。录屏时这就是最高层的 readiness proof。"
+Usable for: Studio full-suite readiness clip, top-level proof narration, continued goal run round 424
