@@ -1235,3 +1235,14 @@ Files shown: docs/recording/goal-181-190-recap.md, `/api/recording-assets/lens-c
 Command/result: npm run lint && npm test && npm run build (44 files, 905 tests, build passed)
 Voiceover note: "差异徽章做完后，我继续跑完整质量门。现在这不是一个临时演示，而是一条稳定的视觉评审链路：before / after、Changed / Subtle、原始 delta、测试和构建。"
 Usable for: goal closeout clip, visual-diff proof, next best-shot-ranking handoff, continued goal run round 187
+
+## Phase DC: v0.8.96 — Best Recording Candidate Strip
+
+Date: 2026-06-14
+Clip title: Phase DC: v0.8.96 — Best Recording Candidate Strip
+What changed: Added a ranked `Best Recording Candidates` strip to the Director Lens dashboard. The strip selects the top changed D1-D4 scene crops from the existing explainable diff metrics and links each candidate back to `/dream` with the matching demo and lens.
+Why this matters: The review page now helps make a creative decision, not only inspect evidence. A creator can open the dashboard and immediately see which changed shots are strongest for the next recording take.
+Files shown: lib/lens-comparison.ts, app/api/recording-assets/lens-comparison/route.ts, docs/recording/lens-visual-capture-workflow.md
+Command/result: npm test -- lib/lens-comparison.test.ts; npm run lint; Browser/local request check confirmed 4 candidate links, 40 image URLs, and 0 broken images.
+Voiceover note: "前面我让看板知道哪一帧 Changed，这一步再往产品决策走：直接给我 Top changed shots，点一下就能回到对应 lens 的 /dream。"
+Usable for: best-shot selection clip, creator workflow evidence, continued goal run round 194

@@ -8,6 +8,7 @@ import {
   type LensComparisonDashboard,
   type LensComparisonDay,
   type LensComparisonPack,
+  type LensRecordingCandidate,
 } from "@/lib/lens-comparison";
 
 export const runtime = "nodejs";
@@ -112,6 +113,65 @@ function buildLensComparisonHtml(dashboard: LensComparisonDashboard) {
       .missing { display: inline-block; margin-bottom: 12px; color: var(--amber); }
       .missing.ready { color: var(--green); }
       .stack { display: grid; gap: 12px; }
+      .candidate-strip {
+        display: grid;
+        grid-template-columns: 240px minmax(0, 1fr);
+        gap: 1px;
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        margin-bottom: 12px;
+        background: var(--line);
+      }
+      .candidate-head, .candidate-list a {
+        background: rgba(255,255,255,0.055);
+      }
+      .candidate-head {
+        display: grid;
+        align-content: center;
+        gap: 5px;
+        padding: 14px;
+      }
+      .candidate-head span {
+        color: var(--amber);
+        font-size: 0.72rem;
+        font-weight: 1000;
+        text-transform: uppercase;
+      }
+      .candidate-head strong {
+        color: var(--ink);
+        font-size: 1.16rem;
+        line-height: 1.05;
+      }
+      .candidate-list {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 1px;
+      }
+      .candidate-list a {
+        display: grid;
+        align-content: center;
+        gap: 6px;
+        min-height: 104px;
+        padding: 12px;
+        color: var(--ink);
+        text-decoration: none;
+      }
+      .candidate-list span {
+        color: var(--green);
+        font-size: 0.7rem;
+        font-weight: 1000;
+        text-transform: uppercase;
+      }
+      .candidate-list strong {
+        font-size: 1rem;
+        line-height: 1.08;
+      }
+      .candidate-list small {
+        color: var(--muted);
+        font-size: 0.68rem;
+        line-height: 1.25;
+      }
       .batch-strip {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -346,6 +406,8 @@ function buildLensComparisonHtml(dashboard: LensComparisonDashboard) {
       }
       @media (max-width: 980px) {
         header, .lens { grid-template-columns: 1fr; }
+        .candidate-strip { grid-template-columns: 1fr; }
+        .candidate-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
         .batch-strip { grid-template-columns: 1fr; }
         .stats { justify-content: start; }
         .shots { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -370,11 +432,36 @@ function buildLensComparisonHtml(dashboard: LensComparisonDashboard) {
         </div>
       </header>
       ${missing}
+      ${renderCandidateStrip(dashboard.bestRecordingCandidates)}
       ${renderBatchStrip(dashboard.currentBatch, dashboard.previousBatch)}
       <section class="stack">${lensCards}</section>
     </main>
   </body>
 </html>`;
+}
+
+function renderCandidateStrip(candidates: LensRecordingCandidate[]) {
+  if (!candidates.length) {
+    return "";
+  }
+
+  return `<section class="candidate-strip" aria-label="Best recording candidates">
+    <div class="candidate-head">
+      <span>Best Recording Candidates</span>
+      <strong>Top changed scene crops</strong>
+    </div>
+    <div class="candidate-list">
+      ${candidates
+        .map(
+          (candidate) => `<a class="candidate-link" href="${escapeHtml(candidate.dreamUrl)}">
+            <span>#${candidate.rank} · ${escapeHtml(candidate.lensLabel)} · D${candidate.day}</span>
+            <strong>${escapeHtml(candidate.dayLabel)}</strong>
+            <small>${escapeHtml(`${candidate.diff.detail} · ${candidate.cue || "visual beat"}`)}</small>
+          </a>`,
+        )
+        .join("")}
+    </div>
+  </section>`;
 }
 
 function renderBatchStrip(currentBatch: LensComparisonBatch | null, previousBatch: LensComparisonBatch | null) {

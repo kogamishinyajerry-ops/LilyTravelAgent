@@ -57,10 +57,22 @@ function makeSummary(
 }
 
 const allLensIds = ["auto", "wide-water", "low-skyline", "isometric-atlas", "close-detail"];
+type TestCanvasStats = { checksum: number; lit: number; varied: number };
 
-async function writeLensBatch(batchId: string, createdAt: string) {
+function withDayStats(summary: ReturnType<typeof makeSummary>, statsByDay: Record<number, TestCanvasStats>) {
+  return {
+    ...summary,
+    days: summary.days.map((day) => ({
+      ...day,
+      canvasStats: statsByDay[day.day] || day.canvasStats,
+    })),
+  };
+}
+
+async function writeLensBatch(batchId: string, createdAt: string, statsByLens: Partial<Record<string, Record<number, TestCanvasStats>>> = {}) {
   for (const lensId of allLensIds) {
-    await writeDreamPack(`${batchId}-lens-${lensId}`, makeSummary(lensId, createdAt, undefined, `${batchId}-lens-${lensId}`));
+    const summary = makeSummary(lensId, createdAt, undefined, `${batchId}-lens-${lensId}`);
+    await writeDreamPack(`${batchId}-lens-${lensId}`, withDayStats(summary, statsByLens[lensId] || {}));
   }
 }
 
@@ -154,6 +166,37 @@ describe("lens comparison dashboard", () => {
     expect(dashboard.previousBatch?.packs[0].days[0].sceneScreenshotPath).toBe(
       "visual-checks/2026-06-13T01-00-00-000Z-lens-auto/dream-dali-d1-scene.png",
     );
+  });
+
+  it("ranks best recording candidates from changed current-versus-previous scene stats", async () => {
+    await writeLensBatch("2026-06-13T01-00-00-000Z", "2026-06-13T01:00:00.000Z");
+    await writeLensBatch("2026-06-13T02-00-00-000Z", "2026-06-13T02:00:00.000Z", {
+      auto: {
+        1: { checksum: 5_000_101, lit: 2001, varied: 51 },
+        2: { checksum: 20_102, lit: 2002, varied: 52 },
+      },
+      "wide-water": {
+        3: { checksum: 3_000_103, lit: 2003, varied: 53 },
+      },
+    });
+
+    const dashboard = await readLensComparisonDashboard(tempRoot);
+
+    expect(dashboard.bestRecordingCandidates).toHaveLength(2);
+    expect(dashboard.bestRecordingCandidates.map((candidate) => `${candidate.rank}:${candidate.lensId}:D${candidate.day}`)).toEqual([
+      "1:auto:D1",
+      "2:wide-water:D3",
+    ]);
+    expect(dashboard.bestRecordingCandidates[0]).toMatchObject({
+      lensLabel: "Auto",
+      dayLabel: "D1 label",
+      demoRoadbook: "dali",
+      dreamUrl: "/dream?demo=dali&lens=auto",
+      diff: {
+        state: "changed",
+        checksumDelta: 5_000_000,
+      },
+    });
   });
 
   it("resolves only image files inside the recordings root", () => {

@@ -23,9 +23,24 @@ export type LensComparisonSceneDiff = {
   state: "changed" | "subtle" | "missing";
   label: string;
   detail: string;
+  score: number;
   checksumDelta: number;
   litDelta: number;
   variedDelta: number;
+};
+
+export type LensRecordingCandidate = {
+  rank: number;
+  lensId: DirectorLensId;
+  lensLabel: string;
+  day: number;
+  dayLabel: string;
+  cue: string;
+  demoRoadbook: string;
+  dreamUrl: string;
+  sceneScreenshotPath: string;
+  sceneScreenshotUrl: string;
+  diff: LensComparisonSceneDiff;
 };
 
 export type LensComparisonPack = {
@@ -72,6 +87,7 @@ export type LensComparisonDashboard = {
   missingLensIds: DirectorLensId[];
   currentBatch: LensComparisonBatch | null;
   previousBatch: LensComparisonBatch | null;
+  bestRecordingCandidates: LensRecordingCandidate[];
   packs: LensComparisonPack[];
 };
 
@@ -131,6 +147,7 @@ export function compareLensSceneStats(
       state: "missing",
       label: "Missing",
       detail: "No previous scene crop",
+      score: 0,
       checksumDelta: 0,
       litDelta: 0,
       variedDelta: 0,
@@ -142,6 +159,7 @@ export function compareLensSceneStats(
       state: "missing",
       label: "Missing",
       detail: "Needs two pure scene crops",
+      score: 0,
       checksumDelta: 0,
       litDelta: 0,
       variedDelta: 0,
@@ -151,12 +169,14 @@ export function compareLensSceneStats(
   const checksumDelta = Math.abs(current.checksum - previous.checksum);
   const litDelta = Math.abs(current.lit - previous.lit);
   const variedDelta = Math.abs(current.varied - previous.varied);
+  const score = checksumDelta + litDelta * 10_000 + variedDelta * 250_000;
   const changed = checksumDelta >= 1_000_000 || litDelta >= 80 || variedDelta >= 4;
 
   return {
     state: changed ? "changed" : "subtle",
     label: changed ? "Changed" : "Subtle",
     detail: `checksum ${formatCompactDelta(checksumDelta)} / lit ${litDelta} / varied ${variedDelta}`,
+    score,
     checksumDelta,
     litDelta,
     variedDelta,
@@ -188,6 +208,7 @@ export function buildLensComparisonDashboard(recordingsRoot: string, summaries: 
     completeBatches.find((batch) => batch.id !== currentBatch?.id) ||
     batches.find((batch) => batch.id !== currentBatch?.id) ||
     null;
+  const bestRecordingCandidates = buildBestRecordingCandidates(currentBatch, previousBatch);
 
   return {
     recordingsRoot,
@@ -200,8 +221,53 @@ export function buildLensComparisonDashboard(recordingsRoot: string, summaries: 
     missingLensIds: directorLenses.map((lens) => lens.id).filter((lensId) => !newestByLens.has(lensId)),
     currentBatch,
     previousBatch,
+    bestRecordingCandidates,
     packs,
   };
+}
+
+function buildBestRecordingCandidates(
+  currentBatch: LensComparisonBatch | null,
+  previousBatch: LensComparisonBatch | null,
+): LensRecordingCandidate[] {
+  if (!currentBatch || !previousBatch) {
+    return [];
+  }
+
+  const previousPacksByLens = new Map(previousBatch.packs.map((pack) => [pack.lensId, pack]));
+  const candidates = currentBatch.packs.flatMap((pack) => {
+    const previousPack = previousPacksByLens.get(pack.lensId);
+    const previousDaysByDay = new Map((previousPack?.days || []).map((day) => [day.day, day]));
+
+    return pack.days
+      .map((day) => {
+        const previousDay = previousDaysByDay.get(day.day);
+        const diff = compareLensSceneStats(day, previousDay);
+        return {
+          lensId: pack.lensId,
+          lensLabel: pack.lensLabel,
+          day: day.day,
+          dayLabel: day.label,
+          cue: day.cue || day.compositionProof,
+          demoRoadbook: pack.demoRoadbook,
+          dreamUrl: `/dream?demo=${encodeURIComponent(pack.demoRoadbook)}&lens=${encodeURIComponent(pack.lensId)}`,
+          sceneScreenshotPath: day.sceneScreenshotPath,
+          sceneScreenshotUrl: day.sceneScreenshotUrl,
+          diff,
+        };
+      })
+      .filter((candidate) => candidate.diff.state === "changed");
+  });
+
+  return candidates
+    .sort(
+      (a, b) =>
+        b.diff.score - a.diff.score ||
+        directorLenses.findIndex((lens) => lens.id === a.lensId) - directorLenses.findIndex((lens) => lens.id === b.lensId) ||
+        a.day - b.day,
+    )
+    .slice(0, 4)
+    .map((candidate, index) => ({ ...candidate, rank: index + 1 }));
 }
 
 function buildLensComparisonBatches(

@@ -37,22 +37,24 @@ Each lens run writes a folder under `recordings/visual-checks/` with:
 
 After `npm run index:recording-assets`, the top-level recording index shows lens-aware titles such as `Dream low-skyline lens visual pack`, and `/studio` recent asset cards show a lens chip.
 
-`/studio` also links to `/api/recording-assets/lens-comparison`, a local Director Lens comparison dashboard. It reads the newest Dream QA pack for each lens, groups shared `runStamp-lens-*` folders into complete five-lens batches, shows current-vs-previous D1-D4 pure 3D crops, labels each pair as `Changed`, `Subtle`, or `Missing` from existing canvas stats, surfaces the Scene Inspector tuning cue plus a compact review checklist, and links back to `/dream?lens=...` for same-lens recording.
+`/studio` also links to `/api/recording-assets/lens-comparison`, a local Director Lens comparison dashboard. It reads the newest Dream QA pack for each lens, groups shared `runStamp-lens-*` folders into complete five-lens batches, shows current-vs-previous D1-D4 pure 3D crops, labels each pair as `Changed`, `Subtle`, or `Missing` from existing canvas stats, ranks the top changed shots in a `Best Recording Candidates` strip, surfaces the Scene Inspector tuning cue plus a compact review checklist, and links back to `/dream?lens=...` for same-lens recording.
 
 ## Review Loop
 
 1. Open `/studio`.
 2. Click `镜头对比`.
 3. Read the Current Batch and Previous Batch chips at the top.
-4. Compare `Auto`, `Water`, `Skyline`, `Atlas`, and `Detail` with the Current row above the Previous row.
-5. Pick one lens that best supports the clip thesis.
-6. Click `Open Dream` to return with the same lens selected.
-7. Open its `clip-notes.md` when you need the QA notes.
-8. Record `/dream` with the same lens selected.
+4. Use `Best Recording Candidates` to pick the strongest changed shot.
+5. Compare `Auto`, `Water`, `Skyline`, `Atlas`, and `Detail` with the Current row above the Previous row.
+6. Pick one lens that best supports the clip thesis.
+7. Click a candidate or `Open Dream` to return with the same lens selected.
+8. Open its `clip-notes.md` when you need the QA notes.
+9. Record `/dream` with the same lens selected.
 
 ## What To Judge
 
 - Does the selected lens create a visibly different composition?
+- Does the `Best Recording Candidates` strip surface the shot you would actually record?
 - Does the current crop show a visible change against the previous complete batch?
 - Do `Changed` / `Subtle` badges match the visible crop differences well enough for narration?
 - Does the pure 3D crop show improvement without relying on surrounding UI?
