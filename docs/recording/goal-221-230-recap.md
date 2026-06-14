@@ -10,11 +10,10 @@ This run made the lightweight recording queue interactive. When `/dream` receive
 
 | Goal | Commit | Summary |
 | --- | --- | --- |
-| 221-224 | pending | Added next-candidate URL params and clickable `/dream` Next chip. |
-| 225 | pending | Added focused tests and recording docs. |
-| 226 | pending | Browser visual handoff check. |
-| 227 | pending | Final lint/test/build verification. |
-| 228 | pending | Push to GitHub. |
+| 221-225 | `b7ef76e` | Added next-candidate URL params, clickable `/dream` Next chip, focused tests, and recording docs. |
+| 226 | `b7ef76e` | Browser check confirmed Next opens #2/4 with close-detail active and the return path intact. |
+| 227 | closeout | Final lint/test/build verification: 44 files, 907 tests, build passed. |
+| 228 | closeout | Push to GitHub after final closeout commit. |
 | 229-230 | closeout | Next-goal handoff. |
 
 ## What Changed In The Creator Loop
@@ -29,6 +28,7 @@ This run made the lightweight recording queue interactive. When `/dream` receive
 - `npm test -- lib/lens-comparison.test.ts components/dream-roadbook.test.tsx` (24 tests passed)
 - `npm run lint` (passed)
 - Browser check: clicking `Next` opened candidate `#2/4`, activated `close-detail`, and kept the return-to-dashboard path.
+- `npm run lint && npm test && npm run build` (44 files, 907 tests, build passed)
 
 ## Recording Angle
 

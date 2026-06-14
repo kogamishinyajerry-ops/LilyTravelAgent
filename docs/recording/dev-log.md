@@ -1312,3 +1312,14 @@ Files shown: lib/lens-comparison.ts, app/dream/page.tsx, components/dream-roadbo
 Command/result: npm test -- lib/lens-comparison.test.ts components/dream-roadbook.test.tsx; npm run lint; Browser check confirmed Next opens #2/4 with close-detail active and the return path intact.
 Voiceover note: "轻量队列现在可以往前走一步了：点 Next，不用回看板，就进入下一个候选镜头。还是没有数据库，只是 URL handoff。"
 Usable for: next-candidate stepping clip, no-storage workflow proof, continued goal run round 224
+
+## Phase DJ: v0.8.103 — Goals 221-230 Final Quality Gate
+
+Date: 2026-06-14
+Clip title: Phase DJ: v0.8.103 — Goals 221-230 Final Quality Gate
+What changed: Closed the interactive next-candidate handoff run with the full local lint, test, and production-build gate after browser visual inspection.
+Why this matters: The ranked candidate workflow now supports stepping forward from inside `/dream`, keeps return-to-dashboard intact, and still passes the complete app gate.
+Files shown: docs/recording/goal-221-230-recap.md, `/dream?...candidate=1`, terminal verification output
+Command/result: npm run lint && npm test && npm run build (44 files, 907 tests, build passed)
+Voiceover note: "Next 候选链接也完成后，继续完整质量门。这个工作流现在可以从看板进 /dream，再在 /dream 里继续下一个候选。"
+Usable for: goal closeout clip, next-candidate stepping proof, final queue handoff, continued goal run round 227
