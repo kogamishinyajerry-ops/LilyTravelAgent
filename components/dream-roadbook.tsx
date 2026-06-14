@@ -1886,6 +1886,10 @@ export function DreamRoadbook({ initialDemo = "dali" }: DreamRoadbookProps = {})
                 <small>Director</small>
                 <strong>{sceneInspector.directorLens.proofLabel}</strong>
               </span>
+              <span>
+                <small>Tune</small>
+                <strong>{sceneInspector.directorLens.sceneCue}</strong>
+              </span>
             </div>
             <div className="dream-composition-grid" aria-label="Cinematic 构图信息">
               <span>

@@ -283,6 +283,7 @@ describe("buildCinematicSceneInspector", () => {
       id: "low-skyline",
       label: "Low Skyline",
       proofLabel: "low-skyline lens",
+      sceneCue: "skyline 1.34x / water 1.08x / route 1.18x",
     });
     expect(inspector.cameraFov).toBe(39);
     expect(inspector.parallaxWeight).toBeGreaterThan(1);

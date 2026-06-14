@@ -210,6 +210,7 @@ describe("DreamRoadbook a11y polish", () => {
 
     expect(skylineButton.getAttribute("aria-pressed")).toBe("true");
     expect(screen.getAllByText("low-skyline lens").length).toBeGreaterThanOrEqual(2);
+    expect(screen.getByText("skyline 1.34x / water 1.08x / route 1.18x")).toBeTruthy();
     expect(screen.getByLabelText("预览资产管理面板").textContent).toContain("low-skyline lens");
   });
 

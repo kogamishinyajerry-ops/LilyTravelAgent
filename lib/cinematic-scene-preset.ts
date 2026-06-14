@@ -1,5 +1,5 @@
 import type { Roadbook } from "@/lib/roadbook-types";
-import { resolveDirectorLens, type DirectorLensId } from "@/lib/director-lens";
+import { buildDirectorLensSceneTuning, resolveDirectorLens, type DirectorLensId } from "@/lib/director-lens";
 
 export type CinematicSceneFocus = {
   day: number;
@@ -155,6 +155,7 @@ export type CinematicDirectorLensInspector = {
   label: string;
   cameraCue: string;
   proofLabel: string;
+  sceneCue: string;
 };
 
 export type CinematicCompositionProfile = {
@@ -868,11 +869,13 @@ export function buildCinematicSceneInspector(
 
 function buildDirectorLensInspector(directorLensId: DirectorLensId): CinematicDirectorLensInspector {
   const lens = resolveDirectorLens(directorLensId);
+  const tuning = buildDirectorLensSceneTuning(lens.id);
   return {
     id: lens.id,
     label: lens.label,
     cameraCue: lens.cameraCue,
     proofLabel: lens.proofLabel,
+    sceneCue: `skyline ${tuning.skylineHeightScale.toFixed(2)}x / water ${tuning.waterDepthScale.toFixed(2)}x / route ${tuning.routeOpacityScale.toFixed(2)}x`,
   };
 }
 
