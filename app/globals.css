@@ -1748,6 +1748,18 @@ textarea {
   background: rgba(79, 143, 122, 0.13);
 }
 
+.studio-recording-recent i {
+  justify-self: start;
+  border: 1px solid rgba(79, 143, 122, 0.16);
+  border-radius: 999px;
+  padding: 3px 7px;
+  color: #365b4d;
+  font-size: 0.7rem;
+  font-style: normal;
+  font-weight: 900;
+  background: rgba(228, 239, 233, 0.72);
+}
+
 .studio-recording-recent-item.studio b {
   color: #7a3c24;
   background: rgba(214, 107, 61, 0.13);

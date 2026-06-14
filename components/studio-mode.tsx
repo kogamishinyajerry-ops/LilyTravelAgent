@@ -55,6 +55,7 @@ type RecordingAssetSummaryPack = {
   createdAt: string;
   label: string;
   detail: string;
+  lens?: string;
 };
 
 type RecordingAssetsApiResponse = {
@@ -658,6 +659,7 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
                           </small>
                           <strong>{pack.title}</strong>
                           <span>{pack.detail}</span>
+                          {pack.lens ? <i>{pack.lens}</i> : null}
                           <b>{getRecordingAssetUsageHint(pack.type)}</b>
                         </div>
                       ))}

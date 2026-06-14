@@ -40,10 +40,11 @@ function recordingAssetsResponse(packCount: number, title = "Studio 16:9 demo pa
           {
             type: "dream",
             id: "dream-coast",
-            title: "Dream coastal visual pack",
+            title: "Dream low-skyline lens visual pack",
             createdAt: "2026-06-13T05:46:20.615Z",
             label: "/dream visual QA",
-            detail: "coast · 4 day screenshots · motion verified",
+            detail: "dali · 4 day screenshots · motion verified · low-skyline lens",
+            lens: "low-skyline lens",
           },
         ]
       : [],
@@ -102,7 +103,8 @@ describe("StudioMode demo roadbooks", () => {
     expect(screen.getByLabelText("最新素材包摘要").textContent).toContain("最新素材");
     expect(screen.getByLabelText("最新素材包摘要").textContent).toContain("Studio 16:9 demo pack");
     expect(screen.getByLabelText("最新素材包摘要").textContent).toContain("/studio recording QA");
-    expect(screen.getAllByText("Dream coastal visual pack")[0]).toBeTruthy();
+    expect(screen.getAllByText("Dream low-skyline lens visual pack")[0]).toBeTruthy();
+    expect(screen.getAllByText("low-skyline lens").length).toBeGreaterThanOrEqual(1);
     expect(screen.getByRole("button", { name: "复制命令" })).toBeTruthy();
     expect(screen.getByRole("link", { name: /梦境路书/ }).getAttribute("href")).toBe("/dream?demo=dali");
     expect(screen.getByLabelText("Demo Bridge").textContent).toContain("云南大理 → Dream");
