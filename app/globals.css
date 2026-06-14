@@ -2035,6 +2035,53 @@ textarea {
   background: rgba(255, 255, 255, 0.58);
 }
 
+.studio-proof-delivery-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 5px;
+  align-items: center;
+}
+
+.studio-proof-delivery-preview {
+  overflow: hidden;
+  min-width: 0;
+  border: 1px solid rgba(79, 143, 122, 0.16);
+  border-radius: 7px;
+  padding: 3px 6px;
+  color: #275f4c;
+  font-size: 0.58rem;
+  font-weight: 900;
+  line-height: 1.15;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  background: rgba(79, 143, 122, 0.1);
+}
+
+.studio-proof-delivery-copy {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  justify-self: end;
+  width: max-content;
+  height: 20px;
+  min-height: 0;
+  border: 1px solid rgba(79, 143, 122, 0.26);
+  border-radius: 7px;
+  padding: 2px 6px;
+  color: #275f4c;
+  background: rgba(79, 143, 122, 0.14);
+  font-size: 0.58rem;
+  font-weight: 950;
+  line-height: 1.1;
+}
+
+.studio-recording-assets .studio-proof-delivery-copy {
+  flex: 0 0 auto;
+  min-height: 0;
+  font-size: 0.58rem;
+  line-height: 1.1;
+}
+
 .studio-proof-story-actions button {
   display: inline-flex;
   align-items: center;

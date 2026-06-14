@@ -1906,3 +1906,14 @@ Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, app/gl
 Command/result: npm test -- components/studio-mode.test.tsx passed with 19 tests; browser check confirmed the copy action is visible, compact, and console errors are empty.
 Voiceover note: "现在 QA 收据不仅能打开，还能直接复制路径，后期剪辑备注可以一键贴上证据位置。"
 Usable for: editing-notes workflow, QA receipt copy narration, continued goal run round 694
+
+## Phase FL: v0.8.157 — Copy Proof Story Delivery Line
+
+Date: 2026-06-14
+Clip title: Phase FL: v0.8.157 — Copy Proof Story Delivery Line
+What changed: `/studio` now shows a compact `Proof Story Delivery` preview line inside the Proof Story `脚本素材` card. The line combines the closeout status, Production Assets readiness, and QA receipt path, and a small copy button copies the exact preview text.
+Why this matters: The final video notes now have one copyable receipt line that describes the whole Proof Story delivery loop.
+Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, app/globals.css, docs/recording/goal-701-710-recap.md
+Command/result: npm test -- components/studio-mode.test.tsx passed with 20 tests; browser check confirmed the Delivery preview and copy action are visible, compact, and console errors are empty.
+Voiceover note: "这一行就是最终交付摘要：Proof Story 收口、Production Assets 入库、QA 收据路径，一次复制给后期剪辑。"
+Usable for: final video notes workflow, delivery closeout narration, continued goal run round 704

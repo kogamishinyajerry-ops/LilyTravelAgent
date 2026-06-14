@@ -244,6 +244,9 @@ describe("StudioMode demo roadbooks", () => {
     expect(scriptCard.textContent).toContain("QA 已捕获 · 复制脚本路径");
     expect(scriptCard.textContent).toContain("Index QA 已验证脚本素材 · 3/3");
     expect(screen.getByLabelText("Proof Story Production Assets 状态").textContent).toBe("Production Assets · HTML + Clip 已入库");
+    expect(screen.getByLabelText("Proof Story Delivery 预览").textContent).toBe(
+      "Proof Story Delivery · Proof Story · 脚本路径: 就绪 · Studio QA: 已捕获 · 索引入库: 已入库 · Index QA: 已验证 · Production Assets · HTML + Clip 已入库 · QA receipt: index-checks/index-check-latest/clip-notes.md",
+    );
     expect(within(scriptCard).getByRole("link", { name: "Production Assets QA 收据" }).getAttribute("href")).toBe(
       "/api/recording-assets/file?path=index-checks%2Findex-check-latest%2Fclip-notes.md",
     );
@@ -403,6 +406,7 @@ describe("StudioMode demo roadbooks", () => {
     render(<StudioMode />);
 
     expect(await screen.findByLabelText("Proof Story Production Assets 状态")).toBeTruthy();
+    expect(screen.getByLabelText("Proof Story Delivery 预览").textContent).toContain("QA receipt: 待生成");
     expect(screen.queryByRole("link", { name: "Production Assets QA 收据" })).toBeNull();
     expect(screen.queryByRole("button", { name: "复制 Production Assets QA 收据路径" })).toBeNull();
   });
@@ -749,6 +753,26 @@ describe("StudioMode demo roadbooks", () => {
     });
 
     expect(writeText).toHaveBeenCalledWith("index-checks/index-check-latest/clip-notes.md");
+    expect(copyButton.textContent).toContain("已复制");
+  });
+
+  it("copies the one-line Proof Story Delivery summary", async () => {
+    const writeText = vi.fn(async () => undefined);
+    Object.defineProperty(window.navigator, "clipboard", {
+      value: { writeText },
+      configurable: true,
+    });
+
+    render(<StudioMode />);
+
+    expect(await screen.findByText("15 个素材包")).toBeTruthy();
+    const deliveryPreview = screen.getByLabelText("Proof Story Delivery 预览").textContent || "";
+    const copyButton = screen.getByRole("button", { name: "复制 Proof Story Delivery" });
+    await act(async () => {
+      fireEvent.click(copyButton);
+    });
+
+    expect(writeText).toHaveBeenCalledWith(deliveryPreview);
     expect(copyButton.textContent).toContain("已复制");
   });
 

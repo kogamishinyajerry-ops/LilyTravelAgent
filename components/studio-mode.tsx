@@ -499,6 +499,10 @@ function getProofStoryProductionAssetsLine(summary: RecordingProofStoryProductio
   return `Production Assets · ${htmlState} · ${clipState}`;
 }
 
+function getProofStoryDeliveryLine(closeoutLine: string, productionAssetsLine: string, receiptPath: string) {
+  return `Proof Story Delivery · ${closeoutLine} · ${productionAssetsLine} · QA receipt: ${receiptPath || "待生成"}`;
+}
+
 function getRecordingProofChecklist(recordingAssets: RecordingAssetsState) {
   if (recordingAssets.status !== "ready") {
     return [
@@ -588,6 +592,7 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
   const [proofScriptCopyState, setProofScriptCopyState] = useState<"idle" | "copied" | "error">("idle");
   const [proofCloseoutCopyState, setProofCloseoutCopyState] = useState<"idle" | "copied" | "error">("idle");
   const [productionReceiptCopyState, setProductionReceiptCopyState] = useState<"idle" | "copied" | "error">("idle");
+  const [proofDeliveryCopyState, setProofDeliveryCopyState] = useState<"idle" | "copied" | "error">("idle");
   const [proofCueIndex, setProofCueIndex] = useState(0);
   const [proofCuePlaying, setProofCuePlaying] = useState(false);
 
@@ -628,6 +633,10 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
   );
   const proofStoryProductionReceiptPath =
     recordingAssets.status === "ready" && proofStoryProductionAssets.ready ? recordingAssets.latestRecordingIndexCheck?.notesPath || "" : "";
+  const proofStoryDeliveryLine = useMemo(
+    () => getProofStoryDeliveryLine(proofStoryCloseoutLine, proofStoryProductionAssetsLine, proofStoryProductionReceiptPath),
+    [proofStoryCloseoutLine, proofStoryProductionAssetsLine, proofStoryProductionReceiptPath],
+  );
 
   const loadRecordingAssets = useCallback(
     async ({ markRefreshing = true, isActive = () => true }: { markRefreshing?: boolean; isActive?: () => boolean } = {}) => {
@@ -811,6 +820,15 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
       setProductionReceiptCopyState("copied");
     } catch {
       setProductionReceiptCopyState("error");
+    }
+  }
+
+  async function copyProofStoryDeliveryLine() {
+    try {
+      await navigator.clipboard.writeText(proofStoryDeliveryLine);
+      setProofDeliveryCopyState("copied");
+    } catch {
+      setProofDeliveryCopyState("error");
     }
   }
 
@@ -1198,6 +1216,20 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
                           <p className="studio-proof-closeout-preview" aria-label="Proof Story 收口状态预览">
                             {proofStoryCloseoutLine}
                           </p>
+                          <div className="studio-proof-delivery-row">
+                            <p className="studio-proof-delivery-preview" aria-label="Proof Story Delivery 预览">
+                              {proofStoryDeliveryLine}
+                            </p>
+                            <button
+                              type="button"
+                              className="studio-proof-delivery-copy"
+                              onClick={copyProofStoryDeliveryLine}
+                              aria-label="复制 Proof Story Delivery"
+                            >
+                              <Copy size={10} />
+                              {proofDeliveryCopyState === "copied" ? "已复制" : proofDeliveryCopyState === "error" ? "手动" : "复制"}
+                            </button>
+                          </div>
                           <button type="button" onClick={copyProofStoryCloseout}>
                             <Copy size={13} />
                             {proofCloseoutCopyState === "copied" ? "收口状态已复制" : proofCloseoutCopyState === "error" ? "手动复制收口状态" : "复制收口状态"}
