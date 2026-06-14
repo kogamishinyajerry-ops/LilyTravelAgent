@@ -1873,3 +1873,14 @@ Files shown: scripts/check-recording-index.mjs, README.md, docs/recording/goal-6
 Command/result: node --check scripts/check-recording-index.mjs passed; npm run check:recording-index passed and wrote `recordings/index-checks/2026-06-14T09-48-27-130Z/summary.json`.
 Voiceover note: "现在我不是只检查链接有没有，而是连 Production Assets 这段给创作者看的文案也纳入自动验收。"
 Usable for: QA rigor clip, production-assets proof narration, continued goal run round 664
+
+## Phase FI: v0.8.154 — Production Assets QA Clip Notes
+
+Date: 2026-06-14
+Clip title: Phase FI: v0.8.154 — Production Assets QA Clip Notes
+What changed: The index-check `clip-notes.md` now includes a compact `Production Assets QA` line when optional script-material evidence exists. It records that the Production Assets title, narration preview, closeout status, cue text, and 3/3 evidence links were checked.
+Why this matters: The QA proof pack now explains the creator-facing checks that passed, making it easier to use as a recording receipt.
+Files shown: scripts/check-recording-index.mjs, recordings/index-checks/2026-06-14T09-50-37-772Z/clip-notes.md, README.md, docs/recording/goal-671-680-recap.md
+Command/result: node --check scripts/check-recording-index.mjs passed; npm run check:recording-index passed and the newest clip notes contain `Production Assets QA`.
+Voiceover note: "现在这份 QA proof pack 自己也会写清楚：Production Assets 的标题、口播、收口状态和三条链接都检查过。"
+Usable for: QA receipt clip, clip-notes workflow narration, continued goal run round 674

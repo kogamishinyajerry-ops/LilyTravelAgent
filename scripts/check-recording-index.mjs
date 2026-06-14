@@ -483,6 +483,7 @@ function buildClipNotes(summary) {
       "## Proof Story Script Material",
       "",
       `- Proof-card screenshot: ${path.basename(summary.scriptMaterialCheck.screenshotPath)}`,
+      `- Production Assets QA: ${proofStoryProductionAssetsLabel}; narration preview; closeout status; cue text; ${summary.scriptMaterialCheck.links.length}/3 evidence links checked.`,
     );
 
     for (const link of summary.scriptMaterialCheck.links) {
@@ -496,7 +497,7 @@ function buildClipNotes(summary) {
     "",
     "- The local archive now carries Dream Proof and Studio Proof evidence.",
     "- The index check verifies both proof cues plus six screenshot, summary, and notes links.",
-    summary.scriptMaterialCheck ? "- When present, the same check also verifies the Proof Story Script Material card and its three evidence links." : "",
+    summary.scriptMaterialCheck ? "- When present, the same check also verifies the Proof Story Production Assets title, narration preview, closeout status, cue text, and three evidence links." : "",
     "",
   );
 
