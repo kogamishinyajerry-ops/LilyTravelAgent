@@ -18,6 +18,19 @@ export type DirectorLens = {
   parallaxScale: number;
 };
 
+export type DirectorLensSceneTuning = {
+  rootPitchOffset: number;
+  skylineHeightScale: number;
+  skylineDepthScale: number;
+  skylineLift: number;
+  waterDepthScale: number;
+  waterZOffset: number;
+  ribbonOpacityScale: number;
+  routeOpacityScale: number;
+  routeYOffset: number;
+  routeZOffset: number;
+};
+
 export const directorLenses: DirectorLens[] = [
   {
     id: "auto",
@@ -87,4 +100,78 @@ export function resolveDirectorLens(id?: string | null): DirectorLens {
 
 export function formatDirectorLensPrompt(lens: DirectorLens): string {
   return `${lens.label}: ${lens.promptCue}; camera=${lens.cameraCue}`;
+}
+
+export function buildDirectorLensSceneTuning(id?: string | null): DirectorLensSceneTuning {
+  const lens = resolveDirectorLens(id);
+  const base: DirectorLensSceneTuning = {
+    rootPitchOffset: 0,
+    skylineHeightScale: 1,
+    skylineDepthScale: 1,
+    skylineLift: 0,
+    waterDepthScale: 1,
+    waterZOffset: 0,
+    ribbonOpacityScale: 1,
+    routeOpacityScale: 1,
+    routeYOffset: 0,
+    routeZOffset: 0,
+  };
+
+  if (lens.id === "wide-water") {
+    return {
+      ...base,
+      rootPitchOffset: 0.012,
+      waterDepthScale: 1.2,
+      waterZOffset: 0.28,
+      ribbonOpacityScale: 1.28,
+      routeOpacityScale: 0.9,
+      routeZOffset: 0.18,
+    };
+  }
+
+  if (lens.id === "low-skyline") {
+    return {
+      ...base,
+      rootPitchOffset: -0.028,
+      skylineHeightScale: 1.34,
+      skylineDepthScale: 0.86,
+      skylineLift: 0.13,
+      waterDepthScale: 1.08,
+      waterZOffset: -0.18,
+      ribbonOpacityScale: 1.42,
+      routeOpacityScale: 1.18,
+      routeYOffset: 0.035,
+      routeZOffset: -0.12,
+    };
+  }
+
+  if (lens.id === "isometric-atlas") {
+    return {
+      ...base,
+      rootPitchOffset: 0.03,
+      skylineHeightScale: 0.84,
+      skylineDepthScale: 1.08,
+      waterDepthScale: 0.9,
+      routeOpacityScale: 1.24,
+      routeYOffset: 0.04,
+    };
+  }
+
+  if (lens.id === "close-detail") {
+    return {
+      ...base,
+      rootPitchOffset: -0.012,
+      skylineHeightScale: 1.12,
+      skylineDepthScale: 0.92,
+      skylineLift: 0.05,
+      waterDepthScale: 0.86,
+      waterZOffset: -0.24,
+      ribbonOpacityScale: 0.82,
+      routeOpacityScale: 0.86,
+      routeYOffset: 0.02,
+      routeZOffset: -0.2,
+    };
+  }
+
+  return base;
 }

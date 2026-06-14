@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  buildDirectorLensSceneTuning,
   directorLenses,
   formatDirectorLensPrompt,
   resolveDirectorLens,
@@ -39,5 +40,31 @@ describe("director-lens", () => {
     expect(formatDirectorLensPrompt(lens)).toBe(
       "Wide Water: wide waterline, horizon depth, reflective foreground; camera=wider lens toward horizon and water",
     );
+  });
+
+  it("keeps auto scene tuning neutral", () => {
+    expect(buildDirectorLensSceneTuning("auto")).toEqual({
+      rootPitchOffset: 0,
+      skylineHeightScale: 1,
+      skylineDepthScale: 1,
+      skylineLift: 0,
+      waterDepthScale: 1,
+      waterZOffset: 0,
+      ribbonOpacityScale: 1,
+      routeOpacityScale: 1,
+      routeYOffset: 0,
+      routeZOffset: 0,
+    });
+  });
+
+  it("makes low-skyline visibly taller, lower, and more cinematic", () => {
+    const tuning = buildDirectorLensSceneTuning("low-skyline");
+
+    expect(tuning.rootPitchOffset).toBeLessThan(0);
+    expect(tuning.skylineHeightScale).toBeGreaterThan(1.3);
+    expect(tuning.skylineDepthScale).toBeLessThan(0.9);
+    expect(tuning.skylineLift).toBeGreaterThan(0.1);
+    expect(tuning.ribbonOpacityScale).toBeGreaterThan(1.3);
+    expect(tuning.routeOpacityScale).toBeGreaterThan(1);
   });
 });
