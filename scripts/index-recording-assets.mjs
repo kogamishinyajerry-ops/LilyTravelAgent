@@ -144,6 +144,7 @@ function buildHtmlIndex(packs) {
                   <b>Narration preview · ${escapeHtml(proofStoryNarrationPreview)}</b>
                   <b>Closeout status · ${escapeHtml(proofStoryCloseoutStatus)}</b>
                   ${pack.scriptMaterial.completeLine ? `<b>${escapeHtml(pack.scriptMaterial.completeLine)}</b>` : ""}
+                  ${pack.scriptMaterial.completeBundleLine ? `<b>${escapeHtml(pack.scriptMaterial.completeBundleLine)}</b>` : ""}
                   ${pack.scriptMaterial.scriptPath ? `<code>Script path · ${escapeHtml(pack.scriptMaterial.scriptPath)}</code>` : ""}
                   ${pack.scriptMaterial.cue ? `<code>Script-material cue · ${escapeHtml(pack.scriptMaterial.cue)}</code>` : ""}
                   <nav>
@@ -341,6 +342,9 @@ function buildMarkdownIndex(packs) {
       if (pack.scriptMaterial.completeLine) {
         lines.push(`- ${pack.scriptMaterial.completeLine}`);
       }
+      if (pack.scriptMaterial.completeBundleLine) {
+        lines.push(`- ${pack.scriptMaterial.completeBundleLine}`);
+      }
       if (pack.scriptMaterial.scriptPath) {
         lines.push(`- Script path: ${pack.scriptMaterial.scriptPath}`);
       }
@@ -406,6 +410,7 @@ function readStudioScriptMaterial(entry, packDir, summary) {
     cue: typeof scriptMaterial.cue === "string" ? scriptMaterial.cue : "",
     buttonText: typeof scriptMaterial.buttonText === "string" ? scriptMaterial.buttonText : "",
     completeLine: typeof scriptMaterial.completeLine === "string" ? scriptMaterial.completeLine : "",
+    completeBundleLine: typeof scriptMaterial.completeBundleLine === "string" ? scriptMaterial.completeBundleLine : "",
     screenshotPath: screenshotFile ? toRecordingLink(path.join("studio-checks", entry, screenshotFile)) : "",
     summaryPath: toRecordingLink(path.join("studio-checks", entry, "summary.json")),
     notesPath: existsSync(path.join(packDir, "clip-notes.md")) ? toRecordingLink(path.join("studio-checks", entry, "clip-notes.md")) : "",

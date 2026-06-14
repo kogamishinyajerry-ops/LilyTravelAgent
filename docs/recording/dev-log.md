@@ -2071,3 +2071,14 @@ Files shown: lib/recording-assets.ts, components/studio-mode.tsx, app/globals.cs
 Command/result: npm test -- lib/recording-assets.test.ts passed with 15 tests; npm test -- components/studio-mode.test.tsx passed with 30 tests; browser check against `http://localhost:3000/studio` showed `Bundle 已入库`, 297px row width inside a 313px card, and 0 console errors; npm run lint && npm test && npm run build passed with 44 test files and 943 tests.
 Voiceover note: "Bundle line 不是只停留在复制按钮。Studio QA 已经采集过这条后期交付线，现在又回到产品台面上，显示 Bundle 已入库。"
 Usable for: proof bundle archive walkthrough, final post-production handoff clip, continued goal run round 844
+
+## Phase FS: v0.8.172 — Complete Bundle In Recording Index QA
+
+Date: 2026-06-14
+Clip title: Phase FS: v0.8.172 — Complete Bundle In Recording Index QA
+What changed: `npm run index:recording-assets`, `/api/recording-assets/index`, and `npm run check:recording-index` now carry and verify the optional `Proof Story Complete Bundle` line from the latest Studio QA proof pack.
+Why this matters: The bundled post-production handoff line is no longer only visible in `/studio`; it is also archived in the local asset index and asserted by the browser-served index QA pass.
+Files shown: scripts/index-recording-assets.mjs, app/api/recording-assets/index/route.ts, scripts/check-recording-index.mjs, docs/recording/goal-851-860-recap.md
+Command/result: node --check scripts/index-recording-assets.mjs passed; node --check scripts/check-recording-index.mjs passed; npm run index:recording-assets indexed 79 packs; npm run check:recording-index passed and generated `recordings/index-checks/2026-06-14T11-20-29-363Z/clip-notes.md` with `Proof Story Complete Bundle`.
+Voiceover note: "现在 Bundle line 进入总素材库，也进入 Recording Index QA。也就是说，后期交付线不是页面上看得到而已，它在素材库和自动验收里都能被追踪。"
+Usable for: Recording Index archive walkthrough, proof bundle QA clip, continued goal run round 854
