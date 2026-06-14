@@ -2114,7 +2114,7 @@ textarea {
 
 .studio-proof-handoff-row {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) auto auto;
   gap: 5px;
   align-items: center;
   width: 100%;
@@ -2134,6 +2134,34 @@ textarea {
   text-overflow: ellipsis;
   white-space: nowrap;
   background: rgba(214, 107, 61, 0.08);
+}
+
+.studio-proof-handoff-sync {
+  display: inline-flex;
+  align-items: center;
+  justify-self: end;
+  width: max-content;
+  height: 20px;
+  min-height: 0;
+  border: 1px solid rgba(38, 59, 49, 0.12);
+  border-radius: 7px;
+  padding: 2px 6px;
+  font-size: 0.58rem;
+  font-weight: 950;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+.studio-proof-handoff-sync.ready {
+  color: #275f4c;
+  border-color: rgba(79, 143, 122, 0.26);
+  background: rgba(79, 143, 122, 0.14);
+}
+
+.studio-proof-handoff-sync.missing {
+  color: #7a3c24;
+  border-color: rgba(191, 128, 85, 0.22);
+  background: rgba(191, 128, 85, 0.1);
 }
 
 .studio-proof-handoff-copy {

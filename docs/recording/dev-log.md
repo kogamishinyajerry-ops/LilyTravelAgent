@@ -1961,3 +1961,14 @@ Files shown: scripts/check-studio-visuals.mjs, recordings/studio-checks/2026-06-
 Command/result: node --check scripts/check-studio-visuals.mjs passed; npm run check:studio-visuals passed and the newest Studio clip notes contain `Proof Story Handoff` plus `Handoff 已复制`.
 Voiceover note: "现在连最后点击复制 Handoff 这一下，也会进入 Studio QA notes。开发过程、产品状态、后期交付文案都能被同一套 proof pack 记录。"
 Usable for: copy-proof receipt clip, final content handoff workflow, continued goal run round 744
+
+## Phase FQ: v0.8.162 — Handoff Copy State Back In Studio
+
+Date: 2026-06-14
+Clip title: Phase FQ: v0.8.162 — Handoff Copy State Back In Studio
+What changed: `/studio` now reads optional `handoffPreview` and `handoffCopyState` from the latest Studio QA script-material summary and shows a compact `Handoff 已复制` chip beside the Proof Story Handoff preview.
+Why this matters: The final handoff copy proof now returns to the recording workbench, closing the loop from Studio UI to Studio QA notes and back into Studio.
+Files shown: lib/recording-assets.ts, components/studio-mode.tsx, app/globals.css, docs/recording/goal-751-760-recap.md
+Command/result: npm test -- lib/recording-assets.test.ts components/studio-mode.test.tsx passed with 39 tests; browser check against `http://localhost:3000/studio` confirmed `Handoff 已复制` is visible in the Proof Story card with empty console errors.
+Voiceover note: "现在 QA notes 记录 Handoff 已复制以后，Studio 会读回来显示同一个状态。最终交付动作也形成了产品闭环。"
+Usable for: handoff proof-loop narration, final content workflow closeout, continued goal run round 754

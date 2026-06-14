@@ -11,6 +11,8 @@ import {
 let tempRoot = "";
 const sampleProofStoryDeliveryLine =
   "Proof Story Delivery · Proof Story · 脚本路径: 就绪 · Studio QA: 已捕获 · 索引入库: 已入库 · Index QA: 已验证 · Production Assets · HTML + Clip 已入库 · QA receipt: index-checks/new-index-check/clip-notes.md";
+const sampleProofStoryHandoffLine =
+  `Proof Story Handoff · ${sampleProofStoryDeliveryLine} · QA notes: index-checks/new-index-check/clip-notes.md · Caption: Vibe Coding 不是只生成页面，而是把路书、QA 证据和后期素材交付打成闭环。`;
 
 beforeEach(async () => {
   tempRoot = await mkdtemp(path.join(os.tmpdir(), "lily-recording-assets-"));
@@ -147,6 +149,8 @@ describe("recording assets", () => {
         scriptPath: "docs/recording/proof-story-demo-script.md",
         cue: "证据时间线 → 四行讲解稿预览 → 复制讲解稿",
         buttonText: "复制脚本路径",
+        handoffPreview: sampleProofStoryHandoffLine,
+        handoffCopyState: "Handoff 已复制",
         screenshotPath: path.join(tempRoot, "studio-checks", "new-studio", "studio-proof-story-script-material.png"),
       },
     });
@@ -182,6 +186,8 @@ describe("recording assets", () => {
         scriptPath: "docs/recording/proof-story-demo-script.md",
         cue: "证据时间线 → 四行讲解稿预览 → 复制讲解稿",
         buttonText: "复制脚本路径",
+        handoffPreview: sampleProofStoryHandoffLine,
+        handoffCopyState: "Handoff 已复制",
         screenshotPath: path.join(tempRoot, "studio-checks", "new-studio", "studio-proof-story-script-material.png"),
       },
     });
@@ -454,6 +460,8 @@ describe("recording assets", () => {
         scriptPath: "docs/recording/proof-story-demo-script.md",
         cue: "证据时间线 → 四行讲解稿预览 → 复制讲解稿",
         buttonText: "复制脚本路径",
+        handoffPreview: sampleProofStoryHandoffLine,
+        handoffCopyState: "Handoff 已复制",
         screenshotPath: path.join(tempRoot, "studio-checks", "new-studio", "studio-proof-story-script-material.png"),
       },
     });
@@ -476,9 +484,40 @@ describe("recording assets", () => {
         scriptPath: "docs/recording/proof-story-demo-script.md",
         cue: "证据时间线 → 四行讲解稿预览 → 复制讲解稿",
         buttonText: "复制脚本路径",
+        handoffPreview: sampleProofStoryHandoffLine,
+        handoffCopyState: "Handoff 已复制",
         screenshotPath: "studio-checks/new-studio/studio-proof-story-script-material.png",
       },
     });
+  });
+
+  it("keeps Studio Handoff fields empty for older script-material QA packs", async () => {
+    await writeSummary("studio-checks/older-script-material", {
+      createdAt: "2026-06-13T05:00:00.000Z",
+      captures: [],
+      proofPlayback: {
+        finalActiveCue: {
+          label: "Suite Run",
+          state: "已通过",
+          detail: "7 步 · 7 通过",
+        },
+        buttonTextAfterPlayback: "播放证据线",
+        screenshotPath: path.join(tempRoot, "studio-checks", "older-script-material", "studio-suite-run-proof.png"),
+        initialCues: [{ label: "Suite Run" }],
+      },
+      scriptMaterial: {
+        visible: true,
+        scriptPath: "docs/recording/proof-story-demo-script.md",
+        cue: "证据时间线 → 四行讲解稿预览 → 复制讲解稿",
+        buttonText: "复制脚本路径",
+        screenshotPath: path.join(tempRoot, "studio-checks", "older-script-material", "studio-proof-story-script-material.png"),
+      },
+    });
+
+    const summary = await readRecordingAssetsSummary(tempRoot);
+
+    expect(summary.latestStudioProofPlayback?.scriptMaterial?.handoffPreview).toBe("");
+    expect(summary.latestStudioProofPlayback?.scriptMaterial?.handoffCopyState).toBe("");
   });
 
   it("keeps Studio proof script material null when older QA packs do not contain it", async () => {

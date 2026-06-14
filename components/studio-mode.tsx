@@ -146,6 +146,8 @@ type RecordingStudioScriptMaterialSummary = {
   scriptPath: string;
   cue: string;
   buttonText: string;
+  handoffPreview?: string;
+  handoffCopyState?: string;
   screenshotPath?: string;
 };
 
@@ -509,6 +511,15 @@ function getProofStoryHandoffLine(deliveryLine: string, receiptPath: string) {
   return `Proof Story Handoff · ${deliveryLine} · QA notes: ${receiptPath || "待生成"} · Caption: ${proofStoryHandoffCaption}`;
 }
 
+function getProofStoryHandoffQaState(scriptMaterial?: RecordingStudioScriptMaterialSummary | null) {
+  const state = scriptMaterial?.handoffCopyState || "";
+  if (!state) {
+    return { label: "Handoff 待验证", ready: false };
+  }
+
+  return { label: state, ready: state.includes("已复制") };
+}
+
 function getProofStoryDeliverySync(studioLine: string, notesLine: string) {
   if (!notesLine) {
     return { label: "Delivery 待入库", ready: false };
@@ -663,6 +674,8 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
     () => getProofStoryHandoffLine(proofStoryDeliveryLine, proofStoryProductionReceiptPath),
     [proofStoryDeliveryLine, proofStoryProductionReceiptPath],
   );
+  const proofStoryHandoffQaState =
+    recordingAssets.status === "ready" ? getProofStoryHandoffQaState(recordingAssets.latestStudioProofPlayback?.scriptMaterial) : getProofStoryHandoffQaState(null);
 
   const loadRecordingAssets = useCallback(
     async ({ markRefreshing = true, isActive = () => true }: { markRefreshing?: boolean; isActive?: () => boolean } = {}) => {
@@ -1275,6 +1288,12 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
                             <p className="studio-proof-handoff-preview" aria-label="Proof Story Handoff 预览">
                               {proofStoryHandoffLine}
                             </p>
+                            <span
+                              className={`studio-proof-handoff-sync ${proofStoryHandoffQaState.ready ? "ready" : "missing"}`}
+                              aria-label="Proof Story Handoff QA 状态"
+                            >
+                              {proofStoryHandoffQaState.label}
+                            </span>
                             <button
                               type="button"
                               className="studio-proof-handoff-copy"

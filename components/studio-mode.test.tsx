@@ -32,6 +32,8 @@ function recordingAssetsResponse(
     };
     omitIndexNotes?: boolean;
     proofStoryDeliveryLine?: string;
+    omitHandoffQa?: boolean;
+    handoffCopyState?: string;
   } = {},
 ) {
   const indexLinkCount = options.indexLinkCount ?? 6;
@@ -149,6 +151,12 @@ function recordingAssetsResponse(
             scriptPath: "docs/recording/proof-story-demo-script.md",
             cue: "证据时间线 → 四行讲解稿预览 → 复制讲解稿",
             buttonText: "复制脚本路径",
+            ...(options.omitHandoffQa
+              ? {}
+              : {
+                  handoffPreview: readyProofStoryHandoffLine,
+                  handoffCopyState: options.handoffCopyState || "Handoff 已复制",
+                }),
             screenshotPath: "studio-checks/studio-proof-latest/studio-proof-story-script-material.png",
           },
         }
@@ -256,6 +264,7 @@ describe("StudioMode demo roadbooks", () => {
     expect(screen.getByLabelText("Proof Story Delivery 预览").textContent).toBe(readyProofStoryDeliveryLine);
     expect(screen.getByLabelText("Proof Story Delivery QA notes 状态").textContent).toBe("Delivery 已入库");
     expect(screen.getByLabelText("Proof Story Handoff 预览").textContent).toBe(readyProofStoryHandoffLine);
+    expect(screen.getByLabelText("Proof Story Handoff QA 状态").textContent).toBe("Handoff 已复制");
     expect(within(scriptCard).getByRole("link", { name: "Production Assets QA 收据" }).getAttribute("href")).toBe(
       "/api/recording-assets/file?path=index-checks%2Findex-check-latest%2Fclip-notes.md",
     );
@@ -439,6 +448,25 @@ describe("StudioMode demo roadbooks", () => {
 
     expect((await screen.findByLabelText("Proof Story Delivery 预览")).textContent).toBe(readyProofStoryDeliveryLine);
     expect(screen.getByLabelText("Proof Story Delivery QA notes 状态").textContent).toBe("Delivery 待入库");
+  });
+
+  it("shows a pending Handoff QA state for older Studio QA packs", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => ({
+        ok: true,
+        status: 200,
+        json: async () =>
+          recordingAssetsResponse(15, "Studio 16:9 demo pack", true, {
+            omitHandoffQa: true,
+          }),
+      })) as unknown as typeof fetch,
+    );
+
+    render(<StudioMode />);
+
+    expect(await screen.findByLabelText("Proof Story Handoff 预览")).toBeTruthy();
+    expect(screen.getByLabelText("Proof Story Handoff QA 状态").textContent).toBe("Handoff 待验证");
   });
 
   it("keeps legacy Dream-only wording for older 3-link recording index checks", async () => {
