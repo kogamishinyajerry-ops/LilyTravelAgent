@@ -320,6 +320,12 @@ describe("StudioMode demo roadbooks", () => {
     expect(screen.getByLabelText("Proof Story Bundle Chain QA 状态").textContent).toBe("Chain 已入库");
     expect(screen.getByLabelText("Proof Story Index Chain 状态").textContent).toBe("Index Chain 已验证");
     expect(screen.getByLabelText("Recording Index Chain 状态").textContent).toBe("Index Chain 已验证");
+    const proofChainSummary = screen.getByLabelText("Proof Chain Summary 预览").textContent || "";
+    expect(proofChainSummary).toContain("Proof Chain Summary");
+    expect(proofChainSummary).toContain("Chain: Proof Story Bundle Chain");
+    expect(proofChainSummary).toContain("Index Chain: Index Chain 已验证");
+    expect(proofChainSummary).toContain("Index QA notes: index-checks/index-check-latest/clip-notes.md");
+    expect(proofChainSummary).toContain("Studio script screenshot: studio-checks/studio-proof-latest/studio-proof-story-script-material.png");
     expect(within(scriptCard).getByRole("link", { name: "Production Assets QA 收据" }).getAttribute("href")).toBe(
       "/api/recording-assets/file?path=index-checks%2Findex-check-latest%2Fclip-notes.md",
     );
@@ -1104,6 +1110,58 @@ describe("StudioMode demo roadbooks", () => {
     expect(chainPreview).toContain("Proof Story Bundle Chain");
     expect(writeText).toHaveBeenCalledWith(chainPreview);
     expect(copyButton.textContent).toContain("已复制");
+  });
+
+  it("copies the Proof Chain Summary line for post-production notes", async () => {
+    const writeText = vi.fn(async () => undefined);
+    Object.defineProperty(window.navigator, "clipboard", {
+      value: { writeText },
+      configurable: true,
+    });
+
+    render(<StudioMode />);
+
+    expect(await screen.findByText("15 个素材包")).toBeTruthy();
+    const summaryPreview = screen.getByLabelText("Proof Chain Summary 预览").textContent || "";
+    const copyButton = screen.getByRole("button", { name: "复制 Proof Chain Summary" });
+    await act(async () => {
+      fireEvent.click(copyButton);
+    });
+
+    expect(summaryPreview).toContain("Proof Chain Summary");
+    expect(summaryPreview).toContain("Index QA notes: index-checks/index-check-latest/clip-notes.md");
+    expect(summaryPreview).toContain("Studio script screenshot: studio-checks/studio-proof-latest/studio-proof-story-script-material.png");
+    expect(writeText).toHaveBeenCalledWith(summaryPreview);
+    expect(copyButton.textContent).toContain("已复制");
+  });
+
+  it("copies a pending Proof Chain Summary when evidence is missing", async () => {
+    const writeText = vi.fn(async () => undefined);
+    Object.defineProperty(window.navigator, "clipboard", {
+      value: { writeText },
+      configurable: true,
+    });
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => ({
+        ok: true,
+        status: 200,
+        json: async () => recordingAssetsResponse(0, "Studio 16:9 demo pack", false),
+      })) as unknown as typeof fetch,
+    );
+
+    render(<StudioMode />);
+
+    expect(await screen.findByText("0 个素材包")).toBeTruthy();
+    const summaryPreview = screen.getByLabelText("Proof Chain Summary 预览").textContent || "";
+    await act(async () => {
+      fireEvent.click(screen.getByRole("button", { name: "复制 Proof Chain Summary" }));
+    });
+
+    expect(summaryPreview).toContain("Index Chain: Index Chain 待验证");
+    expect(summaryPreview).toContain("Index QA notes: 待生成");
+    expect(summaryPreview).toContain("Studio script screenshot: 待捕获");
+    expect(writeText).toHaveBeenCalledWith(summaryPreview);
   });
 
   it("shows a closeout copy fallback when clipboard access fails", async () => {

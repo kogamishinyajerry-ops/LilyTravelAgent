@@ -2159,3 +2159,14 @@ Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, app/gl
 Command/result: npm test -- components/studio-mode.test.tsx passed with 34 tests; browser check against `http://localhost:3000/studio` showed `Index Chain 已验证` in the Index QA card and proof checklist, 121px chip width inside a 313px card, and 0 console errors.
 Voiceover note: "我把 Index Chain 从小卡片抬到主录屏轨道。这样讲解时先看到最终证据链已经验证，再进入脚本素材卡看细节。"
 Usable for: main Studio recording rail walkthrough, proof checklist closeout clip, continued goal run round 924
+
+## Phase FS: v0.8.180 — Proof Chain Summary Copy
+
+Date: 2026-06-14
+Clip title: Phase FS: v0.8.180 — Proof Chain Summary Copy
+What changed: `/studio` now shows a compact `Proof Chain Summary` preview and `复制 Summary` action that copies Chain state, Index Chain state, Index QA notes path, and Studio script-material screenshot path.
+Why this matters: The final proof-chain closeout becomes a single post-production note, so editing notes can reference the verified Chain state and exact evidence files without manual digging.
+Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, app/globals.css, docs/recording/goal-931-940-recap.md
+Command/result: npm test -- components/studio-mode.test.tsx passed with 36 tests; browser check against `http://localhost:3000/studio` confirmed the copied summary matched the preview, row width was 297px inside a 313px card, and console errors were 0.
+Voiceover note: "这里不是再加一个按钮，而是把最终 Chain 的证据路径整理成后期 notes。录完屏以后，剪辑阶段可以直接拿这句话定位证据。"
+Usable for: post-production note workflow clip, proof-chain copy action demo, continued goal run round 934

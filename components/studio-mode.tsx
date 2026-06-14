@@ -685,6 +685,26 @@ function getProofStoryIndexBundleChainState(indexCheck: RecordingIndexCheckSumma
   return { label: "Index Chain 已验证", ready: true };
 }
 
+function getProofChainSummaryLine({
+  chainState,
+  indexChainState,
+  indexReceiptPath,
+  studioScriptScreenshotPath,
+}: {
+  chainState: { label: string };
+  indexChainState: { label: string };
+  indexReceiptPath: string;
+  studioScriptScreenshotPath: string;
+}) {
+  return [
+    "Proof Chain Summary",
+    `Chain: ${chainState.label}`,
+    `Index Chain: ${indexChainState.label}`,
+    `Index QA notes: ${indexReceiptPath || "待生成"}`,
+    `Studio script screenshot: ${studioScriptScreenshotPath || "待捕获"}`,
+  ].join(" · ");
+}
+
 function getProofStoryDeliverySync(studioLine: string, notesLine: string) {
   if (!notesLine) {
     return { label: "Delivery 待入库", ready: false };
@@ -798,6 +818,7 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
   const [proofHandoffCopyState, setProofHandoffCopyState] = useState<"idle" | "copied" | "error">("idle");
   const [proofCompleteBundleCopyState, setProofCompleteBundleCopyState] = useState<"idle" | "copied" | "error">("idle");
   const [proofBundleChainCopyState, setProofBundleChainCopyState] = useState<"idle" | "copied" | "error">("idle");
+  const [proofChainSummaryCopyState, setProofChainSummaryCopyState] = useState<"idle" | "copied" | "error">("idle");
   const [proofCueIndex, setProofCueIndex] = useState(0);
   const [proofCuePlaying, setProofCuePlaying] = useState(false);
 
@@ -903,6 +924,23 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
     recordingAssets.status === "ready"
       ? getProofStoryIndexBundleChainState(recordingAssets.latestRecordingIndexCheck, proofStoryBundleChainState.label)
       : getProofStoryIndexBundleChainState(null, proofStoryBundleChainState.label);
+  const proofStoryScriptScreenshotPath =
+    recordingAssets.status === "ready" ? recordingAssets.latestStudioProofPlayback?.scriptMaterial?.screenshotPath || "" : "";
+  const proofChainSummaryLine = useMemo(
+    () =>
+      getProofChainSummaryLine({
+        chainState: proofStoryBundleChainState,
+        indexChainState: proofStoryIndexBundleChainState,
+        indexReceiptPath: proofStoryProductionReceiptPath,
+        studioScriptScreenshotPath: proofStoryScriptScreenshotPath,
+      }),
+    [
+      proofStoryBundleChainState,
+      proofStoryIndexBundleChainState,
+      proofStoryProductionReceiptPath,
+      proofStoryScriptScreenshotPath,
+    ],
+  );
   const recordingProofChecklist = useMemo(
     () => getRecordingProofChecklist(recordingAssets, proofStoryIndexBundleChainState),
     [recordingAssets, proofStoryIndexBundleChainState],
@@ -1126,6 +1164,15 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
       setProofBundleChainCopyState("copied");
     } catch {
       setProofBundleChainCopyState("error");
+    }
+  }
+
+  async function copyProofChainSummaryLine() {
+    try {
+      await navigator.clipboard.writeText(proofChainSummaryLine);
+      setProofChainSummaryCopyState("copied");
+    } catch {
+      setProofChainSummaryCopyState("error");
     }
   }
 
@@ -1631,6 +1678,20 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
                             >
                               <Copy size={10} />
                               {proofBundleChainCopyState === "copied" ? "已复制" : proofBundleChainCopyState === "error" ? "手动" : "复制 Chain"}
+                            </button>
+                          </div>
+                          <div className="studio-proof-chain-summary-row">
+                            <p className="studio-proof-chain-summary-preview" aria-label="Proof Chain Summary 预览">
+                              {proofChainSummaryLine}
+                            </p>
+                            <button
+                              type="button"
+                              className="studio-proof-chain-summary-copy"
+                              onClick={copyProofChainSummaryLine}
+                              aria-label="复制 Proof Chain Summary"
+                            >
+                              <Copy size={10} />
+                              {proofChainSummaryCopyState === "copied" ? "已复制" : proofChainSummaryCopyState === "error" ? "手动" : "复制 Summary"}
                             </button>
                           </div>
                           <button type="button" onClick={copyProofStoryCloseout}>
