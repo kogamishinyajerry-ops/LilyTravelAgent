@@ -1917,3 +1917,14 @@ Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, app/gl
 Command/result: npm test -- components/studio-mode.test.tsx passed with 20 tests; browser check confirmed the Delivery preview and copy action are visible, compact, and console errors are empty.
 Voiceover note: "这一行就是最终交付摘要：Proof Story 收口、Production Assets 入库、QA 收据路径，一次复制给后期剪辑。"
 Usable for: final video notes workflow, delivery closeout narration, continued goal run round 704
+
+## Phase FM: v0.8.158 — Proof Story Delivery In QA Clip Notes
+
+Date: 2026-06-14
+Clip title: Phase FM: v0.8.158 — Proof Story Delivery In QA Clip Notes
+What changed: Recording Index QA `clip-notes.md` now writes the same compact `Proof Story Delivery` line when optional script-material evidence exists. The line combines closeout status, `Production Assets · HTML + Clip 已入库`, and the generated QA receipt path.
+Why this matters: The proof pack and `/studio` now share the same final delivery language, so the creator can show both the product UI and generated QA notes as one closed Agent workflow.
+Files shown: scripts/check-recording-index.mjs, recordings/index-checks/2026-06-14T10-13-22-593Z/clip-notes.md, README.md, docs/recording/goal-711-720-recap.md
+Command/result: node --check scripts/check-recording-index.mjs passed; npm run check:recording-index passed and the newest clip notes contain `Proof Story Delivery`; a temporary no-script-material fixture passed and omitted the Delivery line.
+Voiceover note: "现在 Studio 里看到的最终交付行，也会被自动写进 QA proof pack。产品状态和素材收据用同一句话收口。"
+Usable for: QA receipt closeout clip, Proof Story final-delivery narration, continued goal run round 714

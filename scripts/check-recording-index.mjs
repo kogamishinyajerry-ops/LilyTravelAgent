@@ -17,6 +17,8 @@ const executablePath = process.env.PLAYWRIGHT_CHROME_EXECUTABLE || (existsSync(s
 const proofStoryProductionAssetsLabel = "Proof Story Production Assets";
 const proofStoryNarrationPreview = "Studio 现在把 Proof Story 脚本路径、证据时间线、四行预览和复制动作放在同一个录屏面板里。";
 const proofStoryCloseoutStatus = "Proof Story · 脚本路径: 就绪 · Studio QA: 已捕获 · 索引入库: 已入库";
+const proofStoryIndexQaStatus = "Index QA: 已验证";
+const proofStoryProductionAssetsReadyLine = "Production Assets · HTML + Clip 已入库";
 
 function resolveUrl(pathname) {
   return new URL(pathname, baseUrl).toString();
@@ -484,6 +486,7 @@ function buildClipNotes(summary) {
       "",
       `- Proof-card screenshot: ${path.basename(summary.scriptMaterialCheck.screenshotPath)}`,
       `- Production Assets QA: ${proofStoryProductionAssetsLabel}; narration preview; closeout status; cue text; ${summary.scriptMaterialCheck.links.length}/3 evidence links checked.`,
+      `- ${buildProofStoryDeliveryLine(summary)}`,
     );
 
     for (const link of summary.scriptMaterialCheck.links) {
@@ -497,11 +500,26 @@ function buildClipNotes(summary) {
     "",
     "- The local archive now carries Dream Proof and Studio Proof evidence.",
     "- The index check verifies both proof cues plus six screenshot, summary, and notes links.",
-    summary.scriptMaterialCheck ? "- When present, the same check also verifies the Proof Story Production Assets title, narration preview, closeout status, cue text, and three evidence links." : "",
+    summary.scriptMaterialCheck
+      ? "- When present, the same check also verifies the Proof Story Production Assets title, narration preview, closeout status, cue text, delivery line, and three evidence links."
+      : "",
     "",
   );
 
   return `${lines.join("\n")}\n`;
+}
+
+function buildProofStoryDeliveryLine(summary) {
+  return `Proof Story Delivery · ${proofStoryCloseoutStatus} · ${proofStoryIndexQaStatus} · ${proofStoryProductionAssetsReadyLine} · QA receipt: ${buildRecordingIndexReceiptPath(summary)}`;
+}
+
+function buildRecordingIndexReceiptPath(summary) {
+  const relativeOutDir = path.relative(recordingsRoot, summary.outDir);
+  if (relativeOutDir && !relativeOutDir.startsWith("..") && !path.isAbsolute(relativeOutDir)) {
+    return toRecordingLink(path.join(relativeOutDir, "clip-notes.md"));
+  }
+
+  return toRecordingLink(path.join(summary.outDir, "clip-notes.md"));
 }
 
 function toRecordingLink(relativePath) {
