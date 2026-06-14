@@ -10,11 +10,10 @@ This run made the lens comparison dashboard useful for 3D tuning review, not onl
 
 | Goal | Commit | Summary |
 | --- | --- | --- |
-| 171-174 | pending | Added batch metadata and current-vs-previous scene-crop comparison UI. |
-| 175 | pending | Added tests and recording docs. |
-| 176 | pending | Browser visual check. |
-| 177 | pending | Final lint/test/build verification. |
-| 178 | pending | Push to GitHub. |
+| 171-175 | `3dc2a8f` | Added batch metadata, current-vs-previous scene-crop comparison UI, focused tests, and recording docs. |
+| 176 | `3dc2a8f` | Browser/local request check confirmed 40 before/after image URLs and 0 broken images. |
+| 177 | closeout | Final lint/test/build verification: 44 files, 904 tests, build passed. |
+| 178 | closeout | Push to GitHub after final closeout commit. |
 | 179-180 | closeout | Next-goal handoff. |
 
 ## What Changed In The Review Surface
@@ -29,6 +28,7 @@ This run made the lens comparison dashboard useful for 3D tuning review, not onl
 - `npm test -- lib/lens-comparison.test.ts` (4 tests passed)
 - `npm run lint` (passed)
 - Browser/local request check: `/api/recording-assets/lens-comparison` showed 5 lens cards, 20 current frames, 20 previous frames, 40 image URLs, and 0 broken images.
+- `npm run lint && npm test && npm run build` (44 files, 904 tests, build passed)
 
 ## Recording Angle
 

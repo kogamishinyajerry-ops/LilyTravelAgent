@@ -1202,3 +1202,14 @@ Files shown: lib/lens-comparison.ts, app/api/recording-assets/lens-comparison/ro
 Command/result: npm test -- lib/lens-comparison.test.ts; npm run lint; Browser/local request check confirmed 5 lens cards, 20 current frames, 20 previous frames, 40 image URLs, and 0 broken images.
 Voiceover note: "现在看板不只是看最新截图，而是把这一轮和上一轮完整五镜头批次放在一起。这样我讲 Vibe Coding 的时候，可以直接证明 3D 调参真的改变了 canvas 画面。"
 Usable for: before/after review clip, visual QA evidence, continued goal run round 174
+
+## Phase CZ: v0.8.93 — Goals 171-180 Final Quality Gate
+
+Date: 2026-06-14
+Clip title: Phase CZ: v0.8.93 — Goals 171-180 Final Quality Gate
+What changed: Closed the before/after review aid with the full local lint, test, and production-build gate after browser visual inspection.
+Why this matters: The visual-evidence dashboard now has both product proof and engineering proof: it can show before/after crops in the browser and still pass the complete app gate.
+Files shown: docs/recording/goal-171-180-recap.md, `/api/recording-assets/lens-comparison`, terminal verification output
+Command/result: npm run lint && npm test && npm run build (44 files, 904 tests, build passed)
+Voiceover note: "这一轮做的是证据层：前后两批 crop 能在看板里对比，最后还通过 904 个测试和生产构建。视觉优化不是凭感觉，而是每一轮都能被复盘。"
+Usable for: goal closeout clip, before/after proof, next visual-diff handoff, continued goal run round 177
