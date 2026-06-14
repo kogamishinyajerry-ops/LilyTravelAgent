@@ -12,11 +12,14 @@ const contentTypes: Record<string, string> = {
   ".jpg": "image/jpeg",
   ".jpeg": "image/jpeg",
   ".webp": "image/webp",
+  ".json": "application/json; charset=utf-8",
+  ".md": "text/markdown; charset=utf-8",
 };
+const allowedExtensions = Object.keys(contentTypes);
 
 export async function GET(request: NextRequest) {
   const relativePath = request.nextUrl.searchParams.get("path") || "";
-  const filePath = resolveRecordingAssetFile(recordingsRoot, relativePath);
+  const filePath = resolveRecordingAssetFile(recordingsRoot, relativePath, allowedExtensions);
   if (!filePath) {
     return new NextResponse("Recording asset file is not available.", { status: 404 });
   }

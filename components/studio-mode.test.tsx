@@ -133,6 +133,15 @@ describe("StudioMode demo roadbooks", () => {
     expect(screen.getByLabelText("Dream visual proof QA 状态").textContent).toContain("视觉证据线已验证");
     expect(screen.getByLabelText("Dream visual proof QA 状态").textContent).toContain("Proof · 3/5 ready");
     expect(screen.getByLabelText("Dream visual proof QA 状态").textContent).toContain("visual-checks/dream-proof-latest/dream-dali-visual-proof-playback.png");
+    expect(within(screen.getByLabelText("Dream visual proof QA 状态")).getByRole("link", { name: /播放截图/ }).getAttribute("href")).toBe(
+      "/api/recording-assets/file?path=visual-checks%2Fdream-proof-latest%2Fdream-dali-visual-proof-playback.png",
+    );
+    expect(within(screen.getByLabelText("Dream visual proof QA 状态")).getByRole("link", { name: /summary/ }).getAttribute("href")).toBe(
+      "/api/recording-assets/file?path=visual-checks%2Fdream-proof-latest%2Fsummary.json",
+    );
+    expect(within(screen.getByLabelText("Dream visual proof QA 状态")).getByRole("link", { name: /notes/ }).getAttribute("href")).toBe(
+      "/api/recording-assets/file?path=visual-checks%2Fdream-proof-latest%2Fclip-notes.md",
+    );
     expect(screen.getAllByText("Dream low-skyline lens visual pack")[0]).toBeTruthy();
     expect(screen.getAllByText("low-skyline lens").length).toBeGreaterThanOrEqual(1);
     expect(screen.getByRole("button", { name: "复制命令" })).toBeTruthy();

@@ -255,6 +255,8 @@ describe("lens comparison dashboard", () => {
     expect(resolveRecordingAssetFile(tempRoot, "visual-checks/run/dream-dali-d1.png")).toBe(path.join(tempRoot, "visual-checks/run/dream-dali-d1.png"));
     expect(resolveRecordingAssetFile(tempRoot, "../.env.local")).toBeNull();
     expect(resolveRecordingAssetFile(tempRoot, "visual-checks/run/summary.json")).toBeNull();
+    expect(resolveRecordingAssetFile(tempRoot, "visual-checks/run/summary.json", [".json", ".md"])).toBe(path.join(tempRoot, "visual-checks/run/summary.json"));
+    expect(resolveRecordingAssetFile(tempRoot, "visual-checks/run/clip-notes.md", [".json", ".md"])).toBe(path.join(tempRoot, "visual-checks/run/clip-notes.md"));
     expect(resolveRecordingAssetFile(tempRoot, "")).toBeNull();
   });
 

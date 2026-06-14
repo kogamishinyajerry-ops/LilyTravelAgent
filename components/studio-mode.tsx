@@ -243,6 +243,10 @@ function formatRecordingAssetTime(value: string) {
   }).format(date);
 }
 
+function buildRecordingEvidenceUrl(relativePath?: string) {
+  return relativePath ? `/api/recording-assets/file?path=${encodeURIComponent(relativePath)}` : "";
+}
+
 function getRecordingAssetReadiness(summary: Extract<RecordingAssetsState, { status: "ready" }>) {
   if (!summary.indexAvailable) {
     return {
@@ -823,6 +827,26 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
                         <span>
                           {recordingAssets.latestDreamVisualProof.finalCueLabel} · {recordingAssets.latestDreamVisualProof.finalCueValue} · {recordingAssets.latestDreamVisualProof.screenshotPath}
                         </span>
+                        <div className="studio-dream-proof-links">
+                          {recordingAssets.latestDreamVisualProof.screenshotPath ? (
+                            <a href={buildRecordingEvidenceUrl(recordingAssets.latestDreamVisualProof.screenshotPath)} target="_blank" rel="noreferrer">
+                              播放截图
+                              <ExternalLink size={12} />
+                            </a>
+                          ) : null}
+                          {recordingAssets.latestDreamVisualProof.summaryPath ? (
+                            <a href={buildRecordingEvidenceUrl(recordingAssets.latestDreamVisualProof.summaryPath)} target="_blank" rel="noreferrer">
+                              summary
+                              <ExternalLink size={12} />
+                            </a>
+                          ) : null}
+                          {recordingAssets.latestDreamVisualProof.notesPath ? (
+                            <a href={buildRecordingEvidenceUrl(recordingAssets.latestDreamVisualProof.notesPath)} target="_blank" rel="noreferrer">
+                              notes
+                              <ExternalLink size={12} />
+                            </a>
+                          ) : null}
+                        </div>
                       </>
                     ) : (
                       <>

@@ -1835,6 +1835,20 @@ textarea {
   white-space: nowrap;
 }
 
+.studio-dream-proof-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.studio-dream-proof-links a {
+  flex: 0 0 auto;
+  min-height: 26px;
+  border-radius: 999px;
+  padding: 4px 7px;
+  font-size: 0.68rem;
+}
+
 .studio-recording-recent {
   display: grid;
   gap: 6px;

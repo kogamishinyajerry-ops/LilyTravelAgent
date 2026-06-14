@@ -498,7 +498,7 @@ export function buildRecordingFileUrl(relativePath: string) {
   return `/api/recording-assets/file?path=${encodeURIComponent(relativePath)}`;
 }
 
-export function resolveRecordingAssetFile(recordingsRoot: string, relativePath: string) {
+export function resolveRecordingAssetFile(recordingsRoot: string, relativePath: string, allowedExtensions = [".png", ".jpg", ".jpeg", ".webp"]) {
   if (!relativePath || relativePath.includes("\0")) {
     return null;
   }
@@ -506,7 +506,7 @@ export function resolveRecordingAssetFile(recordingsRoot: string, relativePath: 
   const rootAbsolute = path.resolve(recordingsRoot);
   const target = path.resolve(rootAbsolute, relativePath);
   const insideRoot = target === rootAbsolute || target.startsWith(`${rootAbsolute}${path.sep}`);
-  const allowed = [".png", ".jpg", ".jpeg", ".webp"].includes(path.extname(target).toLowerCase());
+  const allowed = allowedExtensions.includes(path.extname(target).toLowerCase());
   return insideRoot && allowed ? target : null;
 }
 
