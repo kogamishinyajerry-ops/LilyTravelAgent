@@ -1081,3 +1081,14 @@ Files shown: docs/recording/goal-131-140-recap.md, README.md, docs/recording/dev
 Command/result: npm run lint (passed)
 Voiceover note: "这一轮的重点是把素材变成评审。五种 lens 不只存在于代码和 QA 文件夹里，而是进入一个可以录屏讲解的对比台。"
 Usable for: goal recap clip, lens review chapter, Vibe Coding workflow narrative, continued goal run round 137
+
+## Phase CO: v0.8.82 — Goals 131-140 Final Quality Gate
+
+Date: 2026-06-14
+Clip title: Phase CO: v0.8.82 — Goals 131-140 Final Quality Gate
+What changed: Ran the full local quality gate after the Director Lens comparison dashboard, Dream same-lens handoff, and recap docs were in place.
+Why this matters: The review dashboard is now covered by focused tests, browser evidence, and the full production build.
+Files shown: terminal verification output, docs/recording/goal-131-140-recap.md, `/api/recording-assets/lens-comparison`
+Command/result: npm run lint && npm test && npm run build (44 files, 903 tests, build passed)
+Voiceover note: "对比看板和同 lens 跳转都做完以后，我又跑完整质量门。下一步要把对比图从整页截图推进到真正的 3D 画面裁切。"
+Usable for: goal closeout clip, quality gate proof, next visual-crop handoff, continued goal run round 138
