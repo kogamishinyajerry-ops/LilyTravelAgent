@@ -1631,3 +1631,14 @@ Files shown: scripts/check-studio-visuals.mjs, recordings/studio-checks/2026-06-
 Command/result: node --check scripts/check-studio-visuals.mjs passed; npm run check:studio-visuals passed; summary/html/notes spot checks confirmed `Suite Run`; npm run lint && npm test && npm run build passed with 44 files, 917 tests, and a successful production build.
 Voiceover note: "Studio QA 现在会自己打开脚本模式，播放证据线，最后截下 Suite Run。这就把录屏台自己的讲解闭环也沉淀成了素材。"
 Usable for: Studio QA proof clip, self-verifying creator workbench narration, continued goal run round 444
+
+## Phase EM: v0.8.132 — Studio Proof Playback QA Status
+
+Date: 2026-06-14
+Clip title: Phase EM: v0.8.132 — Studio Proof Playback QA Status
+What changed: `/studio` now reads the latest Studio QA `proofPlayback` result and shows a `Studio Proof` card with final `Suite Run` cue, screenshot, summary, and notes links.
+Why this matters: The workbench now closes the loop from UI proof playback to QA artifact and back to UI status.
+Files shown: lib/recording-assets.ts, components/studio-mode.tsx, app/globals.css, components/studio-mode.test.tsx, lib/recording-assets.test.ts
+Command/result: npm test -- lib/recording-assets.test.ts components/studio-mode.test.tsx passed with 20 tests; Chrome browser check confirmed `/studio` shows `证据播放已捕获` and three 200 evidence links; npm run lint && npm test && npm run build passed with 44 files, 918 tests, and a successful production build.
+Voiceover note: "现在 Studio 能读回自己的 QA 结果：证据播放已经被捕获，最后停在 Suite Run，截图、summary、notes 都能直接打开。"
+Usable for: Studio self-proof status clip, QA loop narration, continued goal run round 454

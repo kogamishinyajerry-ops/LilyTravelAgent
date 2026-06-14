@@ -190,6 +190,7 @@ npm run check:recording-suite
 - `docs/recording/goal-421-430-recap.md` summarizes the Studio Recording Suite status card.
 - `docs/recording/goal-431-440-recap.md` summarizes Suite Run in Studio proof playback.
 - `docs/recording/goal-441-450-recap.md` summarizes Studio QA capturing Suite Run proof playback.
+- `docs/recording/goal-451-460-recap.md` summarizes Studio Proof playback QA status in Studio.
 - `docs/recording/studio-dream-demo-script.md` gives a shot-by-shot Studio ↔ Dream demo recording path.
 - `docs/recording/bridge-qa-evidence-script.md` gives a short Bridge QA proof clip script.
 - `docs/recording/cinematic-visual-contract-script.md` gives a short `/dream` visual-contract recording script for template strategy, Scene Inspector, Proof Stack, and asset state.
