@@ -10,11 +10,11 @@ This run made the Director Lens comparison dashboard easier to record from. The 
 
 | Goal | Commit | Summary |
 | --- | --- | --- |
-| 241-245 | pending | Added the first-candidate primary action, queue chips, focused queue metadata test, and recording docs. |
-| 246 | pending | Browser check should confirm the primary action, 4 queue chips, 4 candidate links, and 40 working images. |
-| 247 | pending | Final lint/test/build verification. |
-| 248 | pending | Push to GitHub after closeout commit. |
-| 249-250 | pending | Next-goal handoff. |
+| 241-245 | `2eed035` | Added the first-candidate primary action, queue chips, focused queue metadata test, and recording docs. |
+| 246 | `2eed035` | Browser check confirmed the primary action, 4 queue chips, 4 candidate links, and 40 working images. |
+| 247 | closeout | Final lint/test/build verification: 44 files, 909 tests, build passed. |
+| 248 | closeout | Push to GitHub after final closeout commit. |
+| 249-250 | closeout | Next-goal handoff. |
 
 ## What Changed In The Creator Loop
 
@@ -23,12 +23,12 @@ This run made the Director Lens comparison dashboard easier to record from. The 
 - Candidate cards remain available for direct jumps.
 - The `/dream` URL handoff stays storage-free and auth-free.
 
-## Evidence To Capture
+## Evidence
 
-- `npm test -- lib/lens-comparison.test.ts`
-- `npm run lint`
-- Browser check: `/api/recording-assets/lens-comparison` shows `Open first candidate`, 4 queue chips, 4 candidate links, 40 image URLs, and 0 broken images.
-- `npm run lint && npm test && npm run build`
+- `npm test -- lib/lens-comparison.test.ts` (7 tests passed)
+- `npm run lint` (passed)
+- Browser check: `/api/recording-assets/lens-comparison` showed `Open first candidate`, 4 queue chips, 4 candidate links, 40 image URLs, and 0 broken images.
+- `npm run lint && npm test && npm run build` (44 files, 909 tests, build passed)
 
 ## Recording Angle
 

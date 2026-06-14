@@ -1353,6 +1353,17 @@ Clip title: Phase DM: v0.8.106 — Candidate Strip Primary Entry
 What changed: The Director Lens comparison dashboard candidate strip now shows an `Open first candidate` primary action and compact 1-4 queue chips before the ranked candidate cards.
 Why this matters: The recording workflow has a clearer starting point. A creator can open the comparison page, see the queue order, and jump into the first `/dream` candidate without scanning every card first.
 Files shown: app/api/recording-assets/lens-comparison/route.ts, lib/lens-comparison.test.ts, docs/recording/lens-visual-capture-workflow.md
-Command/result: npm test -- lib/lens-comparison.test.ts; npm run lint; Browser check should confirm the primary action, 4 queue chips, 4 candidate links, 40 image URLs, and 0 broken images.
+Command/result: npm test -- lib/lens-comparison.test.ts (7 tests passed); npm run lint; Browser check confirmed the primary action, 4 queue chips, 4 candidate links, 40 image URLs, and 0 broken images.
 Voiceover note: "这一步是把看板入口产品化：不是让用户自己猜从哪张开始，而是明确 Open first candidate，同时把 1-4 的录屏顺序露出来。"
 Usable for: dashboard entry-point clip, recording queue setup, continued goal run round 244
+
+## Phase DN: v0.8.107 — Goals 241-250 Final Quality Gate
+
+Date: 2026-06-14
+Clip title: Phase DN: v0.8.107 — Goals 241-250 Final Quality Gate
+What changed: Closed the dashboard candidate-entry run with the full local lint, test, and production-build gate after browser visual inspection.
+Why this matters: The comparison dashboard now gives the creator a clearer first action and visible recording order, while the full app remains buildable and verified.
+Files shown: docs/recording/goal-241-250-recap.md, `/api/recording-assets/lens-comparison`, terminal verification output
+Command/result: npm run lint && npm test && npm run build (44 files, 909 tests, build passed)
+Voiceover note: "候选看板入口做完后，继续完整质量门。现在我从看板开始录的时候，第一步和 1-4 队列都在首屏，不需要额外解释。"
+Usable for: goal closeout clip, dashboard entry proof, next thumbnail-candidate preview handoff, continued goal run round 247
