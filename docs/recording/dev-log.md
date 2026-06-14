@@ -2082,3 +2082,14 @@ Files shown: scripts/index-recording-assets.mjs, app/api/recording-assets/index/
 Command/result: node --check scripts/index-recording-assets.mjs passed; node --check scripts/check-recording-index.mjs passed; npm run index:recording-assets indexed 79 packs; npm run check:recording-index passed and generated `recordings/index-checks/2026-06-14T11-20-29-363Z/clip-notes.md` with `Proof Story Complete Bundle`.
 Voiceover note: "现在 Bundle line 进入总素材库，也进入 Recording Index QA。也就是说，后期交付线不是页面上看得到而已，它在素材库和自动验收里都能被追踪。"
 Usable for: Recording Index archive walkthrough, proof bundle QA clip, continued goal run round 854
+
+## Phase FS: v0.8.173 — Index Bundle Chip In Studio
+
+Date: 2026-06-14
+Clip title: Phase FS: v0.8.173 — Index Bundle Chip In Studio
+What changed: `/studio` now reads the latest Recording Index QA `Proof Story Complete Bundle` line and shows `Index Bundle 已验证` beside the Studio `Bundle 已入库` chip.
+Why this matters: The post-production bundle proof now completes the full return loop: Studio QA captures it, Recording Index QA verifies it, and Studio shows both archive states on one compact line.
+Files shown: lib/recording-assets.ts, components/studio-mode.tsx, app/globals.css, docs/recording/goal-861-870-recap.md
+Command/result: npm test -- lib/recording-assets.test.ts passed with 15 tests; npm test -- components/studio-mode.test.tsx passed with 31 tests; browser check against `http://localhost:3000/studio` showed `Bundle 已入库`, `Index Bundle 已验证`, 297px row width inside a 313px card, and 0 console errors.
+Voiceover note: "这就是回流闭环：Studio 捕获 Bundle，Index QA 验证 Bundle，然后 Studio 又显示 Index Bundle 已验证。录屏时可以一眼讲清这条证据链。"
+Usable for: Studio proof-loop closeout clip, index-to-studio verification walkthrough, continued goal run round 864

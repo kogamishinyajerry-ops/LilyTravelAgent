@@ -92,6 +92,7 @@ type RecordingIndexCheckSummary = {
   scriptMaterialCheck?: RecordingIndexScriptMaterialCheckSummary | null;
   proofStoryDeliveryLine?: string;
   proofStoryCompleteLine?: string;
+  proofStoryCompleteBundleLine?: string;
   proofText: string;
   apiIndexUrl: string;
   screenshotPath: string;
@@ -616,6 +617,19 @@ function getProofStoryCompleteBundleArchiveState(scriptMaterial: RecordingStudio
   return { label: "Bundle 已入库", ready: true };
 }
 
+function getProofStoryIndexCompleteBundleState(indexCheck: RecordingIndexCheckSummary | null | undefined, currentBundleLine: string) {
+  const indexedLine = indexCheck?.proofStoryCompleteBundleLine || "";
+  if (!indexedLine) {
+    return { label: "Index Bundle 待验证", ready: false };
+  }
+
+  if (indexedLine !== currentBundleLine) {
+    return { label: "Index Bundle 待同步", ready: false };
+  }
+
+  return { label: "Index Bundle 已验证", ready: true };
+}
+
 function getProofStoryDeliverySync(studioLine: string, notesLine: string) {
   if (!notesLine) {
     return { label: "Delivery 待入库", ready: false };
@@ -786,7 +800,7 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
     recordingAssets.status === "ready"
       ? getProofStoryIndexCompleteState(recordingAssets.latestRecordingIndexCheck, proofStoryCompleteState.label)
       : getProofStoryIndexCompleteState(null, proofStoryCompleteState.label);
-  const proofStoryCompleteBundleLine = useMemo(
+  const computedProofStoryCompleteBundleLine = useMemo(
     () =>
       getProofStoryCompleteBundleLine({
         deliveryState: proofStoryDeliverySync.label,
@@ -803,10 +817,17 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
       proofStoryProductionReceiptPath,
     ],
   );
+  const archivedProofStoryCompleteBundleLine =
+    recordingAssets.status === "ready" ? recordingAssets.latestStudioProofPlayback?.scriptMaterial?.completeBundleLine || "" : "";
+  const proofStoryCompleteBundleLine = archivedProofStoryCompleteBundleLine || computedProofStoryCompleteBundleLine;
   const proofStoryCompleteBundleArchiveState =
     recordingAssets.status === "ready"
       ? getProofStoryCompleteBundleArchiveState(recordingAssets.latestStudioProofPlayback?.scriptMaterial, proofStoryCompleteBundleLine)
       : getProofStoryCompleteBundleArchiveState(null, proofStoryCompleteBundleLine);
+  const proofStoryIndexCompleteBundleState =
+    recordingAssets.status === "ready"
+      ? getProofStoryIndexCompleteBundleState(recordingAssets.latestRecordingIndexCheck, proofStoryCompleteBundleLine)
+      : getProofStoryIndexCompleteBundleState(null, proofStoryCompleteBundleLine);
 
   const loadRecordingAssets = useCallback(
     async ({ markRefreshing = true, isActive = () => true }: { markRefreshing?: boolean; isActive?: () => boolean } = {}) => {
@@ -1477,6 +1498,12 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
                                 aria-label="Proof Story Complete Bundle QA 状态"
                               >
                                 {proofStoryCompleteBundleArchiveState.label}
+                              </span>
+                              <span
+                                className={`studio-proof-complete-bundle-archive ${proofStoryIndexCompleteBundleState.ready ? "ready" : "missing"}`}
+                                aria-label="Proof Story Index Bundle 状态"
+                              >
+                                {proofStoryIndexCompleteBundleState.label}
                               </span>
                               <button
                                 type="button"

@@ -2286,7 +2286,7 @@ textarea {
 
 .studio-proof-complete-bundle-actions {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.15fr) auto;
   align-items: center;
   gap: 5px;
   min-width: 0;
