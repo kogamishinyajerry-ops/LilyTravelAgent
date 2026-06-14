@@ -45,6 +45,7 @@ describe("recording assets", () => {
     expect(summary.countsByType).toEqual({ dream: 0, studio: 0, bridge: 0 });
     expect(summary.latestPack).toBeNull();
     expect(summary.latestCandidateHandoff).toBeNull();
+    expect(summary.latestDreamVisualProof).toBeNull();
     expect(summary.indexAvailable).toBe(false);
     expect(summary.clipIndexAvailable).toBe(false);
   });
@@ -134,6 +135,52 @@ describe("recording assets", () => {
       captureCount: 3,
       summaryPath: "candidate-handoff-checks/new-candidate/summary.json",
       notesPath: "candidate-handoff-checks/new-candidate/clip-notes.md",
+    });
+  });
+
+  it("reports the latest Dream visual proof playback evidence when available", async () => {
+    await writeSummary("visual-checks/old-without-proof", {
+      createdAt: "2026-06-13T04:00:00.000Z",
+      demoRoadbook: "dali",
+      days: [],
+      motion: { changed: true },
+    });
+    await writeSummary("visual-checks/new-with-proof", {
+      createdAt: "2026-06-13T05:00:00.000Z",
+      demoRoadbook: "dali",
+      visualProof: {
+        finalActiveCue: {
+          label: "Proof",
+          value: "3/5 ready",
+          detail: "proof stack",
+          active: true,
+        },
+        buttonTextAfterPlayback: "播放视觉证据",
+        screenshotPath: path.join(tempRoot, "visual-checks", "new-with-proof", "dream-dali-visual-proof-playback.png"),
+        initialCues: [
+          { label: "Terrain", value: "procedural terrain" },
+          { label: "Skyline", value: "Auto" },
+          { label: "AI Asset", value: "asset pending" },
+          { label: "Route", value: "D1" },
+          { label: "Proof", value: "3/5 ready" },
+        ],
+      },
+      days: [],
+      motion: { changed: true },
+    });
+
+    const summary = await readRecordingAssetsSummary(tempRoot);
+
+    expect(summary.latestDreamVisualProof).toMatchObject({
+      id: "new-with-proof",
+      createdAt: "2026-06-13T05:00:00.000Z",
+      finalCueLabel: "Proof",
+      finalCueValue: "3/5 ready",
+      buttonTextAfterPlayback: "播放视觉证据",
+      cueLabels: ["Terrain", "Skyline", "AI Asset", "Route", "Proof"],
+      screenshotPath: "visual-checks/new-with-proof/dream-dali-visual-proof-playback.png",
+      summaryPath: "visual-checks/new-with-proof/summary.json",
+      notesPath: "visual-checks/new-with-proof/clip-notes.md",
     });
   });
 

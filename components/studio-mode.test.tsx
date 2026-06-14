@@ -29,6 +29,19 @@ function recordingAssetsResponse(packCount: number, title = "Studio 16:9 demo pa
           notesPath: "candidate-handoff-checks/candidate-latest/clip-notes.md",
         }
       : null,
+    latestDreamVisualProof: packCount
+      ? {
+          id: "dream-proof-latest",
+          createdAt: "2026-06-13T05:48:00.000Z",
+          finalCueLabel: "Proof",
+          finalCueValue: "3/5 ready",
+          buttonTextAfterPlayback: "播放视觉证据",
+          cueLabels: ["Terrain", "Skyline", "AI Asset", "Route", "Proof"],
+          screenshotPath: "visual-checks/dream-proof-latest/dream-dali-visual-proof-playback.png",
+          summaryPath: "visual-checks/dream-proof-latest/summary.json",
+          notesPath: "visual-checks/dream-proof-latest/clip-notes.md",
+        }
+      : null,
     recentPacks: packCount
       ? [
           {
@@ -117,6 +130,9 @@ describe("StudioMode demo roadbooks", () => {
     expect(screen.getByLabelText("候选点击 QA 状态").textContent).toContain("候选跳转已验证");
     expect(screen.getByLabelText("候选点击 QA 状态").textContent).toContain("3 个入口");
     expect(screen.getByLabelText("候选点击 QA 状态").textContent).toContain("candidate-handoff-checks/candidate-latest/summary.json");
+    expect(screen.getByLabelText("Dream visual proof QA 状态").textContent).toContain("视觉证据线已验证");
+    expect(screen.getByLabelText("Dream visual proof QA 状态").textContent).toContain("Proof · 3/5 ready");
+    expect(screen.getByLabelText("Dream visual proof QA 状态").textContent).toContain("visual-checks/dream-proof-latest/dream-dali-visual-proof-playback.png");
     expect(screen.getAllByText("Dream low-skyline lens visual pack")[0]).toBeTruthy();
     expect(screen.getAllByText("low-skyline lens").length).toBeGreaterThanOrEqual(1);
     expect(screen.getByRole("button", { name: "复制命令" })).toBeTruthy();
@@ -223,6 +239,8 @@ describe("StudioMode demo roadbooks", () => {
     expect(screen.getByLabelText("最新素材包摘要").textContent).toContain("先运行 recording suite");
     expect(screen.getByLabelText("候选点击 QA 状态").textContent).toContain("等待候选点击 QA");
     expect(screen.getByLabelText("候选点击 QA 状态").textContent).toContain("npm run check:lens-candidate-handoff");
+    expect(screen.getByLabelText("Dream visual proof QA 状态").textContent).toContain("等待视觉证据 QA");
+    expect(screen.getByLabelText("Dream visual proof QA 状态").textContent).toContain("npm run check:dream-visuals");
     expect(screen.getByText("Dream 0")).toBeTruthy();
     expect(screen.getByText("Studio 0")).toBeTruthy();
     expect(screen.getByText("生成本地素材索引")).toBeTruthy();

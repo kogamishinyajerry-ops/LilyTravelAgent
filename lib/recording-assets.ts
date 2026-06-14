@@ -23,6 +23,7 @@ export type RecordingAssetsSummary = {
   latestPack: RecordingAssetPack | null;
   recentPacks: RecordingAssetPack[];
   latestCandidateHandoff: RecordingCandidateHandoffSummary | null;
+  latestDreamVisualProof: RecordingDreamVisualProofSummary | null;
   indexAvailable: boolean;
   indexPath: string;
   clipIndexAvailable: boolean;
@@ -37,6 +38,18 @@ export type RecordingCandidateHandoffSummary = {
   notesPath: string;
 };
 
+export type RecordingDreamVisualProofSummary = {
+  id: string;
+  createdAt: string;
+  finalCueLabel: string;
+  finalCueValue: string;
+  buttonTextAfterPlayback: string;
+  cueLabels: string[];
+  screenshotPath: string;
+  summaryPath: string;
+  notesPath: string;
+};
+
 const sources = [
   { type: "dream" as const, dir: "visual-checks", label: "/dream visual QA" },
   { type: "studio" as const, dir: "studio-checks", label: "/studio recording QA" },
@@ -46,6 +59,7 @@ const sources = [
 export async function readRecordingAssetsSummary(recordingsRoot = process.env.RECORDINGS_DIR || "recordings"): Promise<RecordingAssetsSummary> {
   const packs = await listRecordingAssetPacks(recordingsRoot);
   const latestCandidateHandoff = await readLatestCandidateHandoff(recordingsRoot);
+  const latestDreamVisualProof = await readLatestDreamVisualProof(recordingsRoot);
   const latestPack = packs[0] || null;
   const indexPath = path.join(recordingsRoot, "index.html");
   const clipIndexPath = path.join(recordingsRoot, "clip-index.md");
@@ -57,6 +71,7 @@ export async function readRecordingAssetsSummary(recordingsRoot = process.env.RE
     latestPack,
     recentPacks: packs.slice(0, 3),
     latestCandidateHandoff,
+    latestDreamVisualProof,
     indexAvailable: existsSync(indexPath),
     indexPath,
     clipIndexAvailable: existsSync(clipIndexPath),
@@ -75,6 +90,56 @@ function countPacksByType(packs: RecordingAssetPack[]): Record<RecordingAssetTyp
 export async function listRecordingAssetPacks(recordingsRoot = process.env.RECORDINGS_DIR || "recordings"): Promise<RecordingAssetPack[]> {
   const packs = (await Promise.all(sources.map((source) => readSource(recordingsRoot, source)))).flat();
   return packs.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+}
+
+async function readLatestDreamVisualProof(recordingsRoot: string): Promise<RecordingDreamVisualProofSummary | null> {
+  const sourceRoot = path.join(recordingsRoot, "visual-checks");
+  if (!existsSync(sourceRoot)) {
+    return null;
+  }
+
+  const entries = await readdir(sourceRoot);
+  const runs: RecordingDreamVisualProofSummary[] = [];
+
+  for (const entry of entries) {
+    const packDir = path.join(sourceRoot, entry);
+    const info = await stat(packDir).catch(() => null);
+    if (!info?.isDirectory()) {
+      continue;
+    }
+
+    const summaryPath = path.join(packDir, "summary.json");
+    if (!existsSync(summaryPath)) {
+      continue;
+    }
+
+    const summary = JSON.parse(await readFile(summaryPath, "utf8")) as Record<string, unknown>;
+    const visualProof = typeof summary.visualProof === "object" && summary.visualProof ? summary.visualProof as Record<string, unknown> : null;
+    const finalCue = typeof visualProof?.finalActiveCue === "object" && visualProof.finalActiveCue
+      ? visualProof.finalActiveCue as Record<string, unknown>
+      : null;
+    if (!visualProof || !finalCue) {
+      continue;
+    }
+
+    const initialCues = Array.isArray(visualProof.initialCues) ? visualProof.initialCues : [];
+    const screenshotFile = path.basename(readString(visualProof.screenshotPath));
+    runs.push({
+      id: entry,
+      createdAt: readString(summary.createdAt) || entry,
+      finalCueLabel: readString(finalCue.label),
+      finalCueValue: readString(finalCue.value),
+      buttonTextAfterPlayback: readString(visualProof.buttonTextAfterPlayback),
+      cueLabels: initialCues
+        .map((item) => readString((item as Record<string, unknown>).label))
+        .filter(Boolean),
+      screenshotPath: screenshotFile ? toRecordingLink(path.join("visual-checks", entry, screenshotFile)) : "",
+      summaryPath: toRecordingLink(path.join("visual-checks", entry, "summary.json")),
+      notesPath: existsSync(path.join(packDir, "clip-notes.md")) ? toRecordingLink(path.join("visual-checks", entry, "clip-notes.md")) : "",
+    });
+  }
+
+  return runs.sort((a, b) => b.createdAt.localeCompare(a.createdAt))[0] || null;
 }
 
 async function readLatestCandidateHandoff(recordingsRoot: string): Promise<RecordingCandidateHandoffSummary | null> {

@@ -47,6 +47,7 @@ type RecordingAssetsState =
         label: string;
       } | null;
       latestCandidateHandoff: RecordingCandidateHandoffSummary | null;
+      latestDreamVisualProof: RecordingDreamVisualProofSummary | null;
     }
   | { status: "error"; message: string };
 
@@ -54,6 +55,18 @@ type RecordingCandidateHandoffSummary = {
   id: string;
   createdAt: string;
   captureCount: number;
+  summaryPath: string;
+  notesPath?: string;
+};
+
+type RecordingDreamVisualProofSummary = {
+  id: string;
+  createdAt: string;
+  finalCueLabel: string;
+  finalCueValue: string;
+  buttonTextAfterPlayback: string;
+  cueLabels: string[];
+  screenshotPath: string;
   summaryPath: string;
   notesPath?: string;
 };
@@ -82,6 +95,7 @@ type RecordingAssetsApiResponse = {
     label: string;
   } | null;
   latestCandidateHandoff?: RecordingCandidateHandoffSummary | null;
+  latestDreamVisualProof?: RecordingDreamVisualProofSummary | null;
   message?: string;
 };
 
@@ -369,6 +383,7 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
           recentPacks: data.recentPacks || [],
           latestPack: data.latestPack || null,
           latestCandidateHandoff: data.latestCandidateHandoff || null,
+          latestDreamVisualProof: data.latestDreamVisualProof || null,
         });
         setRecordingAssetsReadAt(new Date().toISOString());
       } catch (caught) {
@@ -797,6 +812,23 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
                         <small>Candidate QA</small>
                         <strong>等待候选点击 QA</strong>
                         <span>运行 npm run check:lens-candidate-handoff 后显示验证状态。</span>
+                      </>
+                    )}
+                  </div>
+                  <div className={`studio-dream-proof-status ${recordingAssets.latestDreamVisualProof ? "ready" : "missing"}`} aria-label="Dream visual proof QA 状态">
+                    {recordingAssets.latestDreamVisualProof ? (
+                      <>
+                        <small>Dream Proof · {formatRecordingAssetTime(recordingAssets.latestDreamVisualProof.createdAt)}</small>
+                        <strong>视觉证据线已验证</strong>
+                        <span>
+                          {recordingAssets.latestDreamVisualProof.finalCueLabel} · {recordingAssets.latestDreamVisualProof.finalCueValue} · {recordingAssets.latestDreamVisualProof.screenshotPath}
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        <small>Dream Proof</small>
+                        <strong>等待视觉证据 QA</strong>
+                        <span>运行 npm run check:dream-visuals 后显示 Proof 播放状态。</span>
                       </>
                     )}
                   </div>
