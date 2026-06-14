@@ -1521,3 +1521,14 @@ Files shown: scripts/check-dream-visuals.mjs, recordings/visual-checks/2026-06-1
 Command/result: node --check scripts/check-dream-visuals.mjs passed; npm run check:dream-visuals passed; npm run lint && npm test && npm run build passed with 44 files, 914 tests, and a successful production build.
 Voiceover note: "我不只做了 Dream 的视觉证据线，还让 QA 真正去点击播放，确认最后停在 Proof，并把这条证据写进素材包。"
 Usable for: Dream QA proof clip, recording asset pipeline evidence, continued goal run round 344
+
+## Phase EC: v0.8.122 — Studio Dream Proof QA Status
+
+Date: 2026-06-14
+Clip title: Phase EC: v0.8.122 — Studio Dream Proof QA Status
+What changed: `/studio` now shows the latest Dream visual-proof playback QA result from recording assets, including final `Proof`, readiness value, and playback screenshot path.
+Why this matters: Dream visual evidence now returns to the creator workbench instead of living only in `summary.json` and `clip-notes.md`.
+Files shown: lib/recording-assets.ts, components/studio-mode.tsx, components/studio-mode.test.tsx
+Command/result: npm test -- lib/recording-assets.test.ts components/studio-mode.test.tsx (17 tests passed); Chrome browser check confirmed `/studio` shows `视觉证据线已验证` and `Proof · 3/5 ready`; npm run lint && npm test && npm run build passed with 44 files, 915 tests, and a successful production build.
+Voiceover note: "Dream 的视觉 QA 证据现在回到 Studio 面板了。我不需要翻 summary，产品自己告诉我这条视觉证据线已经走到 Proof。"
+Usable for: Studio QA evidence clip, Dream proof status narration, continued goal run round 354
