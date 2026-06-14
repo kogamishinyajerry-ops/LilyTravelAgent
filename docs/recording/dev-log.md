@@ -1763,3 +1763,14 @@ Files shown: lib/recording-assets.ts, lib/recording-assets.test.ts, components/s
 Command/result: npm test -- lib/recording-assets.test.ts components/studio-mode.test.tsx passed with 25 tests; browser check confirmed screenshot link returned 200 and console errors were empty; npm run lint && npm test && npm run build
 Voiceover note: "现在脚本素材卡自己也会显示 QA 状态。它不是静态说明，而是能链接回刚刚被 Studio QA 截下来的证据图。"
 Usable for: script-material QA status clip, Studio evidence loop narration, continued goal run round 564
+
+## Phase EY: v0.8.144 — Proof Story Script Material In Asset Index
+
+Date: 2026-06-14
+Clip title: Phase EY: v0.8.144 — Proof Story Script Material In Asset Index
+What changed: `npm run index:recording-assets` and `/api/recording-assets/index` now show a `Proof Story Script Material` entry for Studio QA packs that contain `summary.scriptMaterial`, including a link to `studio-proof-story-script-material.png`.
+Why this matters: The local recording archive now carries the script-material screenshot alongside Dream Proof and Studio Proof, so the content workflow evidence is visible outside `/studio`.
+Files shown: scripts/index-recording-assets.mjs, app/api/recording-assets/index/route.ts, recordings/index.html, recordings/clip-index.md, docs/recording/goal-571-580-recap.md
+Command/result: node --check scripts/index-recording-assets.mjs passed; npm run index:recording-assets indexed 76 packs; npm run check:recording-index passed; npm run lint && npm test && npm run build
+Voiceover note: "现在素材总索引不只展示 Dream Proof 和 Studio Proof，还会展示 Proof Story Script Material。脚本入口从 Studio 卡片进入 archive，后面剪辑时也能直接找到。"
+Usable for: asset-index proof clip, script-material archive narration, continued goal run round 574

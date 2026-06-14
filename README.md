@@ -134,7 +134,7 @@ npm run check:recording-suite
 
 `npm run check:lens-candidate-handoff` expects `http://localhost:3000` unless `LENS_CANDIDATE_BASE_URL` is set. It verifies the Director Lens comparison dashboard candidate actions by clicking `Open first candidate`, the first candidate card, and one queue chip, then checking that `/dream` receives the expected candidate rank, day, and lens context.
 
-`npm run index:recording-assets` scans local `recordings/visual-checks`, `recordings/studio-checks`, and `recordings/handoff-checks`, then writes `recordings/index.html` and `recordings/clip-index.md` as a local asset index. When Dream or Studio QA packs include playback proof evidence, the index also shows Dream Proof and Studio Proof cues plus links to playback screenshots, summaries, and notes.
+`npm run index:recording-assets` scans local `recordings/visual-checks`, `recordings/studio-checks`, and `recordings/handoff-checks`, then writes `recordings/index.html` and `recordings/clip-index.md` as a local asset index. When Dream or Studio QA packs include playback proof evidence, the index also shows Dream Proof and Studio Proof cues plus links to playback screenshots, summaries, and notes. Studio packs with Proof Story script-material evidence also show a `Proof Story Script Material` entry that links to the captured script-card screenshot.
 
 `npm run check:recording-index` expects the local dev server to be running at `http://localhost:3000` unless `RECORDING_INDEX_BASE_URL` is set. It regenerates the local asset index, opens `/api/recording-assets/index`, verifies Dream Proof and Studio Proof text plus all six screenshot/summary/notes links, then writes a small proof pack under `recordings/index-checks/`. If no local Dream or Studio proof pack exists yet, it exits with a clear skipped-precondition message and tells you to run `npm run check:recording-suite`.
 
@@ -202,6 +202,7 @@ npm run check:recording-suite
 - `docs/recording/goal-541-550-recap.md` summarizes the in-app Proof Story script-material card.
 - `docs/recording/goal-551-560-recap.md` summarizes Studio QA capture for the Proof Story script-material card.
 - `docs/recording/goal-561-570-recap.md` summarizes reading the latest script-material QA result back into `/studio`.
+- `docs/recording/goal-571-580-recap.md` summarizes adding Proof Story Script Material to the recording asset index.
 - `docs/recording/proof-story-demo-script.md` gives a short `/studio` script for recording the evidence timeline, four-line proof-story preview, and copy action.
 - `docs/recording/studio-dream-demo-script.md` gives a shot-by-shot Studio ↔ Dream demo recording path.
 - `docs/recording/bridge-qa-evidence-script.md` gives a short Bridge QA proof clip script.

@@ -60,6 +60,15 @@ function buildRecordingIndexHtml(
                     ${pack.studioProof.notesPath ? `<a href="${escapeHtml(buildRecordingFileUrl(pack.studioProof.notesPath))}">notes</a>` : ""}
                   </nav>
                 </div>` : ""}
+              ${pack.studioProof?.scriptMaterial ? `
+                <div class="visual-proof script-material-proof">
+                  <span>Proof Story Script Material · ${escapeHtml(pack.studioProof.scriptMaterial.cue)}</span>
+                  <nav>
+                    ${pack.studioProof.scriptMaterial.screenshotPath ? `<a href="${escapeHtml(buildRecordingFileUrl(pack.studioProof.scriptMaterial.screenshotPath))}">script card screenshot</a>` : ""}
+                    <a href="${escapeHtml(buildRecordingFileUrl(pack.studioProof.summaryPath))}">summary</a>
+                    ${pack.studioProof.notesPath ? `<a href="${escapeHtml(buildRecordingFileUrl(pack.studioProof.notesPath))}">notes</a>` : ""}
+                  </nav>
+                </div>` : ""}
             </article>`,
         )
         .join("")
@@ -103,6 +112,9 @@ function buildRecordingIndexHtml(
       .studio-proof { border-color: rgba(83, 96, 173, 0.22); background: rgba(83, 96, 173, 0.1); }
       .studio-proof span { color: #303d8d; }
       .studio-proof a { background: #5360ad; }
+      .script-material-proof { border-color: rgba(214, 107, 61, 0.22); background: rgba(214, 107, 61, 0.1); }
+      .script-material-proof span { color: #7a3c24; }
+      .script-material-proof a { background: #d66b3d; }
       @media (max-width: 860px) { header, .grid { display: block; } article + article { margin-top: 12px; } }
     </style>
   </head>
