@@ -1441,6 +1441,17 @@ Clip title: Phase DU: v0.8.114 — Studio Candidate QA Status
 What changed: `/api/recording-assets` now exposes the latest candidate-handoff QA run, and `/studio` shows a `候选点击 QA 状态` card in the recording asset panel.
 Why this matters: The workflow proof is now visible inside the creator workbench, not only in terminal output or local recording folders.
 Files shown: lib/recording-assets.ts, components/studio-mode.tsx, docs/recording/recording-asset-pipeline.md
-Command/result: npm test -- lib/recording-assets.test.ts components/studio-mode.test.tsx; Browser check should confirm `/studio` shows the candidate QA status from local recordings.
+Command/result: npm test -- lib/recording-assets.test.ts components/studio-mode.test.tsx (14 tests passed); Playwright browser check on localhost confirmed `/studio` shows `候选跳转已验证`, `3 个入口`, and the candidate-handoff summary path.
 Voiceover note: "我把刚才的点击 QA 结果放回 Studio 面板。这样录屏时，产品自己就能证明候选跳转链路已经验证过。"
 Usable for: Studio asset status clip, QA evidence surface, continued goal run round 284
+
+## Phase DV: v0.8.115 — Goals 281-290 Final Quality Gate
+
+Date: 2026-06-14
+Clip title: Phase DV: v0.8.115 — Goals 281-290 Final Quality Gate
+What changed: Closed the Studio candidate-QA status run with the full local lint, test, and production-build gate after a localhost Playwright browser check.
+Why this matters: The creator workbench can now show candidate-click QA evidence directly in the product UI, and the full app remains verified.
+Files shown: docs/recording/goal-281-290-recap.md, `/studio`, terminal verification output
+Command/result: npm run lint && npm test && npm run build (44 files, 910 tests, build passed)
+Voiceover note: "Studio 状态卡做完后，继续完整质量门。现在我不只生成候选，还把候选点击 QA 是否通过直接显示在素材资产面板里。"
+Usable for: goal closeout clip, Studio QA status proof, next command-rail handoff, continued goal run round 287

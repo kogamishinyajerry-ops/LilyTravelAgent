@@ -10,11 +10,11 @@ This run surfaced the latest candidate-handoff QA result inside `/studio`'s reco
 
 | Goal | Commit | Summary |
 | --- | --- | --- |
-| 281-285 | pending | Added latest candidate-handoff metadata to recording assets, rendered the Studio status card, and updated focused tests/docs. |
-| 286 | pending | Browser check should confirm `/studio` shows the verified candidate QA state from local recordings. |
-| 287 | pending | Final lint/test/build verification. |
-| 288 | pending | Push to GitHub after closeout commit. |
-| 289-290 | pending | Next-goal handoff. |
+| 281-285 | `c1136a6` | Added latest candidate-handoff metadata to recording assets, rendered the Studio status card, and updated focused tests/docs. |
+| 286 | `c1136a6` | Playwright browser check confirmed `/studio` shows the verified candidate QA state from local recordings on `localhost`. |
+| 287 | closeout | Final lint/test/build verification: 44 files, 910 tests, build passed. |
+| 288 | closeout | Push to GitHub after final closeout commit. |
+| 289-290 | closeout | Next-goal handoff. |
 
 ## What Changed In The Creator Loop
 
@@ -23,11 +23,11 @@ This run surfaced the latest candidate-handoff QA result inside `/studio`'s reco
 - The state shows capture count, latest time, and summary path when a passed run exists.
 - Missing state points to `npm run check:lens-candidate-handoff`.
 
-## Evidence To Capture
+## Evidence
 
-- `npm test -- lib/recording-assets.test.ts components/studio-mode.test.tsx`
-- Browser check: `/studio` shows `候选跳转已验证`, `3 个入口`, and the candidate-handoff summary path.
-- `npm run lint && npm test && npm run build`
+- `npm test -- lib/recording-assets.test.ts components/studio-mode.test.tsx` (14 tests passed)
+- Playwright browser check on `http://localhost:3000/studio`: `候选跳转已验证`, `3 个入口`, and the candidate-handoff summary path were visible.
+- `npm run lint && npm test && npm run build` (44 files, 910 tests, build passed)
 
 ## Recording Angle
 
