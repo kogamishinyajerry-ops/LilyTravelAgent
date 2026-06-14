@@ -197,14 +197,35 @@ function buildLensComparisonHtml(dashboard: LensComparisonDashboard) {
       }
       .candidate-list a {
         display: grid;
-        align-content: center;
-        gap: 6px;
-        min-height: 104px;
+        grid-template-columns: 72px minmax(0, 1fr);
+        align-items: center;
+        gap: 10px;
+        min-height: 116px;
         padding: 12px;
         color: var(--ink);
         text-decoration: none;
       }
-      .candidate-list span {
+      .candidate-thumb {
+        overflow: hidden;
+        width: 72px;
+        aspect-ratio: 1.2;
+        border: 1px solid rgba(255,255,255,0.12);
+        border-radius: 7px;
+        background: #111510;
+      }
+      .candidate-thumb img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        filter: saturate(1.08) contrast(1.05);
+      }
+      .candidate-copy {
+        display: grid;
+        gap: 5px;
+        min-width: 0;
+      }
+      .candidate-meta {
         color: var(--green);
         font-size: 0.7rem;
         font-weight: 1000;
@@ -460,6 +481,7 @@ function buildLensComparisonHtml(dashboard: LensComparisonDashboard) {
         .shots { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       }
       @media (max-width: 640px) {
+        .candidate-list { grid-template-columns: 1fr; }
         .shots { grid-template-columns: 1fr; }
       }
     </style>
@@ -515,9 +537,14 @@ function renderCandidateStrip(candidates: LensRecordingCandidate[]) {
       ${candidates
         .map(
           (candidate) => `<a class="candidate-link" href="${escapeHtml(candidate.dreamUrl)}">
-            <span>#${candidate.rank} · ${escapeHtml(candidate.lensLabel)} · D${candidate.day}</span>
-            <strong>${escapeHtml(candidate.dayLabel)}</strong>
-            <small>${escapeHtml(`${candidate.diff.detail} · ${candidate.cue || "visual beat"}`)}</small>
+            <div class="candidate-thumb">
+              <img src="${escapeHtml(candidate.sceneScreenshotUrl)}" alt="${escapeHtml(`${candidate.lensLabel} D${candidate.day} candidate 3D scene crop`)}" loading="lazy" />
+            </div>
+            <div class="candidate-copy">
+              <span class="candidate-meta">#${candidate.rank} · ${escapeHtml(candidate.lensLabel)} · D${candidate.day}</span>
+              <strong>${escapeHtml(candidate.dayLabel)}</strong>
+              <small>${escapeHtml(`${candidate.diff.detail} · ${candidate.cue || "visual beat"}`)}</small>
+            </div>
           </a>`,
         )
         .join("")}

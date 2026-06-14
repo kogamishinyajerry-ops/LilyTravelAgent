@@ -37,7 +37,7 @@ Each lens run writes a folder under `recordings/visual-checks/` with:
 
 After `npm run index:recording-assets`, the top-level recording index shows lens-aware titles such as `Dream low-skyline lens visual pack`, and `/studio` recent asset cards show a lens chip.
 
-`/studio` also links to `/api/recording-assets/lens-comparison`, a local Director Lens comparison dashboard. It reads the newest Dream QA pack for each lens, groups shared `runStamp-lens-*` folders into complete five-lens batches, shows current-vs-previous D1-D4 pure 3D crops, labels each pair as `Changed`, `Subtle`, or `Missing` from existing canvas stats, ranks the top changed shots in a `Best Recording Candidates` strip, shows an `Open first candidate` primary action plus 1-4 queue chips, opens `/dream` with candidate queue query params, surfaces the Scene Inspector tuning cue plus a compact review checklist, and links back to `/dream?lens=...` for same-lens recording.
+`/studio` also links to `/api/recording-assets/lens-comparison`, a local Director Lens comparison dashboard. It reads the newest Dream QA pack for each lens, groups shared `runStamp-lens-*` folders into complete five-lens batches, shows current-vs-previous D1-D4 pure 3D crops, labels each pair as `Changed`, `Subtle`, or `Missing` from existing canvas stats, ranks the top changed shots in a `Best Recording Candidates` strip, shows an `Open first candidate` primary action plus 1-4 queue chips, gives each ranked candidate a compact current-scene thumbnail, opens `/dream` with candidate queue query params, surfaces the Scene Inspector tuning cue plus a compact review checklist, and links back to `/dream?lens=...` for same-lens recording.
 
 ## Review Loop
 
@@ -57,6 +57,7 @@ After `npm run index:recording-assets`, the top-level recording index shows lens
 - Does the `Best Recording Candidates` strip surface the shot you would actually record?
 - Does the strip make the first action obvious before jumping into `/dream`?
 - Do the 1-4 queue chips make the recording order visible at a glance?
+- Do the candidate thumbnails make the visual difference readable without scrolling down to the full crop grid?
 - Does the `/dream` handoff show the candidate cue in the first viewport?
 - Does the cue show current candidate count and the next candidate without needing storage?
 - Does the `Next` chip advance to the next ranked candidate when clicked?

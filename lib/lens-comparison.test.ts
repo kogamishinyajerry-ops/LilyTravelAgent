@@ -191,11 +191,13 @@ describe("lens comparison dashboard", () => {
       lensLabel: "Auto",
       dayLabel: "D1 label",
       demoRoadbook: "dali",
+      sceneScreenshotPath: "visual-checks/2026-06-13T02-00-00-000Z-lens-auto/dream-dali-d1-scene.png",
       diff: {
         state: "changed",
         checksumDelta: 5_000_000,
       },
     });
+    expect(dashboard.bestRecordingCandidates[0].sceneScreenshotUrl).toContain("dream-dali-d1-scene.png");
     expect(dashboard.bestRecordingCandidates[0].dreamUrl).toContain("/dream?demo=dali&lens=auto");
     expect(dashboard.bestRecordingCandidates[0].dreamUrl).toContain("candidate=1");
     expect(dashboard.bestRecordingCandidates[0].dreamUrl).toContain("candidateRank=1");

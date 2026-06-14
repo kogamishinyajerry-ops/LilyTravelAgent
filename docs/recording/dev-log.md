@@ -1367,3 +1367,14 @@ Files shown: docs/recording/goal-241-250-recap.md, `/api/recording-assets/lens-c
 Command/result: npm run lint && npm test && npm run build (44 files, 909 tests, build passed)
 Voiceover note: "候选看板入口做完后，继续完整质量门。现在我从看板开始录的时候，第一步和 1-4 队列都在首屏，不需要额外解释。"
 Usable for: goal closeout clip, dashboard entry proof, next thumbnail-candidate preview handoff, continued goal run round 247
+
+## Phase DO: v0.8.108 — Candidate Thumbnail Queue
+
+Date: 2026-06-14
+Clip title: Phase DO: v0.8.108 — Candidate Thumbnail Queue
+What changed: The Director Lens comparison dashboard now renders a compact current-scene thumbnail inside every ranked candidate card.
+Why this matters: The candidate strip becomes visually diagnostic. The creator can preview the scene beat before opening `/dream`, while the larger before/after grid stays below for detailed review.
+Files shown: app/api/recording-assets/lens-comparison/route.ts, lib/lens-comparison.test.ts, docs/recording/lens-visual-capture-workflow.md
+Command/result: npm test -- lib/lens-comparison.test.ts; npm run lint; Browser check should confirm 4 candidate thumbnails, 4 candidate links, 44 image URLs, and 0 broken images.
+Voiceover note: "现在候选不是纯文字了，每个 Top shot 都有小场景图。录屏时我可以先讲为什么这个画面值得点进去。"
+Usable for: thumbnail candidate queue clip, visual decision proof, continued goal run round 254
