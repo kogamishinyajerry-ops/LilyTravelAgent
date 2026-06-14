@@ -52,6 +52,7 @@ DREAM_LENSES=low-skyline,isometric-atlas npm run check:dream-lenses
 - `录屏证据清单` in script mode, covering Bridge QA, Candidate QA, Lens Compare, and Asset Index.
 - `播放证据线` in script mode, highlighting those four proof rows in recording order.
 - `Dream Proof` status in `/studio`, showing the latest Dream visual proof playback result.
+- `Dream Proof` evidence links in `/studio`: playback screenshot, summary, and clip notes.
 - `Bridge QA 证据状态` in script mode.
 - `候选点击 QA 状态` in the `/studio` asset panel after `npm run check:lens-candidate-handoff`.
 - `/dream` `Dream Visual Proof Cue Strip`, covering Terrain, Skyline, AI Asset, Route, and Proof over the cinematic scene.

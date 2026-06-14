@@ -1532,3 +1532,14 @@ Files shown: lib/recording-assets.ts, components/studio-mode.tsx, components/stu
 Command/result: npm test -- lib/recording-assets.test.ts components/studio-mode.test.tsx (17 tests passed); Chrome browser check confirmed `/studio` shows `视觉证据线已验证` and `Proof · 3/5 ready`; npm run lint && npm test && npm run build passed with 44 files, 915 tests, and a successful production build.
 Voiceover note: "Dream 的视觉 QA 证据现在回到 Studio 面板了。我不需要翻 summary，产品自己告诉我这条视觉证据线已经走到 Proof。"
 Usable for: Studio QA evidence clip, Dream proof status narration, continued goal run round 354
+
+## Phase ED: v0.8.123 — Studio Dream Proof Evidence Links
+
+Date: 2026-06-14
+Clip title: Phase ED: v0.8.123 — Studio Dream Proof Evidence Links
+What changed: The `/studio` Dream Proof status card now links directly to playback screenshot, summary, and notes. `/api/recording-assets/file` can serve safe `.json` and `.md` evidence files under `recordings/`.
+Why this matters: The creator can jump from status to proof asset in one click, without manually browsing local folders.
+Files shown: components/studio-mode.tsx, app/api/recording-assets/file/route.ts, lib/lens-comparison.ts
+Command/result: npm test -- components/studio-mode.test.tsx lib/lens-comparison.test.ts (17 tests passed); Chrome browser check confirmed all three evidence links returned 200; npm run lint && npm test && npm run build passed with 44 files, 915 tests, and a successful production build.
+Voiceover note: "这张卡不只是告诉我 Dream Proof 已验证，还能直接打开截图、summary 和 notes。状态到证据，一步跳过去。"
+Usable for: Studio evidence-link clip, local asset pipeline narration, continued goal run round 364
