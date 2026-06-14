@@ -10,6 +10,8 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 const recordingsRoot = path.join(/*turbopackIgnore: true*/ process.cwd(), "recordings");
+const proofStoryNarrationPreview = "Studio 现在把 Proof Story 脚本路径、证据时间线、四行预览和复制动作放在同一个录屏面板里。";
+const proofStoryCloseoutStatus = "Proof Story · 脚本路径: 就绪 · Studio QA: 已捕获 · 索引入库: 已入库";
 
 export async function GET() {
   const summary = await readRecordingAssetsSummary(recordingsRoot);
@@ -61,8 +63,12 @@ function buildRecordingIndexHtml(
                   </nav>
                 </div>` : ""}
               ${pack.studioProof?.scriptMaterial ? `
-                <div class="visual-proof script-material-proof">
-                  <span>Proof Story Script Material · ${escapeHtml(pack.studioProof.scriptMaterial.cue)}</span>
+                <div class="visual-proof script-material-proof production-assets-proof">
+                  <span>Proof Story Production Assets · Proof Story Script Material</span>
+                  <b>Narration preview · ${escapeHtml(proofStoryNarrationPreview)}</b>
+                  <b>Closeout status · ${escapeHtml(proofStoryCloseoutStatus)}</b>
+                  ${pack.studioProof.scriptMaterial.scriptPath ? `<code>Script path · ${escapeHtml(pack.studioProof.scriptMaterial.scriptPath)}</code>` : ""}
+                  ${pack.studioProof.scriptMaterial.cue ? `<code>Script-material cue · ${escapeHtml(pack.studioProof.scriptMaterial.cue)}</code>` : ""}
                   <nav>
                     ${pack.studioProof.scriptMaterial.screenshotPath ? `<a href="${escapeHtml(buildRecordingFileUrl(pack.studioProof.scriptMaterial.screenshotPath))}">script card screenshot</a>` : ""}
                     <a href="${escapeHtml(buildRecordingFileUrl(pack.studioProof.summaryPath))}">summary</a>
@@ -79,6 +85,7 @@ function buildRecordingIndexHtml(
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="/icon.svg" />
     <title>LilyTravelAgent Recording Assets</title>
     <style>
       * { box-sizing: border-box; }
@@ -107,6 +114,8 @@ function buildRecordingIndexHtml(
       code { display: block; overflow: auto; border-radius: 8px; padding: 7px 9px; color: #284f42; background: rgba(255, 255, 255, 0.68); }
       .visual-proof { display: grid; gap: 7px; border: 1px solid rgba(79, 143, 122, 0.2); border-radius: 8px; padding: 9px; background: rgba(79, 143, 122, 0.1); }
       .visual-proof span { color: #284f42; font-size: 0.82rem; font-weight: 950; }
+      .visual-proof b, .visual-proof code { color: #284f42; font-size: 0.76rem; font-weight: 900; }
+      .visual-proof code { white-space: normal; background: rgba(255, 255, 255, 0.5); }
       .visual-proof nav { display: flex; flex-wrap: wrap; gap: 6px; }
       .visual-proof a { border-radius: 999px; padding: 5px 8px; color: #fff; font-size: 0.74rem; font-weight: 900; text-decoration: none; background: #4f8f7a; }
       .studio-proof { border-color: rgba(83, 96, 173, 0.22); background: rgba(83, 96, 173, 0.1); }
@@ -114,6 +123,7 @@ function buildRecordingIndexHtml(
       .studio-proof a { background: #5360ad; }
       .script-material-proof { border-color: rgba(214, 107, 61, 0.22); background: rgba(214, 107, 61, 0.1); }
       .script-material-proof span { color: #7a3c24; }
+      .script-material-proof b, .script-material-proof code { color: #7a3c24; }
       .script-material-proof a { background: #d66b3d; }
       @media (max-width: 860px) { header, .grid { display: block; } article + article { margin-top: 12px; } }
     </style>

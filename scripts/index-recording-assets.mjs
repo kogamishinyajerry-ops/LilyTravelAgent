@@ -139,8 +139,12 @@ function buildHtmlIndex(packs) {
                   </nav>
                 </div>` : ""}
               ${pack.scriptMaterial ? `
-                <div class="visual-proof script-material-proof">
-                  <span>Proof Story Script Material · ${escapeHtml(pack.scriptMaterial.cue)}</span>
+                <div class="visual-proof script-material-proof production-assets-proof">
+                  <span>Proof Story Production Assets · Proof Story Script Material</span>
+                  <b>Narration preview · ${escapeHtml(proofStoryNarrationPreview)}</b>
+                  <b>Closeout status · ${escapeHtml(proofStoryCloseoutStatus)}</b>
+                  ${pack.scriptMaterial.scriptPath ? `<code>Script path · ${escapeHtml(pack.scriptMaterial.scriptPath)}</code>` : ""}
+                  ${pack.scriptMaterial.cue ? `<code>Script-material cue · ${escapeHtml(pack.scriptMaterial.cue)}</code>` : ""}
                   <nav>
                     ${pack.scriptMaterial.screenshotPath ? `<a href="${escapeHtml(pack.scriptMaterial.screenshotPath)}">script card screenshot</a>` : ""}
                     <a href="${escapeHtml(pack.summaryPath)}">summary</a>
@@ -227,6 +231,19 @@ function buildHtmlIndex(packs) {
         font-size: 0.82rem;
         font-weight: 950;
       }
+      .visual-proof b,
+      .visual-proof code {
+        color: #284f42;
+        font-size: 0.76rem;
+        font-weight: 900;
+      }
+      .visual-proof code {
+        display: block;
+        white-space: normal;
+        border-radius: 7px;
+        padding: 6px 8px;
+        background: rgba(255, 255, 255, 0.5);
+      }
       .visual-proof a {
         color: #fff;
         background: #4f8f7a;
@@ -246,6 +263,10 @@ function buildHtmlIndex(packs) {
         background: rgba(214, 107, 61, 0.1);
       }
       .script-material-proof span {
+        color: #7a3c24;
+      }
+      .script-material-proof b,
+      .script-material-proof code {
         color: #7a3c24;
       }
       .script-material-proof a {

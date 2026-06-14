@@ -1840,3 +1840,14 @@ Files shown: scripts/index-recording-assets.mjs, recordings/clip-index.md, READM
 Command/result: node --check scripts/index-recording-assets.mjs passed; npm run index:recording-assets indexed 76 packs and wrote `### Proof Story Production Assets` into `recordings/clip-index.md`.
 Voiceover note: "现在 clip-index 里不是只有截图证据，还会直接给剪辑用的 Proof Story 素材包：口播预览、收口状态、脚本路径和截图都在一起。"
 Usable for: clip-index editing workflow, Proof Story production asset narration, continued goal run round 634
+
+## Phase FF: v0.8.151 — Proof Story Production Assets In Browser Index
+
+Date: 2026-06-14
+Clip title: Phase FF: v0.8.151 — Proof Story Production Assets In Browser Index
+What changed: `recordings/index.html` and `/api/recording-assets/index` now mirror the `Proof Story Production Assets` grouping from `clip-index.md`. The compact HTML card keeps the `Proof Story Script Material` QA label, adds narration preview, closeout status, script path, and script-material cue, and preserves the script-card screenshot / summary / notes links.
+Why this matters: The browser index now tells the same creator-production story as the Markdown index, so the asset archive is usable both for screen recording and later editing.
+Files shown: scripts/index-recording-assets.mjs, app/api/recording-assets/index/route.ts, recordings/index.html, docs/recording/goal-641-650-recap.md
+Command/result: node --check scripts/index-recording-assets.mjs passed; npm run index:recording-assets indexed 76 packs; browser check confirmed `/api/recording-assets/index` shows the card with empty console errors; npm run check:recording-index passed and wrote a fresh index-check proof pack.
+Voiceover note: "现在浏览器里的素材总索引也不是只列证据，而是直接告诉我这条 Proof Story 的口播、状态和截图在哪里。"
+Usable for: browser archive walkthrough, production-assets card narration, continued goal run round 644
