@@ -33,7 +33,7 @@ import {
 } from "three";
 import type { Material, Object3D } from "three";
 import type { DreamMood, DreamRoadbookDesign, DreamTemplate } from "@/lib/dream-design-skill";
-import type { DirectorLensId } from "@/lib/director-lens";
+import { buildDirectorLensSceneTuning, type DirectorLensId, type DirectorLensSceneTuning } from "@/lib/director-lens";
 import type { PreviewAsset, Roadbook } from "@/lib/roadbook-types";
 import type { LandmarkPreset } from "@/lib/landmark-preset";
 import { getFallbackPreset, getFallbackPresetForTemplate } from "@/lib/landmark-preset-fallbacks";
@@ -173,6 +173,10 @@ export function DreamSkylineScene({
     () => buildCinematicCameraPose(cinematicScene?.focus, directorLens),
     [cinematicScene, directorLens],
   );
+  const lensTuning = useMemo(
+    () => buildDirectorLensSceneTuning(directorLens),
+    [directorLens],
+  );
   const atmosphereProfile = useMemo(
     () => buildCinematicAtmosphereProfile(cinematicScene?.focus),
     [cinematicScene],
@@ -220,7 +224,7 @@ export function DreamSkylineScene({
     disposables.push(renderer);
 
     const root = new Group();
-    root.rotation.x = -0.06;
+    root.rotation.x = -0.06 + lensTuning.rootPitchOffset;
     scene.add(root);
 
     scene.add(new AmbientLight(0xffffff, mood === "neon" ? 0.98 : 1.22));
@@ -255,14 +259,14 @@ export function DreamSkylineScene({
       root.add(createPreviewAssetBillboard(assetSource, disposables));
     }
 
-    const water = profile.hasWater ? createWater(palette, atmosphereProfile, disposables) : null;
+    const water = profile.hasWater ? createWater(palette, atmosphereProfile, lensTuning, disposables) : null;
     if (water) {
       root.add(water);
-      root.add(createWaterSpecularRibbons(palette, atmosphereProfile, disposables));
+      root.add(createWaterSpecularRibbons(palette, atmosphereProfile, lensTuning, disposables));
     }
 
-    root.add(createSkyline(profile, palette, template, disposables));
-    root.add(createRouteRibbon(palette, design.routeStops.length, disposables));
+    root.add(createSkyline(profile, palette, template, lensTuning, disposables));
+    root.add(createRouteRibbon(palette, design.routeStops.length, lensTuning, disposables));
     root.add(createLandmark(profile, palette, template, disposables, landmarkPreset));
     applyHighQualityShading(root);
     const motionTargets = collectCinematicMotionTargets(root);
@@ -312,7 +316,7 @@ export function DreamSkylineScene({
       });
       disposables.forEach((item) => item.dispose());
     };
-  }, [activeDay, assetSource, atmosphereProfile, cameraPose, cinematicScene, design.routeStops.length, directorLens, landmarkPreset, mood, motionProfile, palette, profile, template]);
+  }, [activeDay, assetSource, atmosphereProfile, cameraPose, cinematicScene, design.routeStops.length, directorLens, landmarkPreset, lensTuning, mood, motionProfile, palette, profile, template]);
 
   return (
     <div ref={wrapRef} className={`dream-skyline-scene dream-skyline-${template}${
@@ -1327,6 +1331,7 @@ function createTerrain(
 function createWater(
   palette: SkylinePalette,
   atmosphereProfile: CinematicAtmosphereProfile,
+  lensTuning: DirectorLensSceneTuning,
   disposables: Array<{ dispose: () => void }>,
 ) {
   const geometry = new PlaneGeometry(25, 8, 96, 24);
@@ -1350,7 +1355,8 @@ function createWater(
   const water = new Mesh(geometry, material) as AnimatedWaterMesh;
   water.name = "cinematic-water";
   water.rotation.x = -Math.PI / 2;
-  water.position.set(0, -0.13, 2.8);
+  water.position.set(0, -0.13, 2.8 + lensTuning.waterZOffset);
+  water.scale.z = lensTuning.waterDepthScale;
   water.receiveShadow = true;
   water.userData.baseWaveZ = baseWaveZ;
   disposables.push(geometry, material);
@@ -1360,6 +1366,7 @@ function createWater(
 function createWaterSpecularRibbons(
   palette: SkylinePalette,
   atmosphereProfile: CinematicAtmosphereProfile,
+  lensTuning: DirectorLensSceneTuning,
   disposables: Array<{ dispose: () => void }>,
 ) {
   const group = new Group();
@@ -1370,14 +1377,14 @@ function createWaterSpecularRibbons(
     const points = Array.from({ length: 26 }, (_, index) => {
       const t = index / 25;
       const x = -7.8 + t * 15.6;
-      const z = 2.2 + y * 0.22 + Math.sin(t * Math.PI * 2 + ribbonIndex) * 0.18;
+      const z = 2.2 + lensTuning.waterZOffset + y * 0.22 + Math.sin(t * Math.PI * 2 + ribbonIndex) * 0.18;
       return new Vector3(x, 0.035 + ribbonIndex * 0.006, z);
     });
     const geometry = new BufferGeometry().setFromPoints(points);
     const material = new LineBasicMaterial({
       color: new Color(palette.light),
       transparent: true,
-      opacity: (0.1 + ribbonIndex * 0.025) * atmosphereProfile.ribbonOpacityScale,
+      opacity: (0.1 + ribbonIndex * 0.025) * atmosphereProfile.ribbonOpacityScale * lensTuning.ribbonOpacityScale,
     });
     const line = new Line(geometry, material);
     line.name = "water-specular-ribbon";
@@ -1512,6 +1519,7 @@ function createSkyline(
   profile: SceneProfile,
   palette: SkylinePalette,
   template: DreamTemplate,
+  lensTuning: DirectorLensSceneTuning,
   disposables: Array<{ dispose: () => void }>,
 ) {
   const group = new Group();
@@ -1532,7 +1540,12 @@ function createSkyline(
   void profile;
   void palette;
 
-  return renderLandmarkPreset(skylinePreset, disposables);
+  const skyline = renderLandmarkPreset(skylinePreset, disposables);
+  skyline.name = `lens-aware-${skyline.name || skylineId}`;
+  skyline.scale.y *= lensTuning.skylineHeightScale;
+  skyline.scale.z *= lensTuning.skylineDepthScale;
+  skyline.position.y += lensTuning.skylineLift;
+  return skyline;
 }
 
 function createLandmark(
@@ -1554,20 +1567,21 @@ function createLandmark(
 function createRouteRibbon(
   palette: SkylinePalette,
   stopCount: number,
+  lensTuning: DirectorLensSceneTuning,
   disposables: Array<{ dispose: () => void }>,
 ) {
   const points = Array.from({ length: Math.max(stopCount, 2) }, (_, index) => {
     const count = Math.max(stopCount - 1, 1);
     const x = -6.5 + (index / count) * 13;
-    const z = 2.8 + Math.sin(index * 1.4) * 0.38;
-    return new Vector3(x, 0.06, z);
+    const z = 2.8 + lensTuning.routeZOffset + Math.sin(index * 1.4) * 0.38;
+    return new Vector3(x, 0.06 + lensTuning.routeYOffset, z);
   });
   const curve = new CatmullRomCurve3(points);
   const geometry = new BufferGeometry().setFromPoints(curve.getPoints(80));
   const material = new LineBasicMaterial({
     color: new Color(palette.light),
     transparent: true,
-    opacity: 0.72,
+    opacity: Math.min(0.92, 0.72 * lensTuning.routeOpacityScale),
   });
   disposables.push(geometry, material);
   return new Line(geometry, material);
