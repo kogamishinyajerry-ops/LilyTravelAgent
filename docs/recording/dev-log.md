@@ -1191,3 +1191,14 @@ Files shown: docs/recording/goal-161-170-recap.md, docs/recording/dev-log.md, co
 Command/result: npm run lint && npm test && npm run build (44 files, 903 tests, build passed)
 Voiceover note: "这一步不是只看画面好不好看，而是把整条 Vibe Coding 链路收口：地标细节、截图证据、复盘文档、lint、903 个测试和生产构建都通过。"
 Usable for: goal closeout clip, Dali landmark-detail proof, before/after dashboard handoff, continued goal run round 166
+
+## Phase CY: v0.8.92 — Director Lens Before/After Review Aid
+
+Date: 2026-06-14
+Clip title: Phase CY: v0.8.92 — Director Lens Before/After Review Aid
+What changed: Added complete-batch detection to the Director Lens comparison pipeline and upgraded the local dashboard to show Current vs Previous pure 3D scene crops for each D1-D4 lens shot.
+Why this matters: The creator can now prove a 3D tuning pass visually in one screen: batch metadata at the top, lens evidence on the left, and current/previous canvas crops on the right.
+Files shown: lib/lens-comparison.ts, app/api/recording-assets/lens-comparison/route.ts, docs/recording/lens-visual-capture-workflow.md
+Command/result: npm test -- lib/lens-comparison.test.ts; npm run lint; Browser/local request check confirmed 5 lens cards, 20 current frames, 20 previous frames, 40 image URLs, and 0 broken images.
+Voiceover note: "现在看板不只是看最新截图，而是把这一轮和上一轮完整五镜头批次放在一起。这样我讲 Vibe Coding 的时候，可以直接证明 3D 调参真的改变了 canvas 画面。"
+Usable for: before/after review clip, visual QA evidence, continued goal run round 174

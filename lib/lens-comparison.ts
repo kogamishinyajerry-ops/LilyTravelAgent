@@ -41,13 +41,28 @@ export type LensComparisonPack = {
   }>;
 };
 
+export type LensComparisonBatch = {
+  id: string;
+  createdAt: string;
+  packCount: number;
+  complete: boolean;
+  lensIds: DirectorLensId[];
+  missingLensIds: DirectorLensId[];
+  sceneCropCount: number;
+  packs: LensComparisonPack[];
+};
+
 export type LensComparisonDashboard = {
   recordingsRoot: string;
   createdAt: string;
   totalDreamPacks: number;
   comparedLensCount: number;
+  batchCount: number;
+  completeBatchCount: number;
   sceneCropCount: number;
   missingLensIds: DirectorLensId[];
+  currentBatch: LensComparisonBatch | null;
+  previousBatch: LensComparisonBatch | null;
   packs: LensComparisonPack[];
 };
 
@@ -116,16 +131,79 @@ export function buildLensComparisonDashboard(recordingsRoot: string, summaries: 
       return summary ? buildLensComparisonPack(recordingsRoot, summary, countsByLens.get(lens.id) || 1) : null;
     })
     .filter((pack): pack is LensComparisonPack => Boolean(pack));
+  const batches = buildLensComparisonBatches(recordingsRoot, summaries, countsByLens);
+  const completeBatches = batches.filter((batch) => batch.complete);
+  const currentBatch = completeBatches[0] || batches[0] || null;
+  const previousBatch =
+    completeBatches.find((batch) => batch.id !== currentBatch?.id) ||
+    batches.find((batch) => batch.id !== currentBatch?.id) ||
+    null;
 
   return {
     recordingsRoot,
     createdAt: new Date().toISOString(),
     totalDreamPacks: summaries.length,
     comparedLensCount: packs.length,
+    batchCount: batches.length,
+    completeBatchCount: completeBatches.length,
     sceneCropCount: packs.reduce((total, pack) => total + pack.days.filter((day) => day.hasSceneCrop).length, 0),
     missingLensIds: directorLenses.map((lens) => lens.id).filter((lensId) => !newestByLens.has(lensId)),
+    currentBatch,
+    previousBatch,
     packs,
   };
+}
+
+function buildLensComparisonBatches(
+  recordingsRoot: string,
+  summaries: DreamVisualSummary[],
+  countsByLens: Map<DirectorLensId, number>,
+): LensComparisonBatch[] {
+  const grouped = new Map<string, DreamVisualSummary[]>();
+
+  for (const summary of summaries) {
+    const batchId = readLensBatchId(summary);
+    if (!batchId) {
+      continue;
+    }
+
+    const current = grouped.get(batchId) || [];
+    current.push(summary);
+    grouped.set(batchId, current);
+  }
+
+  return [...grouped.entries()]
+    .map(([id, batchSummaries]) => {
+      const newestByLens = new Map<DirectorLensId, DreamVisualSummary>();
+      const sortedSummaries = [...batchSummaries].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+
+      for (const summary of sortedSummaries) {
+        const lensId = readLensId(summary.raw);
+        if (!newestByLens.has(lensId)) {
+          newestByLens.set(lensId, summary);
+        }
+      }
+
+      const packs = directorLenses
+        .map((lens) => {
+          const summary = newestByLens.get(lens.id);
+          return summary ? buildLensComparisonPack(recordingsRoot, summary, countsByLens.get(lens.id) || 1) : null;
+        })
+        .filter((pack): pack is LensComparisonPack => Boolean(pack));
+      const missingLensIds = directorLenses.map((lens) => lens.id).filter((lensId) => !newestByLens.has(lensId));
+
+      return {
+        id,
+        createdAt: sortedSummaries[0]?.createdAt || id,
+        packCount: packs.length,
+        complete: missingLensIds.length === 0,
+        lensIds: packs.map((pack) => pack.lensId),
+        missingLensIds,
+        sceneCropCount: packs.reduce((total, pack) => total + pack.days.filter((day) => day.hasSceneCrop).length, 0),
+        packs,
+      };
+    })
+    .sort((a, b) => b.createdAt.localeCompare(a.createdAt) || b.id.localeCompare(a.id));
 }
 
 function buildLensComparisonPack(recordingsRoot: string, summary: DreamVisualSummary, sourcePackCount: number): LensComparisonPack {
@@ -293,6 +371,12 @@ function readLensId(summary: Record<string, unknown>): DirectorLensId {
   const proof = readLensProof(summary);
   const byProof = directorLenses.find((lens) => lens.proofLabel === proof);
   return byProof?.id || "auto";
+}
+
+function readLensBatchId(summary: DreamVisualSummary) {
+  const lensId = readLensId(summary.raw);
+  const suffix = `-lens-${lensId}`;
+  return summary.id.endsWith(suffix) ? summary.id.slice(0, -suffix.length) : "";
 }
 
 function readLensProof(summary: Record<string, unknown>) {

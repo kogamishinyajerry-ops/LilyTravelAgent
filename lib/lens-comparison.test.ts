@@ -29,7 +29,12 @@ async function writeDreamPack(id: string, summary: Record<string, unknown>) {
   await writeFile(path.join(packDir, "summary.json"), `${JSON.stringify(summary)}\n`);
 }
 
-function makeSummary(lensId: string, createdAt: string, tuneCue = "skyline 1.00x / water 1.00x / route 1.00x") {
+function makeSummary(
+  lensId: string,
+  createdAt: string,
+  tuneCue = "skyline 1.00x / water 1.00x / route 1.00x",
+  pathStamp = `${createdAt}-lens-${lensId}`,
+) {
   return {
     createdAt,
     demoRoadbook: "dali",
@@ -44,10 +49,18 @@ function makeSummary(lensId: string, createdAt: string, tuneCue = "skyline 1.00x
       inspectorGrid: [{ label: "Tune", value: tuneCue }],
       proofStack: [{ label: "Composition", value: `D${day} composition` }],
       canvasStats: { lit: 2000 + day, varied: 50 + day, checksum: 100 + day },
-      screenshotPath: path.join(tempRoot, "visual-checks", `${createdAt}-lens-${lensId}`, `dream-dali-d${day}.png`),
-      sceneScreenshotPath: path.join(tempRoot, "visual-checks", `${createdAt}-lens-${lensId}`, `dream-dali-d${day}-scene.png`),
+      screenshotPath: path.join(tempRoot, "visual-checks", pathStamp, `dream-dali-d${day}.png`),
+      sceneScreenshotPath: path.join(tempRoot, "visual-checks", pathStamp, `dream-dali-d${day}-scene.png`),
     })),
   };
+}
+
+const allLensIds = ["auto", "wide-water", "low-skyline", "isometric-atlas", "close-detail"];
+
+async function writeLensBatch(batchId: string, createdAt: string) {
+  for (const lensId of allLensIds) {
+    await writeDreamPack(`${batchId}-lens-${lensId}`, makeSummary(lensId, createdAt, undefined, `${batchId}-lens-${lensId}`));
+  }
 }
 
 describe("lens comparison dashboard", () => {
@@ -111,6 +124,35 @@ describe("lens comparison dashboard", () => {
       { label: "3D crop", state: "needs-review", detail: "0/1 crops" },
       { label: "Motion", state: "needs-review", detail: "motion pending" },
     ]);
+  });
+
+  it("exposes the newest complete five-lens batch and the previous complete batch", async () => {
+    await writeLensBatch("2026-06-13T01-00-00-000Z", "2026-06-13T01:00:00.000Z");
+    await writeLensBatch("2026-06-13T02-00-00-000Z", "2026-06-13T02:00:00.000Z");
+    await writeDreamPack("2026-06-13T03-00-00-000Z-lens-low-skyline", makeSummary("low-skyline", "2026-06-13T03:00:00.000Z"));
+
+    const dashboard = await readLensComparisonDashboard(tempRoot);
+
+    expect(dashboard.batchCount).toBe(3);
+    expect(dashboard.completeBatchCount).toBe(2);
+    expect(dashboard.currentBatch).toMatchObject({
+      id: "2026-06-13T02-00-00-000Z",
+      complete: true,
+      packCount: 5,
+      sceneCropCount: 20,
+      missingLensIds: [],
+    });
+    expect(dashboard.previousBatch).toMatchObject({
+      id: "2026-06-13T01-00-00-000Z",
+      complete: true,
+      packCount: 5,
+      sceneCropCount: 20,
+      missingLensIds: [],
+    });
+    expect(dashboard.currentBatch?.packs.map((pack) => pack.lensId)).toEqual(allLensIds);
+    expect(dashboard.previousBatch?.packs[0].days[0].sceneScreenshotPath).toBe(
+      "visual-checks/2026-06-13T01-00-00-000Z-lens-auto/dream-dali-d1-scene.png",
+    );
   });
 
   it("resolves only image files inside the recordings root", () => {

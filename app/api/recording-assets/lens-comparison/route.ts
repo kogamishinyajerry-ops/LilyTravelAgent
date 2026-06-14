@@ -1,7 +1,13 @@
 import path from "node:path";
 import { NextResponse } from "next/server";
 import { directorLenses } from "@/lib/director-lens";
-import { readLensComparisonDashboard, type LensComparisonDashboard, type LensComparisonPack } from "@/lib/lens-comparison";
+import {
+  readLensComparisonDashboard,
+  type LensComparisonBatch,
+  type LensComparisonDashboard,
+  type LensComparisonDay,
+  type LensComparisonPack,
+} from "@/lib/lens-comparison";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -19,8 +25,10 @@ export async function GET() {
 }
 
 function buildLensComparisonHtml(dashboard: LensComparisonDashboard) {
+  const currentPacks = dashboard.currentBatch?.packs.length ? dashboard.currentBatch.packs : dashboard.packs;
+  const previousPacksByLens = new Map((dashboard.previousBatch?.packs || []).map((pack) => [pack.lensId, pack]));
   const lensCards = dashboard.packs.length
-    ? dashboard.packs.map(renderLensCard).join("")
+    ? currentPacks.map((pack) => renderLensCard(pack, previousPacksByLens.get(pack.lensId))).join("")
     : `<article class="empty">
         <p>No Dream lens QA packs yet.</p>
         <h2>Run <code>npm run check:dream-lenses</code></h2>
@@ -103,6 +111,39 @@ function buildLensComparisonHtml(dashboard: LensComparisonDashboard) {
       .missing { display: inline-block; margin-bottom: 12px; color: var(--amber); }
       .missing.ready { color: var(--green); }
       .stack { display: grid; gap: 12px; }
+      .batch-strip {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+      .batch-panel {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 13px 14px;
+        background: rgba(255,255,255,0.055);
+      }
+      .batch-panel span {
+        display: block;
+        color: var(--green);
+        font-size: 0.72rem;
+        font-weight: 1000;
+        text-transform: uppercase;
+      }
+      .batch-panel strong {
+        display: block;
+        margin-top: 5px;
+        color: var(--ink);
+        font-size: 1rem;
+        line-height: 1.1;
+      }
+      .batch-panel small {
+        display: block;
+        margin-top: 5px;
+        color: var(--muted);
+        font-size: 0.72rem;
+        line-height: 1.25;
+      }
       article {
         overflow: hidden;
         border: 1px solid var(--line);
@@ -130,6 +171,14 @@ function buildLensComparisonHtml(dashboard: LensComparisonDashboard) {
         color: var(--amber);
         font-size: 0.82rem;
         line-height: 1.35;
+      }
+      .before-after-note {
+        display: block;
+        margin-top: 8px;
+        color: var(--blue);
+        font-size: 0.72rem;
+        font-weight: 900;
+        line-height: 1.3;
       }
       .checklist {
         display: flex;
@@ -185,6 +234,51 @@ function buildLensComparisonHtml(dashboard: LensComparisonDashboard) {
         object-fit: cover;
         filter: saturate(1.04) contrast(1.04);
       }
+      .frame-pair {
+        display: grid;
+        grid-template-rows: repeat(2, minmax(124px, 1fr));
+        gap: 1px;
+        min-height: 260px;
+        background: rgba(255,255,255,0.08);
+      }
+      .frame {
+        position: relative;
+        min-height: 124px;
+        background: #111510;
+      }
+      .frame img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        min-height: 124px;
+        object-fit: cover;
+      }
+      .frame.empty {
+        display: grid;
+        place-items: center;
+        color: var(--muted);
+        font-size: 0.78rem;
+        font-weight: 900;
+      }
+      .frame-label {
+        position: absolute;
+        left: 8px;
+        top: 8px;
+        z-index: 1;
+        border: 1px solid rgba(255,255,255,0.13);
+        border-radius: 999px;
+        padding: 4px 7px;
+        color: #0f130f;
+        background: var(--green);
+        font-size: 0.62rem;
+        font-weight: 1000;
+        letter-spacing: 0;
+        text-transform: uppercase;
+      }
+      .frame.previous .frame-label {
+        color: var(--ink);
+        background: rgba(15,19,15,0.72);
+      }
       figcaption {
         position: absolute;
         inset: auto 8px 8px;
@@ -224,6 +318,7 @@ function buildLensComparisonHtml(dashboard: LensComparisonDashboard) {
       }
       @media (max-width: 980px) {
         header, .lens { grid-template-columns: 1fr; }
+        .batch-strip { grid-template-columns: 1fr; }
         .stats { justify-content: start; }
         .shots { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       }
@@ -242,18 +337,48 @@ function buildLensComparisonHtml(dashboard: LensComparisonDashboard) {
         <div class="stats">
           <span>${dashboard.totalDreamPacks} Dream packs</span>
           <span>${dashboard.comparedLensCount}/${directorLenses.length} lenses</span>
+          <span>${dashboard.completeBatchCount}/${dashboard.batchCount} complete batches</span>
           <span>${dashboard.sceneCropCount} scene crops</span>
         </div>
       </header>
       ${missing}
+      ${renderBatchStrip(dashboard.currentBatch, dashboard.previousBatch)}
       <section class="stack">${lensCards}</section>
     </main>
   </body>
 </html>`;
 }
 
-function renderLensCard(pack: LensComparisonPack) {
+function renderBatchStrip(currentBatch: LensComparisonBatch | null, previousBatch: LensComparisonBatch | null) {
+  if (!currentBatch && !previousBatch) {
+    return "";
+  }
+
+  return `<section class="batch-strip" aria-label="Before after batch summary">
+    ${renderBatchPanel("Current", currentBatch)}
+    ${renderBatchPanel("Previous", previousBatch)}
+  </section>`;
+}
+
+function renderBatchPanel(label: string, batch: LensComparisonBatch | null) {
+  if (!batch) {
+    return `<div class="batch-panel">
+      <span>${escapeHtml(label)}</span>
+      <strong>No complete batch yet</strong>
+      <small>Run <code>npm run check:dream-lenses</code> twice for before/after review.</small>
+    </div>`;
+  }
+
+  return `<div class="batch-panel">
+    <span>${escapeHtml(label)} Batch</span>
+    <strong>${escapeHtml(batch.id)}</strong>
+    <small>${escapeHtml(`${batch.packCount}/${directorLenses.length} lenses · ${batch.sceneCropCount} scene crops · ${batch.complete ? "complete" : `missing ${batch.missingLensIds.join(" / ")}`}`)}</small>
+  </div>`;
+}
+
+function renderLensCard(pack: LensComparisonPack, previousPack?: LensComparisonPack) {
   const dayMap = new Map(pack.days.map((day) => [day.day, day]));
+  const previousDayMap = new Map((previousPack?.days || []).map((day) => [day.day, day]));
   const shots = [1, 2, 3, 4]
     .map((day) => {
       const shot = dayMap.get(day);
@@ -268,15 +393,7 @@ function renderLensCard(pack: LensComparisonPack) {
           </figure>`;
       }
 
-      return `
-        <figure>
-          <img src="${escapeHtml(shot.sceneScreenshotUrl)}" alt="${escapeHtml(`${pack.lensProof} D${day} 3D scene crop`)}" loading="lazy" />
-          <figcaption>
-            <span>D${day}</span>
-            <strong>${escapeHtml(shot.label)}</strong>
-            <small>${escapeHtml(`${shot.hasSceneCrop ? "3D crop" : "page frame"} · ${shot.cue || shot.compositionProof || "visual beat"}`)}</small>
-          </figcaption>
-        </figure>`;
+      return renderShotFigure(pack, shot, day, previousDayMap.get(day));
     })
     .join("");
 
@@ -287,6 +404,11 @@ function renderLensCard(pack: LensComparisonPack) {
           <p>${escapeHtml(pack.demoRoadbook)} · ${escapeHtml(pack.createdAt)}</p>
           <h2>${escapeHtml(pack.lensLabel)}</h2>
           <strong>${escapeHtml(pack.tuningCue)}</strong>
+          ${
+            previousPack
+              ? `<span class="before-after-note">${escapeHtml(`Before/after: ${previousPack.id} -> ${pack.id}`)}</span>`
+              : `<span class="before-after-note">Current-only: run another complete batch for before/after.</span>`
+          }
         </div>
         <div class="checklist">
           ${pack.checklist.map((item) => `<span class="${escapeHtml(item.state)}">${escapeHtml(item.label)} · ${escapeHtml(item.detail)}</span>`).join("")}
@@ -300,6 +422,41 @@ function renderLensCard(pack: LensComparisonPack) {
       </div>
       <div class="shots">${shots}</div>
     </article>`;
+}
+
+function renderShotFigure(pack: LensComparisonPack, shot: LensComparisonDay, day: number, previousShot?: LensComparisonDay) {
+  const caption = `${shot.hasSceneCrop ? "3D crop" : "page frame"} · ${shot.cue || shot.compositionProof || "visual beat"}`;
+
+  if (!previousShot) {
+    return `
+      <figure>
+        <img src="${escapeHtml(shot.sceneScreenshotUrl)}" alt="${escapeHtml(`${pack.lensProof} D${day} current 3D scene crop`)}" loading="lazy" />
+        <figcaption>
+          <span>D${day}</span>
+          <strong>${escapeHtml(shot.label)}</strong>
+          <small>${escapeHtml(caption)}</small>
+        </figcaption>
+      </figure>`;
+  }
+
+  return `
+    <figure>
+      <div class="frame-pair">
+        <div class="frame current">
+          <span class="frame-label">Current</span>
+          <img src="${escapeHtml(shot.sceneScreenshotUrl)}" alt="${escapeHtml(`${pack.lensProof} D${day} current 3D scene crop`)}" loading="lazy" />
+        </div>
+        <div class="frame previous">
+          <span class="frame-label">Previous</span>
+          <img src="${escapeHtml(previousShot.sceneScreenshotUrl)}" alt="${escapeHtml(`${pack.lensProof} D${day} previous 3D scene crop`)}" loading="lazy" />
+        </div>
+      </div>
+      <figcaption>
+        <span>D${day}</span>
+        <strong>${escapeHtml(shot.label)}</strong>
+        <small>${escapeHtml(caption)}</small>
+      </figcaption>
+    </figure>`;
 }
 
 function escapeHtml(value: string | number) {
