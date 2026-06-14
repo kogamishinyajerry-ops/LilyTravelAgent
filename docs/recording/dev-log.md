@@ -1004,3 +1004,14 @@ Files shown: scripts/check-dream-visuals.mjs, /tmp low-skyline QA pack, docs/rec
 Command/result: DREAM_URL=http://127.0.0.1:3000/dream DREAM_LENS=low-skyline DREAM_VISUAL_OUT_DIR=<tmp> npm run check:dream-visuals && rg "low-skyline lens|skyline 1.34x / water 1.08x / route 1.18x" <tmp> (passed)
 Voiceover note: "我专门重启本地服务跑了一次真实浏览器 QA。现在 low-skyline 的变化不只在代码里，自动生成的素材包里也能看到。"
 Usable for: live QA evidence clip, low-skyline before/after prep, Vibe Coding verification narrative, continued goal run round 117
+
+## Phase CH: v0.8.75 — Remaining Lens Live Visual QA
+
+Date: 2026-06-14
+Clip title: Phase CH: v0.8.75 — Remaining Lens Live Visual QA
+What changed: Tuned `wide-water`, `isometric-atlas`, and `close-detail` scene parameters, then ran live browser QA with `DREAM_LENSES=wide-water,isometric-atlas,close-detail npm run check:dream-lenses`. The generated QA packs recorded the expected tuning cues: `skyline 0.90x / water 1.36x / route 0.82x`, `skyline 0.72x / water 0.82x / route 1.42x`, and `skyline 1.18x / water 0.72x / route 0.78x`.
+Why this matters: All five Director Lens modes now have measurable Scene Inspector tuning evidence and live QA coverage. This completes the first pass from "lens selector" to a batch-comparable visual direction system.
+Files shown: lib/director-lens.ts, scripts/check-dream-visuals.mjs, /tmp remaining-lenses QA pack, docs/recording/dev-log.md
+Command/result: DREAM_URL=http://127.0.0.1:3000/dream DREAM_LENSES=wide-water,isometric-atlas,close-detail DREAM_LENS_VISUAL_OUT_ROOT=<tmp> npm run check:dream-lenses && rg <three tuning cues> <tmp> (passed)
+Voiceover note: "我把剩下三个镜头也跑了一遍真实浏览器 QA。现在 Water、Atlas、Detail 都不是抽象标签，而是有各自的 Scene Inspector 数值和素材包。"
+Usable for: all-lens comparison clip, visual direction system proof, Vibe Coding batch QA narrative, continued goal run round 124
