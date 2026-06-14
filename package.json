@@ -11,6 +11,7 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "check:dream-visuals": "node scripts/check-dream-visuals.mjs",
+    "check:dream-lenses": "node scripts/check-dream-lenses.mjs",
     "check:studio-visuals": "node scripts/check-studio-visuals.mjs",
     "check:studio-dream-handoff": "node scripts/check-studio-dream-handoff.mjs",
     "check:recording-suite": "node scripts/check-recording-suite.mjs",
