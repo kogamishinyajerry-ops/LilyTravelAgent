@@ -1113,11 +1113,27 @@ function createDaliGateMarker(
   accentMaterial: Material,
   disposables: Array<{ dispose: () => void }>,
 ) {
+  const shadowMaterial = new MeshBasicMaterial({
+    color: new Color("#273038"),
+    transparent: true,
+    opacity: marker.isActive ? 0.44 : 0.28,
+    depthWrite: false,
+  });
+  disposables.push(shadowMaterial);
+
+  addMarkerBox(group, `${marker.id}-stone-plinth`, 0.92, 0.08, 0.28, 0, 0.08, 0.02, bodyMaterial, disposables);
   addMarkerBox(group, `${marker.id}-left-tower`, 0.18, 0.72, 0.22, -0.31, 0.36, 0, bodyMaterial, disposables);
   addMarkerBox(group, `${marker.id}-right-tower`, 0.18, 0.72, 0.22, 0.31, 0.36, 0, bodyMaterial, disposables);
+  addMarkerBox(group, `${marker.id}-left-inner-shadow`, 0.055, 0.46, 0.025, -0.18, 0.36, -0.13, shadowMaterial, disposables);
+  addMarkerBox(group, `${marker.id}-right-inner-shadow`, 0.055, 0.46, 0.025, 0.18, 0.36, -0.13, shadowMaterial, disposables);
+  addMarkerBox(group, `${marker.id}-gate-opening`, 0.28, 0.38, 0.026, 0, 0.34, -0.14, shadowMaterial, disposables);
   addMarkerBox(group, `${marker.id}-lintel`, 0.8, 0.16, 0.24, 0, 0.69, 0, bodyMaterial, disposables);
+  addMarkerBox(group, `${marker.id}-lower-eave`, 0.9, 0.045, 0.34, 0, 0.76, -0.01, roofMaterial, disposables, -0.02);
   addMarkerBox(group, `${marker.id}-roof-main`, 0.96, 0.08, 0.32, 0, 0.84, 0, roofMaterial, disposables, 0.04);
+  addMarkerBox(group, `${marker.id}-roof-ridge`, 0.72, 0.055, 0.2, 0, 0.9, -0.015, roofMaterial, disposables, 0.02);
   addMarkerBox(group, `${marker.id}-roof-tip`, 1.08, 0.04, 0.24, 0, 0.93, 0, roofMaterial, disposables, -0.04);
+  addMarkerBox(group, `${marker.id}-left-lantern`, 0.075, 0.1, 0.025, -0.38, 0.54, -0.13, accentMaterial, disposables);
+  addMarkerBox(group, `${marker.id}-right-lantern`, 0.075, 0.1, 0.025, 0.38, 0.54, -0.13, accentMaterial, disposables);
   addMarkerBox(group, `${marker.id}-gate-light`, 0.16, 0.24, 0.02, 0, 0.36, -0.12, accentMaterial, disposables);
 }
 
@@ -1159,10 +1175,24 @@ function createDaliCourtyardArchMarker(
   accentMaterial: Material,
   disposables: Array<{ dispose: () => void }>,
 ) {
+  const shadowMaterial = new MeshBasicMaterial({
+    color: new Color("#29323a"),
+    transparent: true,
+    opacity: marker.isActive ? 0.36 : 0.22,
+    depthWrite: false,
+  });
+  disposables.push(shadowMaterial);
+
+  addMarkerBox(group, `${marker.id}-courtyard-base`, 0.86, 0.055, 0.28, 0, 0.08, 0.03, bodyMaterial, disposables);
   addMarkerBox(group, `${marker.id}-left-wall`, 0.16, 0.54, 0.2, -0.26, 0.29, 0, bodyMaterial, disposables);
   addMarkerBox(group, `${marker.id}-right-wall`, 0.16, 0.54, 0.2, 0.26, 0.29, 0, bodyMaterial, disposables);
+  addMarkerBox(group, `${marker.id}-courtyard-opening-shadow`, 0.28, 0.32, 0.026, 0, 0.28, -0.13, shadowMaterial, disposables);
   addMarkerBox(group, `${marker.id}-arch-top`, 0.68, 0.14, 0.22, 0, 0.56, 0, bodyMaterial, disposables);
+  addMarkerBox(group, `${marker.id}-lower-roof-eave`, 0.76, 0.045, 0.34, 0, 0.64, -0.01, roofMaterial, disposables, 0.035);
   addMarkerBox(group, `${marker.id}-roof`, 0.86, 0.08, 0.32, 0, 0.72, 0, roofMaterial, disposables, -0.03);
+  addMarkerBox(group, `${marker.id}-roof-ridge`, 0.54, 0.045, 0.2, 0, 0.79, -0.01, roofMaterial, disposables, 0.018);
+  addMarkerBox(group, `${marker.id}-left-side-eave`, 0.34, 0.045, 0.18, -0.38, 0.52, 0.01, roofMaterial, disposables, -0.045);
+  addMarkerBox(group, `${marker.id}-right-side-eave`, 0.34, 0.045, 0.18, 0.38, 0.52, 0.01, roofMaterial, disposables, 0.045);
 
   const windowGeometry = new CircleGeometry(0.11, 24);
   const window = new Mesh(windowGeometry, accentMaterial);

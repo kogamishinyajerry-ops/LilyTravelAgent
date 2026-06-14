@@ -1158,3 +1158,14 @@ Files shown: terminal verification output, docs/recording/goal-151-160-recap.md,
 Command/result: npm run lint && npm test && npm run build (44 files, 903 tests, build passed)
 Voiceover note: "3D depth staging 做完以后，我还是跑完整质量门。现在可以继续做更具体的地标细节，而不是怕前一层不稳。"
 Usable for: goal closeout clip, quality gate proof, next landmark-detail handoff, continued goal run round 156
+
+## Phase CV: v0.8.89 — Dali Landmark Detail Pass
+
+Date: 2026-06-14
+Clip title: Phase CV: v0.8.89 — Dali Landmark Detail Pass
+What changed: Added more recognizable details to the Dali old-town gate and courtyard markers: stone plinths, darker arch openings, roof tiers, side eaves, light accents, and courtyard shadows.
+Why this matters: The pure 3D scene crops now have clearer destination symbols to judge, not only abstract low-poly blocks.
+Files shown: components/dream-skyline-scene.tsx, recordings/visual-checks/*-lens-low-skyline/dream-dali-d1-scene.png, recordings/visual-checks/*-lens-low-skyline/dream-dali-d3-scene.png
+Command/result: npm run lint && npm run build; DREAM_URL=http://127.0.0.1:3000/dream npm run check:dream-lenses; Browser check confirmed the latest five-lens batch, 20 scene crops, and 0 broken images.
+Voiceover note: "我开始给大理地标加辨识度：门洞暗部、屋檐层、院落阴影和小灯点。看板可以直接检查这些细节有没有进入 3D crop。"
+Usable for: Dali landmark-detail clip, 3D visual-quality narrative, continued goal run round 164
