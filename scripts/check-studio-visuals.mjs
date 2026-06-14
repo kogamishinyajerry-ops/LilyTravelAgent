@@ -149,9 +149,28 @@ async function captureProofStoryScriptMaterial(page) {
   await card.waitFor({ state: "visible", timeout: 30_000 });
 
   const text = ((await card.textContent()) || "").replace(/\s+/g, " ").trim();
-  const buttonText = await card.getByRole("button").innerText();
+  const buttonText = await card.getByRole("button", { name: "复制脚本路径" }).innerText();
+  const handoffPreview = await card.getByLabel("Proof Story Handoff 预览").innerText();
+  const handoffCopyButton = card.getByRole("button", { name: "复制 Proof Story Handoff" });
   assert(text.includes(proofStoryScriptPath), `Proof Story script card did not include ${proofStoryScriptPath}: ${text}`);
   assert(text.includes(proofStoryScriptCue), `Proof Story script card did not include cue text: ${text}`);
+  assert(handoffPreview.includes("Proof Story Handoff"), `Proof Story script card did not include handoff preview: ${handoffPreview}`);
+
+  await handoffCopyButton.click();
+  await page.waitForFunction(
+    () => {
+      const button = document.querySelector('[aria-label="复制 Proof Story Handoff"]');
+      return button?.textContent?.includes("已复制") || button?.textContent?.includes("手动");
+    },
+    null,
+    { timeout: 5_000 },
+  );
+  const handoffCopyButtonText = await handoffCopyButton.innerText();
+  const handoffCopyState = handoffCopyButtonText.includes("已复制") ? "Handoff 已复制" : `Handoff ${handoffCopyButtonText.trim() || "手动"}`;
+  assert(
+    handoffCopyState === "Handoff 已复制" || handoffCopyState.includes("手动"),
+    `Proof Story handoff copy did not reach copied or fallback state: ${handoffCopyButtonText}`,
+  );
 
   const screenshotPath = path.join(outDir, "studio-proof-story-script-material.png");
   await card.screenshot({ path: screenshotPath });
@@ -161,6 +180,8 @@ async function captureProofStoryScriptMaterial(page) {
     scriptPath: proofStoryScriptPath,
     cue: proofStoryScriptCue,
     buttonText,
+    handoffPreview,
+    handoffCopyState,
     text,
     screenshotPath,
   };
@@ -226,6 +247,7 @@ function buildHtmlReport(summary) {
             <div><dt>path</dt><dd>${escapeHtml(summary.scriptMaterial.scriptPath)}</dd></div>
             <div><dt>cue</dt><dd>${escapeHtml(summary.scriptMaterial.cue)}</dd></div>
             <div><dt>button</dt><dd>${escapeHtml(summary.scriptMaterial.buttonText)}</dd></div>
+            <div><dt>handoff</dt><dd>${escapeHtml(summary.scriptMaterial.handoffCopyState || "")}</dd></div>
           </dl>
         </div>
       </section>`
@@ -389,6 +411,8 @@ function buildClipNotes(summary) {
     `- Script path: ${summary.scriptMaterial.scriptPath}`,
     `- Cue: ${summary.scriptMaterial.cue}`,
     `- Button: ${summary.scriptMaterial.buttonText}`,
+    `- Proof Story Handoff: ${summary.scriptMaterial.handoffPreview}`,
+    `- Handoff copy state: ${summary.scriptMaterial.handoffCopyState}`,
     `- Voiceover prompt: Studio 现在把 Proof Story 脚本路径、证据时间线、四行预览和复制动作放在同一个录屏面板里。`,
     ``,
   ].join("\n");

@@ -1950,3 +1950,14 @@ Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, app/gl
 Command/result: npm test -- components/studio-mode.test.tsx passed with 23 tests; browser check against `http://localhost:3000/studio` confirmed the Handoff preview/copy action fit inside the Proof Story card with empty console errors.
 Voiceover note: "最后我把 Delivery、QA notes 和视频标题角度压成一条 Handoff。录完屏，这一行就可以直接进选题和剪辑备注。"
 Usable for: final handoff notes clip, Vibe Coding content-production narration, continued goal run round 734
+
+## Phase FP: v0.8.161 — Handoff Copy State In Studio QA Notes
+
+Date: 2026-06-14
+Clip title: Phase FP: v0.8.161 — Handoff Copy State In Studio QA Notes
+What changed: `npm run check:studio-visuals` now captures the Proof Story Handoff preview, clicks `复制 Proof Story Handoff`, verifies the copied/fallback state, and writes both the Handoff line and `Handoff 已复制` state into Studio QA `clip-notes.md`.
+Why this matters: The handoff copy action is now part of the generated proof pack, so the recording workflow can prove that the final video-planning note was actually copy-ready.
+Files shown: scripts/check-studio-visuals.mjs, recordings/studio-checks/2026-06-14T10-25-54-393Z/clip-notes.md, README.md, docs/recording/goal-741-750-recap.md
+Command/result: node --check scripts/check-studio-visuals.mjs passed; npm run check:studio-visuals passed and the newest Studio clip notes contain `Proof Story Handoff` plus `Handoff 已复制`.
+Voiceover note: "现在连最后点击复制 Handoff 这一下，也会进入 Studio QA notes。开发过程、产品状态、后期交付文案都能被同一套 proof pack 记录。"
+Usable for: copy-proof receipt clip, final content handoff workflow, continued goal run round 744
