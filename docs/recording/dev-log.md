@@ -993,3 +993,14 @@ Files shown: docs/recording/dev-log.md, terminal verification output, `/dream`
 Command/result: npm run lint && npm test && npm run build (43 files, 894 tests, build passed)
 Voiceover note: "low-skyline 的第一轮调参后，我又跑完整质量门。现在它不是一个感觉上的变化，而是有测试、有 Scene Inspector、有 QA 脚本记录。"
 Usable for: verification checkpoint clip, low-skyline tuning evidence, Vibe Coding quality gate narrative, continued goal run round 116
+
+## Phase CG: v0.8.74 — Low-Skyline Live Visual QA
+
+Date: 2026-06-14
+Clip title: Phase CG: v0.8.74 — Low-Skyline Live Visual QA
+What changed: Restarted the local Next.js dev server to ensure the current bundle was running, then executed `DREAM_LENS=low-skyline npm run check:dream-visuals` against `/dream`. The generated `summary.json`, `index.html`, and `clip-notes.md` all contained `low-skyline lens` plus the tuning cue `skyline 1.34x / water 1.08x / route 1.18x`.
+Why this matters: This is live browser evidence, not only unit-test evidence. The low-skyline tuning path can be captured by the existing visual QA pipeline and becomes reviewable recording material.
+Files shown: scripts/check-dream-visuals.mjs, /tmp low-skyline QA pack, docs/recording/dev-log.md
+Command/result: DREAM_URL=http://127.0.0.1:3000/dream DREAM_LENS=low-skyline DREAM_VISUAL_OUT_DIR=<tmp> npm run check:dream-visuals && rg "low-skyline lens|skyline 1.34x / water 1.08x / route 1.18x" <tmp> (passed)
+Voiceover note: "我专门重启本地服务跑了一次真实浏览器 QA。现在 low-skyline 的变化不只在代码里，自动生成的素材包里也能看到。"
+Usable for: live QA evidence clip, low-skyline before/after prep, Vibe Coding verification narrative, continued goal run round 117
