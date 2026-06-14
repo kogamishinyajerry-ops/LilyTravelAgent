@@ -1576,3 +1576,14 @@ Files shown: lib/recording-assets.ts, components/studio-mode.tsx, app/globals.cs
 Command/result: npm test -- lib/recording-assets.test.ts components/studio-mode.test.tsx passed with 18 tests; Chrome browser check confirmed `/studio` shows `素材总索引已验证` and three 200 evidence links; npm run lint && npm test && npm run build passed with 44 files, 916 tests, and a successful production build.
 Voiceover note: "现在 Studio 里多了一张 Index QA 卡：它证明素材总索引不是我手动看过，而是被命令验证过，三条证据链接也都能打开。"
 Usable for: Studio archive-QA status clip, proof-loop narration, continued goal run round 394
+
+## Phase EH: v0.8.127 — Recording Suite Includes Index QA
+
+Date: 2026-06-14
+Clip title: Phase EH: v0.8.127 — Recording Suite Includes Index QA
+What changed: `npm run check:recording-suite` now runs a final `Recording index proof QA` step after generating the asset index. `check:recording-index` supports `RECORDING_INDEX_SKIP_REBUILD=1` so the suite can reuse the index it just wrote.
+Why this matters: One command now prepares the recording assets and verifies the archive evidence chain that Studio displays.
+Files shown: scripts/check-recording-suite.mjs, scripts/check-recording-index.mjs, README.md, docs/recording/recording-asset-pipeline.md, recordings/index-checks/2026-06-14T08-07-48-074Z/summary.json
+Command/result: node --check scripts/check-recording-index.mjs && node --check scripts/check-recording-suite.mjs passed; RECORDING_INDEX_SKIP_REBUILD=1 npm run check:recording-index passed; npm run check:recording-suite passed; npm run lint && npm test && npm run build passed with 44 files, 916 tests, and a successful production build.
+Voiceover note: "现在 full suite 最后会自动跑 Index QA。也就是说一条命令不仅生成素材，还验证素材总索引的证据链。"
+Usable for: full-suite workflow clip, recording readiness narration, continued goal run round 404
