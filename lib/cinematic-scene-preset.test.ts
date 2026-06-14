@@ -288,6 +288,24 @@ describe("buildCinematicSceneInspector", () => {
     expect(inspector.cameraFov).toBe(39);
     expect(inspector.parallaxWeight).toBeGreaterThan(1);
   });
+
+  it("summarizes wide-water tuning for recording", () => {
+    const inspector = buildCinematicSceneInspector(sampleRoadbook, 2, "wide-water");
+
+    expect(inspector.directorLens).toMatchObject({
+      id: "wide-water",
+      proofLabel: "wide-water lens",
+      sceneCue: "skyline 0.90x / water 1.36x / route 0.82x",
+    });
+  });
+
+  it("summarizes atlas and detail tuning as distinct cues", () => {
+    const atlas = buildCinematicSceneInspector(sampleRoadbook, 2, "isometric-atlas");
+    const detail = buildCinematicSceneInspector(sampleRoadbook, 2, "close-detail");
+
+    expect(atlas.directorLens.sceneCue).toBe("skyline 0.72x / water 0.82x / route 1.42x");
+    expect(detail.directorLens.sceneCue).toBe("skyline 1.18x / water 0.72x / route 0.78x");
+  });
 });
 
 describe("buildCinematicCompositionProfile", () => {
