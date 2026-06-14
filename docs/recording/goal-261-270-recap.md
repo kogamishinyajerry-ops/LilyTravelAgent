@@ -10,11 +10,11 @@ This run made the thumbnail candidate queue feel more like a finished recording 
 
 | Goal | Commit | Summary |
 | --- | --- | --- |
-| 261-265 | pending | Added stable-height candidate cards, hover/focus treatment, a `Why:` badge, focused data coverage, and recording docs. |
-| 266 | pending | Browser check should confirm 4 `Why:` badges, 4 thumbnails, 4 candidate links, unchanged first-viewport availability, and 0 broken images. |
-| 267 | pending | Final lint/test/build verification. |
-| 268 | pending | Push to GitHub after closeout commit. |
-| 269-270 | pending | Next-goal handoff. |
+| 261-265 | `e8f1ad5` | Added stable-height candidate cards, hover/focus treatment, a `Why:` badge, focused data coverage, and recording docs. |
+| 266 | `e8f1ad5` | Browser check confirmed 4 `Why:` badges, 4 thumbnails, 4 candidate links, unchanged first-viewport availability, and 0 broken images. |
+| 267 | closeout | Final lint/test/build verification: 44 files, 909 tests, build passed. |
+| 268 | closeout | Push to GitHub after final closeout commit. |
+| 269-270 | closeout | Next-goal handoff. |
 
 ## What Changed In The Creator Loop
 
@@ -23,12 +23,12 @@ This run made the thumbnail candidate queue feel more like a finished recording 
 - The card content is bounded inside the existing strip height so the first viewport does not grow.
 - The ranking and `/dream` handoff URLs remain unchanged.
 
-## Evidence To Capture
+## Evidence
 
-- `npm test -- lib/lens-comparison.test.ts`
-- `npm run lint`
-- Browser check: `/api/recording-assets/lens-comparison` shows 4 `Why:` badges, 4 candidate thumbnails, 4 candidate links, 44 image URLs, and 0 broken images.
-- `npm run lint && npm test && npm run build`
+- `npm test -- lib/lens-comparison.test.ts` (7 tests passed)
+- `npm run lint` (passed)
+- Browser check: `/api/recording-assets/lens-comparison` showed 4 `Why:` badges, 4 candidate thumbnails, 4 candidate links, 44 image URLs, and 0 broken images.
+- `npm run lint && npm test && npm run build` (44 files, 909 tests, build passed)
 
 ## Recording Angle
 
