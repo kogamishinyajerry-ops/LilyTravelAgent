@@ -40,7 +40,8 @@ DREAM_LENSES=low-skyline,isometric-atlas npm run check:dream-lenses
 - Candidate handoff QA: dashboard-to-`/dream` click proof for ranked recording candidates.
 - `recordings/index.html` and `recordings/clip-index.md`: the local archive entry points.
 - Dream visual-proof playback evidence in both local archive entry points when a Dream QA pack contains `summary.visualProof`.
-- `recordings/index-checks/*`: proof that the generated archive exposes Dream Proof and that screenshot, summary, and notes links return HTTP 200.
+- Studio proof playback evidence in both local archive entry points when a Studio QA pack contains `summary.proofPlayback`.
+- `recordings/index-checks/*`: proof that the generated archive exposes Dream Proof and Studio Proof and that all six screenshot, summary, and notes links return HTTP 200.
 - `recordings/suite-runs/*`: top-level proof for a full recording-suite run, listing every step, pass/fail status, duration, and output paths.
 - `/api/recording-assets/lens-comparison`: the local Director Lens comparison dashboard with D1-D4 thumbnails.
 
@@ -70,7 +71,7 @@ DREAM_LENSES=low-skyline,isometric-atlas npm run check:dream-lenses
 - `/dream` `Dream Visual Proof Cue Strip`, covering Terrain, Skyline, AI Asset, Route, and Proof over the cinematic scene.
 - `/dream` `播放视觉证据`, highlighting those five visual proof cues in recording order.
 - `npm run check:dream-visuals` captures the visual proof cue labels, final `Proof` playback state, and `dream-*-visual-proof-playback.png`.
-- `npm run check:recording-index` verifies `/api/recording-assets/index` exposes Dream Proof and writes an `index-checks` proof pack. `npm run check:recording-suite` now runs this step after generating the asset index.
+- `npm run check:recording-index` verifies `/api/recording-assets/index` exposes Dream Proof and Studio Proof, then writes an `index-checks` proof pack with two proof-card screenshots and six link checks. `npm run check:recording-suite` runs this step after generating the asset index.
 - `npm run check:recording-suite` writes a `suite-runs` manifest and clip notes after the full QA chain finishes.
 - In `/dream`, `Agent Visual Contract`, `Director Lens`, `Scene Inspector`, and `Proof Stack` show why the cinematic page is structured, not only decorative.
 - `打开总索引` leading to `/api/recording-assets/index`.

@@ -1653,3 +1653,14 @@ Files shown: lib/recording-assets.ts, scripts/index-recording-assets.mjs, app/ap
 Command/result: node --check scripts/index-recording-assets.mjs passed; npm test -- lib/recording-assets.test.ts passed; npm run index:recording-assets wrote Studio Proof entries; Chrome browser check confirmed three API evidence links returned 200; npm run lint && npm test && npm run build passed with 44 files, 918 tests, and a successful production build.
 Voiceover note: "素材总索引现在不只记录 Dream Proof，也记录 Studio Proof。产品画面和录屏台的证据都沉淀进 archive。"
 Usable for: archive proof comparison clip, creator asset pipeline narration, continued goal run round 464
+
+## Phase EO: v0.8.134 — Double-Proof Recording Index QA
+
+Date: 2026-06-14
+Clip title: Phase EO: v0.8.134 — Double-Proof Recording Index QA
+What changed: `npm run check:recording-index` now verifies both Dream Proof and Studio Proof blocks in `/api/recording-assets/index`, checks all six screenshot / summary / notes links, and writes Dream plus Studio proof-card screenshots into `recordings/index-checks/*`.
+Why this matters: The generated archive now has a repeatable QA receipt for both the cinematic product proof and the creator-workbench proof.
+Files shown: scripts/check-recording-index.mjs, recordings/index-checks/2026-06-14T08-36-09-433Z/summary.json, recordings/index-checks/2026-06-14T08-36-09-433Z/clip-notes.md
+Command/result: node --check scripts/check-recording-index.mjs passed; npm run check:recording-index passed with 6 evidence links; empty recordings root skipped cleanly; Dream-only root failed with a missing Studio Proof message; npm run check:recording-suite passed; npm run lint && npm test && npm run build passed with 44 files, 918 tests, and a successful production build.
+Voiceover note: "现在 Index QA 不是只检查 Dream Proof，而是同时检查 Dream 和 Studio。六条证据链接都能打开，archive 才算真的自证。"
+Usable for: double-proof QA clip, Agent asset pipeline narration, continued goal run round 474

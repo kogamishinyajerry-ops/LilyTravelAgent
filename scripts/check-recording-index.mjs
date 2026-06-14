@@ -9,6 +9,7 @@ const runStamp = new Date().toISOString().replace(/[:.]/g, "-");
 const outDir = process.env.RECORDING_INDEX_OUT_DIR || path.join("recordings", "index-checks", runStamp);
 const recordingsRoot = process.env.RECORDINGS_DIR || "recordings";
 const visualChecksRoot = path.join(recordingsRoot, "visual-checks");
+const studioChecksRoot = path.join(recordingsRoot, "studio-checks");
 const skipRebuild = process.env.RECORDING_INDEX_SKIP_REBUILD === "1";
 const npmCommand = process.platform === "win32" ? "npm.cmd" : "npm";
 const systemChromePath = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
@@ -25,12 +26,16 @@ function assert(condition, message) {
 }
 
 async function main() {
-  const localProof = await readLatestLocalDreamProof();
-  if (!localProof) {
-    console.log(`Recording index QA skipped: no local Dream visual-proof evidence found under ${visualChecksRoot}.`);
-    console.log("Run npm run check:dream-visuals first, then rerun npm run check:recording-index.");
+  const dreamProof = await readLatestLocalDreamProof();
+  const studioProof = await readLatestLocalStudioProof();
+  if (!dreamProof && !studioProof) {
+    console.log(`Recording index QA skipped: no local Dream or Studio proof evidence found under ${recordingsRoot}.`);
+    console.log("Run npm run check:recording-suite first, then rerun npm run check:recording-index.");
     return;
   }
+  assert(dreamProof, `Recording index QA expected Dream Proof evidence under ${visualChecksRoot}, but none was found.`);
+  assert(studioProof, `Recording index QA expected Studio Proof evidence under ${studioChecksRoot}, but none was found.`);
+  const proofs = [dreamProof, studioProof];
 
   await assertReachable(resolveUrl("/api/recording-assets/index"));
   if (skipRebuild) {
@@ -42,46 +47,49 @@ async function main() {
 
   const staticIndexPath = path.join(recordingsRoot, "index.html");
   const staticIndex = await readFile(staticIndexPath, "utf8");
-  assert(staticIndex.includes("Dream Proof"), `${staticIndexPath} does not include Dream Proof.`);
-  assert(
-    staticIndex.includes(`${localProof.finalCueLabel} · ${localProof.finalCueValue}`),
-    `${staticIndexPath} does not include the latest Dream Proof final cue.`,
-  );
-  assert(staticIndex.includes(localProof.screenshotPath), `${staticIndexPath} does not link the Dream Proof playback screenshot.`);
+  for (const proof of proofs) {
+    assertStaticProof(staticIndex, staticIndexPath, proof);
+  }
 
   const browser = await chromium.launch({ headless: true, executablePath });
-  const page = await browser.newPage({ viewport: { width: 1280, height: 720 }, deviceScaleFactor: 1 });
   const consoleMessages = [];
-
-  page.on("console", (message) => {
-    const text = message.text();
-    if (message.type() === "error" && !text.includes("Failed to load resource")) {
-      consoleMessages.push(`${message.type()}: ${text}`);
-    }
-  });
-
+  const proofChecks = [];
   const indexUrl = resolveUrl("/api/recording-assets/index");
-  await page.goto(indexUrl, { waitUntil: "networkidle" });
-  await page.waitForSelector(".visual-proof", { timeout: 30_000 });
 
-  const proofText = await page.locator(".visual-proof").first().innerText();
-  assert(proofText.includes("Dream Proof"), `API index proof block missing Dream Proof label: ${proofText}`);
-  assert(proofText.includes(localProof.finalCueLabel), `API index proof block missing final cue label: ${proofText}`);
-  assert(proofText.includes(localProof.finalCueValue), `API index proof block missing final cue value: ${proofText}`);
+  try {
+    const page = await browser.newPage({ viewport: { width: 1280, height: 720 }, deviceScaleFactor: 1 });
 
-  const links = await page.locator(".visual-proof").first().locator("a").evaluateAll((anchors) =>
-    anchors.map((anchor) => ({
-      label: anchor.textContent?.trim() || "",
-      href: anchor.getAttribute("href") || "",
-    })),
-  );
+    page.on("console", (message) => {
+      const text = message.text();
+      if (message.type() === "error" && !text.includes("Failed to load resource")) {
+        consoleMessages.push(`${message.type()}: ${text}`);
+      }
+    });
 
-  const linkChecks = await verifyProofLinks(links);
-  const screenshotPath = path.join(outDir, "recording-index-dream-proof.png");
-  await page.locator(".visual-proof").first().screenshot({ path: screenshotPath });
-  await browser.close();
+    await page.goto(indexUrl, { waitUntil: "networkidle" });
+    await page.waitForSelector(".visual-proof", { timeout: 30_000 });
+    await page.waitForSelector(".studio-proof", { timeout: 30_000 });
+
+    for (const proof of proofs) {
+      const { block, proofText, linkChecks } = await findMatchingProofBlock(page, proof);
+      const screenshotPath = path.join(outDir, `recording-index-${proof.proofId}-proof.png`);
+      await block.screenshot({ path: screenshotPath });
+      proofChecks.push({
+        proofId: proof.proofId,
+        label: proof.label,
+        proofText,
+        links: linkChecks,
+        screenshotPath,
+      });
+    }
+  } finally {
+    await browser.close();
+  }
 
   assert(consoleMessages.length === 0, `Unexpected browser console messages:\n${consoleMessages.join("\n")}`);
+  const dreamCheck = proofChecks.find((proof) => proof.proofId === "dream");
+  const studioCheck = proofChecks.find((proof) => proof.proofId === "studio");
+  const allLinks = proofChecks.flatMap((proof) => proof.links);
 
   const summary = {
     baseUrl,
@@ -89,10 +97,14 @@ async function main() {
     outDir,
     staticIndexPath,
     apiIndexUrl: indexUrl,
-    localProof,
-    proofText,
-    links: linkChecks,
-    screenshotPath,
+    localProof: dreamProof,
+    localStudioProof: studioProof,
+    proofText: dreamCheck?.proofText || "",
+    studioProofText: studioCheck?.proofText || "",
+    links: allLinks,
+    proofChecks,
+    screenshotPath: dreamCheck?.screenshotPath || "",
+    studioScreenshotPath: studioCheck?.screenshotPath || "",
     consoleMessages,
   };
 
@@ -133,6 +145,9 @@ async function readLatestLocalDreamProof() {
     const screenshotFile = path.basename(typeof visualProof.screenshotPath === "string" ? visualProof.screenshotPath : "");
     return {
       id: entry,
+      proofId: "dream",
+      label: "Dream Proof",
+      selector: ".visual-proof:not(.studio-proof)",
       createdAt: typeof summary.createdAt === "string" ? summary.createdAt : entry,
       finalCueLabel: typeof finalCue.label === "string" ? finalCue.label : "",
       finalCueValue: typeof finalCue.value === "string" ? finalCue.value : "",
@@ -145,26 +160,122 @@ async function readLatestLocalDreamProof() {
   return null;
 }
 
-async function verifyProofLinks(links) {
+async function readLatestLocalStudioProof() {
+  if (!existsSync(studioChecksRoot)) {
+    return null;
+  }
+
+  const entries = (await readdir(studioChecksRoot, { withFileTypes: true }))
+    .filter((entry) => entry.isDirectory())
+    .map((entry) => entry.name)
+    .sort()
+    .reverse();
+
+  for (const entry of entries) {
+    const packDir = path.join(studioChecksRoot, entry);
+    const summaryPath = path.join(packDir, "summary.json");
+    if (!existsSync(summaryPath)) {
+      continue;
+    }
+
+    const summary = JSON.parse(await readFile(summaryPath, "utf8"));
+    const proofPlayback = summary.proofPlayback && typeof summary.proofPlayback === "object" ? summary.proofPlayback : null;
+    const finalCue = proofPlayback?.finalActiveCue && typeof proofPlayback.finalActiveCue === "object" ? proofPlayback.finalActiveCue : null;
+    if (!proofPlayback || !finalCue) {
+      continue;
+    }
+
+    const screenshotFile = path.basename(typeof proofPlayback.screenshotPath === "string" ? proofPlayback.screenshotPath : "");
+    return {
+      id: entry,
+      proofId: "studio",
+      label: "Studio Proof",
+      selector: ".studio-proof",
+      createdAt: typeof summary.createdAt === "string" ? summary.createdAt : entry,
+      finalCueLabel: typeof finalCue.label === "string" ? finalCue.label : "",
+      finalCueValue: typeof finalCue.detail === "string" ? finalCue.detail : "",
+      screenshotPath: screenshotFile ? toRecordingLink(path.join("studio-checks", entry, screenshotFile)) : "",
+      summaryPath: toRecordingLink(path.join("studio-checks", entry, "summary.json")),
+      notesPath: existsSync(path.join(packDir, "clip-notes.md")) ? toRecordingLink(path.join("studio-checks", entry, "clip-notes.md")) : "",
+    };
+  }
+
+  return null;
+}
+
+function assertStaticProof(staticIndex, staticIndexPath, proof) {
+  assert(staticIndex.includes(proof.label), `${staticIndexPath} does not include ${proof.label}.`);
+  assert(
+    staticIndex.includes(`${proof.finalCueLabel} · ${proof.finalCueValue}`),
+    `${staticIndexPath} does not include the latest ${proof.label} final cue.`,
+  );
+  assert(proof.screenshotPath, `${proof.label} local proof is missing a playback screenshot path.`);
+  assert(proof.summaryPath, `${proof.label} local proof is missing a summary path.`);
+  assert(proof.notesPath, `${proof.label} local proof is missing a notes path.`);
+  assert(staticIndex.includes(proof.screenshotPath), `${staticIndexPath} does not link the ${proof.label} playback screenshot.`);
+  assert(staticIndex.includes(proof.summaryPath), `${staticIndexPath} does not link the ${proof.label} summary.`);
+  assert(staticIndex.includes(proof.notesPath), `${staticIndexPath} does not link the ${proof.label} notes.`);
+}
+
+function assertProofText(proof, proofText) {
+  assert(proofText.includes(proof.label), `API index proof block missing ${proof.label} label: ${proofText}`);
+  assert(proofText.includes(proof.finalCueLabel), `API index ${proof.label} block missing final cue label: ${proofText}`);
+  assert(proofText.includes(proof.finalCueValue), `API index ${proof.label} block missing final cue value: ${proofText}`);
+}
+
+async function findMatchingProofBlock(page, proof) {
+  const blocks = page.locator(proof.selector);
+  const blockCount = await blocks.count();
+  assert(blockCount > 0, `API index proof block missing for ${proof.label}.`);
+
+  const diagnostics = [];
+  for (let index = 0; index < blockCount; index += 1) {
+    const block = blocks.nth(index);
+    const proofText = await block.innerText();
+    const links = await block.locator("a").evaluateAll((anchors) =>
+      anchors.map((anchor) => ({
+        label: anchor.textContent?.trim() || "",
+        href: anchor.getAttribute("href") || "",
+      })),
+    );
+
+    try {
+      assertProofText(proof, proofText);
+      const linkChecks = await verifyProofLinks(proof, links);
+      return { block, proofText, linkChecks };
+    } catch (error) {
+      diagnostics.push(`block ${index + 1}: ${error instanceof Error ? error.message : String(error)}`);
+    }
+  }
+
+  throw new Error(`API index matching ${proof.label} block not found.\n${diagnostics.join("\n")}`);
+}
+
+async function verifyProofLinks(proof, links) {
   const required = [
-    { id: "screenshot", label: "playback screenshot", expectedType: "image/png" },
-    { id: "summary", label: "summary", expectedType: "application/json" },
-    { id: "notes", label: "notes", expectedType: "text/markdown" },
+    { id: "screenshot", label: "playback screenshot", expectedType: "image/png", expectedPath: proof.screenshotPath },
+    { id: "summary", label: "summary", expectedType: "application/json", expectedPath: proof.summaryPath },
+    { id: "notes", label: "notes", expectedType: "text/markdown", expectedPath: proof.notesPath },
   ];
 
   const results = [];
   for (const requiredLink of required) {
     const link = links.find((item) => item.label === requiredLink.label);
-    assert(link, `API index Dream Proof link missing: ${requiredLink.label}`);
-    assert(link.href.includes("/api/recording-assets/file?path="), `Dream Proof ${requiredLink.label} should use the safe file API: ${link.href}`);
+    assert(requiredLink.expectedPath, `${proof.label} local proof is missing expected ${requiredLink.label} path.`);
+    assert(link, `API index ${proof.label} link missing: ${requiredLink.label}`);
+    assert(link.href.includes("/api/recording-assets/file?path="), `${proof.label} ${requiredLink.label} should use the safe file API: ${link.href}`);
 
     const url = new URL(link.href, baseUrl).toString();
+    const safePath = new URL(url).searchParams.get("path") || "";
+    assert(safePath === requiredLink.expectedPath, `${proof.label} ${requiredLink.label} path mismatch: expected ${requiredLink.expectedPath}, got ${safePath}`);
     const response = await fetch(url);
     const contentType = response.headers.get("content-type") || "";
-    assert(response.ok, `Dream Proof ${requiredLink.label} returned HTTP ${response.status}: ${url}`);
-    assert(contentType.includes(requiredLink.expectedType), `Dream Proof ${requiredLink.label} content-type mismatch: ${contentType}`);
+    assert(response.ok, `${proof.label} ${requiredLink.label} returned HTTP ${response.status}: ${url}`);
+    assert(contentType.includes(requiredLink.expectedType), `${proof.label} ${requiredLink.label} content-type mismatch: ${contentType}`);
     results.push({
       id: requiredLink.id,
+      proofId: proof.proofId,
+      proofLabel: proof.label,
       label: requiredLink.label,
       href: link.href,
       status: response.status,
@@ -225,20 +336,26 @@ function buildClipNotes(summary) {
     `- Playback screenshot: ${summary.localProof.screenshotPath}`,
     `- Proof-card screenshot: ${path.basename(summary.screenshotPath)}`,
     "",
+    "## Studio Proof",
+    "",
+    `- Final cue: ${summary.localStudioProof.finalCueLabel} / ${summary.localStudioProof.finalCueValue}`,
+    `- Playback screenshot: ${summary.localStudioProof.screenshotPath}`,
+    `- Proof-card screenshot: ${path.basename(summary.studioScreenshotPath)}`,
+    "",
     "## Link Checks",
     "",
   ];
 
   for (const link of summary.links) {
-    lines.push(`- ${link.label}: HTTP ${link.status} / ${link.contentType}`);
+    lines.push(`- ${link.proofLabel} ${link.label}: HTTP ${link.status} / ${link.contentType}`);
   }
 
   lines.push(
     "",
     "## Voiceover",
     "",
-    "- The local archive now carries the same Dream Proof evidence that Studio shows.",
-    "- The index check verifies the proof cue plus the screenshot, summary, and notes links.",
+    "- The local archive now carries Dream Proof and Studio Proof evidence.",
+    "- The index check verifies both proof cues plus six screenshot, summary, and notes links.",
     "",
   );
 
