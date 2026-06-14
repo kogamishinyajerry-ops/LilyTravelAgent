@@ -29,10 +29,18 @@ export type RecordingAssetsSummary = {
   latestRecordingIndexCheck: RecordingIndexCheckSummary | null;
   latestRecordingSuiteRun: RecordingSuiteRunSummary | null;
   latestStudioProofPlayback: RecordingStudioProofPlaybackSummary | null;
+  proofStoryProductionAssets: RecordingProofStoryProductionAssetsSummary;
   indexAvailable: boolean;
   indexPath: string;
   clipIndexAvailable: boolean;
   clipIndexPath: string;
+};
+
+export type RecordingProofStoryProductionAssetsSummary = {
+  scriptMaterialReady: boolean;
+  htmlIndexReady: boolean;
+  clipIndexReady: boolean;
+  ready: boolean;
 };
 
 export type RecordingCandidateHandoffSummary = {
@@ -137,6 +145,7 @@ export async function readRecordingAssetsSummary(recordingsRoot = process.env.RE
   const latestPack = packs[0] || null;
   const indexPath = path.join(recordingsRoot, "index.html");
   const clipIndexPath = path.join(recordingsRoot, "clip-index.md");
+  const proofStoryProductionAssets = await readProofStoryProductionAssets(indexPath, clipIndexPath, latestStudioProofPlayback);
 
   return {
     recordingsRoot,
@@ -149,11 +158,37 @@ export async function readRecordingAssetsSummary(recordingsRoot = process.env.RE
     latestRecordingIndexCheck,
     latestRecordingSuiteRun,
     latestStudioProofPlayback,
+    proofStoryProductionAssets,
     indexAvailable: existsSync(indexPath),
     indexPath,
     clipIndexAvailable: existsSync(clipIndexPath),
     clipIndexPath,
   };
+}
+
+async function readProofStoryProductionAssets(
+  indexPath: string,
+  clipIndexPath: string,
+  latestStudioProofPlayback: RecordingStudioProofPlaybackSummary | null,
+): Promise<RecordingProofStoryProductionAssetsSummary> {
+  const scriptMaterialReady = Boolean(latestStudioProofPlayback?.scriptMaterial);
+  const htmlIndexReady = await fileIncludes(indexPath, "Proof Story Production Assets");
+  const clipIndexReady = await fileIncludes(clipIndexPath, "Proof Story Production Assets");
+
+  return {
+    scriptMaterialReady,
+    htmlIndexReady,
+    clipIndexReady,
+    ready: scriptMaterialReady && htmlIndexReady && clipIndexReady,
+  };
+}
+
+async function fileIncludes(filePath: string, text: string) {
+  if (!existsSync(filePath)) {
+    return false;
+  }
+
+  return (await readFile(filePath, "utf8")).includes(text);
 }
 
 function countPacksByType(packs: RecordingAssetPack[]): Record<RecordingAssetType, number> {

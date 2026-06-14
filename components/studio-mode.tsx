@@ -51,8 +51,16 @@ type RecordingAssetsState =
       latestRecordingIndexCheck: RecordingIndexCheckSummary | null;
       latestRecordingSuiteRun: RecordingSuiteRunSummary | null;
       latestStudioProofPlayback: RecordingStudioProofPlaybackSummary | null;
+      proofStoryProductionAssets: RecordingProofStoryProductionAssetsSummary;
     }
   | { status: "error"; message: string };
+
+type RecordingProofStoryProductionAssetsSummary = {
+  scriptMaterialReady: boolean;
+  htmlIndexReady: boolean;
+  clipIndexReady: boolean;
+  ready: boolean;
+};
 
 type RecordingCandidateHandoffSummary = {
   id: string;
@@ -168,7 +176,15 @@ type RecordingAssetsApiResponse = {
   latestRecordingIndexCheck?: RecordingIndexCheckSummary | null;
   latestRecordingSuiteRun?: RecordingSuiteRunSummary | null;
   latestStudioProofPlayback?: RecordingStudioProofPlaybackSummary | null;
+  proofStoryProductionAssets?: RecordingProofStoryProductionAssetsSummary;
   message?: string;
+};
+
+const emptyProofStoryProductionAssets: RecordingProofStoryProductionAssetsSummary = {
+  scriptMaterialReady: false,
+  htmlIndexReady: false,
+  clipIndexReady: false,
+  ready: false,
 };
 
 const studioCoastalBrief: TravelBrief = {
@@ -469,6 +485,20 @@ function buildProofStoryLines(timeline: ReturnType<typeof getRecordingEvidenceTi
   return timeline.map((item, index) => `${String(index + 1).padStart(2, "0")}. ${item.label}: ${item.state} · ${item.detail}`);
 }
 
+function getProofStoryProductionAssetsLine(summary: RecordingProofStoryProductionAssetsSummary) {
+  if (!summary.scriptMaterialReady) {
+    return "Production Assets · 等待脚本素材";
+  }
+
+  if (summary.ready) {
+    return "Production Assets · HTML + Clip 已入库";
+  }
+
+  const htmlState = summary.htmlIndexReady ? "HTML 已入库" : "HTML 待入库";
+  const clipState = summary.clipIndexReady ? "Clip 已入库" : "Clip 待入库";
+  return `Production Assets · ${htmlState} · ${clipState}`;
+}
+
 function getRecordingProofChecklist(recordingAssets: RecordingAssetsState) {
   if (recordingAssets.status !== "ready") {
     return [
@@ -589,6 +619,12 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
     () => `Proof Story · ${proofStoryCloseoutItems.map((item) => `${item.label}: ${item.status}`).join(" · ")}`,
     [proofStoryCloseoutItems],
   );
+  const proofStoryProductionAssets =
+    recordingAssets.status === "ready" ? recordingAssets.proofStoryProductionAssets : emptyProofStoryProductionAssets;
+  const proofStoryProductionAssetsLine = useMemo(
+    () => getProofStoryProductionAssetsLine(proofStoryProductionAssets),
+    [proofStoryProductionAssets],
+  );
 
   const loadRecordingAssets = useCallback(
     async ({ markRefreshing = true, isActive = () => true }: { markRefreshing?: boolean; isActive?: () => boolean } = {}) => {
@@ -617,6 +653,7 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
           latestRecordingIndexCheck: data.latestRecordingIndexCheck || null,
           latestRecordingSuiteRun: data.latestRecordingSuiteRun || null,
           latestStudioProofPlayback: data.latestStudioProofPlayback || null,
+          proofStoryProductionAssets: data.proofStoryProductionAssets || emptyProofStoryProductionAssets,
         });
         setRecordingAssetsReadAt(new Date().toISOString());
       } catch (caught) {
@@ -1106,6 +1143,12 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
                           ) : (
                             <span className="studio-proof-script-status missing">Index QA 待验证脚本素材 · {recordingIndexCommand}</span>
                           )}
+                          <span
+                            className={`studio-proof-script-status studio-proof-production-status ${proofStoryProductionAssets.ready ? "ready" : "missing"}`}
+                            aria-label="Proof Story Production Assets 状态"
+                          >
+                            {proofStoryProductionAssetsLine}
+                          </span>
                           <div className="studio-proof-closeout" aria-label="Proof Story 收口清单">
                             {proofStoryCloseoutItems.map((item) => (
                               <span className={item.ready ? "ready" : "missing"} key={item.label}>

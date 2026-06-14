@@ -16,9 +16,23 @@ function recordingAssetsResponse(
   packCount: number,
   title = "Studio 16:9 demo pack",
   indexAvailable = true,
-  options: { indexLinkCount?: number } = {},
+  options: {
+    indexLinkCount?: number;
+    productionAssets?: {
+      scriptMaterialReady?: boolean;
+      htmlIndexReady?: boolean;
+      clipIndexReady?: boolean;
+      ready?: boolean;
+    };
+  } = {},
 ) {
   const indexLinkCount = options.indexLinkCount ?? 6;
+  const defaultProductionAssets = {
+    scriptMaterialReady: Boolean(packCount),
+    htmlIndexReady: Boolean(packCount && indexAvailable),
+    clipIndexReady: Boolean(packCount && indexAvailable),
+    ready: Boolean(packCount && indexAvailable),
+  };
   return {
     ok: true,
     packCount,
@@ -129,6 +143,10 @@ function recordingAssetsResponse(
           },
         }
       : null,
+    proofStoryProductionAssets: {
+      ...defaultProductionAssets,
+      ...options.productionAssets,
+    },
     recentPacks: packCount
       ? [
           {
@@ -224,6 +242,7 @@ describe("StudioMode demo roadbooks", () => {
     expect(scriptCard.textContent).toContain("证据时间线 → 四行讲解稿预览 → 复制讲解稿");
     expect(scriptCard.textContent).toContain("QA 已捕获 · 复制脚本路径");
     expect(scriptCard.textContent).toContain("Index QA 已验证脚本素材 · 3/3");
+    expect(screen.getByLabelText("Proof Story Production Assets 状态").textContent).toBe("Production Assets · HTML + Clip 已入库");
     expect(within(scriptCard).getByRole("link", { name: "QA 已捕获 · 复制脚本路径" }).getAttribute("href")).toBe(
       "/api/recording-assets/file?path=studio-checks%2Fstudio-proof-latest%2Fstudio-proof-story-script-material.png",
     );
@@ -335,6 +354,31 @@ describe("StudioMode demo roadbooks", () => {
     expect(screen.queryByLabelText("系列章节提示")).toBeNull();
     expect(screen.queryByLabelText("录屏证据清单")).toBeNull();
     expect(screen.queryByText("讲解轨道已打开")).toBeNull();
+  });
+
+  it("shows which Production Assets index is still pending in the Proof Story card", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => ({
+        ok: true,
+        status: 200,
+        json: async () =>
+          recordingAssetsResponse(15, "Studio 16:9 demo pack", true, {
+            productionAssets: {
+              scriptMaterialReady: true,
+              htmlIndexReady: true,
+              clipIndexReady: false,
+              ready: false,
+            },
+          }),
+      })) as unknown as typeof fetch,
+    );
+
+    render(<StudioMode />);
+
+    expect((await screen.findByLabelText("Proof Story Production Assets 状态")).textContent).toBe(
+      "Production Assets · HTML 已入库 · Clip 待入库",
+    );
   });
 
   it("keeps legacy Dream-only wording for older 3-link recording index checks", async () => {
@@ -460,6 +504,7 @@ describe("StudioMode demo roadbooks", () => {
     expect(screen.getByLabelText("证据讲解稿预览").textContent).toContain("04. Suite Run: 待运行 · npm run check:recording-suite");
     expect(screen.getByLabelText("Proof Story 脚本素材").textContent).toContain("QA 待捕获 · npm run check:studio-visuals");
     expect(screen.getByLabelText("Proof Story 脚本素材").textContent).toContain("Index QA 待验证脚本素材 · npm run check:recording-index");
+    expect(screen.getByLabelText("Proof Story Production Assets 状态").textContent).toBe("Production Assets · 等待脚本素材");
     const closeout = screen.getByLabelText("Proof Story 收口清单");
     expect(closeout.textContent).toContain("脚本路径就绪");
     expect(closeout.textContent).toContain("Studio QA待捕获");

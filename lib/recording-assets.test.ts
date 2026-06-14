@@ -49,6 +49,12 @@ describe("recording assets", () => {
     expect(summary.latestRecordingIndexCheck).toBeNull();
     expect(summary.latestRecordingSuiteRun).toBeNull();
     expect(summary.latestStudioProofPlayback).toBeNull();
+    expect(summary.proofStoryProductionAssets).toEqual({
+      scriptMaterialReady: false,
+      htmlIndexReady: false,
+      clipIndexReady: false,
+      ready: false,
+    });
     expect(summary.indexAvailable).toBe(false);
     expect(summary.clipIndexAvailable).toBe(false);
   });
@@ -116,6 +122,76 @@ describe("recording assets", () => {
     expect(summary.latestPack?.notesPath).toBe("");
     expect(summary.indexAvailable).toBe(true);
     expect(summary.clipIndexAvailable).toBe(true);
+  });
+
+  it("reports Proof Story production assets ready when both local indexes contain the grouping", async () => {
+    await writeFile(path.join(tempRoot, "index.html"), "<html>Proof Story Production Assets</html>");
+    await writeFile(path.join(tempRoot, "clip-index.md"), "### Proof Story Production Assets\n");
+    await writeSummary("studio-checks/new-studio", {
+      createdAt: "2026-06-13T05:00:00.000Z",
+      captures: [],
+      proofPlayback: {
+        finalActiveCue: {
+          label: "Suite Run",
+          state: "已通过",
+          detail: "7 步 · 7 通过",
+        },
+        buttonTextAfterPlayback: "播放证据线",
+        screenshotPath: path.join(tempRoot, "studio-checks", "new-studio", "studio-suite-run-proof.png"),
+        initialCues: [{ label: "Suite Run" }],
+      },
+      scriptMaterial: {
+        visible: true,
+        scriptPath: "docs/recording/proof-story-demo-script.md",
+        cue: "证据时间线 → 四行讲解稿预览 → 复制讲解稿",
+        buttonText: "复制脚本路径",
+        screenshotPath: path.join(tempRoot, "studio-checks", "new-studio", "studio-proof-story-script-material.png"),
+      },
+    });
+
+    const summary = await readRecordingAssetsSummary(tempRoot);
+
+    expect(summary.proofStoryProductionAssets).toEqual({
+      scriptMaterialReady: true,
+      htmlIndexReady: true,
+      clipIndexReady: true,
+      ready: true,
+    });
+  });
+
+  it("keeps Proof Story production assets pending when one local index lacks the grouping", async () => {
+    await writeFile(path.join(tempRoot, "index.html"), "<html>Proof Story Production Assets</html>");
+    await writeFile(path.join(tempRoot, "clip-index.md"), "# Index\n");
+    await writeSummary("studio-checks/new-studio", {
+      createdAt: "2026-06-13T05:00:00.000Z",
+      captures: [],
+      proofPlayback: {
+        finalActiveCue: {
+          label: "Suite Run",
+          state: "已通过",
+          detail: "7 步 · 7 通过",
+        },
+        buttonTextAfterPlayback: "播放证据线",
+        screenshotPath: path.join(tempRoot, "studio-checks", "new-studio", "studio-suite-run-proof.png"),
+        initialCues: [{ label: "Suite Run" }],
+      },
+      scriptMaterial: {
+        visible: true,
+        scriptPath: "docs/recording/proof-story-demo-script.md",
+        cue: "证据时间线 → 四行讲解稿预览 → 复制讲解稿",
+        buttonText: "复制脚本路径",
+        screenshotPath: path.join(tempRoot, "studio-checks", "new-studio", "studio-proof-story-script-material.png"),
+      },
+    });
+
+    const summary = await readRecordingAssetsSummary(tempRoot);
+
+    expect(summary.proofStoryProductionAssets).toEqual({
+      scriptMaterialReady: true,
+      htmlIndexReady: true,
+      clipIndexReady: false,
+      ready: false,
+    });
   });
 
   it("reports the latest candidate handoff QA without counting it as a recording pack", async () => {

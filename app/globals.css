@@ -1911,6 +1911,12 @@ textarea {
   background: rgba(191, 128, 85, 0.1);
 }
 
+.studio-proof-production-status {
+  border-radius: 7px;
+  padding: 3px 6px;
+  font-size: 0.58rem;
+}
+
 .studio-proof-closeout {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));

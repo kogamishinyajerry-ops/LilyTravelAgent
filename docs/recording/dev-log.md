@@ -1851,3 +1851,14 @@ Files shown: scripts/index-recording-assets.mjs, app/api/recording-assets/index/
 Command/result: node --check scripts/index-recording-assets.mjs passed; npm run index:recording-assets indexed 76 packs; browser check confirmed `/api/recording-assets/index` shows the card with empty console errors; npm run check:recording-index passed and wrote a fresh index-check proof pack.
 Voiceover note: "现在浏览器里的素材总索引也不是只列证据，而是直接告诉我这条 Proof Story 的口播、状态和截图在哪里。"
 Usable for: browser archive walkthrough, production-assets card narration, continued goal run round 644
+
+## Phase FG: v0.8.152 — Studio Production Assets Readiness
+
+Date: 2026-06-14
+Clip title: Phase FG: v0.8.152 — Studio Production Assets Readiness
+What changed: `/api/recording-assets` now reports Proof Story production-assets readiness from the latest Studio script-material evidence plus `recordings/index.html` and `recordings/clip-index.md`. `/studio` shows a compact `Production Assets` chip inside the Proof Story `脚本素材` card.
+Why this matters: The creator can see from Studio whether the Proof Story production-assets grouping has made it into both the browser index and Markdown clip index.
+Files shown: lib/recording-assets.ts, lib/recording-assets.test.ts, components/studio-mode.tsx, components/studio-mode.test.tsx, app/globals.css, docs/recording/goal-651-660-recap.md
+Command/result: npm test -- lib/recording-assets.test.ts components/studio-mode.test.tsx passed with 31 tests; browser check confirmed the chip is visible, compact, and console errors were empty.
+Voiceover note: "现在 Studio 也能看到 Production Assets 是否已经回流到两个索引。也就是说，录屏素材从卡片、QA、索引到 Studio 状态形成了闭环。"
+Usable for: Studio asset-loop closeout, production readiness narration, continued goal run round 654
