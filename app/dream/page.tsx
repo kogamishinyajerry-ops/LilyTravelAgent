@@ -12,9 +12,14 @@ export default async function DreamPage({ searchParams }: DreamPageProps) {
   const initialCandidate = candidate
     ? {
         rank: readParam(params.candidateRank),
+        total: readParam(params.candidateTotal),
         day: readParam(params.candidateDay),
         label: readParam(params.candidateLabel),
         detail: readParam(params.candidateDetail),
+        nextRank: readParam(params.nextCandidateRank),
+        nextLens: readParam(params.nextCandidateLens),
+        nextDay: readParam(params.nextCandidateDay),
+        nextLabel: readParam(params.nextCandidateLabel),
         returnHref: "/api/recording-assets/lens-comparison",
       }
     : undefined;

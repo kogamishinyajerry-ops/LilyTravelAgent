@@ -199,7 +199,11 @@ describe("lens comparison dashboard", () => {
     expect(dashboard.bestRecordingCandidates[0].dreamUrl).toContain("/dream?demo=dali&lens=auto");
     expect(dashboard.bestRecordingCandidates[0].dreamUrl).toContain("candidate=1");
     expect(dashboard.bestRecordingCandidates[0].dreamUrl).toContain("candidateRank=1");
+    expect(dashboard.bestRecordingCandidates[0].dreamUrl).toContain("candidateTotal=2");
     expect(dashboard.bestRecordingCandidates[0].dreamUrl).toContain("candidateDay=1");
+    expect(dashboard.bestRecordingCandidates[0].dreamUrl).toContain("nextCandidateRank=2");
+    expect(dashboard.bestRecordingCandidates[0].dreamUrl).toContain("nextCandidateLens=Water");
+    expect(dashboard.bestRecordingCandidates[0].dreamUrl).toContain("nextCandidateDay=3");
   });
 
   it("resolves only image files inside the recordings root", () => {

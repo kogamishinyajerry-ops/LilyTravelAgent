@@ -90,9 +90,14 @@ const dreamBriefDefaults: TravelBrief = {
 type DemoRoadbookId = "dali" | "coast";
 type CandidateHandoff = {
   rank?: string;
+  total?: string;
   day?: string;
   label?: string;
   detail?: string;
+  nextRank?: string;
+  nextLens?: string;
+  nextDay?: string;
+  nextLabel?: string;
   returnHref?: string;
 };
 
@@ -254,9 +259,14 @@ export function DreamRoadbook({ initialDemo = "dali", initialLens = "auto", init
   const candidateHandoff = initialCandidate?.rank || initialCandidate?.day || initialCandidate?.label || initialCandidate?.detail
     ? {
         rank: initialCandidate.rank || "1",
+        total: initialCandidate.total || "",
         day: normalizeCandidateDay(initialCandidate.day),
         label: initialCandidate.label || "候选镜头",
         detail: initialCandidate.detail || "来自镜头对比看板",
+        nextRank: initialCandidate.nextRank || "",
+        nextLens: initialCandidate.nextLens || "",
+        nextDay: initialCandidate.nextDay || "",
+        nextLabel: initialCandidate.nextLabel || "",
         returnHref: initialCandidate.returnHref || "/api/recording-assets/lens-comparison",
       }
     : null;
@@ -1391,9 +1401,14 @@ export function DreamRoadbook({ initialDemo = "dali", initialLens = "auto", init
             <div className="dream-candidate-handoff" aria-label="Recording Candidate Handoff">
               <span>Recording Candidate</span>
               <strong>
-                #{candidateHandoff.rank} · D{candidateHandoff.day} · {candidateHandoff.label}
+                #{candidateHandoff.rank}{candidateHandoff.total ? `/${candidateHandoff.total}` : ""} · D{candidateHandoff.day} · {candidateHandoff.label}
               </strong>
               <p>{candidateHandoff.detail}</p>
+              {candidateHandoff.nextLabel ? (
+                <small className="dream-candidate-next">
+                  Next #{candidateHandoff.nextRank || "?"} · {candidateHandoff.nextLens || "Lens"} · D{candidateHandoff.nextDay || "?"} · {candidateHandoff.nextLabel}
+                </small>
+              ) : null}
               <Link href={candidateHandoff.returnHref}>
                 返回镜头对比看板
                 <Eye size={13} />

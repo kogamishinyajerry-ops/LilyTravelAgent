@@ -259,34 +259,49 @@ function buildBestRecordingCandidates(
       .filter((candidate) => candidate.diff.state === "changed");
   });
 
-  return candidates
+  const rankedCandidates = candidates
     .sort(
       (a, b) =>
         b.diff.score - a.diff.score ||
         directorLenses.findIndex((lens) => lens.id === a.lensId) - directorLenses.findIndex((lens) => lens.id === b.lensId) ||
         a.day - b.day,
     )
-    .slice(0, 4)
-    .map((candidate, index) => {
-      const rank = index + 1;
-      return {
-        ...candidate,
-        rank,
-        dreamUrl: buildCandidateDreamUrl(candidate, rank),
-      };
-    });
+    .slice(0, 4);
+
+  return rankedCandidates.map((candidate, index) => {
+    const rank = index + 1;
+    const nextCandidate = rankedCandidates[index + 1];
+    return {
+      ...candidate,
+      rank,
+      dreamUrl: buildCandidateDreamUrl(candidate, rank, rankedCandidates.length, nextCandidate),
+    };
+  });
 }
 
-function buildCandidateDreamUrl(candidate: Omit<LensRecordingCandidate, "rank">, rank: number) {
+function buildCandidateDreamUrl(
+  candidate: Omit<LensRecordingCandidate, "rank">,
+  rank: number,
+  total: number,
+  nextCandidate?: Omit<LensRecordingCandidate, "rank">,
+) {
   const params = new URLSearchParams({
     demo: candidate.demoRoadbook,
     lens: candidate.lensId,
     candidate: "1",
     candidateRank: String(rank),
+    candidateTotal: String(total),
     candidateDay: String(candidate.day),
     candidateLabel: candidate.dayLabel,
     candidateDetail: candidate.diff.detail,
   });
+
+  if (nextCandidate) {
+    params.set("nextCandidateRank", String(rank + 1));
+    params.set("nextCandidateLens", nextCandidate.lensLabel);
+    params.set("nextCandidateDay", String(nextCandidate.day));
+    params.set("nextCandidateLabel", nextCandidate.dayLabel);
+  }
 
   return `/dream?${params.toString()}`;
 }

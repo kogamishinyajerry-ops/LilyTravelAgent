@@ -233,9 +233,14 @@ describe("DreamRoadbook a11y polish", () => {
         initialLens="wide-water"
         initialCandidate={{
           rank: "3",
+          total: "4",
           day: "2",
           label: "洱海西线",
           detail: "checksum 1.5M / lit 0 / varied 3",
+          nextRank: "4",
+          nextLens: "Atlas",
+          nextDay: "3",
+          nextLabel: "喜洲村落",
           returnHref: "/api/recording-assets/lens-comparison",
         }}
       />,
@@ -243,7 +248,8 @@ describe("DreamRoadbook a11y polish", () => {
 
     const handoff = screen.getByLabelText("Recording Candidate Handoff");
 
-    expect(handoff.textContent).toContain("#3 · D2 · 洱海西线");
+    expect(handoff.textContent).toContain("#3/4 · D2 · 洱海西线");
+    expect(handoff.textContent).toContain("Next #4 · Atlas · D3 · 喜洲村落");
     expect(handoff.textContent).toContain("checksum 1.5M / lit 0 / varied 3");
     expect(within(handoff).getByRole("link", { name: /返回镜头对比看板/ }).getAttribute("href")).toBe(
       "/api/recording-assets/lens-comparison",

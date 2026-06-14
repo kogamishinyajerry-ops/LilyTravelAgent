@@ -2236,6 +2236,17 @@ textarea {
   line-height: 1.35;
 }
 
+.dream-candidate-next {
+  justify-self: start;
+  border: 1px solid rgba(255, 255, 255, 0.48);
+  border-radius: 999px;
+  padding: 4px 7px;
+  color: rgba(39, 49, 59, 0.72);
+  font-size: 0.66rem;
+  font-weight: 900;
+  background: rgba(255, 255, 255, 0.42);
+}
+
 .dream-candidate-handoff a {
   display: inline-flex;
   align-items: center;

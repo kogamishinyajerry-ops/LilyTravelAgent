@@ -1279,3 +1279,14 @@ Files shown: docs/recording/goal-201-210-recap.md, `/api/recording-assets/lens-c
 Command/result: npm run lint && npm test && npm run build (44 files, 907 tests, build passed)
 Voiceover note: "候选跳转做完后，我继续跑完整质量门。现在从看板选 Top shot 到 /dream 录制场景，再回到看板，是一条可验证的闭环。"
 Usable for: goal closeout clip, candidate handoff proof, next recording-queue handoff, continued goal run round 207
+
+## Phase DG: v0.8.100 — Lightweight Recording Queue Handoff
+
+Date: 2026-06-14
+Clip title: Phase DG: v0.8.100 — Lightweight Recording Queue Handoff
+What changed: Candidate links now include queue metadata: candidate total plus the next candidate rank, lens, day, and label. `/dream` shows the current candidate as `#rank/total` and a compact `Next` chip in the first-viewport cue.
+Why this matters: The creator can record a sequence of top changed shots without storage, login, or a queue database. The queue lives entirely in the explainable dashboard URL handoff.
+Files shown: lib/lens-comparison.ts, app/dream/page.tsx, components/dream-roadbook.tsx, docs/recording/lens-visual-capture-workflow.md
+Command/result: npm test -- lib/lens-comparison.test.ts components/dream-roadbook.test.tsx; npm run lint; Browser check confirmed `#1/4`, `Next #2`, visible cue, and return path.
+Voiceover note: "这一步我没有做复杂队列系统，只把 Top shots 的顺序写进 URL。进入 /dream 后左侧直接显示现在录第几个、下一个是谁。"
+Usable for: recording queue handoff clip, no-storage workflow proof, continued goal run round 214
