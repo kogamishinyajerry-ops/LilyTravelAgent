@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 
 // Mocks must be set up before importing the component under test.
 vi.mock("next/dynamic", () => ({
@@ -49,6 +49,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
+  vi.useRealTimers();
   cleanup();
   vi.restoreAllMocks();
   vi.unstubAllGlobals();
@@ -201,6 +202,41 @@ describe("DreamRoadbook a11y polish", () => {
     expect(strip.textContent).toContain("D1");
     expect(strip.textContent).toContain("Proof");
     expect(strip.textContent).toContain("3/5 ready");
+    expect(within(strip).getByRole("button", { name: "播放视觉证据" })).toBeTruthy();
+    expect(strip.querySelector('[aria-current="step"]')?.textContent).toContain("Terrain");
+  });
+
+  it("plays the visual proof cue strip in recording order", async () => {
+    render(<DreamRoadbook />);
+
+    const strip = screen.getByLabelText("Dream Visual Proof Cue Strip");
+    expect(strip.querySelector('[aria-current="step"]')?.textContent).toContain("Terrain");
+
+    vi.useFakeTimers();
+    fireEvent.click(within(strip).getByRole("button", { name: "播放视觉证据" }));
+
+    expect(within(strip).getByRole("button", { name: "视觉讲解中" }).getAttribute("aria-pressed")).toBe("true");
+
+    await act(async () => {
+      vi.advanceTimersByTime(1200);
+    });
+    expect(strip.querySelector('[aria-current="step"]')?.textContent).toContain("Skyline");
+
+    await act(async () => {
+      vi.advanceTimersByTime(1200);
+    });
+    expect(strip.querySelector('[aria-current="step"]')?.textContent).toContain("AI Asset");
+
+    await act(async () => {
+      vi.advanceTimersByTime(1200);
+    });
+    expect(strip.querySelector('[aria-current="step"]')?.textContent).toContain("Route");
+
+    await act(async () => {
+      vi.advanceTimersByTime(1200);
+    });
+    expect(strip.querySelector('[aria-current="step"]')?.textContent).toContain("Proof");
+    expect(within(strip).getByRole("button", { name: "播放视觉证据" }).getAttribute("aria-pressed")).toBe("false");
   });
 
   it("shows the active template rendering strategy", () => {

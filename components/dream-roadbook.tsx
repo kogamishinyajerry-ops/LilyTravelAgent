@@ -293,6 +293,8 @@ export function DreamRoadbook({ initialDemo = "dali", initialLens = "auto", init
   const [landmarkModel, setLandmarkModel] = useState("");
   const [useRealTerrain, setUseRealTerrain] = useState(false);
   const [realTerrainTokenMissing, setRealTerrainTokenMissing] = useState(false);
+  const [visualCueIndex, setVisualCueIndex] = useState(0);
+  const [visualCuePlaying, setVisualCuePlaying] = useState(false);
   const design = useMemo(() => buildDreamRoadbookDesign(roadbook), [roadbook]);
   const activePlan = roadbook.days.find((day) => day.day === activeDay) || roadbook.days[0];
   const activeStop = design.routeStops.find((stop) => stop.day === activePlan?.day) || design.routeStops[0];
@@ -480,6 +482,22 @@ export function DreamRoadbook({ initialDemo = "dali", initialLens = "auto", init
   );
 
   useEffect(() => {
+    if (!visualCuePlaying) {
+      return;
+    }
+
+    const timer = window.setTimeout(() => {
+      const nextIndex = Math.min(visualCueIndex + 1, visualProofCues.length - 1);
+      setVisualCueIndex(nextIndex);
+      if (nextIndex >= visualProofCues.length - 1) {
+        setVisualCuePlaying(false);
+      }
+    }, 1200);
+
+    return () => window.clearTimeout(timer);
+  }, [visualCueIndex, visualCuePlaying, visualProofCues.length]);
+
+  useEffect(() => {
     if (trackDemoStep === null || trackDemoStep >= demoTrackNotes.length - 1 || isBusy) {
       return;
     }
@@ -647,6 +665,11 @@ export function DreamRoadbook({ initialDemo = "dali", initialLens = "auto", init
     setRecordingProgress({ step: 0, total: getTotalCombinations(recordingConfig) });
     setCountdownMs(recordingConfig.stepIntervalMs ?? 4000);
     startRecording();
+  }
+
+  function playVisualProofCues() {
+    setVisualCueIndex(0);
+    setVisualCuePlaying(true);
   }
 
   function stepManualTemplate(direction: 1 | -1) {
@@ -1958,8 +1981,15 @@ export function DreamRoadbook({ initialDemo = "dali", initialLens = "auto", init
             </div>
           </div>
           <div className="dream-visual-proof-strip" aria-label="Dream Visual Proof Cue Strip">
-            {visualProofCues.map((item) => (
-              <span key={item.label}>
+            <button type="button" className="dream-visual-proof-play" onClick={playVisualProofCues} aria-pressed={visualCuePlaying}>
+              {visualCuePlaying ? "视觉讲解中" : "播放视觉证据"}
+            </button>
+            {visualProofCues.map((item, index) => (
+              <span
+                key={item.label}
+                className={index === visualCueIndex ? "active" : ""}
+                aria-current={index === visualCueIndex ? "step" : undefined}
+              >
                 <small>{item.label}</small>
                 <strong>{item.value}</strong>
                 <em>{item.detail}</em>
