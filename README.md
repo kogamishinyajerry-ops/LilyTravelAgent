@@ -133,7 +133,7 @@ npm run check:recording-suite
 
 `npm run check:lens-candidate-handoff` expects `http://localhost:3000` unless `LENS_CANDIDATE_BASE_URL` is set. It verifies the Director Lens comparison dashboard candidate actions by clicking `Open first candidate`, the first candidate card, and one queue chip, then checking that `/dream` receives the expected candidate rank, day, and lens context.
 
-`npm run index:recording-assets` scans local `recordings/visual-checks`, `recordings/studio-checks`, and `recordings/handoff-checks`, then writes `recordings/index.html` and `recordings/clip-index.md` as a local asset index.
+`npm run index:recording-assets` scans local `recordings/visual-checks`, `recordings/studio-checks`, and `recordings/handoff-checks`, then writes `recordings/index.html` and `recordings/clip-index.md` as a local asset index. When Dream QA packs include visual-proof playback evidence, the index also shows the final `Proof` cue plus links to the playback screenshot, summary, and notes.
 
 `npm run check:recording-suite` expects the local dev server to be running at `http://localhost:3000`. It runs the Dali `/dream` visual QA, coastal `/dream` visual QA, Dali Director Lens QA for the four non-auto lens modes, `/studio` visual QA, Studio-Dream handoff QA, and recording asset index in sequence. Set `RECORDING_SUITE_BASE_URL`, `DREAM_URL`, `STUDIO_URL`, or `HANDOFF_BASE_URL` to target another local server.
 
@@ -179,6 +179,7 @@ npm run check:recording-suite
 - `docs/recording/goal-341-350-recap.md` summarizes Dream visual proof playback QA evidence.
 - `docs/recording/goal-351-360-recap.md` summarizes the Studio Dream Proof QA status card.
 - `docs/recording/goal-361-370-recap.md` summarizes Studio Dream Proof evidence links.
+- `docs/recording/goal-371-380-recap.md` summarizes Dream Proof evidence in the recording asset index.
 - `docs/recording/studio-dream-demo-script.md` gives a shot-by-shot Studio ↔ Dream demo recording path.
 - `docs/recording/bridge-qa-evidence-script.md` gives a short Bridge QA proof clip script.
 - `docs/recording/cinematic-visual-contract-script.md` gives a short `/dream` visual-contract recording script for template strategy, Scene Inspector, Proof Stack, and asset state.

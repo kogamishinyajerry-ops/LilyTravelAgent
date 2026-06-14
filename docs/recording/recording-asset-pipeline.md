@@ -38,6 +38,7 @@ DREAM_LENSES=low-skyline,isometric-atlas npm run check:dream-lenses
 - Studio-Dream Bridge QA pack: handoff proof for the two-way recording circuit.
 - Candidate handoff QA: dashboard-to-`/dream` click proof for ranked recording candidates.
 - `recordings/index.html` and `recordings/clip-index.md`: the local archive entry points.
+- Dream visual-proof playback evidence in both local archive entry points when a Dream QA pack contains `summary.visualProof`.
 - `/api/recording-assets/lens-comparison`: the local Director Lens comparison dashboard with D1-D4 thumbnails.
 
 ## What To Show On Screen
@@ -53,6 +54,7 @@ DREAM_LENSES=low-skyline,isometric-atlas npm run check:dream-lenses
 - `播放证据线` in script mode, highlighting those four proof rows in recording order.
 - `Dream Proof` status in `/studio`, showing the latest Dream visual proof playback result.
 - `Dream Proof` evidence links in `/studio`: playback screenshot, summary, and clip notes.
+- `Dream Proof` evidence in `/api/recording-assets/index` and `recordings/index.html`: final cue, readiness value, playback screenshot, summary, and notes.
 - `Bridge QA 证据状态` in script mode.
 - `候选点击 QA 状态` in the `/studio` asset panel after `npm run check:lens-candidate-handoff`.
 - `/dream` `Dream Visual Proof Cue Strip`, covering Terrain, Skyline, AI Asset, Route, and Proof over the cinematic scene.
@@ -78,6 +80,7 @@ Run it, return to `/studio`, then click `刷新`.
 - "The Agent workflow has two outputs: the product screen and the creator material archive."
 - "Dream QA is product footage. Studio QA is walkthrough footage. Bridge QA proves the handoff."
 - "In Dream QA, the screenshot is paired with a visual contract: prompt strategy, director lens, scene proof, asset state, and motion evidence."
+- "The archive does not only list screenshots. It also carries the Dream Proof playback result, so evidence survives outside the Studio screen."
 - "The lens batch lets me compare five camera directions before I tune or record the final clip."
 
 ## Verification

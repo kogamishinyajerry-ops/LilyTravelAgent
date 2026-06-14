@@ -1543,3 +1543,14 @@ Files shown: components/studio-mode.tsx, app/api/recording-assets/file/route.ts,
 Command/result: npm test -- components/studio-mode.test.tsx lib/lens-comparison.test.ts (17 tests passed); Chrome browser check confirmed all three evidence links returned 200; npm run lint && npm test && npm run build passed with 44 files, 915 tests, and a successful production build.
 Voiceover note: "这张卡不只是告诉我 Dream Proof 已验证，还能直接打开截图、summary 和 notes。状态到证据，一步跳过去。"
 Usable for: Studio evidence-link clip, local asset pipeline narration, continued goal run round 364
+
+## Phase EE: v0.8.124 — Dream Proof Evidence In Recording Index
+
+Date: 2026-06-14
+Clip title: Phase EE: v0.8.124 — Dream Proof Evidence In Recording Index
+What changed: `recordings/index.html`, `recordings/clip-index.md`, and `/api/recording-assets/index` now surface Dream visual-proof playback evidence when a Dream QA pack contains `summary.visualProof`.
+Why this matters: The creator archive now carries the same proof chain as Studio: final `Proof` cue, playback screenshot, summary, and notes are available from the generated asset index.
+Files shown: scripts/index-recording-assets.mjs, lib/recording-assets.ts, app/api/recording-assets/index/route.ts, recordings/index.html, recordings/clip-index.md
+Command/result: node --check scripts/index-recording-assets.mjs passed; npm test -- lib/recording-assets.test.ts passed with 7 tests; npm run index:recording-assets indexed 50 packs; Chrome browser check confirmed Dream Proof links returned 200; npm run lint && npm test && npm run build passed with 44 files, 915 tests, and a successful production build.
+Voiceover note: "上一轮我把 Dream Proof 放回 Studio，这一轮我把它放进素材总索引。以后打开 archive，就能直接看到这条视觉证据线停在 Proof，并点开截图、summary 和 notes。"
+Usable for: recording archive proof clip, Dream evidence pipeline narration, continued goal run round 374
