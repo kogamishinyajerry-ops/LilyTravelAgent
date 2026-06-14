@@ -17,9 +17,9 @@ This run completed the first tuning pass for the remaining Director Lens modes. 
 | 125 | `5ad39fb` | Updated the Director Lens shot matrix with all tuning cues. |
 | 126 | `4573882` | Added all tuning cues to the lens capture workflow guide. |
 | 127 | `d4cdcaf` | Logged the full lint/test/build verification checkpoint. |
-| 128 | pending | Packaged this recap for the content archive. |
-| 129 | pending | README/dev-log closeout. |
-| 130 | pending | Final verification, push, and next-goal handoff. |
+| 128 | `1eb9992` | Packaged this recap for the content archive. |
+| 129 | `1eb9992` | Added README/dev-log closeout entries for the tuning chapter. |
+| 130 | closeout | Final verification, push, and next-goal handoff. |
 
 ## Tuning Cues
 
@@ -36,7 +36,7 @@ This run completed the first tuning pass for the remaining Director Lens modes. 
 - `npm test -- lib/director-lens.test.ts`
 - `npm test -- lib/cinematic-scene-preset.test.ts`
 - Live browser QA: `DREAM_LENSES=wide-water,isometric-atlas,close-detail npm run check:dream-lenses`
-- `npm run lint && npm test && npm run build` passed with 899 tests.
+- `npm run lint && npm test && npm run build` passed with 43 test files, 899 tests, and a successful production build.
 
 ## Recording Angle
 
