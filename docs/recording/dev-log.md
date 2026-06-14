@@ -1609,3 +1609,14 @@ Files shown: lib/recording-assets.ts, components/studio-mode.tsx, app/globals.cs
 Command/result: npm test -- lib/recording-assets.test.ts components/studio-mode.test.tsx passed with 19 tests; Chrome browser check confirmed `/studio` shows `Full suite 已通过`, `7 步 · 7 通过 · 1m 47s`, and two 200 evidence links; npm run lint && npm test && npm run build passed with 44 files, 917 tests, and a successful production build.
 Voiceover note: "现在 Studio 直接显示 full suite 的总状态：七步全过、耗时一分多钟，summary 和 notes 都在卡片里。录屏时这就是最高层的 readiness proof。"
 Usable for: Studio full-suite readiness clip, top-level proof narration, continued goal run round 424
+
+## Phase EK: v0.8.130 — Suite Run In Studio Proof Playback
+
+Date: 2026-06-14
+Clip title: Phase EK: v0.8.130 — Suite Run In Studio Proof Playback
+What changed: `/studio` script-mode proof checklist now includes `Suite Run`, and `播放证据线` advances to `Suite Run` as the final highlighted proof step.
+Why this matters: The Studio narration can close on the top-level recording-suite receipt instead of stopping at the asset index.
+Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, docs/recording/recording-asset-pipeline.md
+Command/result: npm test -- components/studio-mode.test.tsx passed; Chrome browser check confirmed playback final active step is `Suite Run`; npm run lint && npm test && npm run build passed with 44 files, 917 tests, and a successful production build.
+Voiceover note: "现在证据线最后会停在 Suite Run。也就是从单项 QA 讲到 full suite 总收据，最后一步把整条链路收住。"
+Usable for: proof playback closeout clip, full-suite receipt narration, continued goal run round 434
