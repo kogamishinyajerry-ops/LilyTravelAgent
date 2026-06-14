@@ -278,6 +278,47 @@ function getBridgeEvidenceCue(recordingAssets: RecordingAssetsState) {
   };
 }
 
+function getRecordingProofChecklist(recordingAssets: RecordingAssetsState) {
+  if (recordingAssets.status !== "ready") {
+    return [
+      { label: "Bridge QA", state: "等待读取", detail: "读取本地桥接素材。", href: "" },
+      { label: "Candidate QA", state: "等待读取", detail: "读取候选点击 QA。", href: "" },
+      { label: "Lens Compare", state: "等待读取", detail: "读取镜头对比入口。", href: "" },
+      { label: "Asset Index", state: "等待读取", detail: "读取总素材索引。", href: "" },
+    ];
+  }
+
+  const bridgeCount = recordingAssets.countsByType.bridge;
+  return [
+    {
+      label: "Bridge QA",
+      state: bridgeCount > 0 ? "已验证" : "待生成",
+      detail: bridgeCount > 0 ? `${bridgeCount} 个桥接素材` : "运行 recording suite",
+      href: "",
+    },
+    {
+      label: "Candidate QA",
+      state: recordingAssets.latestCandidateHandoff ? "已验证" : "待运行",
+      detail: recordingAssets.latestCandidateHandoff
+        ? `${recordingAssets.latestCandidateHandoff.captureCount} 个入口`
+        : candidateHandoffCommand,
+      href: recordingAssets.latestCandidateHandoff?.summaryPath || "",
+    },
+    {
+      label: "Lens Compare",
+      state: recordingAssets.lensComparisonUrl ? "可打开" : "待生成",
+      detail: "镜头候选对比",
+      href: recordingAssets.lensComparisonUrl,
+    },
+    {
+      label: "Asset Index",
+      state: recordingAssets.indexAvailable ? "可打开" : "待生成",
+      detail: recordingAssets.indexAvailable ? `${recordingAssets.packCount} 个素材包` : recordingSuiteCommand,
+      href: recordingAssets.indexAvailable ? recordingAssets.indexUrl : "",
+    },
+  ];
+}
+
 export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
   const initialDemoRoadbook = getStudioDemoRoadbook(initialDemo);
   const [brief, setBrief] = useState<TravelBrief>(initialDemoRoadbook.brief);
@@ -617,6 +658,26 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
                     </div>
                   );
                 })()}
+                <div className="studio-proof-checklist" aria-label="录屏证据清单">
+                  <div className="studio-proof-checklist-heading">
+                    <span>Proof Stack</span>
+                    <strong>录屏证据清单</strong>
+                  </div>
+                  {getRecordingProofChecklist(recordingAssets).map((item) => (
+                    <div className="studio-proof-checklist-item" key={item.label}>
+                      <span>{item.label}</span>
+                      <strong>{item.state}</strong>
+                      {item.href ? (
+                        <a href={item.href} target="_blank" rel="noreferrer">
+                          {item.detail}
+                          <ExternalLink size={12} />
+                        </a>
+                      ) : (
+                        <p>{item.detail}</p>
+                      )}
+                    </div>
+                  ))}
+                </div>
                 <div className="studio-shot-cue" aria-label="当前镜头建议">
                   <span>{studioShotCue.title}</span>
                   <strong>{studioShotCue.primary}</strong>

@@ -139,6 +139,7 @@ describe("StudioMode demo roadbooks", () => {
     expect(screen.queryByLabelText("录屏讲解轨道")).toBeNull();
     expect(screen.queryByLabelText("当前镜头建议")).toBeNull();
     expect(screen.queryByLabelText("系列章节提示")).toBeNull();
+    expect(screen.queryByLabelText("录屏证据清单")).toBeNull();
     expect(screen.queryByText("讲解轨道已打开")).toBeNull();
   });
 
@@ -248,6 +249,20 @@ describe("StudioMode demo roadbooks", () => {
     expect(screen.getByText("指向 Bridge QA 卡片，说明 Studio 和 Dream 的闭环已验证。")).toBeTruthy();
     expect(screen.getByLabelText("Bridge QA 证据状态").textContent).toContain("1 个桥接素材");
     expect(screen.getByLabelText("Bridge QA 证据状态").textContent).toContain("Studio-Dream 闭环已验证");
+    const proofChecklist = screen.getByLabelText("录屏证据清单");
+    expect(proofChecklist.textContent).toContain("Proof Stack");
+    expect(proofChecklist.textContent).toContain("录屏证据清单");
+    expect(proofChecklist.textContent).toContain("Bridge QA");
+    expect(proofChecklist.textContent).toContain("1 个桥接素材");
+    expect(proofChecklist.textContent).toContain("Candidate QA");
+    expect(proofChecklist.textContent).toContain("3 个入口");
+    expect(proofChecklist.textContent).toContain("Lens Compare");
+    expect(proofChecklist.textContent).toContain("镜头候选对比");
+    expect(proofChecklist.textContent).toContain("Asset Index");
+    expect(proofChecklist.textContent).toContain("15 个素材包");
+    expect(within(proofChecklist).getByRole("link", { name: /3 个入口/ }).getAttribute("href")).toBe("candidate-handoff-checks/candidate-latest/summary.json");
+    expect(within(proofChecklist).getByRole("link", { name: /镜头候选对比/ }).getAttribute("href")).toBe("/api/recording-assets/lens-comparison");
+    expect(within(proofChecklist).getByRole("link", { name: /15 个素材包/ }).getAttribute("href")).toBe("/api/recording-assets/index");
     expect(screen.getByText("讲解轨道已打开")).toBeTruthy();
     expect(screen.getByRole("button", { name: /脚本模式/ }).getAttribute("aria-pressed")).toBe("true");
   });

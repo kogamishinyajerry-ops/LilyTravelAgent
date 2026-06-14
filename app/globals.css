@@ -1387,6 +1387,76 @@ textarea {
   line-height: 1.35;
 }
 
+.studio-proof-checklist {
+  display: grid;
+  gap: 6px;
+  border: 1px solid rgba(38, 59, 49, 0.14);
+  border-radius: 8px;
+  padding: 9px;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.studio-proof-checklist-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.studio-proof-checklist-heading span {
+  color: #5360ad;
+  font-size: 0.7rem;
+  font-weight: 950;
+}
+
+.studio-proof-checklist-heading strong {
+  color: var(--moss);
+  font-size: 0.84rem;
+}
+
+.studio-proof-checklist-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(54px, 0.55fr);
+  gap: 2px 8px;
+  align-items: center;
+  border-top: 1px solid rgba(38, 59, 49, 0.1);
+  padding-top: 6px;
+}
+
+.studio-proof-checklist-item span {
+  color: var(--moss);
+  font-size: 0.74rem;
+  font-weight: 950;
+}
+
+.studio-proof-checklist-item strong {
+  justify-self: end;
+  border-radius: 999px;
+  padding: 3px 7px;
+  color: #fff;
+  font-size: 0.68rem;
+  background: var(--moss);
+}
+
+.studio-proof-checklist-item p,
+.studio-proof-checklist-item a {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 850;
+  line-height: 1.28;
+}
+
+.studio-proof-checklist-item a {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  justify-self: start;
+  color: #5360ad;
+  text-decoration: none;
+}
+
 .studio-shot-cue {
   display: grid;
   gap: 5px;
