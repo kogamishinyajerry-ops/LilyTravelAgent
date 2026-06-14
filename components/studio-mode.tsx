@@ -1114,6 +1114,9 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
                               </span>
                             ))}
                           </div>
+                          <p className="studio-proof-closeout-preview" aria-label="Proof Story 收口状态预览">
+                            {proofStoryCloseoutLine}
+                          </p>
                           <button type="button" onClick={copyProofStoryCloseout}>
                             <Copy size={13} />
                             {proofCloseoutCopyState === "copied" ? "收口状态已复制" : proofCloseoutCopyState === "error" ? "手动复制收口状态" : "复制收口状态"}

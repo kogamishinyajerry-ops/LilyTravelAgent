@@ -235,6 +235,9 @@ describe("StudioMode demo roadbooks", () => {
     expect(closeout.textContent).toContain("Studio QA已捕获");
     expect(closeout.textContent).toContain("索引入库已入库");
     expect(closeout.textContent).toContain("Index QA已验证");
+    expect(screen.getByLabelText("Proof Story 收口状态预览").textContent).toBe(
+      "Proof Story · 脚本路径: 就绪 · Studio QA: 已捕获 · 索引入库: 已入库 · Index QA: 已验证",
+    );
     expect(within(evidenceTimeline).getByRole("link", { name: /Dream Proof/ }).getAttribute("href")).toBe(
       "/api/recording-assets/file?path=visual-checks%2Fdream-proof-latest%2Fsummary.json",
     );
@@ -462,6 +465,9 @@ describe("StudioMode demo roadbooks", () => {
     expect(closeout.textContent).toContain("Studio QA待捕获");
     expect(closeout.textContent).toContain("索引入库待入库");
     expect(closeout.textContent).toContain("Index QA待验证");
+    expect(screen.getByLabelText("Proof Story 收口状态预览").textContent).toBe(
+      "Proof Story · 脚本路径: 就绪 · Studio QA: 待捕获 · 索引入库: 待入库 · Index QA: 待验证",
+    );
     expect(screen.getByText("Dream 0")).toBeTruthy();
     expect(screen.getByText("Studio 0")).toBeTruthy();
     expect(screen.getByText("生成本地素材索引")).toBeTruthy();
@@ -645,9 +651,10 @@ describe("StudioMode demo roadbooks", () => {
     render(<StudioMode />);
 
     expect(await screen.findByText("15 个素材包")).toBeTruthy();
+    const closeoutPreview = screen.getByLabelText("Proof Story 收口状态预览").textContent || "";
     fireEvent.click(screen.getByRole("button", { name: "复制收口状态" }));
 
-    expect(writeText).toHaveBeenCalledWith("Proof Story · 脚本路径: 就绪 · Studio QA: 已捕获 · 索引入库: 已入库 · Index QA: 已验证");
+    expect(writeText).toHaveBeenCalledWith(closeoutPreview);
     expect(await screen.findByText("收口状态已复制")).toBeTruthy();
     expect(screen.getByRole("button", { name: "复制脚本路径" })).toBeTruthy();
     expect(screen.getByRole("button", { name: "复制讲解稿" })).toBeTruthy();

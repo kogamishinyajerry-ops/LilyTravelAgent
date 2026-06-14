@@ -1818,3 +1818,14 @@ Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, docs/r
 Command/result: npm test -- components/studio-mode.test.tsx passed with 16 tests; browser check confirmed `复制收口状态` is visible and console errors were empty; npm run lint && npm test && npm run build
 Voiceover note: "现在这条 Proof Story 收口不只是能看，还能一键复制成剪辑备注：脚本、Studio QA、入库、Index QA 四件事一行带走。"
 Usable for: caption workflow clip, proof-loop closeout narration, continued goal run round 614
+
+## Phase FD: v0.8.149 — Proof Story Closeout Status Preview
+
+Date: 2026-06-14
+Clip title: Phase FD: v0.8.149 — Proof Story Closeout Status Preview
+What changed: `/studio` now shows `Proof Story 收口状态预览` inside the `脚本素材` card. The preview renders the exact one-line status copied by `复制收口状态`.
+Why this matters: The creator can inspect the production-status line before copying, matching the earlier pattern where the proof-story narration is visible before `复制讲解稿`.
+Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, app/globals.css, docs/recording/goal-621-630-recap.md
+Command/result: npm test -- components/studio-mode.test.tsx passed with 16 tests; browser check confirmed the preview line fits inside the card and console errors were empty; npm run lint && npm test && npm run build
+Voiceover note: "现在复制收口状态之前，也能先看到那一行最终文案。录屏时观众能看到状态从产品里直接变成剪辑备注。"
+Usable for: closeout preview clip, caption workflow narration, continued goal run round 624

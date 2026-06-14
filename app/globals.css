@@ -1957,6 +1957,20 @@ textarea {
   font-weight: 900;
 }
 
+.studio-recording-assets .studio-proof-closeout-preview {
+  overflow: hidden;
+  border: 1px solid rgba(38, 59, 49, 0.1);
+  border-radius: 7px;
+  padding: 5px 7px;
+  color: var(--moss);
+  font-size: 0.61rem;
+  font-weight: 850;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  background: rgba(255, 255, 255, 0.58);
+}
+
 .studio-proof-story-actions button {
   display: inline-flex;
   align-items: center;
