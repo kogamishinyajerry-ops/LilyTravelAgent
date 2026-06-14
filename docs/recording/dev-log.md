@@ -1488,3 +1488,14 @@ Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, app/gl
 Command/result: npm test -- components/studio-mode.test.tsx (10 Studio tests passed); Chrome browser check confirmed the sequence reaches `Asset Index`; npm run lint && npm test && npm run build passed with 44 files, 912 tests, and a successful production build.
 Voiceover note: "现在我点播放证据线，它会从 Bridge QA 走到 Candidate，再到 Lens Compare 和素材索引。这个就是录屏时的讲解节奏。"
 Usable for: Studio proof playback clip, evidence narration sequence, continued goal run round 314
+
+## Phase DZ: v0.8.119 — Dream Visual Proof Cue Strip
+
+Date: 2026-06-14
+Clip title: Phase DZ: v0.8.119 — Dream Visual Proof Cue Strip
+What changed: `/dream` now overlays a compact `Dream Visual Proof Cue Strip` with Terrain, Skyline, AI Asset, Route, and Proof cues.
+Why this matters: The dream roadbook hero can now explain its visual asset pipeline without leaving the cinematic scene.
+Files shown: components/dream-roadbook.tsx, components/dream-roadbook.test.tsx, app/globals.css
+Command/result: npm test -- components/dream-roadbook.test.tsx (20 Dream tests passed); Chrome browser check confirmed all five cues and no overlap with caption, asset chip, hotspots, or title; npm run lint && npm test && npm run build passed with 44 files, 913 tests, and a successful production build.
+Voiceover note: "Studio 里我证明工作流，Dream 里我证明画面。这个条把 Terrain、Skyline、AI Asset、Route、Proof 五层都摆在主视觉上。"
+Usable for: Dream visual proof clip, 3D asset-pipeline narration, continued goal run round 324
