@@ -4,6 +4,7 @@ import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
   buildRecordingFileUrl,
+  compareLensSceneStats,
   readLensComparisonDashboard,
   resolveRecordingAssetFile,
 } from "./lens-comparison";
@@ -160,5 +161,39 @@ describe("lens comparison dashboard", () => {
     expect(resolveRecordingAssetFile(tempRoot, "../.env.local")).toBeNull();
     expect(resolveRecordingAssetFile(tempRoot, "visual-checks/run/summary.json")).toBeNull();
     expect(resolveRecordingAssetFile(tempRoot, "")).toBeNull();
+  });
+
+  it("classifies explainable scene-stat differences without image processing", () => {
+    expect(
+      compareLensSceneStats(
+        { hasSceneCrop: true, checksum: 8_810_815, lit: 2400, varied: 94 },
+        { hasSceneCrop: true, checksum: 3_810_815, lit: 2400, varied: 94 },
+      ),
+    ).toMatchObject({
+      state: "changed",
+      label: "Changed",
+      checksumDelta: 5_000_000,
+      litDelta: 0,
+      variedDelta: 0,
+    });
+
+    expect(
+      compareLensSceneStats(
+        { hasSceneCrop: true, checksum: 8_810_815, lit: 2400, varied: 94 },
+        { hasSceneCrop: true, checksum: 8_790_815, lit: 2400, varied: 93 },
+      ),
+    ).toMatchObject({
+      state: "subtle",
+      label: "Subtle",
+      checksumDelta: 20_000,
+      litDelta: 0,
+      variedDelta: 1,
+    });
+
+    expect(compareLensSceneStats({ hasSceneCrop: true, checksum: 8_810_815, lit: 2400, varied: 94 })).toMatchObject({
+      state: "missing",
+      label: "Missing",
+      detail: "No previous scene crop",
+    });
   });
 });

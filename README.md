@@ -158,6 +158,7 @@ npm run check:recording-suite
 - `docs/recording/goal-151-160-recap.md` summarizes the Dali 3D depth-staging render upgrade.
 - `docs/recording/goal-161-170-recap.md` summarizes the Dali old-town gate and courtyard landmark-detail render pass.
 - `docs/recording/goal-171-180-recap.md` summarizes the current-vs-previous Director Lens scene-crop review aid.
+- `docs/recording/goal-181-190-recap.md` summarizes the explainable visual-diff badges for before/after scene crops.
 - `docs/recording/studio-dream-demo-script.md` gives a shot-by-shot Studio ↔ Dream demo recording path.
 - `docs/recording/bridge-qa-evidence-script.md` gives a short Bridge QA proof clip script.
 - `docs/recording/cinematic-visual-contract-script.md` gives a short `/dream` visual-contract recording script for template strategy, Scene Inspector, Proof Stack, and asset state.

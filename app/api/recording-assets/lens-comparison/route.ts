@@ -2,6 +2,7 @@ import path from "node:path";
 import { NextResponse } from "next/server";
 import { directorLenses } from "@/lib/director-lens";
 import {
+  compareLensSceneStats,
   readLensComparisonDashboard,
   type LensComparisonBatch,
   type LensComparisonDashboard,
@@ -279,6 +280,33 @@ function buildLensComparisonHtml(dashboard: LensComparisonDashboard) {
         color: var(--ink);
         background: rgba(15,19,15,0.72);
       }
+      .diff-badge {
+        position: absolute;
+        right: 8px;
+        top: 8px;
+        z-index: 1;
+        border: 1px solid rgba(255,255,255,0.14);
+        border-radius: 999px;
+        padding: 4px 7px;
+        color: var(--ink);
+        background: rgba(15,19,15,0.68);
+        font-size: 0.62rem;
+        font-weight: 1000;
+        letter-spacing: 0;
+        text-transform: uppercase;
+      }
+      .diff-badge.changed {
+        color: #0f130f;
+        background: var(--amber);
+      }
+      .diff-badge.subtle {
+        color: #0f130f;
+        background: var(--blue);
+      }
+      .diff-badge.missing {
+        color: var(--ink);
+        background: rgba(219,121,101,0.64);
+      }
       figcaption {
         position: absolute;
         inset: auto 8px 8px;
@@ -425,16 +453,18 @@ function renderLensCard(pack: LensComparisonPack, previousPack?: LensComparisonP
 }
 
 function renderShotFigure(pack: LensComparisonPack, shot: LensComparisonDay, day: number, previousShot?: LensComparisonDay) {
+  const diff = compareLensSceneStats(shot, previousShot);
   const caption = `${shot.hasSceneCrop ? "3D crop" : "page frame"} · ${shot.cue || shot.compositionProof || "visual beat"}`;
 
   if (!previousShot) {
     return `
       <figure>
         <img src="${escapeHtml(shot.sceneScreenshotUrl)}" alt="${escapeHtml(`${pack.lensProof} D${day} current 3D scene crop`)}" loading="lazy" />
+        <span class="diff-badge ${escapeHtml(diff.state)}">${escapeHtml(diff.label)}</span>
         <figcaption>
           <span>D${day}</span>
           <strong>${escapeHtml(shot.label)}</strong>
-          <small>${escapeHtml(caption)}</small>
+          <small>${escapeHtml(`${caption} · ${diff.detail}`)}</small>
         </figcaption>
       </figure>`;
   }
@@ -444,6 +474,7 @@ function renderShotFigure(pack: LensComparisonPack, shot: LensComparisonDay, day
       <div class="frame-pair">
         <div class="frame current">
           <span class="frame-label">Current</span>
+          <span class="diff-badge ${escapeHtml(diff.state)}">${escapeHtml(diff.label)}</span>
           <img src="${escapeHtml(shot.sceneScreenshotUrl)}" alt="${escapeHtml(`${pack.lensProof} D${day} current 3D scene crop`)}" loading="lazy" />
         </div>
         <div class="frame previous">
@@ -454,7 +485,7 @@ function renderShotFigure(pack: LensComparisonPack, shot: LensComparisonDay, day
       <figcaption>
         <span>D${day}</span>
         <strong>${escapeHtml(shot.label)}</strong>
-        <small>${escapeHtml(caption)}</small>
+        <small>${escapeHtml(`${caption} · ${diff.detail}`)}</small>
       </figcaption>
     </figure>`;
 }

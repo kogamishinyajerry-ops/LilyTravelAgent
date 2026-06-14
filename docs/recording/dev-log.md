@@ -1213,3 +1213,14 @@ Files shown: docs/recording/goal-171-180-recap.md, `/api/recording-assets/lens-c
 Command/result: npm run lint && npm test && npm run build (44 files, 904 tests, build passed)
 Voiceover note: "这一轮做的是证据层：前后两批 crop 能在看板里对比，最后还通过 904 个测试和生产构建。视觉优化不是凭感觉，而是每一轮都能被复盘。"
 Usable for: goal closeout clip, before/after proof, next visual-diff handoff, continued goal run round 177
+
+## Phase DA: v0.8.94 — Explainable Scene-Diff Badges
+
+Date: 2026-06-14
+Clip title: Phase DA: v0.8.94 — Explainable Scene-Diff Badges
+What changed: Added a lightweight scene-stat comparison function and rendered `Changed`, `Subtle`, or `Missing` badges on each current-vs-previous D1-D4 crop in the Director Lens dashboard.
+Why this matters: The visual QA page now explains whether a tuning pass moved the canvas enough to discuss on camera, without adding image-processing dependencies or hiding the result behind an opaque score.
+Files shown: lib/lens-comparison.ts, app/api/recording-assets/lens-comparison/route.ts, docs/recording/lens-visual-capture-workflow.md
+Command/result: npm test -- lib/lens-comparison.test.ts; npm run lint; Browser/local request check confirmed 6 Changed, 14 Subtle, 0 Missing, 40 image URLs, and 0 broken images.
+Voiceover note: "我没有上复杂图像算法，先用现有 canvasStats 做解释型差异：checksum、lit、varied。看板直接告诉我这一帧是 Changed 还是 Subtle，方便录屏时讲证据。"
+Usable for: visual-diff explanation clip, dashboard evidence, continued goal run round 184

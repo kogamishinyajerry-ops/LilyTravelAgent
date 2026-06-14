@@ -37,7 +37,7 @@ Each lens run writes a folder under `recordings/visual-checks/` with:
 
 After `npm run index:recording-assets`, the top-level recording index shows lens-aware titles such as `Dream low-skyline lens visual pack`, and `/studio` recent asset cards show a lens chip.
 
-`/studio` also links to `/api/recording-assets/lens-comparison`, a local Director Lens comparison dashboard. It reads the newest Dream QA pack for each lens, groups shared `runStamp-lens-*` folders into complete five-lens batches, shows current-vs-previous D1-D4 pure 3D crops, surfaces the Scene Inspector tuning cue plus a compact review checklist, and links back to `/dream?lens=...` for same-lens recording.
+`/studio` also links to `/api/recording-assets/lens-comparison`, a local Director Lens comparison dashboard. It reads the newest Dream QA pack for each lens, groups shared `runStamp-lens-*` folders into complete five-lens batches, shows current-vs-previous D1-D4 pure 3D crops, labels each pair as `Changed`, `Subtle`, or `Missing` from existing canvas stats, surfaces the Scene Inspector tuning cue plus a compact review checklist, and links back to `/dream?lens=...` for same-lens recording.
 
 ## Review Loop
 
@@ -54,6 +54,7 @@ After `npm run index:recording-assets`, the top-level recording index shows lens
 
 - Does the selected lens create a visibly different composition?
 - Does the current crop show a visible change against the previous complete batch?
+- Do `Changed` / `Subtle` badges match the visible crop differences well enough for narration?
 - Does the pure 3D crop show improvement without relying on surrounding UI?
 - Are terrain depth, water reflections, and active landmark scale visible in the crop?
 - Are old-town gate/courtyard details readable as roof tiers, arch shadows, and light accents?

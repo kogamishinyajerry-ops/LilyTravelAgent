@@ -19,6 +19,15 @@ export type LensComparisonDay = {
   checksum: number;
 };
 
+export type LensComparisonSceneDiff = {
+  state: "changed" | "subtle" | "missing";
+  label: string;
+  detail: string;
+  checksumDelta: number;
+  litDelta: number;
+  variedDelta: number;
+};
+
 export type LensComparisonPack = {
   id: string;
   createdAt: string;
@@ -111,6 +120,47 @@ export async function listDreamVisualSummaries(recordingsRoot = process.env.RECO
   }
 
   return summaries.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+}
+
+export function compareLensSceneStats(
+  current: Pick<LensComparisonDay, "hasSceneCrop" | "checksum" | "lit" | "varied">,
+  previous?: Pick<LensComparisonDay, "hasSceneCrop" | "checksum" | "lit" | "varied">,
+): LensComparisonSceneDiff {
+  if (!previous) {
+    return {
+      state: "missing",
+      label: "Missing",
+      detail: "No previous scene crop",
+      checksumDelta: 0,
+      litDelta: 0,
+      variedDelta: 0,
+    };
+  }
+
+  if (!current.hasSceneCrop || !previous.hasSceneCrop) {
+    return {
+      state: "missing",
+      label: "Missing",
+      detail: "Needs two pure scene crops",
+      checksumDelta: 0,
+      litDelta: 0,
+      variedDelta: 0,
+    };
+  }
+
+  const checksumDelta = Math.abs(current.checksum - previous.checksum);
+  const litDelta = Math.abs(current.lit - previous.lit);
+  const variedDelta = Math.abs(current.varied - previous.varied);
+  const changed = checksumDelta >= 1_000_000 || litDelta >= 80 || variedDelta >= 4;
+
+  return {
+    state: changed ? "changed" : "subtle",
+    label: changed ? "Changed" : "Subtle",
+    detail: `checksum ${formatCompactDelta(checksumDelta)} / lit ${litDelta} / varied ${variedDelta}`,
+    checksumDelta,
+    litDelta,
+    variedDelta,
+  };
 }
 
 export function buildLensComparisonDashboard(recordingsRoot: string, summaries: DreamVisualSummary[]): LensComparisonDashboard {
@@ -377,6 +427,18 @@ function readLensBatchId(summary: DreamVisualSummary) {
   const lensId = readLensId(summary.raw);
   const suffix = `-lens-${lensId}`;
   return summary.id.endsWith(suffix) ? summary.id.slice(0, -suffix.length) : "";
+}
+
+function formatCompactDelta(value: number) {
+  if (value >= 1_000_000) {
+    return `${(value / 1_000_000).toFixed(1)}M`;
+  }
+
+  if (value >= 1_000) {
+    return `${Math.round(value / 1_000)}K`;
+  }
+
+  return `${value}`;
 }
 
 function readLensProof(summary: Record<string, unknown>) {
