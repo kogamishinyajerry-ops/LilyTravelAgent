@@ -1125,3 +1125,14 @@ Files shown: terminal verification output, docs/recording/goal-141-150-recap.md,
 Command/result: npm run lint && npm test && npm run build (44 files, 903 tests, build passed)
 Voiceover note: "我把评审对象缩到 WebGL 画面本体后，再跑完整质量门。下一轮开始真正改 3D 内容，让画面本身更有冲击力。"
 Usable for: goal closeout clip, quality gate proof, 3D content-quality handoff, continued goal run round 147
+
+## Phase CS: v0.8.86 — Dali 3D Depth Staging Pass
+
+Date: 2026-06-14
+Clip title: Phase CS: v0.8.86 — Dali 3D Depth Staging Pass
+What changed: Added a Dali depth-staging layer to the Three.js scene: foreground water banks, additive water reflections, a distant ridge highlight, and lens-tuned active landmark scale boost.
+Why this matters: The pure scene-crop dashboard now has real render changes to judge. This is the first step from verifying the QA surface toward making the 3D preview itself more cinematic.
+Files shown: components/dream-skyline-scene.tsx, recordings/visual-checks/*-lens-close-detail/dream-dali-d1-scene.png, `/api/recording-assets/lens-comparison`
+Command/result: npm run lint && npm run build; DREAM_URL=http://127.0.0.1:3000/dream DREAM_LENSES=close-detail npm run check:dream-lenses
+Voiceover note: "现在我开始动 3D 本体：加前景水岸、反光和远山层次，再让特定 lens 下的 active 地标更有前景感。"
+Usable for: 3D content tuning clip, scene-crop before/after narrative, continued goal run round 154

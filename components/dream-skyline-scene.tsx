@@ -249,7 +249,7 @@ export function DreamSkylineScene({
 
     root.add(createAtmosphere(palette, mood, atmosphereProfile, disposables));
     if (cinematicScene) {
-      root.add(createCinematicPresetLayer(cinematicScene, palette, disposables));
+      root.add(createCinematicPresetLayer(cinematicScene, palette, lensTuning, disposables));
     }
 
     const terrain = createTerrain(profile, palette, disposables);
@@ -461,6 +461,7 @@ function createAtmosphere(
 function createCinematicPresetLayer(
   scene: ResolvedCinematicScenePreset,
   palette: SkylinePalette,
+  lensTuning: DirectorLensSceneTuning,
   disposables: Array<{ dispose: () => void }>,
 ) {
   const group = new Group();
@@ -494,8 +495,9 @@ function createCinematicPresetLayer(
     group.add(createCoastalWaterfrontCluster(scene, palette, disposables));
     group.add(createCoastalLandmarkSilhouettes(scene, palette, disposables));
   } else {
+    group.add(createDaliDepthStaging(scene, palette, lensTuning, disposables));
     group.add(createDaliCourtyardCluster(scene, palette, disposables));
-    group.add(createDaliLandmarkSilhouettes(scene, palette, disposables));
+    group.add(createDaliLandmarkSilhouettes(scene, palette, lensTuning, disposables));
   }
   group.add(createFocusBeacon(scene, palette, disposables));
 
@@ -610,6 +612,99 @@ function createDaliRouteRail(
   return group;
 }
 
+function createDaliDepthStaging(
+  scene: ResolvedCinematicScenePreset,
+  palette: SkylinePalette,
+  lensTuning: DirectorLensSceneTuning,
+  disposables: Array<{ dispose: () => void }>,
+) {
+  const group = new Group();
+  group.name = "dali-depth-staging";
+
+  const bankMaterial = new MeshStandardMaterial({
+    color: new Color("#d8c3a1"),
+    roughness: 0.78,
+    metalness: 0.02,
+    transparent: true,
+    opacity: 0.28 + Math.max(0, lensTuning.waterDepthScale - 1) * 0.16,
+  });
+  const reflectionMaterial = new MeshBasicMaterial({
+    color: new Color(palette.light),
+    transparent: true,
+    opacity: 0.18 + lensTuning.ribbonOpacityScale * 0.04,
+    depthWrite: false,
+    blending: AdditiveBlending,
+  });
+  const ridgeMaterial = new LineBasicMaterial({
+    color: new Color("#f4ead6"),
+    transparent: true,
+    opacity: 0.16 + Math.max(0, lensTuning.skylineHeightScale - 1) * 0.14,
+  });
+  disposables.push(bankMaterial, reflectionMaterial, ridgeMaterial);
+
+  const focusX = scene.focus.x;
+  const focusZ = scene.focus.z;
+  const foregroundScale = 1 + Math.max(0, 1 - lensTuning.waterDepthScale) * 0.24;
+
+  addMarkerBox(
+    group,
+    "dali-foreground-bank-main",
+    5.6 * foregroundScale,
+    0.026,
+    0.18,
+    focusX * 0.22,
+    0.072,
+    focusZ + 0.78,
+    bankMaterial,
+    disposables,
+    -0.025,
+  );
+  addMarkerBox(
+    group,
+    "dali-foreground-bank-secondary",
+    3.8 * foregroundScale,
+    0.018,
+    0.11,
+    focusX * 0.16 - 0.22,
+    0.082,
+    focusZ + 1.08,
+    bankMaterial,
+    disposables,
+    0.018,
+  );
+
+  for (let index = 0; index < 4; index += 1) {
+    addMarkerBox(
+      group,
+      `dali-water-reflection-${index}`,
+      0.78 - index * 0.08,
+      0.012,
+      0.036,
+      focusX - 0.44 + index * 0.3,
+      0.09 + index * 0.004,
+      focusZ + 0.38 + index * 0.14,
+      reflectionMaterial,
+      disposables,
+      index % 2 === 0 ? 0.04 : -0.035,
+    );
+  }
+
+  const ridgePoints = Array.from({ length: 32 }, (_, index) => {
+    const t = index / 31;
+    const x = -7.8 + t * 15.6;
+    const y = 0.86 + Math.sin(t * Math.PI * 2.2 + scene.focus.day * 0.45) * 0.035;
+    return new Vector3(x, y, -5.12 - scene.focus.day * 0.05);
+  });
+  const ridgeGeometry = new BufferGeometry().setFromPoints(ridgePoints);
+  const ridgeLine = new Line(ridgeGeometry, ridgeMaterial);
+  ridgeLine.name = "dali-distant-ridge-highlight";
+  ridgeLine.renderOrder = -1;
+  group.add(ridgeLine);
+  disposables.push(ridgeGeometry);
+
+  return group;
+}
+
 function createDaliCourtyardCluster(
   scene: ResolvedCinematicScenePreset,
   palette: SkylinePalette,
@@ -667,6 +762,7 @@ function createDaliCourtyardCluster(
 function createDaliLandmarkSilhouettes(
   scene: ResolvedCinematicScenePreset,
   palette: SkylinePalette,
+  lensTuning: DirectorLensSceneTuning,
   disposables: Array<{ dispose: () => void }>,
 ) {
   const layer = buildCinematicLandmarkSilhouettes(scene.preset, scene.focus.day);
@@ -677,7 +773,12 @@ function createDaliLandmarkSilhouettes(
     const markerGroup = createDaliLandmarkMarker(marker, palette, disposables);
     markerGroup.name = marker.id;
     markerGroup.position.set(marker.x, 0.14, marker.z);
-    markerGroup.scale.setScalar(marker.scale);
+    const activeForegroundBoost = marker.isActive
+      ? 1 +
+        Math.max(0, lensTuning.skylineHeightScale - 1) * 0.2 +
+        Math.max(0, 1 - lensTuning.waterDepthScale) * 0.18
+      : 1;
+    markerGroup.scale.setScalar(marker.scale * activeForegroundBoost);
     markerGroup.rotation.y = marker.kind === "erhai-sail" ? -0.18 : marker.kind === "return-cafe" ? 0.24 : 0.12;
     group.add(markerGroup);
   });

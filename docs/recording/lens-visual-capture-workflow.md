@@ -53,6 +53,7 @@ After `npm run index:recording-assets`, the top-level recording index shows lens
 
 - Does the selected lens create a visibly different composition?
 - Does the pure 3D crop show improvement without relying on surrounding UI?
+- Are terrain depth, water reflections, and active landmark scale visible in the crop?
 - Does the D1-D4 director timeline still read clearly?
 - Does the map stay compact and non-distracting?
 - Does the Proof Stack show `Director` as ready?
