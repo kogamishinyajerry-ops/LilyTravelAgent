@@ -1455,3 +1455,14 @@ Files shown: docs/recording/goal-281-290-recap.md, `/studio`, terminal verificat
 Command/result: npm run lint && npm test && npm run build (44 files, 910 tests, build passed)
 Voiceover note: "Studio 状态卡做完后，继续完整质量门。现在我不只生成候选，还把候选点击 QA 是否通过直接显示在素材资产面板里。"
 Usable for: goal closeout clip, Studio QA status proof, next command-rail handoff, continued goal run round 287
+
+## Phase DW: v0.8.116 — Studio Candidate QA Command Rail
+
+Date: 2026-06-14
+Clip title: Phase DW: v0.8.116 — Studio Candidate QA Command Rail
+What changed: `/studio` now includes a `复制候选 QA` button and a visible `候选 QA` step in the recording asset workflow rail.
+Why this matters: The creator can run the candidate click-through check from the same panel that displays its latest status, keeping the recording workflow explainable.
+Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, docs/recording/recording-asset-pipeline.md
+Command/result: npm test -- components/studio-mode.test.tsx (9 Studio tests passed); browser check confirmed `/studio` shows `复制候选 QA`, `候选 QA`, and the candidate QA status card; npm run lint && npm test && npm run build passed with 44 files, 911 tests, and a successful production build.
+Voiceover note: "我把候选 QA 命令也放进 Studio。现在这个面板不仅显示状态，还告诉我下一步怎么验证。"
+Usable for: Studio command rail clip, creator workflow proof, continued goal run round 294
