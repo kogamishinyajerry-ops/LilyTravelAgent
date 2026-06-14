@@ -10,11 +10,10 @@ This run made the before/after dashboard more narratable. Instead of asking the 
 
 | Goal | Commit | Summary |
 | --- | --- | --- |
-| 181-184 | pending | Added explainable scene-stat diff logic and dashboard badges. |
-| 185 | pending | Added focused tests and recording docs. |
-| 186 | pending | Browser/local request visual check. |
-| 187 | pending | Final lint/test/build verification. |
-| 188 | pending | Push to GitHub. |
+| 181-185 | `9fedec3` | Added explainable scene-stat diff logic, dashboard badges, focused tests, and recording docs. |
+| 186 | `9fedec3` | Browser/local request check confirmed 6 Changed, 14 Subtle, 0 Missing, 40 image URLs, and 0 broken images. |
+| 187 | closeout | Final lint/test/build verification: 44 files, 905 tests, build passed. |
+| 188 | closeout | Push to GitHub after final closeout commit. |
 | 189-190 | closeout | Next-goal handoff. |
 
 ## What Changed In The Review Surface
@@ -29,6 +28,7 @@ This run made the before/after dashboard more narratable. Instead of asking the 
 - `npm test -- lib/lens-comparison.test.ts` (5 tests passed)
 - `npm run lint` (passed)
 - Browser/local request check: `/api/recording-assets/lens-comparison` showed 6 Changed, 14 Subtle, 0 Missing, 40 image URLs, and 0 broken images.
+- `npm run lint && npm test && npm run build` (44 files, 905 tests, build passed)
 
 ## Recording Angle
 

@@ -1224,3 +1224,14 @@ Files shown: lib/lens-comparison.ts, app/api/recording-assets/lens-comparison/ro
 Command/result: npm test -- lib/lens-comparison.test.ts; npm run lint; Browser/local request check confirmed 6 Changed, 14 Subtle, 0 Missing, 40 image URLs, and 0 broken images.
 Voiceover note: "我没有上复杂图像算法，先用现有 canvasStats 做解释型差异：checksum、lit、varied。看板直接告诉我这一帧是 Changed 还是 Subtle，方便录屏时讲证据。"
 Usable for: visual-diff explanation clip, dashboard evidence, continued goal run round 184
+
+## Phase DB: v0.8.95 — Goals 181-190 Final Quality Gate
+
+Date: 2026-06-14
+Clip title: Phase DB: v0.8.95 — Goals 181-190 Final Quality Gate
+What changed: Closed the explainable scene-diff badge run with the full local lint, test, and production-build gate after browser visual inspection.
+Why this matters: The dashboard can now show current/previous crops, state-level visual-diff badges, raw stat deltas, and still pass the full engineering gate.
+Files shown: docs/recording/goal-181-190-recap.md, `/api/recording-assets/lens-comparison`, terminal verification output
+Command/result: npm run lint && npm test && npm run build (44 files, 905 tests, build passed)
+Voiceover note: "差异徽章做完后，我继续跑完整质量门。现在这不是一个临时演示，而是一条稳定的视觉评审链路：before / after、Changed / Subtle、原始 delta、测试和构建。"
+Usable for: goal closeout clip, visual-diff proof, next best-shot-ranking handoff, continued goal run round 187
