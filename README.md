@@ -156,6 +156,7 @@ npm run check:recording-suite
 - `docs/recording/goal-131-140-recap.md` summarizes the Director Lens comparison dashboard and Dream handoff run.
 - `docs/recording/goal-141-150-recap.md` summarizes the pure WebGL scene-crop QA and comparison dashboard upgrade.
 - `docs/recording/goal-151-160-recap.md` summarizes the Dali 3D depth-staging render upgrade.
+- `docs/recording/goal-161-170-recap.md` summarizes the Dali old-town gate and courtyard landmark-detail render pass.
 - `docs/recording/studio-dream-demo-script.md` gives a shot-by-shot Studio ↔ Dream demo recording path.
 - `docs/recording/bridge-qa-evidence-script.md` gives a short Bridge QA proof clip script.
 - `docs/recording/cinematic-visual-contract-script.md` gives a short `/dream` visual-contract recording script for template strategy, Scene Inspector, Proof Stack, and asset state.

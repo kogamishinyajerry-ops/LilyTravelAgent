@@ -1169,3 +1169,14 @@ Files shown: components/dream-skyline-scene.tsx, recordings/visual-checks/*-lens
 Command/result: npm run lint && npm run build; DREAM_URL=http://127.0.0.1:3000/dream npm run check:dream-lenses; Browser check confirmed the latest five-lens batch, 20 scene crops, and 0 broken images.
 Voiceover note: "我开始给大理地标加辨识度：门洞暗部、屋檐层、院落阴影和小灯点。看板可以直接检查这些细节有没有进入 3D crop。"
 Usable for: Dali landmark-detail clip, 3D visual-quality narrative, continued goal run round 164
+
+## Phase CW: v0.8.90 — Goals 161-170 Landmark Detail Recap
+
+Date: 2026-06-14
+Clip title: Phase CW: v0.8.90 — Goals 161-170 Landmark Detail Recap
+What changed: Added the 161-170 recap and README entry for the Dali landmark-detail render pass.
+Why this matters: This packages the shift from generic low-poly buildings toward recognizable Dali symbols inside the pure 3D review workflow.
+Files shown: docs/recording/goal-161-170-recap.md, README.md, components/dream-skyline-scene.tsx
+Command/result: npm run lint (passed)
+Voiceover note: "这轮把大理地标从抽象体块推进到可识别符号：城门、屋檐、暗部和院落细节。"
+Usable for: goal recap clip, Dali landmark detail chapter, continued goal run round 165
