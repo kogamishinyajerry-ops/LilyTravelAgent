@@ -1136,3 +1136,14 @@ Files shown: components/dream-skyline-scene.tsx, recordings/visual-checks/*-lens
 Command/result: npm run lint && npm run build; DREAM_URL=http://127.0.0.1:3000/dream DREAM_LENSES=close-detail npm run check:dream-lenses
 Voiceover note: "现在我开始动 3D 本体：加前景水岸、反光和远山层次，再让特定 lens 下的 active 地标更有前景感。"
 Usable for: 3D content tuning clip, scene-crop before/after narrative, continued goal run round 154
+
+## Phase CT: v0.8.87 — Goals 151-160 Dali 3D Depth Recap
+
+Date: 2026-06-14
+Clip title: Phase CT: v0.8.87 — Goals 151-160 Dali 3D Depth Recap
+What changed: Added the 151-160 recap and README entry for the Dali depth-staging render upgrade.
+Why this matters: This records the first concrete 3D-content pass after the pure scene-crop QA system was ready.
+Files shown: docs/recording/goal-151-160-recap.md, README.md, components/dream-skyline-scene.tsx
+Command/result: npm run lint (passed)
+Voiceover note: "这一轮终于不是只做工具链，而是开始让 3D 画面本身更有层次。评审看板能证明改动有没有进入 canvas crop。"
+Usable for: 3D render recap clip, visual-quality progression, continued goal run round 155
