@@ -67,4 +67,34 @@ describe("director-lens", () => {
     expect(tuning.ribbonOpacityScale).toBeGreaterThan(1.3);
     expect(tuning.routeOpacityScale).toBeGreaterThan(1);
   });
+
+  it("makes wide-water emphasize horizon water instead of skyline mass", () => {
+    const tuning = buildDirectorLensSceneTuning("wide-water");
+
+    expect(tuning.skylineHeightScale).toBeLessThan(1);
+    expect(tuning.waterDepthScale).toBeGreaterThan(1.3);
+    expect(tuning.waterZOffset).toBeGreaterThan(0.4);
+    expect(tuning.ribbonOpacityScale).toBeGreaterThan(1.5);
+    expect(tuning.routeOpacityScale).toBeLessThan(0.9);
+  });
+
+  it("makes isometric-atlas prioritize route hierarchy", () => {
+    const tuning = buildDirectorLensSceneTuning("isometric-atlas");
+
+    expect(tuning.rootPitchOffset).toBeGreaterThan(0.05);
+    expect(tuning.skylineHeightScale).toBeLessThan(0.8);
+    expect(tuning.routeOpacityScale).toBeGreaterThan(1.4);
+    expect(tuning.routeYOffset).toBeGreaterThan(0.05);
+    expect(tuning.ribbonOpacityScale).toBeLessThan(0.9);
+  });
+
+  it("makes close-detail tighten the foreground and reduce water field", () => {
+    const tuning = buildDirectorLensSceneTuning("close-detail");
+
+    expect(tuning.rootPitchOffset).toBeLessThan(0);
+    expect(tuning.skylineDepthScale).toBeLessThan(0.85);
+    expect(tuning.skylineLift).toBeGreaterThan(0.07);
+    expect(tuning.waterDepthScale).toBeLessThan(0.75);
+    expect(tuning.routeZOffset).toBeLessThan(-0.25);
+  });
 });

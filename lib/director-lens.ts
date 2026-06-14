@@ -120,12 +120,14 @@ export function buildDirectorLensSceneTuning(id?: string | null): DirectorLensSc
   if (lens.id === "wide-water") {
     return {
       ...base,
-      rootPitchOffset: 0.012,
-      waterDepthScale: 1.2,
-      waterZOffset: 0.28,
-      ribbonOpacityScale: 1.28,
-      routeOpacityScale: 0.9,
-      routeZOffset: 0.18,
+      rootPitchOffset: 0.018,
+      skylineHeightScale: 0.9,
+      skylineDepthScale: 1.12,
+      waterDepthScale: 1.36,
+      waterZOffset: 0.42,
+      ribbonOpacityScale: 1.58,
+      routeOpacityScale: 0.82,
+      routeZOffset: 0.26,
     };
   }
 
@@ -148,28 +150,30 @@ export function buildDirectorLensSceneTuning(id?: string | null): DirectorLensSc
   if (lens.id === "isometric-atlas") {
     return {
       ...base,
-      rootPitchOffset: 0.03,
-      skylineHeightScale: 0.84,
-      skylineDepthScale: 1.08,
-      waterDepthScale: 0.9,
-      routeOpacityScale: 1.24,
-      routeYOffset: 0.04,
+      rootPitchOffset: 0.052,
+      skylineHeightScale: 0.72,
+      skylineDepthScale: 1.18,
+      waterDepthScale: 0.82,
+      ribbonOpacityScale: 0.78,
+      routeOpacityScale: 1.42,
+      routeYOffset: 0.06,
+      routeZOffset: 0.04,
     };
   }
 
   if (lens.id === "close-detail") {
     return {
       ...base,
-      rootPitchOffset: -0.012,
-      skylineHeightScale: 1.12,
-      skylineDepthScale: 0.92,
-      skylineLift: 0.05,
-      waterDepthScale: 0.86,
-      waterZOffset: -0.24,
-      ribbonOpacityScale: 0.82,
-      routeOpacityScale: 0.86,
-      routeYOffset: 0.02,
-      routeZOffset: -0.2,
+      rootPitchOffset: -0.018,
+      skylineHeightScale: 1.18,
+      skylineDepthScale: 0.82,
+      skylineLift: 0.08,
+      waterDepthScale: 0.72,
+      waterZOffset: -0.34,
+      ribbonOpacityScale: 0.68,
+      routeOpacityScale: 0.78,
+      routeYOffset: 0.025,
+      routeZOffset: -0.3,
     };
   }
 
