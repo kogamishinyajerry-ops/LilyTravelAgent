@@ -32,6 +32,7 @@ Each lens run writes a folder under `recordings/visual-checks/` with:
 - `index.html`
 - `clip-notes.md`
 - active Director Lens metadata
+- structured Lens tuning evidence from Scene Inspector
 
 After `npm run index:recording-assets`, the top-level recording index shows lens-aware titles such as `Dream low-skyline lens visual pack`, and `/studio` recent asset cards show a lens chip.
 
@@ -50,7 +51,8 @@ After `npm run index:recording-assets`, the top-level recording index shows lens
 - Does the map stay compact and non-distracting?
 - Does the Proof Stack show `Director` as ready?
 - Does the asset panel expose the same lens and cache key?
+- Does Scene Inspector show the expected tuning cue, for example `skyline 1.34x / water 1.08x / route 1.18x` for `low-skyline`?
 
 ## Next Tuning Slice
 
-After the five packs exist, tune one lens at a time. Start with `low-skyline`, because it is the clearest path toward city-skyline visual impact.
+After the five packs exist, tune one lens at a time. Start with `low-skyline`, because it is the clearest path toward city-skyline visual impact. The first low-skyline tuning pass now increases skyline height, foreground water glint, route brightness, and root pitch so the QA pack has measurable evidence before visual comparison.

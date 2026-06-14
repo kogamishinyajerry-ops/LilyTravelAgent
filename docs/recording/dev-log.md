@@ -971,3 +971,14 @@ Files shown: scripts/check-dream-lenses.mjs, components/studio-mode.tsx, docs/re
 Command/result: npm run lint && npm test && npm run build (43 files, 892 tests, build passed)
 Voiceover note: "这一步我又跑了完整质量门。现在五种镜头语言的素材捕获、索引展示和 Studio 可视化是一条稳定链路。"
 Usable for: verification checkpoint clip, lens capture workflow, Vibe Coding reliability narrative, continued goal run round 109
+
+## Phase CE: v0.8.72 — Low-Skyline Lens Tuning Pass
+
+Date: 2026-06-14
+Clip title: Phase CE: v0.8.72 — Low-Skyline Lens Tuning Pass
+What changed: Added a tested Director Lens scene-tuning model and connected it to the `/dream` Three.js scene. `low-skyline` now lowers the root pitch, increases skyline height, compresses skyline depth, lifts silhouettes, strengthens water glint, and brightens the route rail. Scene Inspector now exposes the tuning cue, and Dream visual QA records/validates that cue for `DREAM_LENS=low-skyline`.
+Why this matters: The lens selector now changes more than the camera pose. It also changes the visible scene composition and writes measurable evidence into the QA pack, which makes before/after visual tuning recordable.
+Files shown: lib/director-lens.ts, components/dream-skyline-scene.tsx, components/dream-roadbook.tsx, scripts/check-dream-visuals.mjs, docs/recording/lens-visual-capture-workflow.md
+Command/result: npm test -- lib/director-lens.test.ts; npm test -- lib/cinematic-scene-preset.test.ts components/dream-roadbook.test.tsx; npm run lint
+Voiceover note: "我先不追求一次把 3D 做到最终，而是把 low-skyline 的变化拆成可测参数：天际线更高、水线更亮、路线更明显，然后让 QA 自动记录这些证据。"
+Usable for: low-skyline tuning clip, lens comparison workflow, Vibe Coding visual QA narrative, continued goal run round 115
