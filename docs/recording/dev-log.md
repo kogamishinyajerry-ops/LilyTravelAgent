@@ -949,3 +949,14 @@ Files shown: docs/recording/goal-71-100-recap.md, README.md, docs/recording/dev-
 Command/result: npm run lint && npm test && npm run build
 Voiceover note: "这 30 轮的重点不是又堆了一个按钮，而是把镜头语言变成了产品结构：模型、提示词、画面、缓存、QA 和录屏脚本全部打通。"
 Usable for: 30-goal recap clip, Director Lens chapter, Vibe Coding long-form outline, continued product polish
+
+## Phase CC: v0.8.70 — Lens-Aware Recording Asset Index
+
+Date: 2026-06-14
+Clip title: Phase CC: v0.8.70 — Lens-Aware Recording Asset Index
+What changed: Added `npm run check:dream-lenses`, wired the recording suite to run the four non-auto Director Lens modes, and updated the recording asset readers/index so Dream QA packs surface the active lens in title, detail, HTML index, Markdown index, and `/studio` asset summaries.
+Why this matters: The recording pipeline can now compare camera directions as first-class material. A Skyline Lens QA pack is no longer hidden as just another Dali screenshot folder; the lens appears everywhere a creator reviews assets.
+Files shown: scripts/check-dream-lenses.mjs, scripts/check-recording-suite.mjs, lib/recording-assets.ts, scripts/index-recording-assets.mjs, recordings/index.html
+Command/result: npm test -- lib/recording-assets.test.ts && npm run lint; RECORDINGS_DIR=<tmp> npm run index:recording-assets confirmed low-skyline lens in HTML and Markdown.
+Voiceover note: "我把五种镜头语言接进录屏素材管线。以后不是只生成一个好看的页面，而是可以批量生成不同镜头方向的 QA 素材包，再从索引里对比。"
+Usable for: lens comparison workflow clip, recording asset automation, Vibe Coding evidence pipeline, continued goal run round 105
