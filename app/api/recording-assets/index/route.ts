@@ -42,6 +42,15 @@ function buildRecordingIndexHtml(
               <strong>${escapeHtml(pack.detail)}</strong>
               <code>recordings/${escapeHtml(pack.galleryPath)}</code>
               ${pack.notesPath ? `<code>recordings/${escapeHtml(pack.notesPath)}</code>` : ""}
+              ${pack.visualProof ? `
+                <div class="visual-proof">
+                  <span>Dream Proof · ${escapeHtml(pack.visualProof.finalCueLabel)} · ${escapeHtml(pack.visualProof.finalCueValue)}</span>
+                  <nav>
+                    ${pack.visualProof.screenshotPath ? `<a href="${escapeHtml(buildRecordingFileUrl(pack.visualProof.screenshotPath))}">playback screenshot</a>` : ""}
+                    <a href="${escapeHtml(buildRecordingFileUrl(pack.visualProof.summaryPath))}">summary</a>
+                    ${pack.visualProof.notesPath ? `<a href="${escapeHtml(buildRecordingFileUrl(pack.visualProof.notesPath))}">notes</a>` : ""}
+                  </nav>
+                </div>` : ""}
             </article>`,
         )
         .join("")
@@ -78,6 +87,10 @@ function buildRecordingIndexHtml(
       h2 { font-size: 1.35rem; }
       strong { color: #34443c; }
       code { display: block; overflow: auto; border-radius: 8px; padding: 7px 9px; color: #284f42; background: rgba(255, 255, 255, 0.68); }
+      .visual-proof { display: grid; gap: 7px; border: 1px solid rgba(79, 143, 122, 0.2); border-radius: 8px; padding: 9px; background: rgba(79, 143, 122, 0.1); }
+      .visual-proof span { color: #284f42; font-size: 0.82rem; font-weight: 950; }
+      .visual-proof nav { display: flex; flex-wrap: wrap; gap: 6px; }
+      .visual-proof a { border-radius: 999px; padding: 5px 8px; color: #fff; font-size: 0.74rem; font-weight: 900; text-decoration: none; background: #4f8f7a; }
       @media (max-width: 860px) { header, .grid { display: block; } article + article { margin-top: 12px; } }
     </style>
   </head>
@@ -108,4 +121,8 @@ function escapeHtml(value: string) {
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;");
+}
+
+function buildRecordingFileUrl(relativePath: string) {
+  return `/api/recording-assets/file?path=${encodeURIComponent(relativePath)}`;
 }

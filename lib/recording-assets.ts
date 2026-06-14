@@ -14,6 +14,7 @@ export type RecordingAssetPack = {
   galleryPath: string;
   notesPath: string;
   summaryPath: string;
+  visualProof: RecordingDreamVisualProofSummary | null;
 };
 
 export type RecordingAssetsSummary = {
@@ -114,32 +115,41 @@ async function readLatestDreamVisualProof(recordingsRoot: string): Promise<Recor
     }
 
     const summary = JSON.parse(await readFile(summaryPath, "utf8")) as Record<string, unknown>;
-    const visualProof = typeof summary.visualProof === "object" && summary.visualProof ? summary.visualProof as Record<string, unknown> : null;
-    const finalCue = typeof visualProof?.finalActiveCue === "object" && visualProof.finalActiveCue
-      ? visualProof.finalActiveCue as Record<string, unknown>
-      : null;
-    if (!visualProof || !finalCue) {
+    const visualProof = readDreamVisualProofFromSummary(entry, packDir, summary);
+    if (!visualProof) {
       continue;
     }
 
-    const initialCues = Array.isArray(visualProof.initialCues) ? visualProof.initialCues : [];
-    const screenshotFile = path.basename(readString(visualProof.screenshotPath));
-    runs.push({
-      id: entry,
-      createdAt: readString(summary.createdAt) || entry,
-      finalCueLabel: readString(finalCue.label),
-      finalCueValue: readString(finalCue.value),
-      buttonTextAfterPlayback: readString(visualProof.buttonTextAfterPlayback),
-      cueLabels: initialCues
-        .map((item) => readString((item as Record<string, unknown>).label))
-        .filter(Boolean),
-      screenshotPath: screenshotFile ? toRecordingLink(path.join("visual-checks", entry, screenshotFile)) : "",
-      summaryPath: toRecordingLink(path.join("visual-checks", entry, "summary.json")),
-      notesPath: existsSync(path.join(packDir, "clip-notes.md")) ? toRecordingLink(path.join("visual-checks", entry, "clip-notes.md")) : "",
-    });
+    runs.push(visualProof);
   }
 
   return runs.sort((a, b) => b.createdAt.localeCompare(a.createdAt))[0] || null;
+}
+
+function readDreamVisualProofFromSummary(entry: string, packDir: string, summary: Record<string, unknown>): RecordingDreamVisualProofSummary | null {
+  const visualProof = typeof summary.visualProof === "object" && summary.visualProof ? summary.visualProof as Record<string, unknown> : null;
+  const finalCue = typeof visualProof?.finalActiveCue === "object" && visualProof.finalActiveCue
+    ? visualProof.finalActiveCue as Record<string, unknown>
+    : null;
+  if (!visualProof || !finalCue) {
+    return null;
+  }
+
+  const initialCues = Array.isArray(visualProof.initialCues) ? visualProof.initialCues : [];
+  const screenshotFile = path.basename(readString(visualProof.screenshotPath));
+  return {
+    id: entry,
+    createdAt: readString(summary.createdAt) || entry,
+    finalCueLabel: readString(finalCue.label),
+    finalCueValue: readString(finalCue.value),
+    buttonTextAfterPlayback: readString(visualProof.buttonTextAfterPlayback),
+    cueLabels: initialCues
+      .map((item) => readString((item as Record<string, unknown>).label))
+      .filter(Boolean),
+    screenshotPath: screenshotFile ? toRecordingLink(path.join("visual-checks", entry, screenshotFile)) : "",
+    summaryPath: toRecordingLink(path.join("visual-checks", entry, "summary.json")),
+    notesPath: existsSync(path.join(packDir, "clip-notes.md")) ? toRecordingLink(path.join("visual-checks", entry, "clip-notes.md")) : "",
+  };
 }
 
 async function readLatestCandidateHandoff(recordingsRoot: string): Promise<RecordingCandidateHandoffSummary | null> {
@@ -210,6 +220,7 @@ async function readSource(recordingsRoot: string, source: (typeof sources)[numbe
       galleryPath: toRecordingLink(path.join(source.dir, entry, "index.html")),
       notesPath: existsSync(path.join(packDir, "clip-notes.md")) ? toRecordingLink(path.join(source.dir, entry, "clip-notes.md")) : "",
       summaryPath: toRecordingLink(path.join(source.dir, entry, "summary.json")),
+      visualProof: source.type === "dream" ? readDreamVisualProofFromSummary(entry, packDir, summary) : null,
     });
   }
 

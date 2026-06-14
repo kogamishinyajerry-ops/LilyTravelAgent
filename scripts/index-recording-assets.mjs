@@ -56,6 +56,7 @@ async function readSource(source) {
       galleryPath: toRecordingLink(path.join(source.dir, entry, "index.html")),
       notesPath: existsSync(path.join(packDir, "clip-notes.md")) ? toRecordingLink(path.join(source.dir, entry, "clip-notes.md")) : "",
       summaryPath: toRecordingLink(path.join(source.dir, entry, "summary.json")),
+      visualProof: source.type === "dream" ? readDreamVisualProof(entry, packDir, summary) : null,
     });
   }
 
@@ -115,6 +116,15 @@ function buildHtmlIndex(packs) {
                 <a href="${escapeHtml(pack.summaryPath)}">summary</a>
                 ${pack.notesPath ? `<a href="${escapeHtml(pack.notesPath)}">clip notes</a>` : ""}
               </nav>
+              ${pack.visualProof ? `
+                <div class="visual-proof">
+                  <span>Dream Proof · ${escapeHtml(pack.visualProof.finalCueLabel)} · ${escapeHtml(pack.visualProof.finalCueValue)}</span>
+                  <nav>
+                    ${pack.visualProof.screenshotPath ? `<a href="${escapeHtml(pack.visualProof.screenshotPath)}">playback screenshot</a>` : ""}
+                    <a href="${escapeHtml(pack.visualProof.summaryPath)}">summary</a>
+                    ${pack.visualProof.notesPath ? `<a href="${escapeHtml(pack.visualProof.notesPath)}">clip notes</a>` : ""}
+                  </nav>
+                </div>` : ""}
             </article>`,
         )
         .join("")
@@ -182,6 +192,23 @@ function buildHtmlIndex(packs) {
         text-decoration: none;
         background: rgba(255, 255, 255, 0.6);
       }
+      .visual-proof {
+        display: grid;
+        gap: 7px;
+        border: 1px solid rgba(79, 143, 122, 0.2);
+        border-radius: 8px;
+        padding: 9px;
+        background: rgba(79, 143, 122, 0.1);
+      }
+      .visual-proof span {
+        color: #284f42;
+        font-size: 0.82rem;
+        font-weight: 950;
+      }
+      .visual-proof a {
+        color: #fff;
+        background: #4f8f7a;
+      }
       @media (max-width: 860px) { header, .grid { display: block; } article + article { margin-top: 12px; } }
     </style>
   </head>
@@ -224,6 +251,12 @@ function buildMarkdownIndex(packs) {
     if (pack.lens) {
       lines.push(`- Director Lens: ${pack.lens}`);
     }
+    if (pack.visualProof) {
+      lines.push(`- Dream Proof: ${pack.visualProof.finalCueLabel} / ${pack.visualProof.finalCueValue}`);
+      if (pack.visualProof.screenshotPath) {
+        lines.push(`- Dream Proof screenshot: ${pack.visualProof.screenshotPath}`);
+      }
+    }
     lines.push(`- Gallery: ${pack.galleryPath}`);
     lines.push(`- Summary: ${pack.summaryPath}`);
     if (pack.notesPath) {
@@ -233,6 +266,23 @@ function buildMarkdownIndex(packs) {
   }
 
   return lines.join("\n");
+}
+
+function readDreamVisualProof(entry, packDir, summary) {
+  const visualProof = summary.visualProof && typeof summary.visualProof === "object" ? summary.visualProof : null;
+  const finalCue = visualProof?.finalActiveCue && typeof visualProof.finalActiveCue === "object" ? visualProof.finalActiveCue : null;
+  if (!visualProof || !finalCue) {
+    return null;
+  }
+
+  const screenshotFile = path.basename(typeof visualProof.screenshotPath === "string" ? visualProof.screenshotPath : "");
+  return {
+    finalCueLabel: typeof finalCue.label === "string" ? finalCue.label : "",
+    finalCueValue: typeof finalCue.value === "string" ? finalCue.value : "",
+    screenshotPath: screenshotFile ? toRecordingLink(path.join("visual-checks", entry, screenshotFile)) : "",
+    summaryPath: toRecordingLink(path.join("visual-checks", entry, "summary.json")),
+    notesPath: existsSync(path.join(packDir, "clip-notes.md")) ? toRecordingLink(path.join("visual-checks", entry, "clip-notes.md")) : "",
+  };
 }
 
 function toRecordingLink(relativePath) {
