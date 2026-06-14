@@ -1983,3 +1983,14 @@ Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, app/gl
 Command/result: npm test -- components/studio-mode.test.tsx passed with 25 tests; browser check against `http://localhost:3000/studio` confirmed the Complete strip is compact, styled, and visible with empty console errors.
 Voiceover note: "这一条 Complete strip 就是最后的收口：Delivery 入库、Handoff 已复制、QA 收据就绪。录屏讲到这里，整条 Agent 工作流闭环了。"
 Usable for: final closeout clip, proof-story workflow summary, continued goal run round 764
+
+## Phase FS: v0.8.164 — Complete Line In Studio QA Notes
+
+Date: 2026-06-14
+Clip title: Phase FS: v0.8.164 — Complete Line In Studio QA Notes
+What changed: `npm run check:studio-visuals` now captures the visible `Proof Story Complete` strip and writes the same line into generated Studio QA `clip-notes.md`.
+Why this matters: The final closeout signal is no longer only visible in the product UI; it also becomes part of the automated proof pack for editing and voiceover planning.
+Files shown: scripts/check-studio-visuals.mjs, recordings/studio-checks/2026-06-14T10-36-49-482Z/clip-notes.md, README.md, docs/recording/goal-771-780-recap.md
+Command/result: node --check scripts/check-studio-visuals.mjs passed; npm run check:studio-visuals passed and the newest Studio clip notes contain `Proof Story Complete`.
+Voiceover note: "Complete strip 现在也会写进 Studio QA notes。产品里的最终收口信号，自动进入素材证据包。"
+Usable for: proof-pack closeout narration, final recording receipt clip, continued goal run round 774

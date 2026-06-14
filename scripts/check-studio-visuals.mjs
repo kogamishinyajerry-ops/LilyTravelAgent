@@ -151,10 +151,15 @@ async function captureProofStoryScriptMaterial(page) {
   const text = ((await card.textContent()) || "").replace(/\s+/g, " ").trim();
   const buttonText = await card.getByRole("button", { name: "复制脚本路径" }).innerText();
   const handoffPreview = await card.getByLabel("Proof Story Handoff 预览").innerText();
+  const completeLine = await card.getByLabel("Proof Story Complete 状态").innerText();
   const handoffCopyButton = card.getByRole("button", { name: "复制 Proof Story Handoff" });
   assert(text.includes(proofStoryScriptPath), `Proof Story script card did not include ${proofStoryScriptPath}: ${text}`);
   assert(text.includes(proofStoryScriptCue), `Proof Story script card did not include cue text: ${text}`);
   assert(handoffPreview.includes("Proof Story Handoff"), `Proof Story script card did not include handoff preview: ${handoffPreview}`);
+  assert(
+    completeLine.includes("Proof Story Complete") || completeLine.includes("Proof Story Pending"),
+    `Proof Story script card did not include complete strip: ${completeLine}`,
+  );
 
   await handoffCopyButton.click();
   await page.waitForFunction(
@@ -182,6 +187,7 @@ async function captureProofStoryScriptMaterial(page) {
     buttonText,
     handoffPreview,
     handoffCopyState,
+    completeLine,
     text,
     screenshotPath,
   };
@@ -248,6 +254,7 @@ function buildHtmlReport(summary) {
             <div><dt>cue</dt><dd>${escapeHtml(summary.scriptMaterial.cue)}</dd></div>
             <div><dt>button</dt><dd>${escapeHtml(summary.scriptMaterial.buttonText)}</dd></div>
             <div><dt>handoff</dt><dd>${escapeHtml(summary.scriptMaterial.handoffCopyState || "")}</dd></div>
+            <div><dt>complete</dt><dd>${escapeHtml(summary.scriptMaterial.completeLine || "")}</dd></div>
           </dl>
         </div>
       </section>`
@@ -413,6 +420,7 @@ function buildClipNotes(summary) {
     `- Button: ${summary.scriptMaterial.buttonText}`,
     `- Proof Story Handoff: ${summary.scriptMaterial.handoffPreview}`,
     `- Handoff copy state: ${summary.scriptMaterial.handoffCopyState}`,
+    `- Proof Story Complete: ${summary.scriptMaterial.completeLine}`,
     `- Voiceover prompt: Studio 现在把 Proof Story 脚本路径、证据时间线、四行预览和复制动作放在同一个录屏面板里。`,
     ``,
   ].join("\n");
