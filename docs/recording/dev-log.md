@@ -1565,3 +1565,14 @@ Files shown: scripts/check-recording-index.mjs, package.json, README.md, docs/re
 Command/result: node --check scripts/check-recording-index.mjs passed; npm run check:recording-index passed; RECORDINGS_DIR=<empty> npm run check:recording-index skipped cleanly; npm run lint && npm test && npm run build passed with 44 files, 915 tests, and a successful production build.
 Voiceover note: "这一轮我把素材总索引的验收也变成命令。它会刷新 archive，打开 API index，确认 Dream Proof 文字和三条证据链接都没断。"
 Usable for: recording archive QA clip, Vibe Coding automation narration, continued goal run round 384
+
+## Phase EG: v0.8.126 — Studio Recording Index QA Status
+
+Date: 2026-06-14
+Clip title: Phase EG: v0.8.126 — Studio Recording Index QA Status
+What changed: `/studio` now reads the latest `recordings/index-checks` result and shows a `Recording Index QA` card with final Proof cue, evidence-link count, proof-card screenshot, summary, and notes.
+Why this matters: The recording workbench now shows that the local archive itself has been validated, not only that Dream and Candidate QA ran.
+Files shown: lib/recording-assets.ts, components/studio-mode.tsx, app/globals.css, components/studio-mode.test.tsx, lib/recording-assets.test.ts
+Command/result: npm test -- lib/recording-assets.test.ts components/studio-mode.test.tsx passed with 18 tests; Chrome browser check confirmed `/studio` shows `素材总索引已验证` and three 200 evidence links; npm run lint && npm test && npm run build passed with 44 files, 916 tests, and a successful production build.
+Voiceover note: "现在 Studio 里多了一张 Index QA 卡：它证明素材总索引不是我手动看过，而是被命令验证过，三条证据链接也都能打开。"
+Usable for: Studio archive-QA status clip, proof-loop narration, continued goal run round 394
