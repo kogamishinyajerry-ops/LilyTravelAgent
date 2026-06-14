@@ -94,6 +94,7 @@ type RecordingIndexCheckSummary = {
   proofStoryCompleteLine?: string;
   proofStoryCompleteBundleLine?: string;
   proofStoryBundleChainLine?: string;
+  proofChainSummaryLine?: string;
   proofText: string;
   apiIndexUrl: string;
   screenshotPath: string;
@@ -725,6 +726,19 @@ function getProofChainSummaryArchiveState(scriptMaterial: RecordingStudioScriptM
   return { label: "Summary 已入库", ready: true };
 }
 
+function getProofChainIndexSummaryState(indexCheck: RecordingIndexCheckSummary | null | undefined, currentSummaryLine: string) {
+  const indexedLine = indexCheck?.proofChainSummaryLine || "";
+  if (!indexedLine) {
+    return { label: "Index Summary 待验证", ready: false };
+  }
+
+  if (indexedLine !== currentSummaryLine) {
+    return { label: "Index Summary 待同步", ready: false };
+  }
+
+  return { label: "Index Summary 已验证", ready: true };
+}
+
 function getProofStoryDeliverySync(studioLine: string, notesLine: string) {
   if (!notesLine) {
     return { label: "Delivery 待入库", ready: false };
@@ -968,6 +982,10 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
     recordingAssets.status === "ready"
       ? getProofChainSummaryArchiveState(recordingAssets.latestStudioProofPlayback?.scriptMaterial, proofChainSummaryLine)
       : getProofChainSummaryArchiveState(null, proofChainSummaryLine);
+  const proofChainIndexSummaryState =
+    recordingAssets.status === "ready"
+      ? getProofChainIndexSummaryState(recordingAssets.latestRecordingIndexCheck, proofChainSummaryLine)
+      : getProofChainIndexSummaryState(null, proofChainSummaryLine);
   const recordingProofChecklist = useMemo(
     () => getRecordingProofChecklist(recordingAssets, proofStoryIndexBundleChainState),
     [recordingAssets, proofStoryIndexBundleChainState],
@@ -1716,6 +1734,12 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
                               aria-label="Proof Chain Summary QA 状态"
                             >
                               {proofChainSummaryArchiveState.label}
+                            </span>
+                            <span
+                              className={`studio-proof-chain-summary-archive ${proofChainIndexSummaryState.ready ? "ready" : "missing"}`}
+                              aria-label="Proof Chain Index Summary 状态"
+                            >
+                              {proofChainIndexSummaryState.label}
                             </span>
                             <button
                               type="button"

@@ -50,6 +50,8 @@ function recordingAssetsResponse(
     indexBundleLine?: string;
     omitIndexChainQa?: boolean;
     indexChainLine?: string;
+    omitIndexSummaryQa?: boolean;
+    indexSummaryLine?: string;
     omitCompleteBundleQa?: boolean;
     completeBundleLine?: string;
     completeBundleCopyState?: string;
@@ -147,6 +149,7 @@ function recordingAssetsResponse(
           proofStoryCompleteLine: defaultProofStoryCompleteLine,
           proofStoryCompleteBundleLine: options.omitIndexBundleQa ? "" : options.indexBundleLine || readyProofStoryCompleteBundleLine,
           proofStoryBundleChainLine: indexLinkCount >= 6 && !options.omitIndexChainQa ? options.indexChainLine || readyProofStoryBundleChainLine : "",
+          proofChainSummaryLine: indexLinkCount >= 6 && !options.omitIndexSummaryQa ? options.indexSummaryLine || readyProofChainSummaryLine : "",
           summaryPath: "index-checks/index-check-latest/summary.json",
           notesPath: options.omitIndexNotes ? undefined : "index-checks/index-check-latest/clip-notes.md",
         }
@@ -338,6 +341,7 @@ describe("StudioMode demo roadbooks", () => {
     expect(proofChainSummary).toContain("Index QA notes: index-checks/index-check-latest/clip-notes.md");
     expect(proofChainSummary).toContain("Studio script screenshot: studio-checks/studio-proof-latest/studio-proof-story-script-material.png");
     expect(screen.getByLabelText("Proof Chain Summary QA 状态").textContent).toBe("Summary 已入库");
+    expect(screen.getByLabelText("Proof Chain Index Summary 状态").textContent).toBe("Index Summary 已验证");
     expect(within(scriptCard).getByRole("link", { name: "Production Assets QA 收据" }).getAttribute("href")).toBe(
       "/api/recording-assets/file?path=index-checks%2Findex-check-latest%2Fclip-notes.md",
     );
@@ -694,6 +698,26 @@ describe("StudioMode demo roadbooks", () => {
 
     fireEvent.click(screen.getByRole("button", { name: /脚本模式/ }));
     expect(screen.getByLabelText("录屏证据清单").textContent).toContain("Index Chain 待验证");
+  });
+
+  it("shows a pending Index Summary state for older index QA packs", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => ({
+        ok: true,
+        status: 200,
+        json: async () =>
+          recordingAssetsResponse(15, "Studio 16:9 demo pack", true, {
+            omitIndexSummaryQa: true,
+          }),
+      })) as unknown as typeof fetch,
+    );
+
+    render(<StudioMode />);
+
+    expect(await screen.findByLabelText("Proof Chain Summary 预览")).toBeTruthy();
+    expect(screen.getByLabelText("Proof Chain Summary QA 状态").textContent).toBe("Summary 已入库");
+    expect(screen.getByLabelText("Proof Chain Index Summary 状态").textContent).toBe("Index Summary 待验证");
   });
 
   it("keeps legacy Dream-only wording for older 3-link recording index checks", async () => {

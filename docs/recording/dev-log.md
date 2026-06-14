@@ -2203,3 +2203,14 @@ Files shown: scripts/index-recording-assets.mjs, app/api/recording-assets/index/
 Command/result: node --check scripts/index-recording-assets.mjs passed; node --check scripts/check-recording-index.mjs passed; npm run index:recording-assets indexed 81 packs; npm run check:recording-index passed and generated `recordings/index-checks/2026-06-14T12-04-40-698Z/clip-notes.md` with `Proof Chain Summary`.
 Voiceover note: "Summary line 进入 Recording Index QA，说明后期 notes 不只是 Studio 卡片里的文案，而是被总素材库和自动验收一起追踪。"
 Usable for: Recording Index Summary archive walkthrough, post-production notes QA clip, continued goal run round 964
+
+## Phase FS: v0.8.184 — Index Summary Chip In Studio
+
+Date: 2026-06-14
+Clip title: Phase FS: v0.8.184 — Index Summary Chip In Studio
+What changed: `/studio` now reads the latest Recording Index QA `Proof Chain Summary` line and shows `Index Summary 已验证` beside the existing `Summary 已入库` chip.
+Why this matters: The post-production note now completes the full return loop: Studio QA captures it, Recording Index QA verifies it, and Studio shows both archive states in one compact line.
+Files shown: lib/recording-assets.ts, components/studio-mode.tsx, app/globals.css, docs/recording/goal-971-980-recap.md
+Command/result: npm test -- lib/recording-assets.test.ts components/studio-mode.test.tsx passed with 53 tests; browser check against `http://localhost:3000/studio` showed `Summary 已入库`, `Index Summary 已验证`, 297px row width inside a 313px card, and 0 console errors.
+Voiceover note: "Summary 也完成回流闭环：Studio QA 采集，Recording Index QA 验证，然后 Studio 显示 Index Summary 已验证。"
+Usable for: final Summary proof-loop walkthrough, post-production note verification clip, continued goal run round 974
