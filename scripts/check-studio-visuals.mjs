@@ -78,6 +78,8 @@ async function main() {
     });
   }
 
+  const proofPlayback = await captureProofPlayback(page);
+
   await browser.close();
 
   const summary = {
@@ -86,6 +88,7 @@ async function main() {
     viewport: { width: 1280, height: 720 },
     outDir,
     captures,
+    proofPlayback,
     consoleMessages,
   };
   const summaryPath = path.join(outDir, "summary.json");
@@ -100,6 +103,49 @@ async function main() {
   console.log(`Studio visual QA passed: ${summaryPath}`);
   console.log(`Studio visual QA gallery: ${htmlPath}`);
   console.log(`Studio visual QA clip notes: ${clipNotesPath}`);
+}
+
+async function captureProofPlayback(page) {
+  await page.getByRole("button", { name: /脚本模式/ }).click();
+  await page.waitForSelector('[aria-label="录屏证据清单"]', { timeout: 30_000 });
+
+  const initialCues = await readProofChecklist(page);
+  assert(initialCues.some((cue) => cue.label === "Suite Run"), "Studio proof checklist should include Suite Run.");
+
+  const checklist = page.locator('[aria-label="录屏证据清单"]');
+  await checklist.getByRole("button", { name: "播放证据线" }).click();
+  await page.waitForFunction(
+    () => document.querySelector('[aria-label="录屏证据清单"] [aria-current="step"]')?.textContent?.includes("Suite Run"),
+    null,
+    { timeout: 10_000 },
+  );
+
+  const finalActiveCue = (await readProofChecklist(page)).find((cue) => cue.active) || null;
+  assert(finalActiveCue?.label === "Suite Run", `Studio proof playback should end on Suite Run, got ${finalActiveCue?.label || "none"}.`);
+
+  const screenshotPath = path.join(outDir, "studio-suite-run-proof.png");
+  await page.screenshot({ path: screenshotPath, fullPage: false });
+  const buttonTextAfterPlayback = await checklist.locator("button").innerText();
+  assert(buttonTextAfterPlayback.includes("播放证据线"), `Proof playback button did not reset: ${buttonTextAfterPlayback}`);
+
+  return {
+    initialCues,
+    finalActiveCue,
+    buttonTextAfterPlayback,
+    screenshotPath,
+  };
+}
+
+async function readProofChecklist(page) {
+  return page.locator(".studio-proof-checklist-item").evaluateAll((items) =>
+    items.map((item) => ({
+      label: item.querySelector("span")?.textContent?.trim() || "",
+      state: item.querySelector("strong")?.textContent?.trim() || "",
+      detail: item.querySelector("a, p")?.textContent?.trim() || "",
+      cue: item.querySelector("em")?.textContent?.trim() || "",
+      active: item.getAttribute("aria-current") === "step",
+    })),
+  );
 }
 
 main().catch((error) => {
@@ -124,6 +170,21 @@ function buildHtmlReport(summary) {
         </article>`,
     )
     .join("");
+  const proof = summary.proofPlayback
+    ? `
+      <section class="proof">
+        <img src="${escapeHtml(path.basename(summary.proofPlayback.screenshotPath))}" alt="Studio Suite Run proof playback final state" />
+        <div>
+          <p>proof playback</p>
+          <h2>${escapeHtml(summary.proofPlayback.finalActiveCue?.label || "Proof cue")}</h2>
+          <dl>
+            <div><dt>state</dt><dd>${escapeHtml(summary.proofPlayback.finalActiveCue?.state || "")}</dd></div>
+            <div><dt>detail</dt><dd>${escapeHtml(summary.proofPlayback.finalActiveCue?.detail || "")}</dd></div>
+            <div><dt>button</dt><dd>${escapeHtml(summary.proofPlayback.buttonTextAfterPlayback)}</dd></div>
+          </dl>
+        </div>
+      </section>`
+    : "";
 
   return `<!doctype html>
 <html lang="zh-CN">
@@ -172,6 +233,18 @@ function buildHtmlReport(summary) {
         object-fit: cover;
       }
       article > div { padding: 16px; }
+      .proof {
+        overflow: hidden;
+        display: grid;
+        grid-template-columns: minmax(0, 1.5fr) minmax(280px, 0.7fr);
+        gap: 0;
+        margin-top: 16px;
+        border: 1px solid rgba(83, 96, 173, 0.24);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.76);
+        box-shadow: 0 18px 50px rgba(47, 60, 70, 0.12);
+      }
+      .proof > div { padding: 18px; }
       article p {
         color: #63806e;
         font-size: 0.72rem;
@@ -204,7 +277,7 @@ function buildHtmlReport(summary) {
         font-weight: 900;
       }
       @media (max-width: 900px) {
-        header, .grid { display: block; }
+        header, .grid, .proof { display: block; }
         article + article { margin-top: 14px; }
       }
     </style>
@@ -219,6 +292,7 @@ function buildHtmlReport(summary) {
         <p>${escapeHtml(summary.createdAt)}<br />${escapeHtml(summary.targetUrl)}</p>
       </header>
       <section class="grid">${cards}</section>
+      ${proof}
     </main>
   </body>
 </html>
@@ -253,6 +327,15 @@ function buildClipNotes(summary) {
     `我把 /studio 当成内容生产工作台：不用每次等真实生成，也能稳定切换大理和海岸样例，检查输入区、路书预览和状态条是否同步。`,
     ``,
     captures,
+    ``,
+    `## Suite Run Proof Playback`,
+    ``,
+    `- Screenshot: ${path.basename(summary.proofPlayback.screenshotPath)}`,
+    `- Final cue: ${summary.proofPlayback.finalActiveCue?.label || ""}`,
+    `- State: ${summary.proofPlayback.finalActiveCue?.state || ""}`,
+    `- Detail: ${summary.proofPlayback.finalActiveCue?.detail || ""}`,
+    `- Button after playback: ${summary.proofPlayback.buttonTextAfterPlayback}`,
+    `- Voiceover prompt: 播放证据线最后停在 Suite Run，用 full suite 总收据给 Studio 录屏证据链收口。`,
     ``,
   ].join("\n");
 }
