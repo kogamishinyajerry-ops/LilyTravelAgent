@@ -1886,6 +1886,31 @@ textarea {
   white-space: nowrap;
 }
 
+.studio-proof-script-status {
+  display: block;
+  overflow: hidden;
+  border: 1px solid rgba(38, 59, 49, 0.12);
+  border-radius: 999px;
+  padding: 4px 7px;
+  font-size: 0.62rem;
+  font-weight: 950;
+  text-decoration: none;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.studio-proof-script-status.ready {
+  color: #275f4c;
+  border-color: rgba(79, 143, 122, 0.26);
+  background: rgba(79, 143, 122, 0.14);
+}
+
+.studio-proof-script-status.missing {
+  color: #7a3c24;
+  border-color: rgba(191, 128, 85, 0.22);
+  background: rgba(191, 128, 85, 0.1);
+}
+
 .studio-proof-story-actions button {
   display: inline-flex;
   align-items: center;

@@ -100,6 +100,15 @@ export type RecordingStudioProofPlaybackSummary = {
   screenshotPath: string;
   summaryPath: string;
   notesPath: string;
+  scriptMaterial: RecordingStudioScriptMaterialSummary | null;
+};
+
+export type RecordingStudioScriptMaterialSummary = {
+  visible: boolean;
+  scriptPath: string;
+  cue: string;
+  buttonText: string;
+  screenshotPath: string;
 };
 
 const sources = [
@@ -453,6 +462,25 @@ function readStudioProofPlaybackFromSummary(entry: string, packDir: string, summ
     screenshotPath: screenshotFile ? toRecordingLink(path.join("studio-checks", entry, screenshotFile)) : "",
     summaryPath: toRecordingLink(path.join("studio-checks", entry, "summary.json")),
     notesPath: existsSync(path.join(packDir, "clip-notes.md")) ? toRecordingLink(path.join("studio-checks", entry, "clip-notes.md")) : "",
+    scriptMaterial: readStudioScriptMaterialFromSummary(entry, summary),
+  };
+}
+
+function readStudioScriptMaterialFromSummary(entry: string, summary: Record<string, unknown>): RecordingStudioScriptMaterialSummary | null {
+  const scriptMaterial = typeof summary.scriptMaterial === "object" && summary.scriptMaterial
+    ? summary.scriptMaterial as Record<string, unknown>
+    : null;
+  if (!scriptMaterial) {
+    return null;
+  }
+
+  const screenshotFile = path.basename(readString(scriptMaterial.screenshotPath));
+  return {
+    visible: Boolean(scriptMaterial.visible),
+    scriptPath: readString(scriptMaterial.scriptPath),
+    cue: readString(scriptMaterial.cue),
+    buttonText: readString(scriptMaterial.buttonText),
+    screenshotPath: screenshotFile ? toRecordingLink(path.join("studio-checks", entry, screenshotFile)) : "",
   };
 }
 

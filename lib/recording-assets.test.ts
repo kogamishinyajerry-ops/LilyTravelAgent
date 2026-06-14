@@ -332,6 +332,13 @@ describe("recording assets", () => {
           { label: "Suite Run" },
         ],
       },
+      scriptMaterial: {
+        visible: true,
+        scriptPath: "docs/recording/proof-story-demo-script.md",
+        cue: "证据时间线 → 四行讲解稿预览 → 复制讲解稿",
+        buttonText: "复制脚本路径",
+        screenshotPath: path.join(tempRoot, "studio-checks", "new-studio", "studio-proof-story-script-material.png"),
+      },
     });
 
     const summary = await readRecordingAssetsSummary(tempRoot);
@@ -347,7 +354,35 @@ describe("recording assets", () => {
       screenshotPath: "studio-checks/new-studio/studio-suite-run-proof.png",
       summaryPath: "studio-checks/new-studio/summary.json",
       notesPath: "studio-checks/new-studio/clip-notes.md",
+      scriptMaterial: {
+        visible: true,
+        scriptPath: "docs/recording/proof-story-demo-script.md",
+        cue: "证据时间线 → 四行讲解稿预览 → 复制讲解稿",
+        buttonText: "复制脚本路径",
+        screenshotPath: "studio-checks/new-studio/studio-proof-story-script-material.png",
+      },
     });
+  });
+
+  it("keeps Studio proof script material null when older QA packs do not contain it", async () => {
+    await writeSummary("studio-checks/studio-without-script-material", {
+      createdAt: "2026-06-13T05:00:00.000Z",
+      captures: [],
+      proofPlayback: {
+        finalActiveCue: {
+          label: "Suite Run",
+          state: "已通过",
+          detail: "7 步 · 7 通过",
+        },
+        buttonTextAfterPlayback: "播放证据线",
+        screenshotPath: path.join(tempRoot, "studio-checks", "studio-without-script-material", "studio-suite-run-proof.png"),
+        initialCues: [{ label: "Suite Run" }],
+      },
+    });
+
+    const summary = await readRecordingAssetsSummary(tempRoot);
+
+    expect(summary.latestStudioProofPlayback?.scriptMaterial).toBeNull();
   });
 
   it("includes only the three most recent packs in the summary", async () => {

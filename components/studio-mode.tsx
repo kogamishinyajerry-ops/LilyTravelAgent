@@ -119,6 +119,15 @@ type RecordingStudioProofPlaybackSummary = {
   screenshotPath: string;
   summaryPath: string;
   notesPath?: string;
+  scriptMaterial?: RecordingStudioScriptMaterialSummary | null;
+};
+
+type RecordingStudioScriptMaterialSummary = {
+  visible: boolean;
+  scriptPath: string;
+  cue: string;
+  buttonText: string;
+  screenshotPath?: string;
 };
 
 type RecordingAssetSummaryPack = {
@@ -1033,6 +1042,18 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
                           <strong>Proof Story Demo Script</strong>
                           <code>{proofStoryScriptPath}</code>
                           <p>{proofStoryScriptCue}</p>
+                          {recordingAssets.status === "ready" && recordingAssets.latestStudioProofPlayback?.scriptMaterial ? (
+                            <a
+                              className="studio-proof-script-status ready"
+                              href={buildRecordingEvidenceUrl(recordingAssets.latestStudioProofPlayback.scriptMaterial.screenshotPath)}
+                              target="_blank"
+                              rel="noreferrer"
+                            >
+                              QA 已捕获 · {recordingAssets.latestStudioProofPlayback.scriptMaterial.buttonText || "复制脚本路径"}
+                            </a>
+                          ) : (
+                            <span className="studio-proof-script-status missing">QA 待捕获 · {studioVisualProofCommand}</span>
+                          )}
                           <button type="button" onClick={copyProofStoryScriptPath}>
                             <Copy size={13} />
                             {proofScriptCopyState === "copied" ? "脚本路径已复制" : proofScriptCopyState === "error" ? "手动复制路径" : "复制脚本路径"}

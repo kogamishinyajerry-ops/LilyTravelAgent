@@ -1752,3 +1752,14 @@ Files shown: scripts/check-studio-visuals.mjs, recordings/studio-checks/2026-06-
 Command/result: node --check scripts/check-studio-visuals.mjs passed; npm run check:studio-visuals passed and wrote the script-material evidence pack; npm run lint && npm test && npm run build
 Voiceover note: "现在连脚本素材卡也被 QA 捕获了。也就是说，Studio 里的讲解脚本入口不是只靠我肉眼看，它会进入 summary、HTML 和 clip notes。"
 Usable for: Studio QA evidence clip, script-material proof narration, continued goal run round 554
+
+## Phase EX: v0.8.143 — Studio Script Material QA Status
+
+Date: 2026-06-14
+Clip title: Phase EX: v0.8.143 — Studio Script Material QA Status
+What changed: `/api/recording-assets` now parses optional `summary.scriptMaterial` from the latest Studio QA pack. `/studio` shows `QA 已捕获 · 复制脚本路径` on the Proof Story `脚本素材` card and links to the captured card screenshot; missing state still shows `npm run check:studio-visuals`.
+Why this matters: The script card now closes the loop: UI card, QA capture, local evidence pack, and Studio status all point to the same Proof Story recording material.
+Files shown: lib/recording-assets.ts, lib/recording-assets.test.ts, components/studio-mode.tsx, components/studio-mode.test.tsx, app/globals.css, docs/recording/goal-561-570-recap.md
+Command/result: npm test -- lib/recording-assets.test.ts components/studio-mode.test.tsx passed with 25 tests; browser check confirmed screenshot link returned 200 and console errors were empty; npm run lint && npm test && npm run build
+Voiceover note: "现在脚本素材卡自己也会显示 QA 状态。它不是静态说明，而是能链接回刚刚被 Studio QA 截下来的证据图。"
+Usable for: script-material QA status clip, Studio evidence loop narration, continued goal run round 564

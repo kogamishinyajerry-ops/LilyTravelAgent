@@ -109,6 +109,13 @@ function recordingAssetsResponse(
           screenshotPath: "studio-checks/studio-proof-latest/studio-suite-run-proof.png",
           summaryPath: "studio-checks/studio-proof-latest/summary.json",
           notesPath: "studio-checks/studio-proof-latest/clip-notes.md",
+          scriptMaterial: {
+            visible: true,
+            scriptPath: "docs/recording/proof-story-demo-script.md",
+            cue: "证据时间线 → 四行讲解稿预览 → 复制讲解稿",
+            buttonText: "复制脚本路径",
+            screenshotPath: "studio-checks/studio-proof-latest/studio-proof-story-script-material.png",
+          },
         }
       : null,
     recentPacks: packCount
@@ -204,6 +211,10 @@ describe("StudioMode demo roadbooks", () => {
     const scriptCard = screen.getByLabelText("Proof Story 脚本素材");
     expect(scriptCard.textContent).toContain("docs/recording/proof-story-demo-script.md");
     expect(scriptCard.textContent).toContain("证据时间线 → 四行讲解稿预览 → 复制讲解稿");
+    expect(scriptCard.textContent).toContain("QA 已捕获 · 复制脚本路径");
+    expect(within(scriptCard).getByRole("link", { name: "QA 已捕获 · 复制脚本路径" }).getAttribute("href")).toBe(
+      "/api/recording-assets/file?path=studio-checks%2Fstudio-proof-latest%2Fstudio-proof-story-script-material.png",
+    );
     expect(within(evidenceTimeline).getByRole("link", { name: /Dream Proof/ }).getAttribute("href")).toBe(
       "/api/recording-assets/file?path=visual-checks%2Fdream-proof-latest%2Fsummary.json",
     );
@@ -424,6 +435,7 @@ describe("StudioMode demo roadbooks", () => {
     expect(screen.getByLabelText("证据讲解稿预览").textContent).toContain("02. Studio Proof: 待运行 · npm run check:studio-visuals");
     expect(screen.getByLabelText("证据讲解稿预览").textContent).toContain("03. Index QA: 待运行 · npm run check:recording-index");
     expect(screen.getByLabelText("证据讲解稿预览").textContent).toContain("04. Suite Run: 待运行 · npm run check:recording-suite");
+    expect(screen.getByLabelText("Proof Story 脚本素材").textContent).toContain("QA 待捕获 · npm run check:studio-visuals");
     expect(screen.getByText("Dream 0")).toBeTruthy();
     expect(screen.getByText("Studio 0")).toBeTruthy();
     expect(screen.getByText("生成本地素材索引")).toBeTruthy();
