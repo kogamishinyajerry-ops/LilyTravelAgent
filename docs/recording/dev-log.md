@@ -1697,3 +1697,14 @@ Files shown: components/studio-mode.tsx, app/globals.css, components/studio-mode
 Command/result: npm test -- components/studio-mode.test.tsx passed with 11 tests; browser check confirmed the live timeline order, summary links, and empty console errors; npm run lint && npm test && npm run build passed with 44 files, 919 tests, and a successful production build.
 Voiceover note: "现在 Studio 有一条证据时间线：先是 Dream 画面，再是 Studio 讲解台，再到 Index QA，最后用 Suite Run 收口。"
 Usable for: evidence-chain recording clip, Studio walkthrough narration, continued goal run round 504
+
+## Phase ES: v0.8.138 — Copy Proof Story
+
+Date: 2026-06-14
+Clip title: Phase ES: v0.8.138 — Copy Proof Story
+What changed: `/studio` now has a compact `复制讲解稿` action below the evidence timeline. It copies a four-line narration outline ordered as Dream Proof, Studio Proof, Index QA, and Suite Run.
+Why this matters: The timeline is now useful not only on screen, but also as a reusable caption or later voiceover draft for the creator workflow.
+Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, app/globals.css
+Command/result: npm test -- components/studio-mode.test.tsx passed with 13 tests; browser check confirmed the action is visible, the four timeline steps remain visible, and console errors were empty; npm run lint && npm test && npm run build passed with 44 files, 921 tests, and a successful production build.
+Voiceover note: "证据时间线现在可以一键复制成四行讲解稿，录完屏之后可以直接当字幕或旁白草稿用。"
+Usable for: voiceover workflow clip, creator tooling narration, continued goal run round 514

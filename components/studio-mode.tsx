@@ -529,6 +529,7 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
   const [scriptMode, setScriptMode] = useState(false);
   const [recordingCommandCopyState, setRecordingCommandCopyState] = useState<"idle" | "copied" | "error">("idle");
   const [candidateCommandCopyState, setCandidateCommandCopyState] = useState<"idle" | "copied" | "error">("idle");
+  const [proofStoryCopyState, setProofStoryCopyState] = useState<"idle" | "copied" | "error">("idle");
   const [proofCueIndex, setProofCueIndex] = useState(0);
   const [proofCuePlaying, setProofCuePlaying] = useState(false);
 
@@ -685,6 +686,19 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
       setCandidateCommandCopyState("copied");
     } catch {
       setCandidateCommandCopyState("error");
+    }
+  }
+
+  async function copyProofStory() {
+    const story = recordingEvidenceTimeline
+      .map((item, index) => `${String(index + 1).padStart(2, "0")}. ${item.label}: ${item.state} · ${item.detail}`)
+      .join("\n");
+
+    try {
+      await navigator.clipboard.writeText(story);
+      setProofStoryCopyState("copied");
+    } catch {
+      setProofStoryCopyState("error");
     }
   }
 
@@ -971,28 +985,36 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
                     <span>{getRecordingAssetUsageHint("bridge")} · {recordingAssets.countsByType.bridge}</span>
                   </div>
                   {recordingEvidenceTimeline.length ? (
-                    <div className="studio-evidence-timeline" aria-label="录屏证据时间线">
-                      {recordingEvidenceTimeline.map((item, index) => {
-                        const content = (
-                          <>
-                            <small>{String(index + 1).padStart(2, "0")}</small>
-                            <strong>{item.label}</strong>
-                            <span>{item.state}</span>
-                            <p>{item.detail}</p>
-                          </>
-                        );
+                    <>
+                      <div className="studio-evidence-timeline" aria-label="录屏证据时间线">
+                        {recordingEvidenceTimeline.map((item, index) => {
+                          const content = (
+                            <>
+                              <small>{String(index + 1).padStart(2, "0")}</small>
+                              <strong>{item.label}</strong>
+                              <span>{item.state}</span>
+                              <p>{item.detail}</p>
+                            </>
+                          );
 
-                        return item.href ? (
-                          <a className={item.tone} href={buildRecordingEvidenceUrl(item.href)} target="_blank" rel="noreferrer" key={item.label}>
-                            {content}
-                          </a>
-                        ) : (
-                          <div className={item.tone} key={item.label}>
-                            {content}
-                          </div>
-                        );
-                      })}
-                    </div>
+                          return item.href ? (
+                            <a className={item.tone} href={buildRecordingEvidenceUrl(item.href)} target="_blank" rel="noreferrer" key={item.label}>
+                              {content}
+                            </a>
+                          ) : (
+                            <div className={item.tone} key={item.label}>
+                              {content}
+                            </div>
+                          );
+                        })}
+                      </div>
+                      <div className="studio-proof-story-actions" aria-label="证据讲解稿">
+                        <button type="button" onClick={copyProofStory}>
+                          <Copy size={13} />
+                          {proofStoryCopyState === "copied" ? "讲解稿已复制" : proofStoryCopyState === "error" ? "手动复制讲解稿" : "复制讲解稿"}
+                        </button>
+                      </div>
+                    </>
                   ) : null}
                   <div className="studio-recording-latest" aria-label="最新素材包摘要">
                     {recordingAssets.latestPack ? (
@@ -1235,6 +1257,8 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
                   {recordingCommandCopyState === "error" ? <span className="studio-recording-copy-status">浏览器不允许自动复制，可手动复制上方命令</span> : null}
                   {candidateCommandCopyState === "copied" ? <span className="studio-recording-copy-status">候选 QA 命令已复制</span> : null}
                   {candidateCommandCopyState === "error" ? <span className="studio-recording-copy-status">浏览器不允许自动复制候选 QA 命令</span> : null}
+                  {proofStoryCopyState === "copied" ? <span className="studio-recording-copy-status">证据讲解稿已复制</span> : null}
+                  {proofStoryCopyState === "error" ? <span className="studio-recording-copy-status">浏览器不允许自动复制讲解稿</span> : null}
                   <div className="studio-recording-workflow" aria-label="录屏素材流程">
                     {recordingWorkflowSteps.map((item) => (
                       <div key={item.step}>

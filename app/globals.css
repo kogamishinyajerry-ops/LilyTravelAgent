@@ -1822,6 +1822,25 @@ textarea {
   -webkit-line-clamp: 2;
 }
 
+.studio-proof-story-actions {
+  display: flex;
+}
+
+.studio-proof-story-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-height: 28px;
+  border: 1px solid rgba(38, 59, 49, 0.14);
+  border-radius: 8px;
+  padding: 0 9px;
+  color: var(--moss);
+  font-size: 0.74rem;
+  font-weight: 950;
+  background: rgba(255, 255, 255, 0.7);
+}
+
 .studio-recording-latest {
   display: grid;
   gap: 3px;

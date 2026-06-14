@@ -549,4 +549,46 @@ describe("StudioMode demo roadbooks", () => {
     expect(await screen.findByText("候选 QA 命令已复制")).toBeTruthy();
     expect(screen.getByRole("button", { name: "已复制候选 QA" })).toBeTruthy();
   });
+
+  it("copies a four-line proof story from the Studio evidence timeline", async () => {
+    const writeText = vi.fn(async () => undefined);
+    Object.defineProperty(window.navigator, "clipboard", {
+      value: { writeText },
+      configurable: true,
+    });
+
+    render(<StudioMode />);
+
+    expect(await screen.findByText("15 个素材包")).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: "复制讲解稿" }));
+
+    expect(writeText).toHaveBeenCalledWith(
+      [
+        "01. Dream Proof: 已验证 · Proof · 3/5 ready",
+        "02. Studio Proof: 已捕获 · Suite Run · 7 步 · 7 通过",
+        "03. Index QA: 已验证 · Dream + Studio 双证据 · 6 条链接",
+        "04. Suite Run: 已通过 · 7 步 · 7 通过",
+      ].join("\n"),
+    );
+    expect(await screen.findByText("证据讲解稿已复制")).toBeTruthy();
+    expect(screen.getByRole("button", { name: "讲解稿已复制" })).toBeTruthy();
+  });
+
+  it("shows a proof story copy fallback when clipboard access fails", async () => {
+    const writeText = vi.fn(async () => {
+      throw new Error("clipboard denied");
+    });
+    Object.defineProperty(window.navigator, "clipboard", {
+      value: { writeText },
+      configurable: true,
+    });
+
+    render(<StudioMode />);
+
+    expect(await screen.findByText("15 个素材包")).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: "复制讲解稿" }));
+
+    expect(await screen.findByText("浏览器不允许自动复制讲解稿")).toBeTruthy();
+    expect(screen.getByRole("button", { name: "手动复制讲解稿" })).toBeTruthy();
+  });
 });
