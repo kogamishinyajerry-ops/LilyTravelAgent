@@ -136,7 +136,7 @@ npm run check:recording-suite
 
 `npm run index:recording-assets` scans local `recordings/visual-checks`, `recordings/studio-checks`, and `recordings/handoff-checks`, then writes `recordings/index.html` and `recordings/clip-index.md` as a local asset index. When Dream or Studio QA packs include playback proof evidence, the index also shows Dream Proof and Studio Proof cues plus links to playback screenshots, summaries, and notes. Studio packs with Proof Story script-material evidence also show a `Proof Story Script Material` entry that links to the captured script-card screenshot.
 
-`npm run check:recording-index` expects the local dev server to be running at `http://localhost:3000` unless `RECORDING_INDEX_BASE_URL` is set. It regenerates the local asset index, opens `/api/recording-assets/index`, verifies Dream Proof and Studio Proof text plus all six screenshot/summary/notes links, then writes a small proof pack under `recordings/index-checks/`. If no local Dream or Studio proof pack exists yet, it exits with a clear skipped-precondition message and tells you to run `npm run check:recording-suite`.
+`npm run check:recording-index` expects the local dev server to be running at `http://localhost:3000` unless `RECORDING_INDEX_BASE_URL` is set. It regenerates the local asset index, opens `/api/recording-assets/index`, verifies Dream Proof and Studio Proof text plus all six screenshot/summary/notes links, then writes a small proof pack under `recordings/index-checks/`. If the latest Studio QA pack contains Proof Story script-material evidence, it also verifies that card and its three links as an optional `scriptMaterialCheck`. If no local Dream or Studio proof pack exists yet, it exits with a clear skipped-precondition message and tells you to run `npm run check:recording-suite`.
 
 `npm run check:recording-suite` expects the local dev server to be running at `http://localhost:3000`. It runs the Dali `/dream` visual QA, coastal `/dream` visual QA, Dali Director Lens QA for the four non-auto lens modes, `/studio` visual QA, Studio-Dream handoff QA, recording asset index generation, and Recording Index QA in sequence. It also writes `recordings/suite-runs/<stamp>/summary.json` and `clip-notes.md` as the top-level receipt for the full run. Set `RECORDING_SUITE_BASE_URL`, `DREAM_URL`, `STUDIO_URL`, `HANDOFF_BASE_URL`, or `RECORDING_INDEX_BASE_URL` to target another local server.
 
@@ -203,6 +203,7 @@ npm run check:recording-suite
 - `docs/recording/goal-551-560-recap.md` summarizes Studio QA capture for the Proof Story script-material card.
 - `docs/recording/goal-561-570-recap.md` summarizes reading the latest script-material QA result back into `/studio`.
 - `docs/recording/goal-571-580-recap.md` summarizes adding Proof Story Script Material to the recording asset index.
+- `docs/recording/goal-581-590-recap.md` summarizes optional Recording Index QA checks for Proof Story Script Material.
 - `docs/recording/proof-story-demo-script.md` gives a short `/studio` script for recording the evidence timeline, four-line proof-story preview, and copy action.
 - `docs/recording/studio-dream-demo-script.md` gives a shot-by-shot Studio ↔ Dream demo recording path.
 - `docs/recording/bridge-qa-evidence-script.md` gives a short Bridge QA proof clip script.

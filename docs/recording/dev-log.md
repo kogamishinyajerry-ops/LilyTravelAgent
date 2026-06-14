@@ -1774,3 +1774,14 @@ Files shown: scripts/index-recording-assets.mjs, app/api/recording-assets/index/
 Command/result: node --check scripts/index-recording-assets.mjs passed; npm run index:recording-assets indexed 76 packs; npm run check:recording-index passed; npm run lint && npm test && npm run build
 Voiceover note: "现在素材总索引不只展示 Dream Proof 和 Studio Proof，还会展示 Proof Story Script Material。脚本入口从 Studio 卡片进入 archive，后面剪辑时也能直接找到。"
 Usable for: asset-index proof clip, script-material archive narration, continued goal run round 574
+
+## Phase EZ: v0.8.145 — Recording Index QA Checks Script Material
+
+Date: 2026-06-14
+Clip title: Phase EZ: v0.8.145 — Recording Index QA Checks Script Material
+What changed: `npm run check:recording-index` now reads optional `summary.scriptMaterial` from the latest Studio QA pack. When present, it verifies the `Proof Story Script Material` index block, checks the script-card screenshot / summary / notes links, captures a proof-card screenshot, and writes `scriptMaterialCheck` into the index-check summary.
+Why this matters: Script-material archive evidence is now validated by the same QA command that already verifies Dream Proof and Studio Proof, without changing the required six-link baseline.
+Files shown: scripts/check-recording-index.mjs, recordings/index-checks/2026-06-14T09-24-23-279Z/summary.json, recordings/index-checks/2026-06-14T09-24-23-279Z/clip-notes.md, docs/recording/goal-581-590-recap.md
+Command/result: node --check scripts/check-recording-index.mjs passed; npm run check:recording-index passed with 6 baseline links plus optional scriptMaterialCheck; npm run lint && npm test && npm run build
+Voiceover note: "现在 Index QA 仍然把 Dream 和 Studio 作为必检基线，但如果发现脚本素材证据，它会额外检查三条链接，并把结果单独写成 scriptMaterialCheck。"
+Usable for: optional proof QA clip, archive evidence rigor narration, continued goal run round 584

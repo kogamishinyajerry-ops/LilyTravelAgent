@@ -36,6 +36,7 @@ async function main() {
   assert(dreamProof, `Recording index QA expected Dream Proof evidence under ${visualChecksRoot}, but none was found.`);
   assert(studioProof, `Recording index QA expected Studio Proof evidence under ${studioChecksRoot}, but none was found.`);
   const proofs = [dreamProof, studioProof];
+  const scriptMaterial = studioProof.scriptMaterial || null;
 
   await assertReachable(resolveUrl("/api/recording-assets/index"));
   if (skipRebuild) {
@@ -50,10 +51,14 @@ async function main() {
   for (const proof of proofs) {
     assertStaticProof(staticIndex, staticIndexPath, proof);
   }
+  if (scriptMaterial) {
+    assertStaticScriptMaterial(staticIndex, staticIndexPath, scriptMaterial);
+  }
 
   const browser = await chromium.launch({ headless: true, executablePath });
   const consoleMessages = [];
   const proofChecks = [];
+  let scriptMaterialCheck = null;
   const indexUrl = resolveUrl("/api/recording-assets/index");
 
   try {
@@ -82,6 +87,19 @@ async function main() {
         screenshotPath,
       });
     }
+
+    if (scriptMaterial) {
+      const { block, proofText, linkChecks } = await findMatchingScriptMaterialBlock(page, scriptMaterial);
+      const screenshotPath = path.join(outDir, "recording-index-script-material-proof.png");
+      await block.screenshot({ path: screenshotPath });
+      scriptMaterialCheck = {
+        proofId: scriptMaterial.proofId,
+        label: scriptMaterial.label,
+        proofText,
+        links: linkChecks,
+        screenshotPath,
+      };
+    }
   } finally {
     await browser.close();
   }
@@ -103,6 +121,7 @@ async function main() {
     studioProofText: studioCheck?.proofText || "",
     links: allLinks,
     proofChecks,
+    scriptMaterialCheck,
     screenshotPath: dreamCheck?.screenshotPath || "",
     studioScreenshotPath: studioCheck?.screenshotPath || "",
     consoleMessages,
@@ -186,6 +205,7 @@ async function readLatestLocalStudioProof() {
     }
 
     const screenshotFile = path.basename(typeof proofPlayback.screenshotPath === "string" ? proofPlayback.screenshotPath : "");
+    const scriptMaterial = readStudioScriptMaterial(entry, packDir, summary);
     return {
       id: entry,
       proofId: "studio",
@@ -197,10 +217,29 @@ async function readLatestLocalStudioProof() {
       screenshotPath: screenshotFile ? toRecordingLink(path.join("studio-checks", entry, screenshotFile)) : "",
       summaryPath: toRecordingLink(path.join("studio-checks", entry, "summary.json")),
       notesPath: existsSync(path.join(packDir, "clip-notes.md")) ? toRecordingLink(path.join("studio-checks", entry, "clip-notes.md")) : "",
+      scriptMaterial,
     };
   }
 
   return null;
+}
+
+function readStudioScriptMaterial(entry, packDir, summary) {
+  const scriptMaterial = summary.scriptMaterial && typeof summary.scriptMaterial === "object" ? summary.scriptMaterial : null;
+  if (!scriptMaterial) {
+    return null;
+  }
+
+  const screenshotFile = path.basename(typeof scriptMaterial.screenshotPath === "string" ? scriptMaterial.screenshotPath : "");
+  return {
+    proofId: "script-material",
+    label: "Proof Story Script Material",
+    selector: ".script-material-proof",
+    cue: typeof scriptMaterial.cue === "string" ? scriptMaterial.cue : "",
+    screenshotPath: screenshotFile ? toRecordingLink(path.join("studio-checks", entry, screenshotFile)) : "",
+    summaryPath: toRecordingLink(path.join("studio-checks", entry, "summary.json")),
+    notesPath: existsSync(path.join(packDir, "clip-notes.md")) ? toRecordingLink(path.join("studio-checks", entry, "clip-notes.md")) : "",
+  };
 }
 
 function assertStaticProof(staticIndex, staticIndexPath, proof) {
@@ -217,10 +256,26 @@ function assertStaticProof(staticIndex, staticIndexPath, proof) {
   assert(staticIndex.includes(proof.notesPath), `${staticIndexPath} does not link the ${proof.label} notes.`);
 }
 
+function assertStaticScriptMaterial(staticIndex, staticIndexPath, scriptMaterial) {
+  assert(staticIndex.includes(scriptMaterial.label), `${staticIndexPath} does not include ${scriptMaterial.label}.`);
+  assert(staticIndex.includes(scriptMaterial.cue), `${staticIndexPath} does not include the ${scriptMaterial.label} cue.`);
+  assert(scriptMaterial.screenshotPath, `${scriptMaterial.label} local proof is missing a screenshot path.`);
+  assert(scriptMaterial.summaryPath, `${scriptMaterial.label} local proof is missing a summary path.`);
+  assert(scriptMaterial.notesPath, `${scriptMaterial.label} local proof is missing a notes path.`);
+  assert(staticIndex.includes(scriptMaterial.screenshotPath), `${staticIndexPath} does not link the ${scriptMaterial.label} screenshot.`);
+  assert(staticIndex.includes(scriptMaterial.summaryPath), `${staticIndexPath} does not link the ${scriptMaterial.label} summary.`);
+  assert(staticIndex.includes(scriptMaterial.notesPath), `${staticIndexPath} does not link the ${scriptMaterial.label} notes.`);
+}
+
 function assertProofText(proof, proofText) {
   assert(proofText.includes(proof.label), `API index proof block missing ${proof.label} label: ${proofText}`);
   assert(proofText.includes(proof.finalCueLabel), `API index ${proof.label} block missing final cue label: ${proofText}`);
   assert(proofText.includes(proof.finalCueValue), `API index ${proof.label} block missing final cue value: ${proofText}`);
+}
+
+function assertScriptMaterialText(scriptMaterial, proofText) {
+  assert(proofText.includes(scriptMaterial.label), `API index script-material block missing label: ${proofText}`);
+  assert(proofText.includes(scriptMaterial.cue), `API index script-material block missing cue: ${proofText}`);
 }
 
 async function findMatchingProofBlock(page, proof) {
@@ -251,6 +306,34 @@ async function findMatchingProofBlock(page, proof) {
   throw new Error(`API index matching ${proof.label} block not found.\n${diagnostics.join("\n")}`);
 }
 
+async function findMatchingScriptMaterialBlock(page, scriptMaterial) {
+  const blocks = page.locator(scriptMaterial.selector);
+  const blockCount = await blocks.count();
+  assert(blockCount > 0, `API index proof block missing for ${scriptMaterial.label}.`);
+
+  const diagnostics = [];
+  for (let index = 0; index < blockCount; index += 1) {
+    const block = blocks.nth(index);
+    const proofText = await block.innerText();
+    const links = await block.locator("a").evaluateAll((anchors) =>
+      anchors.map((anchor) => ({
+        label: anchor.textContent?.trim() || "",
+        href: anchor.getAttribute("href") || "",
+      })),
+    );
+
+    try {
+      assertScriptMaterialText(scriptMaterial, proofText);
+      const linkChecks = await verifyScriptMaterialLinks(scriptMaterial, links);
+      return { block, proofText, linkChecks };
+    } catch (error) {
+      diagnostics.push(`block ${index + 1}: ${error instanceof Error ? error.message : String(error)}`);
+    }
+  }
+
+  throw new Error(`API index matching ${scriptMaterial.label} block not found.\n${diagnostics.join("\n")}`);
+}
+
 async function verifyProofLinks(proof, links) {
   const required = [
     { id: "screenshot", label: "playback screenshot", expectedType: "image/png", expectedPath: proof.screenshotPath },
@@ -276,6 +359,41 @@ async function verifyProofLinks(proof, links) {
       id: requiredLink.id,
       proofId: proof.proofId,
       proofLabel: proof.label,
+      label: requiredLink.label,
+      href: link.href,
+      status: response.status,
+      contentType,
+    });
+  }
+
+  return results;
+}
+
+async function verifyScriptMaterialLinks(scriptMaterial, links) {
+  const required = [
+    { id: "screenshot", label: "script card screenshot", expectedType: "image/png", expectedPath: scriptMaterial.screenshotPath },
+    { id: "summary", label: "summary", expectedType: "application/json", expectedPath: scriptMaterial.summaryPath },
+    { id: "notes", label: "notes", expectedType: "text/markdown", expectedPath: scriptMaterial.notesPath },
+  ];
+
+  const results = [];
+  for (const requiredLink of required) {
+    const link = links.find((item) => item.label === requiredLink.label);
+    assert(requiredLink.expectedPath, `${scriptMaterial.label} local proof is missing expected ${requiredLink.label} path.`);
+    assert(link, `API index ${scriptMaterial.label} link missing: ${requiredLink.label}`);
+    assert(link.href.includes("/api/recording-assets/file?path="), `${scriptMaterial.label} ${requiredLink.label} should use the safe file API: ${link.href}`);
+
+    const url = new URL(link.href, baseUrl).toString();
+    const safePath = new URL(url).searchParams.get("path") || "";
+    assert(safePath === requiredLink.expectedPath, `${scriptMaterial.label} ${requiredLink.label} path mismatch: expected ${requiredLink.expectedPath}, got ${safePath}`);
+    const response = await fetch(url);
+    const contentType = response.headers.get("content-type") || "";
+    assert(response.ok, `${scriptMaterial.label} ${requiredLink.label} returned HTTP ${response.status}: ${url}`);
+    assert(contentType.includes(requiredLink.expectedType), `${scriptMaterial.label} ${requiredLink.label} content-type mismatch: ${contentType}`);
+    results.push({
+      id: requiredLink.id,
+      proofId: scriptMaterial.proofId,
+      proofLabel: scriptMaterial.label,
       label: requiredLink.label,
       href: link.href,
       status: response.status,
@@ -350,12 +468,26 @@ function buildClipNotes(summary) {
     lines.push(`- ${link.proofLabel} ${link.label}: HTTP ${link.status} / ${link.contentType}`);
   }
 
+  if (summary.scriptMaterialCheck) {
+    lines.push(
+      "",
+      "## Proof Story Script Material",
+      "",
+      `- Proof-card screenshot: ${path.basename(summary.scriptMaterialCheck.screenshotPath)}`,
+    );
+
+    for (const link of summary.scriptMaterialCheck.links) {
+      lines.push(`- ${link.proofLabel} ${link.label}: HTTP ${link.status} / ${link.contentType}`);
+    }
+  }
+
   lines.push(
     "",
     "## Voiceover",
     "",
     "- The local archive now carries Dream Proof and Studio Proof evidence.",
     "- The index check verifies both proof cues plus six screenshot, summary, and notes links.",
+    summary.scriptMaterialCheck ? "- When present, the same check also verifies the Proof Story Script Material card and its three evidence links." : "",
     "",
   );
 
