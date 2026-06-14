@@ -153,6 +153,7 @@ npm run check:recording-suite
 - `docs/recording/goal-101-110-recap.md` summarizes the all-lens visual capture and recording asset index run.
 - `docs/recording/goal-111-120-recap.md` summarizes the first low-skyline 3D lens-tuning run.
 - `docs/recording/goal-121-130-recap.md` summarizes the all-lens tuning cue pass and live visual QA evidence.
+- `docs/recording/goal-131-140-recap.md` summarizes the Director Lens comparison dashboard and Dream handoff run.
 - `docs/recording/studio-dream-demo-script.md` gives a shot-by-shot Studio ↔ Dream demo recording path.
 - `docs/recording/bridge-qa-evidence-script.md` gives a short Bridge QA proof clip script.
 - `docs/recording/cinematic-visual-contract-script.md` gives a short `/dream` visual-contract recording script for template strategy, Scene Inspector, Proof Stack, and asset state.

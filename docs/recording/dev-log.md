@@ -1070,3 +1070,14 @@ Files shown: app/dream/page.tsx, components/dream-roadbook.tsx, app/api/recordin
 Command/result: npm test -- components/dream-roadbook.test.tsx lib/lens-comparison.test.ts; npm run lint && npm run build; Browser check confirmed `/dream?demo=dali&lens=wide-water` opens with Water active and the expected Tune cue.
 Voiceover note: "这个看板不是一个孤立报告。点 Open Dream，就能带着同一个 lens 回到产品页继续录制。"
 Usable for: lens handoff clip, comparison-to-recording workflow, Vibe Coding product loop narrative, continued goal run round 136
+
+## Phase CN: v0.8.81 — Goals 131-140 Lens Review Recap
+
+Date: 2026-06-14
+Clip title: Phase CN: v0.8.81 — Goals 131-140 Lens Review Recap
+What changed: Added the 131-140 recap and README entry for the Director Lens comparison dashboard run.
+Why this matters: This packages the dashboard, Studio entry, same-lens Dream handoff, browser evidence, and next visual-crop direction into one creator chapter.
+Files shown: docs/recording/goal-131-140-recap.md, README.md, docs/recording/dev-log.md, `/api/recording-assets/lens-comparison`
+Command/result: npm run lint (passed)
+Voiceover note: "这一轮的重点是把素材变成评审。五种 lens 不只存在于代码和 QA 文件夹里，而是进入一个可以录屏讲解的对比台。"
+Usable for: goal recap clip, lens review chapter, Vibe Coding workflow narrative, continued goal run round 137
