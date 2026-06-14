@@ -22,10 +22,19 @@ export type RecordingAssetsSummary = {
   countsByType: Record<RecordingAssetType, number>;
   latestPack: RecordingAssetPack | null;
   recentPacks: RecordingAssetPack[];
+  latestCandidateHandoff: RecordingCandidateHandoffSummary | null;
   indexAvailable: boolean;
   indexPath: string;
   clipIndexAvailable: boolean;
   clipIndexPath: string;
+};
+
+export type RecordingCandidateHandoffSummary = {
+  id: string;
+  createdAt: string;
+  captureCount: number;
+  summaryPath: string;
+  notesPath: string;
 };
 
 const sources = [
@@ -36,6 +45,7 @@ const sources = [
 
 export async function readRecordingAssetsSummary(recordingsRoot = process.env.RECORDINGS_DIR || "recordings"): Promise<RecordingAssetsSummary> {
   const packs = await listRecordingAssetPacks(recordingsRoot);
+  const latestCandidateHandoff = await readLatestCandidateHandoff(recordingsRoot);
   const latestPack = packs[0] || null;
   const indexPath = path.join(recordingsRoot, "index.html");
   const clipIndexPath = path.join(recordingsRoot, "clip-index.md");
@@ -46,6 +56,7 @@ export async function readRecordingAssetsSummary(recordingsRoot = process.env.RE
     countsByType: countPacksByType(packs),
     latestPack,
     recentPacks: packs.slice(0, 3),
+    latestCandidateHandoff,
     indexAvailable: existsSync(indexPath),
     indexPath,
     clipIndexAvailable: existsSync(clipIndexPath),
@@ -64,6 +75,41 @@ function countPacksByType(packs: RecordingAssetPack[]): Record<RecordingAssetTyp
 export async function listRecordingAssetPacks(recordingsRoot = process.env.RECORDINGS_DIR || "recordings"): Promise<RecordingAssetPack[]> {
   const packs = (await Promise.all(sources.map((source) => readSource(recordingsRoot, source)))).flat();
   return packs.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+}
+
+async function readLatestCandidateHandoff(recordingsRoot: string): Promise<RecordingCandidateHandoffSummary | null> {
+  const sourceRoot = path.join(recordingsRoot, "candidate-handoff-checks");
+  if (!existsSync(sourceRoot)) {
+    return null;
+  }
+
+  const entries = await readdir(sourceRoot);
+  const runs: RecordingCandidateHandoffSummary[] = [];
+
+  for (const entry of entries) {
+    const packDir = path.join(sourceRoot, entry);
+    const info = await stat(packDir).catch(() => null);
+    if (!info?.isDirectory()) {
+      continue;
+    }
+
+    const summaryPath = path.join(packDir, "summary.json");
+    if (!existsSync(summaryPath)) {
+      continue;
+    }
+
+    const summary = JSON.parse(await readFile(summaryPath, "utf8")) as Record<string, unknown>;
+    const captures = Array.isArray(summary.captures) ? summary.captures : [];
+    runs.push({
+      id: entry,
+      createdAt: readString(summary.createdAt) || entry,
+      captureCount: captures.length,
+      summaryPath: toRecordingLink(path.join("candidate-handoff-checks", entry, "summary.json")),
+      notesPath: existsSync(path.join(packDir, "clip-notes.md")) ? toRecordingLink(path.join("candidate-handoff-checks", entry, "clip-notes.md")) : "",
+    });
+  }
+
+  return runs.sort((a, b) => b.createdAt.localeCompare(a.createdAt))[0] || null;
 }
 
 async function readSource(recordingsRoot: string, source: (typeof sources)[number]) {

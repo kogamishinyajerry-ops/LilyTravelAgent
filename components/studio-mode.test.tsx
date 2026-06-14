@@ -20,6 +20,15 @@ function recordingAssetsResponse(packCount: number, title = "Studio 16:9 demo pa
     indexAvailable,
     indexUrl: indexAvailable ? "/api/recording-assets/index" : "",
     lensComparisonUrl: "/api/recording-assets/lens-comparison",
+    latestCandidateHandoff: packCount
+      ? {
+          id: "candidate-latest",
+          createdAt: "2026-06-13T05:47:00.000Z",
+          captureCount: 3,
+          summaryPath: "candidate-handoff-checks/candidate-latest/summary.json",
+          notesPath: "candidate-handoff-checks/candidate-latest/clip-notes.md",
+        }
+      : null,
     recentPacks: packCount
       ? [
           {
@@ -104,6 +113,9 @@ describe("StudioMode demo roadbooks", () => {
     expect(screen.getByLabelText("最新素材包摘要").textContent).toContain("最新素材");
     expect(screen.getByLabelText("最新素材包摘要").textContent).toContain("Studio 16:9 demo pack");
     expect(screen.getByLabelText("最新素材包摘要").textContent).toContain("/studio recording QA");
+    expect(screen.getByLabelText("候选点击 QA 状态").textContent).toContain("候选跳转已验证");
+    expect(screen.getByLabelText("候选点击 QA 状态").textContent).toContain("3 个入口");
+    expect(screen.getByLabelText("候选点击 QA 状态").textContent).toContain("candidate-handoff-checks/candidate-latest/summary.json");
     expect(screen.getAllByText("Dream low-skyline lens visual pack")[0]).toBeTruthy();
     expect(screen.getAllByText("low-skyline lens").length).toBeGreaterThanOrEqual(1);
     expect(screen.getByRole("button", { name: "复制命令" })).toBeTruthy();
@@ -204,6 +216,8 @@ describe("StudioMode demo roadbooks", () => {
     expect(screen.getByLabelText("录屏素材状态").textContent).toContain("先跑 recording suite");
     expect(screen.getByLabelText("最新素材包摘要").textContent).toContain("暂无最新素材");
     expect(screen.getByLabelText("最新素材包摘要").textContent).toContain("先运行 recording suite");
+    expect(screen.getByLabelText("候选点击 QA 状态").textContent).toContain("等待候选点击 QA");
+    expect(screen.getByLabelText("候选点击 QA 状态").textContent).toContain("npm run check:lens-candidate-handoff");
     expect(screen.getByText("Dream 0")).toBeTruthy();
     expect(screen.getByText("Studio 0")).toBeTruthy();
     expect(screen.getByText("生成本地素材索引")).toBeTruthy();

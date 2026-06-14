@@ -170,6 +170,7 @@ npm run check:recording-suite
 - `docs/recording/goal-251-260-recap.md` summarizes the candidate thumbnail previews in the dashboard queue.
 - `docs/recording/goal-261-270-recap.md` summarizes the candidate `Why:` badge and hover/focus state.
 - `docs/recording/goal-271-280-recap.md` summarizes the candidate click-through QA check.
+- `docs/recording/goal-281-290-recap.md` summarizes the Studio candidate QA status card.
 - `docs/recording/studio-dream-demo-script.md` gives a shot-by-shot Studio ↔ Dream demo recording path.
 - `docs/recording/bridge-qa-evidence-script.md` gives a short Bridge QA proof clip script.
 - `docs/recording/cinematic-visual-contract-script.md` gives a short `/dream` visual-contract recording script for template strategy, Scene Inspector, Proof Stack, and asset state.

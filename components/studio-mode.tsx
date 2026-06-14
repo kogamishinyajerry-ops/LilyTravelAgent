@@ -46,8 +46,17 @@ type RecordingAssetsState =
         createdAt: string;
         label: string;
       } | null;
+      latestCandidateHandoff: RecordingCandidateHandoffSummary | null;
     }
   | { status: "error"; message: string };
+
+type RecordingCandidateHandoffSummary = {
+  id: string;
+  createdAt: string;
+  captureCount: number;
+  summaryPath: string;
+  notesPath?: string;
+};
 
 type RecordingAssetSummaryPack = {
   type: RecordingAssetType;
@@ -72,6 +81,7 @@ type RecordingAssetsApiResponse = {
     createdAt: string;
     label: string;
   } | null;
+  latestCandidateHandoff?: RecordingCandidateHandoffSummary | null;
   message?: string;
 };
 
@@ -303,6 +313,7 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
           lensComparisonUrl: data.lensComparisonUrl || "/api/recording-assets/lens-comparison",
           recentPacks: data.recentPacks || [],
           latestPack: data.latestPack || null,
+          latestCandidateHandoff: data.latestCandidateHandoff || null,
         });
         setRecordingAssetsReadAt(new Date().toISOString());
       } catch (caught) {
@@ -648,6 +659,21 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
                         <small>最新素材</small>
                         <strong>暂无最新素材</strong>
                         <span>先运行 recording suite 生成第一批素材。</span>
+                      </>
+                    )}
+                  </div>
+                  <div className={`studio-candidate-handoff-status ${recordingAssets.latestCandidateHandoff ? "ready" : "missing"}`} aria-label="候选点击 QA 状态">
+                    {recordingAssets.latestCandidateHandoff ? (
+                      <>
+                        <small>Candidate QA · {formatRecordingAssetTime(recordingAssets.latestCandidateHandoff.createdAt)}</small>
+                        <strong>候选跳转已验证</strong>
+                        <span>{recordingAssets.latestCandidateHandoff.captureCount} 个入口 · {recordingAssets.latestCandidateHandoff.summaryPath}</span>
+                      </>
+                    ) : (
+                      <>
+                        <small>Candidate QA</small>
+                        <strong>等待候选点击 QA</strong>
+                        <span>运行 npm run check:lens-candidate-handoff 后显示验证状态。</span>
                       </>
                     )}
                   </div>

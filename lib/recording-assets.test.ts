@@ -44,6 +44,7 @@ describe("recording assets", () => {
     expect(summary.packCount).toBe(0);
     expect(summary.countsByType).toEqual({ dream: 0, studio: 0, bridge: 0 });
     expect(summary.latestPack).toBeNull();
+    expect(summary.latestCandidateHandoff).toBeNull();
     expect(summary.indexAvailable).toBe(false);
     expect(summary.clipIndexAvailable).toBe(false);
   });
@@ -111,6 +112,29 @@ describe("recording assets", () => {
     expect(summary.latestPack?.notesPath).toBe("");
     expect(summary.indexAvailable).toBe(true);
     expect(summary.clipIndexAvailable).toBe(true);
+  });
+
+  it("reports the latest candidate handoff QA without counting it as a recording pack", async () => {
+    await writeSummary("candidate-handoff-checks/old-candidate", {
+      createdAt: "2026-06-13T04:00:00.000Z",
+      captures: [{ id: "primary" }],
+    });
+    await writeSummary("candidate-handoff-checks/new-candidate", {
+      createdAt: "2026-06-13T05:00:00.000Z",
+      captures: [{ id: "primary" }, { id: "first-card" }, { id: "second-chip" }],
+    });
+
+    const summary = await readRecordingAssetsSummary(tempRoot);
+
+    expect(summary.packCount).toBe(0);
+    expect(summary.countsByType).toEqual({ dream: 0, studio: 0, bridge: 0 });
+    expect(summary.latestCandidateHandoff).toMatchObject({
+      id: "new-candidate",
+      createdAt: "2026-06-13T05:00:00.000Z",
+      captureCount: 3,
+      summaryPath: "candidate-handoff-checks/new-candidate/summary.json",
+      notesPath: "candidate-handoff-checks/new-candidate/clip-notes.md",
+    });
   });
 
   it("includes only the three most recent packs in the summary", async () => {

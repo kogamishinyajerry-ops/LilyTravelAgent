@@ -1433,3 +1433,14 @@ Files shown: docs/recording/goal-271-280-recap.md, scripts/check-lens-candidate-
 Command/result: npm run lint && npm test && npm run build (44 files, 909 tests, build passed)
 Voiceover note: "候选点击 QA 做完后，我继续完整质量门。现在这个路书 Agent 的录屏链路，从视觉候选到 /dream 场景，是脚本验证过的。"
 Usable for: goal closeout clip, workflow QA proof, studio asset status handoff, continued goal run round 277
+
+## Phase DU: v0.8.114 — Studio Candidate QA Status
+
+Date: 2026-06-14
+Clip title: Phase DU: v0.8.114 — Studio Candidate QA Status
+What changed: `/api/recording-assets` now exposes the latest candidate-handoff QA run, and `/studio` shows a `候选点击 QA 状态` card in the recording asset panel.
+Why this matters: The workflow proof is now visible inside the creator workbench, not only in terminal output or local recording folders.
+Files shown: lib/recording-assets.ts, components/studio-mode.tsx, docs/recording/recording-asset-pipeline.md
+Command/result: npm test -- lib/recording-assets.test.ts components/studio-mode.test.tsx; Browser check should confirm `/studio` shows the candidate QA status from local recordings.
+Voiceover note: "我把刚才的点击 QA 结果放回 Studio 面板。这样录屏时，产品自己就能证明候选跳转链路已经验证过。"
+Usable for: Studio asset status clip, QA evidence surface, continued goal run round 284

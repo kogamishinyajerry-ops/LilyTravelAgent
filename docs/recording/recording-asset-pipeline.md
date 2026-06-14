@@ -9,8 +9,9 @@ Purpose: turn every visual QA run into usable creator material: screenshots, loc
 3. Open `/studio`.
 4. Click `刷新` in the `素材资产` panel.
 5. Point to `Bridge QA 证据状态`.
-6. Open `打开总索引`.
-7. Open `镜头对比`.
+6. Point to `候选点击 QA 状态`.
+7. Open `打开总索引`.
+8. Open `镜头对比`.
 
 Optional all-lens product run:
 
@@ -32,6 +33,7 @@ DREAM_LENSES=low-skyline,isometric-atlas npm run check:dream-lenses
 - Each Dream QA pack includes D1-D4 screenshots, Scene Inspector text, Composition profile, Director Lens status, Proof Stack status, WebGL pixel checks, and micro-motion evidence.
 - `/studio` QA pack: walkthrough footage for the 16:9 creator workbench.
 - Studio-Dream Bridge QA pack: handoff proof for the two-way recording circuit.
+- Candidate handoff QA: dashboard-to-`/dream` click proof for ranked recording candidates.
 - `recordings/index.html` and `recordings/clip-index.md`: the local archive entry points.
 - `/api/recording-assets/lens-comparison`: the local Director Lens comparison dashboard with D1-D4 thumbnails.
 
@@ -44,6 +46,7 @@ DREAM_LENSES=low-skyline,isometric-atlas npm run check:dream-lenses
 - `产品画面` / `讲解画面` / `桥接验证` usage hints.
 - Lens-aware Dream QA packs in the local index after `npm run check:recording-suite`.
 - `Bridge QA 证据状态` in script mode.
+- `候选点击 QA 状态` in the `/studio` asset panel after `npm run check:lens-candidate-handoff`.
 - In `/dream`, `Agent Visual Contract`, `Director Lens`, `Scene Inspector`, and `Proof Stack` show why the cinematic page is structured, not only decorative.
 - `打开总索引` leading to `/api/recording-assets/index`.
 - `镜头对比` leading to `/api/recording-assets/lens-comparison`.
@@ -70,6 +73,7 @@ Run it, return to `/studio`, then click `刷新`.
 
 ```bash
 npm run check:recording-suite
+npm run check:lens-candidate-handoff
 npm run lint
 npm test
 npm run build
