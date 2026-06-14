@@ -1257,3 +1257,14 @@ Files shown: docs/recording/goal-191-200-recap.md, `/api/recording-assets/lens-c
 Command/result: npm run lint && npm test && npm run build (44 files, 906 tests, build passed)
 Voiceover note: "候选条做完后，我还是跑完整质量门。现在这页不只是 QA 截图墙，而是一个能直接帮我决定录哪一段的创作者面板。"
 Usable for: goal closeout clip, best-shot workflow proof, next candidate-handoff goal, continued goal run round 197
+
+## Phase DE: v0.8.98 — Candidate To Dream Handoff Cue
+
+Date: 2026-06-14
+Clip title: Phase DE: v0.8.98 — Candidate To Dream Handoff Cue
+What changed: Candidate links now carry candidate rank, day, label, and diff detail into `/dream`. `/dream` initializes the active day from the candidate and shows a first-viewport Recording Candidate cue with a return link to the comparison dashboard.
+Why this matters: The creator can move from "which changed shot should I record?" to the exact `/dream` scene without losing context, then jump back to the dashboard for the next candidate.
+Files shown: lib/lens-comparison.ts, app/dream/page.tsx, components/dream-roadbook.tsx, app/globals.css
+Command/result: npm test -- lib/lens-comparison.test.ts components/dream-roadbook.test.tsx; npm run lint; Browser check confirmed candidate link params, visible first-viewport cue, active lens, and return path.
+Voiceover note: "现在候选条不是一个静态列表，点进去会把 rank、D 几、差异说明带进 /dream。录屏时我可以直接从证据看板跳到要录的场景，再一键回看板。"
+Usable for: candidate handoff clip, creator loop proof, continued goal run round 204

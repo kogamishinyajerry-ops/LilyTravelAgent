@@ -160,6 +160,7 @@ npm run check:recording-suite
 - `docs/recording/goal-171-180-recap.md` summarizes the current-vs-previous Director Lens scene-crop review aid.
 - `docs/recording/goal-181-190-recap.md` summarizes the explainable visual-diff badges for before/after scene crops.
 - `docs/recording/goal-191-200-recap.md` summarizes the Best Recording Candidates strip for changed scene crops.
+- `docs/recording/goal-201-210-recap.md` summarizes the candidate-to-Dream handoff cue and return path.
 - `docs/recording/studio-dream-demo-script.md` gives a shot-by-shot Studio ↔ Dream demo recording path.
 - `docs/recording/bridge-qa-evidence-script.md` gives a short Bridge QA proof clip script.
 - `docs/recording/cinematic-visual-contract-script.md` gives a short `/dream` visual-contract recording script for template strategy, Scene Inspector, Proof Stack, and asset state.

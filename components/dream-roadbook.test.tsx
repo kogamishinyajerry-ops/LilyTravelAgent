@@ -226,6 +226,32 @@ describe("DreamRoadbook a11y polish", () => {
     expect(screen.getByText("skyline 0.90x / water 1.36x / route 0.82x")).toBeTruthy();
   });
 
+  it("shows a recording candidate handoff cue from the comparison dashboard", () => {
+    render(
+      <DreamRoadbook
+        initialDemo="dali"
+        initialLens="wide-water"
+        initialCandidate={{
+          rank: "3",
+          day: "2",
+          label: "洱海西线",
+          detail: "checksum 1.5M / lit 0 / varied 3",
+          returnHref: "/api/recording-assets/lens-comparison",
+        }}
+      />,
+    );
+
+    const handoff = screen.getByLabelText("Recording Candidate Handoff");
+
+    expect(handoff.textContent).toContain("#3 · D2 · 洱海西线");
+    expect(handoff.textContent).toContain("checksum 1.5M / lit 0 / varied 3");
+    expect(within(handoff).getByRole("link", { name: /返回镜头对比看板/ }).getAttribute("href")).toBe(
+      "/api/recording-assets/lens-comparison",
+    );
+    expect(screen.getByText("D2 · 洱海西线")).toBeTruthy();
+    expect(screen.getByText("skyline 0.90x / water 1.36x / route 0.82x")).toBeTruthy();
+  });
+
   it("updates the template rendering strategy when switching demo roadbooks", () => {
     render(<DreamRoadbook />);
 

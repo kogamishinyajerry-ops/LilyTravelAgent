@@ -88,9 +88,18 @@ const dreamBriefDefaults: TravelBrief = {
 };
 
 type DemoRoadbookId = "dali" | "coast";
+type CandidateHandoff = {
+  rank?: string;
+  day?: string;
+  label?: string;
+  detail?: string;
+  returnHref?: string;
+};
+
 type DreamRoadbookProps = {
   initialDemo?: string;
   initialLens?: string;
+  initialCandidate?: CandidateHandoff;
 };
 
 const coastalDreamBriefDefaults: TravelBrief = {
@@ -141,6 +150,11 @@ function getDemoRoadbookOption(value?: string) {
   return demoRoadbookOptions.find((option) => option.id === demoId) || demoRoadbookOptions[0];
 }
 
+function normalizeCandidateDay(value?: string) {
+  const day = Number(value);
+  return Number.isInteger(day) && day >= 1 && day <= 4 ? day : 1;
+}
+
 const generationModes: Array<{ id: GenerationMode; label: string; note: string }> = [
   { id: "speed", label: "快速", note: "补细节也快" },
   { id: "quality", label: "高质量", note: "M3 补完整版" },
@@ -176,9 +190,10 @@ async function fetchPreviewAssetHistory(cacheKey: string) {
   return result.items;
 }
 
-export function DreamRoadbook({ initialDemo = "dali", initialLens = "auto" }: DreamRoadbookProps = {}) {
+export function DreamRoadbook({ initialDemo = "dali", initialLens = "auto", initialCandidate }: DreamRoadbookProps = {}) {
   const initialDemoOption = getDemoRoadbookOption(initialDemo);
   const initialDirectorLens = resolveDirectorLens(initialLens);
+  const initialCandidateDay = normalizeCandidateDay(initialCandidate?.day);
   const runIdRef = useRef(0);
   const recordingControllerRef = useRef<RecordingController | null>(null);
   const recordingConfigRef = useRef<RecordingConfig>(defaultRecordingConfig);
@@ -194,7 +209,7 @@ export function DreamRoadbook({ initialDemo = "dali", initialLens = "auto" }: Dr
   const [roadbook, setRoadbook] = useState<Roadbook>(initialDemoOption.roadbook);
   const [brief, setBrief] = useState<TravelBrief>(initialDemoOption.brief);
   const [interestsInput, setInterestsInput] = useState(initialDemoOption.brief.interests.join("、"));
-  const [activeDay, setActiveDay] = useState(1);
+  const [activeDay, setActiveDay] = useState(initialCandidateDay);
   const [mood, setMood] = useState<DreamMood>(initialDemoOption.mood);
   const [template, setTemplate] = useState<DreamTemplate>(initialDemoOption.template);
   const [directorLens, setDirectorLens] = useState<DirectorLensId>(initialDirectorLens.id);
@@ -236,6 +251,15 @@ export function DreamRoadbook({ initialDemo = "dali", initialLens = "auto" }: Dr
   const activeStop = design.routeStops.find((stop) => stop.day === activePlan?.day) || design.routeStops[0];
   const activeTemplate = dreamTemplates.find((item) => item.id === template) || dreamTemplates[0];
   const activeDirectorLens = useMemo(() => resolveDirectorLens(directorLens), [directorLens]);
+  const candidateHandoff = initialCandidate?.rank || initialCandidate?.day || initialCandidate?.label || initialCandidate?.detail
+    ? {
+        rank: initialCandidate.rank || "1",
+        day: normalizeCandidateDay(initialCandidate.day),
+        label: initialCandidate.label || "候选镜头",
+        detail: initialCandidate.detail || "来自镜头对比看板",
+        returnHref: initialCandidate.returnHref || "/api/recording-assets/lens-comparison",
+      }
+    : null;
   const sceneInspector = useMemo(
     () => buildCinematicSceneInspector(roadbook, activeDay, directorLens),
     [activeDay, directorLens, roadbook],
@@ -1362,6 +1386,20 @@ export function DreamRoadbook({ initialDemo = "dali", initialLens = "auto" }: Dr
               ))}
             </div>
           </div>
+
+          {candidateHandoff ? (
+            <div className="dream-candidate-handoff" aria-label="Recording Candidate Handoff">
+              <span>Recording Candidate</span>
+              <strong>
+                #{candidateHandoff.rank} · D{candidateHandoff.day} · {candidateHandoff.label}
+              </strong>
+              <p>{candidateHandoff.detail}</p>
+              <Link href={candidateHandoff.returnHref}>
+                返回镜头对比看板
+                <Eye size={13} />
+              </Link>
+            </div>
+          ) : null}
 
           <form className="dream-brief-form" onSubmit={handleGenerate}>
             <label>

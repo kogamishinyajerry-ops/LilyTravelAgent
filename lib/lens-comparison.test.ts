@@ -191,12 +191,15 @@ describe("lens comparison dashboard", () => {
       lensLabel: "Auto",
       dayLabel: "D1 label",
       demoRoadbook: "dali",
-      dreamUrl: "/dream?demo=dali&lens=auto",
       diff: {
         state: "changed",
         checksumDelta: 5_000_000,
       },
     });
+    expect(dashboard.bestRecordingCandidates[0].dreamUrl).toContain("/dream?demo=dali&lens=auto");
+    expect(dashboard.bestRecordingCandidates[0].dreamUrl).toContain("candidate=1");
+    expect(dashboard.bestRecordingCandidates[0].dreamUrl).toContain("candidateRank=1");
+    expect(dashboard.bestRecordingCandidates[0].dreamUrl).toContain("candidateDay=1");
   });
 
   it("resolves only image files inside the recordings root", () => {

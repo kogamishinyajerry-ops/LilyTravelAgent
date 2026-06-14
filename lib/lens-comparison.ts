@@ -250,7 +250,7 @@ function buildBestRecordingCandidates(
           dayLabel: day.label,
           cue: day.cue || day.compositionProof,
           demoRoadbook: pack.demoRoadbook,
-          dreamUrl: `/dream?demo=${encodeURIComponent(pack.demoRoadbook)}&lens=${encodeURIComponent(pack.lensId)}`,
+          dreamUrl: "",
           sceneScreenshotPath: day.sceneScreenshotPath,
           sceneScreenshotUrl: day.sceneScreenshotUrl,
           diff,
@@ -267,7 +267,28 @@ function buildBestRecordingCandidates(
         a.day - b.day,
     )
     .slice(0, 4)
-    .map((candidate, index) => ({ ...candidate, rank: index + 1 }));
+    .map((candidate, index) => {
+      const rank = index + 1;
+      return {
+        ...candidate,
+        rank,
+        dreamUrl: buildCandidateDreamUrl(candidate, rank),
+      };
+    });
+}
+
+function buildCandidateDreamUrl(candidate: Omit<LensRecordingCandidate, "rank">, rank: number) {
+  const params = new URLSearchParams({
+    demo: candidate.demoRoadbook,
+    lens: candidate.lensId,
+    candidate: "1",
+    candidateRank: String(rank),
+    candidateDay: String(candidate.day),
+    candidateLabel: candidate.dayLabel,
+    candidateDetail: candidate.diff.detail,
+  });
+
+  return `/dream?${params.toString()}`;
 }
 
 function buildLensComparisonBatches(

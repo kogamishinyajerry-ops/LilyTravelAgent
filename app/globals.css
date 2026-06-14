@@ -2203,6 +2203,53 @@ textarea {
   background: linear-gradient(135deg, var(--dream-accent), var(--dream-accent-2));
 }
 
+.dream-candidate-handoff {
+  display: grid;
+  gap: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.52);
+  border-radius: 8px;
+  padding: 10px;
+  color: rgba(39, 49, 59, 0.82);
+  background:
+    linear-gradient(135deg, rgba(235, 177, 85, 0.36), rgba(255, 255, 255, 0.24)),
+    rgba(255, 255, 255, 0.22);
+}
+
+.dream-candidate-handoff span {
+  color: rgba(39, 49, 59, 0.64);
+  font-size: 0.68rem;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.dream-candidate-handoff strong {
+  color: var(--dream-ink);
+  font-size: 0.88rem;
+  line-height: 1.15;
+}
+
+.dream-candidate-handoff p {
+  margin: 0;
+  color: rgba(39, 49, 59, 0.7);
+  font-size: 0.72rem;
+  font-weight: 850;
+  line-height: 1.35;
+}
+
+.dream-candidate-handoff a {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  justify-self: start;
+  border-radius: 999px;
+  padding: 5px 9px;
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 950;
+  text-decoration: none;
+  background: linear-gradient(135deg, #9d6b25, var(--dream-accent));
+}
+
 .dream-reset-action {
   gap: 6px;
   color: var(--dream-ink);
