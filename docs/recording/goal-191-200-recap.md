@@ -10,11 +10,10 @@ This run turned the diff dashboard into a creative-decision surface. It now rank
 
 | Goal | Commit | Summary |
 | --- | --- | --- |
-| 191-194 | pending | Added ranked Best Recording Candidates from existing diff metrics. |
-| 195 | pending | Added focused tests and recording docs. |
-| 196 | pending | Browser/local request visual check. |
-| 197 | pending | Final lint/test/build verification. |
-| 198 | pending | Push to GitHub. |
+| 191-195 | `de2fed1` | Added ranked Best Recording Candidates, focused tests, and recording docs. |
+| 196 | `de2fed1` | Browser/local request check confirmed 4 candidate links, 40 image URLs, and 0 broken images. |
+| 197 | closeout | Final lint/test/build verification: 44 files, 906 tests, build passed. |
+| 198 | closeout | Push to GitHub after final closeout commit. |
 | 199-200 | closeout | Next-goal handoff. |
 
 ## What Changed In The Review Surface
@@ -29,6 +28,7 @@ This run turned the diff dashboard into a creative-decision surface. It now rank
 - `npm test -- lib/lens-comparison.test.ts` (6 tests passed)
 - `npm run lint` (passed)
 - Browser/local request check: `/api/recording-assets/lens-comparison` showed 4 candidate links, 40 image URLs, and 0 broken images.
+- `npm run lint && npm test && npm run build` (44 files, 906 tests, build passed)
 
 ## Recording Angle
 

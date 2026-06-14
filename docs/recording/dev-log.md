@@ -1246,3 +1246,14 @@ Files shown: lib/lens-comparison.ts, app/api/recording-assets/lens-comparison/ro
 Command/result: npm test -- lib/lens-comparison.test.ts; npm run lint; Browser/local request check confirmed 4 candidate links, 40 image URLs, and 0 broken images.
 Voiceover note: "前面我让看板知道哪一帧 Changed，这一步再往产品决策走：直接给我 Top changed shots，点一下就能回到对应 lens 的 /dream。"
 Usable for: best-shot selection clip, creator workflow evidence, continued goal run round 194
+
+## Phase DD: v0.8.97 — Goals 191-200 Final Quality Gate
+
+Date: 2026-06-14
+Clip title: Phase DD: v0.8.97 — Goals 191-200 Final Quality Gate
+What changed: Closed the Best Recording Candidates run with the full local lint, test, and production-build gate after browser visual inspection.
+Why this matters: The dashboard now supports the full creator loop: find changed shots, pick the strongest candidates, jump back into `/dream`, and keep the whole workflow verified.
+Files shown: docs/recording/goal-191-200-recap.md, `/api/recording-assets/lens-comparison`, terminal verification output
+Command/result: npm run lint && npm test && npm run build (44 files, 906 tests, build passed)
+Voiceover note: "候选条做完后，我还是跑完整质量门。现在这页不只是 QA 截图墙，而是一个能直接帮我决定录哪一段的创作者面板。"
+Usable for: goal closeout clip, best-shot workflow proof, next candidate-handoff goal, continued goal run round 197
