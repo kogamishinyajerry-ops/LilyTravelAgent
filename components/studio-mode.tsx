@@ -697,7 +697,10 @@ function getProofStoryDeliverySync(studioLine: string, notesLine: string) {
   return { label: "Delivery 待同步", ready: false };
 }
 
-function getRecordingProofChecklist(recordingAssets: RecordingAssetsState) {
+function getRecordingProofChecklist(
+  recordingAssets: RecordingAssetsState,
+  proofStoryIndexBundleChainState?: { label: string; ready: boolean },
+) {
   if (recordingAssets.status !== "ready") {
     return [
       { label: "Bridge QA", state: "等待读取", detail: "读取本地桥接素材。", href: "", cue: "先证明 Studio 和 Dream 能互相跳转。" },
@@ -713,6 +716,7 @@ function getRecordingProofChecklist(recordingAssets: RecordingAssetsState) {
   const indexCoverage = recordingAssets.latestRecordingIndexCheck
     ? getRecordingIndexCheckCoverage(recordingAssets.latestRecordingIndexCheck)
     : null;
+  const indexChainLabel = proofStoryIndexBundleChainState?.label || "Index Chain 待验证";
   return [
     {
       label: "Bridge QA",
@@ -747,9 +751,13 @@ function getRecordingProofChecklist(recordingAssets: RecordingAssetsState) {
     {
       label: "Index QA",
       state: recordingAssets.latestRecordingIndexCheck ? "已验证" : "待运行",
-      detail: indexCoverage ? indexCoverage.checklistDetail : recordingIndexCommand,
+      detail: indexCoverage ? `${indexCoverage.checklistDetail} · ${indexChainLabel}` : recordingIndexCommand,
       href: recordingAssets.latestRecordingIndexCheck?.summaryPath || "",
-      cue: indexCoverage ? indexCoverage.cue : "确认素材总索引本身也有自动验收。",
+      cue: indexCoverage && proofStoryIndexBundleChainState?.ready
+        ? "确认总索引同时验收 Dream、Studio 和最终 Chain 交付。"
+        : indexCoverage
+          ? indexCoverage.cue
+          : "确认素材总索引本身也有自动验收。",
     },
     {
       label: "Suite Run",
@@ -796,7 +804,6 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
   const locatedCount = useMemo(() => points.filter((point) => point.status === "ok").length, [points]);
   const topStops = roadbook.days.flatMap((day) => day.stops.slice(0, 2)).slice(0, 8);
   const dreamHandoffHref = demoRoadbookId ? `/dream?demo=${demoRoadbookId}` : "/dream";
-  const recordingProofChecklist = useMemo(() => getRecordingProofChecklist(recordingAssets), [recordingAssets]);
   const recordingIndexCoverage =
     recordingAssets.status === "ready" && recordingAssets.latestRecordingIndexCheck
       ? getRecordingIndexCheckCoverage(recordingAssets.latestRecordingIndexCheck)
@@ -896,6 +903,10 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
     recordingAssets.status === "ready"
       ? getProofStoryIndexBundleChainState(recordingAssets.latestRecordingIndexCheck, proofStoryBundleChainState.label)
       : getProofStoryIndexBundleChainState(null, proofStoryBundleChainState.label);
+  const recordingProofChecklist = useMemo(
+    () => getRecordingProofChecklist(recordingAssets, proofStoryIndexBundleChainState),
+    [recordingAssets, proofStoryIndexBundleChainState],
+  );
 
   const loadRecordingAssets = useCallback(
     async ({ markRefreshing = true, isActive = () => true }: { markRefreshing?: boolean; isActive?: () => boolean } = {}) => {
@@ -1720,6 +1731,12 @@ export function StudioMode({ initialDemo = "dali" }: StudioModeProps = {}) {
                             ))}
                           </div>
                         ) : null}
+                        <span
+                          className={`studio-index-chain-check ${proofStoryIndexBundleChainState.ready ? "ready" : "missing"}`}
+                          aria-label="Recording Index Chain 状态"
+                        >
+                          {proofStoryIndexBundleChainState.label}
+                        </span>
                         <div className="studio-dream-proof-links">
                           {recordingAssets.latestRecordingIndexCheck.screenshotPath ? (
                             <a href={buildRecordingEvidenceUrl(recordingAssets.latestRecordingIndexCheck.screenshotPath)} target="_blank" rel="noreferrer">

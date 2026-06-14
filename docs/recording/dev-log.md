@@ -2148,3 +2148,14 @@ Files shown: lib/recording-assets.ts, components/studio-mode.tsx, app/globals.cs
 Command/result: npm test -- lib/recording-assets.test.ts components/studio-mode.test.tsx passed with 49 tests; browser check against `http://localhost:3000/studio` showed `Chain 已入库`, `Index Chain 已验证`, 297px row width inside a 313px card, and 0 console errors.
 Voiceover note: "现在 Chain 也完成回流闭环：Studio 捕获，Index QA 验证，然后 Studio 显示 Index Chain 已验证。录屏时可以一眼讲清最终视频 notes 也被验收。"
 Usable for: Studio final proof-chain closeout clip, index-to-studio Chain verification walkthrough, continued goal run round 914
+
+## Phase FS: v0.8.179 — Index Chain In Main Recording Rail
+
+Date: 2026-06-14
+Clip title: Phase FS: v0.8.179 — Index Chain In Main Recording Rail
+What changed: The main `/studio` Recording Index QA card now shows `Index Chain 已验证`, and the script-mode proof checklist appends the same Chain state to the Index QA step.
+Why this matters: The final proof-chain closeout is visible in the primary recording surface, so a screen recording can explain the Chain loop before zooming into the detailed script-material card.
+Files shown: components/studio-mode.tsx, components/studio-mode.test.tsx, app/globals.css, docs/recording/goal-921-930-recap.md
+Command/result: npm test -- components/studio-mode.test.tsx passed with 34 tests; browser check against `http://localhost:3000/studio` showed `Index Chain 已验证` in the Index QA card and proof checklist, 121px chip width inside a 313px card, and 0 console errors.
+Voiceover note: "我把 Index Chain 从小卡片抬到主录屏轨道。这样讲解时先看到最终证据链已经验证，再进入脚本素材卡看细节。"
+Usable for: main Studio recording rail walkthrough, proof checklist closeout clip, continued goal run round 924

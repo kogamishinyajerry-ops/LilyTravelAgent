@@ -2538,6 +2538,29 @@ textarea {
   white-space: nowrap;
 }
 
+.studio-index-chain-check {
+  width: fit-content;
+  max-width: 100%;
+  border: 1px solid rgba(79, 143, 122, 0.18);
+  border-radius: 999px;
+  padding: 2px 6px;
+  font-size: 0.66rem;
+  font-weight: 950;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.studio-index-chain-check.ready {
+  color: var(--moss);
+  background: rgba(255, 255, 255, 0.62);
+}
+
+.studio-index-chain-check.missing {
+  color: #7a3c24;
+  border-color: rgba(191, 128, 85, 0.22);
+  background: rgba(191, 128, 85, 0.1);
+}
+
 .studio-dream-proof-links {
   display: flex;
   flex-wrap: wrap;
